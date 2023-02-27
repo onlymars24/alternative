@@ -1,14 +1,57 @@
 <script>
 export default{
-    name: "Main"
+    name: "Main",
+    data() {
+        return {
+            dispatchPointEmpty: false,
+            dispatchPointFilled: false,
+            arrivalPointEmpty: false,
+            arrivalPointFilled: false,
+            arrivalText: '',
+            dispatchText: '',
+            arrivalData: {
+                
+            },
+            dispatchData: {
+
+            },
+            arrivalEl: {
+                
+            },
+            dispatchEl: {
+                id: null,
+                text: 
+            },
+        }
+    },
+    methods: {
+        dispatchFocus(){
+            if(!dispatchText){
+                this.dispatchPointEmpty = true
+                this.dispatchPointFilled = false
+            }
+            else{
+                this.dispatchPointEmpty = false
+                this.dispatchPointFilled = true
+            }
+        },
+        blur(){
+            this.dispatchPointEmpty = this.dispatchPointFilled = this.arrivalPointEmpty = this.arrivalPointFilled = false
+        },
+    },
+    watch: {
+        dispatchText(newDispatchText, oldDispatchText) {
+            if(!newDispatchText){
+                this.dispatchPointEmpty = true
+                this.dispatchPointFilled = false
+            }
+            else{
+                this.dispatchPointEmpty = false
+                this.dispatchPointFilled = true
+            }
+        }
+    }
 }
-
-const dispatchPointEmpty = true;
-const dispatchPointFilled = false;
-const arrivalPointEmpty = false;
-const arrivalPointFilled = false;
-
-
 </script>
 
 <template>
@@ -38,9 +81,10 @@ const arrivalPointFilled = false;
                     Автовокзал Санкт-Петербурга
                 </h1>
                 <p class="main__main-p">
-                    Билеты на автобус онлайн
+                    Билеты на автобус онлайн {{test123}}
                 </p>
             </div>
+            
             <div class="main__table">
                 <div class="main__table-table">
                     <ul v-if="dispatchPointEmpty" class="hint">
@@ -92,17 +136,57 @@ const arrivalPointFilled = false;
                             <span>какой-то там район, какая-то станция</span>
                         </li>
                     </ul>
+                    <ul v-if="dispatchPointFilled" class="hint">
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                    </ul>
                     <p class="">Откуда</p>
-                    <input class="main__table-input-1" list="OWNER" value="Краснодар" type="text">
-                    <datalist id="OWNER">
-                        <option>Москва</option>
-                        <option>Санкт - Петербург</option>
-                        <option>Иваново</option>
-                        <option>Ярославль</option>
-                    </datalist>
+                    <input @focus="dispatchFocus" @blur="blur" v-model="dispatchText" class="main__table-input-1" type="text">
                 </div>
                 <div class="main__table-table">
-                    <ul class="hint">
+                    <ul v-if="arrivalPointEmpty" class="hint">
                         <li class="hint__title">
                             <span>Популярные направления:</span>
                         </li>
@@ -151,14 +235,54 @@ const arrivalPointFilled = false;
                             <span>какой-то там район, какая-то станция</span>
                         </li>
                     </ul>
+                    <ul v-if="arrivalPointFilled" class="hint">
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                        <li>
+                            <strong>Краснодар, </strong>
+                            <span>какой-то там район, какая-то станция</span>
+                        </li>
+                    </ul>
                     <p class="">Куда</p>
-                    <input disabled class="main__table-input" list="OWNER" placeholder="Укажите Откуда" type="text">
-                    <datalist id="OWNER">
-                        <option>Москва</option>
-                        <option>Санкт - Петербург</option>
-                        <option>Иваново</option>
-                        <option>Ярославль</option>
-                    </datalist>
+                    <input v-model="arrivalText" disabled class="main__table-input" list="OWNER" placeholder="Укажите Откуда" type="text">
                 </div>
                 <div class="main__table-table">
                     <p class="">Дата поездки</p>
