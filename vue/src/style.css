@@ -190,6 +190,7 @@ outline: none;
   display: flex;
   margin: 0 auto;
   border-radius: 50%;
+  justify-content: center;
 }
 .main__table-button button{
   padding: 0 20px;
@@ -207,7 +208,7 @@ outline: none;
 .main__table-table{
   background-color: #fff;
   border: 1px solid rgb(233, 233, 233);
-  max-width: 20%;
+  max-width: 25%;
 }
 
 .main__table-table p{

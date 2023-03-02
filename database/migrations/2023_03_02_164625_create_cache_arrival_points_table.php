@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('cache_arrival_points', function (Blueprint $table) {
             $table->id();
-            $table->string('phone');
-            $table->string('email');
-            $table->rememberToken();
+            $table->integer('dispatch_point_id');
+            $table->json('arrival_point');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('cache_arrival_points');
     }
 };

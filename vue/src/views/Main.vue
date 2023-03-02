@@ -1,309 +1,30 @@
 <script>
+import Footer from '../components/Footer.vue'
+import HeaderMain from '../components/HeaderMain.vue'
+
 export default{
     name: "Main",
+    components: {
+        HeaderMain,
+        Footer,
+    },
     data() {
-        return {
-            dispatchPointEmpty: false,
-            dispatchPointFilled: false,
-            arrivalPointEmpty: false,
-            arrivalPointFilled: false,
-            arrivalText: '',
-            dispatchText: '',
-            arrivalData: {
-                
-            },
-            dispatchData: {
-
-            },
-            arrivalEl: {
-                
-            },
-            dispatchEl: {
-                id: null,
-                text: 
-            },
-        }
+        return {}
     },
     methods: {
-        dispatchFocus(){
-            if(!dispatchText){
-                this.dispatchPointEmpty = true
-                this.dispatchPointFilled = false
-            }
-            else{
-                this.dispatchPointEmpty = false
-                this.dispatchPointFilled = true
-            }
-        },
-        blur(){
-            this.dispatchPointEmpty = this.dispatchPointFilled = this.arrivalPointEmpty = this.arrivalPointFilled = false
-        },
+        
     },
     watch: {
-        dispatchText(newDispatchText, oldDispatchText) {
-            if(!newDispatchText){
-                this.dispatchPointEmpty = true
-                this.dispatchPointFilled = false
-            }
-            else{
-                this.dispatchPointEmpty = false
-                this.dispatchPointFilled = true
-            }
-        }
+        
+    },
+    computed: {
+
     }
 }
 </script>
 
 <template>
-<div class="main__header">
-        <div class="container">
-            <div class="header__inner">
-                <div class="header__logo">
-                    <a href="index.html"> <img src="../img/741411.png" alt="" class="header-inner-image"> <span>Автовокзал</span> </a>
-                </div>
-                <ul class="header__links">
-                    <li>
-                        <a href="">
-                            <img src="../img/headphones.png" alt="">
-                            <span>Служба поддержки</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/login.html">
-                            <img src="../img/login_man.png" alt="">
-                            <span>Личный кабинет</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="main">
-                <h1 class="main__main">
-                    Автовокзал Санкт-Петербурга
-                </h1>
-                <p class="main__main-p">
-                    Билеты на автобус онлайн {{test123}}
-                </p>
-            </div>
-            
-            <div class="main__table">
-                <div class="main__table-table">
-                    <ul v-if="dispatchPointEmpty" class="hint">
-                        <li class="hint__title">
-                            <span>Популярные направления:</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                    </ul>
-                    <ul v-if="dispatchPointFilled" class="hint">
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                    </ul>
-                    <p class="">Откуда</p>
-                    <input @focus="dispatchFocus" @blur="blur" v-model="dispatchText" class="main__table-input-1" type="text">
-                </div>
-                <div class="main__table-table">
-                    <ul v-if="arrivalPointEmpty" class="hint">
-                        <li class="hint__title">
-                            <span>Популярные направления:</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                    </ul>
-                    <ul v-if="arrivalPointFilled" class="hint">
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                        <li>
-                            <strong>Краснодар, </strong>
-                            <span>какой-то там район, какая-то станция</span>
-                        </li>
-                    </ul>
-                    <p class="">Куда</p>
-                    <input v-model="arrivalText" disabled class="main__table-input" list="OWNER" placeholder="Укажите Откуда" type="text">
-                </div>
-                <div class="main__table-table">
-                    <p class="">Дата поездки</p>
-                    <input class="main__table-date" type="date">
-                </div>
-                <div class="main__table-table">
-                    <p class="">Пассажиры</p>
-                    <input class="main__table-input" type="text">
-                </div>
-                <div class="main__table-button">
-                    <button class="main__button">
-                        Найти билет
-                    </button>
-                </div>
-            </div>
-            <div class="main__another__date">
-                <a href="" class="main__another__date-fix">Завтра</a>
-                <a href="" class="main__another__date-fix">Послезавтра</a>
-            </div>
-        </div>
-    </div>
+    <HeaderMain/>
     <div class="choice">
         <div class="container">
             <div class="choice__inner">
@@ -495,88 +216,7 @@ export default{
     </div>
     
     <hr class="bef__footer">
-
-    <footer class="footer">
-        <div class="container">
-            <div class="partners">
-                <div class="partners__logo">
-                
-                </div>
-                <div class="partners__logo">
-                    
-                </div>
-                <div class="partners__logo">
-                    
-                </div>
-                <div class="partners__logo">
-                    
-                </div>
-                <div class="partners__logo">
-                    
-                </div>
-                <div class="partners__logo">
-                    
-                </div>
-                <div class="partners__logo">
-                    
-                </div>
-            </div>
-            <div class="footer__info">
-                <div class="footer__info-about">
-                    <div class="footer__info-about__main">
-                        <p>Информация</p>
-                    </div>
-                    <div class="footer__info-about__pass">
-                        <a href="">О нас</a>
-                        <br>
-                        <a href="">Вопросы и ответы</a>
-                        <br>
-                        <a href="">Вернуть билет</a>
-                        <br>
-                        <a href="">Блог</a>
-                        <br>
-                        <a href="">Контакты</a>
-                    </div>
-                </div>
-                <div class="footer__info-about">
-                    <div class="footer__info-about__main">
-                        <p>Партнёрам</p>
-                    </div>
-                    <div class="footer__info-about__pass">
-                        <a href="">Перевозчикам</a>
-                        <br>
-                        <a href="">Агентам</a>
-                        <br>
-                        <a href="">Партнерская программа</a>
-                        <br>
-                        <a href="">Автобусные перевозчики</a>
-                    </div>
-                </div>
-                <div class="footer__info-about">
-                    <div class="footer__info-about__main">
-                        <p>Документы</p>
-                    </div>
-                    <div class="footer__info-about__pass">
-                        <a href="">Договор оферты</a>
-                        <br>
-                        <a href="">Политика конфиденциальности</a>
-                    </div>
-                </div>
-                <div class="footer__info-about"></div>
-            </div>
-            <div class="cookies__text">
-                <p>Мы используем информацию, зарегистрированную в <a href="">файлах «cookies»</a>, в частности, в рекламных и статистических целях, а также для того, чтобы адаптировать наши сайты к индивидуальным потребностям Пользователей. Вы можете изменить настройки касающиеся «cookies» в вашем браузере. Изменение настроек может ограничить функциональность сайта.</p>
-            </div>            
-        </div>
-    </footer>
-
-    <div class="copyright">
-        <div class="container">
-            <div class="copyright__text">
-                <p>© 2023, OOO «Lorem». Все права защищены. «Lorem» — Онлайн сервис продажи lorem'ов</p>
-            </div>
-        </div>
-    </div>
+    <Footer/>
 </template>
 
 <style>
@@ -584,7 +224,7 @@ export default{
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet');
     .hint{
         list-style-type: none;
-        height: 242px;
+        max-height: 242px;
         width: 400px;
         overflow-y: scroll;
         background-color: #fff;
