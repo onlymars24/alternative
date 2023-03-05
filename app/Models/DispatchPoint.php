@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class DispatchPoint extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id',
+        'name',
+        'region',
+        'details',
+        'address',
+        'latitude',
+        'longitude',
+        'okato',
+        'place'
+    ];
 }

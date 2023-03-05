@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('region');
-            $table->string('details');
-            $table->string('address');
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->string('details')->nullable();
+            $table->string('address')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
             $table->string('okato');
             $table->boolean('place');
             $table->timestamps();
