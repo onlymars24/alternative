@@ -9,7 +9,7 @@ const routes = [
     component: Main
   },
   {
-    path: '/races',
+    path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/:date',
     name: 'Races',
     component: Races
   },

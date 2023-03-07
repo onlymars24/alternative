@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('cache_arrival_points', function (Blueprint $table) {
             $table->id();
             $table->integer('dispatch_point_id');
-            $table->json('arrival_point');
+            $table->json('arrival_points');
             $table->timestamps();
         });
     }

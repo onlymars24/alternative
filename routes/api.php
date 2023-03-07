@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\ArrivalPointsController;
+use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\Api\RacesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::apiResources([
-    'users' => UserController::class,
-    'settings' => SettingController::class,
-    'transactions' => TransactionController::class,
+    'dispatch_points' => DispatchPointsController::class,
+    'arrival_points' => ArrivalPointsController::class,
+    'races' => RacesController::class,
 ]);

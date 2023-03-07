@@ -29,7 +29,7 @@
                 </p>
             </div>
             
-            <div class="main__table">
+            <form @submit.prevent="findRaces" class="main__table">
                 <div class="main__table-table">
                     <ul v-if="dispatchPointEmpty" class="hint">
                         <li class="hint__title">
@@ -75,17 +75,28 @@
                 <div class="main__table-table">
                     <p class="">Дата поездки</p>
                     <input class="main__table-date" type="date" v-model="date">
+                    <p class="" style="position: absolute;
+                        bottom: 0;
+                        font-size: 17px;
+                        color: black;
+                        background: white;
+                        padding: 10px;
+                        padding-left: 0;
+                        width: 95px;
+                        height: 20px;">
+                        {{date}}
+                    </p>
                 </div>
                 <!-- <div class="main__table-table">
                     <p class="">Пассажиры</p>
                     <input class="main__table-input" type="text">
                 </div> -->
                 <div class="main__table-button">
-                    <button class="main__button">
+                    <button type="submit" class="main__button" :disabled="disabledButton">
                         Найти билет
                     </button>
                 </div>
-            </div>
+            </form>
             <div class="main__another__date">
                 <a href="" class="main__another__date-fix">Завтра</a>
                 <a href="" class="main__another__date-fix">Послезавтра</a>
@@ -95,18 +106,45 @@
 </template>
 
 <script>
+import router from '../router'
+import axios, {isCancel, AxiosError} from 'axios';
 export default{
+        props: {
+            dispatchEl0: {
+                type: Object,
+                default: function () {
+                    return {
+                        id: null,
+                        name: null
+                    }
+                }
+            },
+            arrivalEl0: {
+                type: Object,
+                default: function () {
+                    return {
+                        id: null,
+                        name: null
+                    }
+                }
+            },
+            date0: {
+                type: String,
+                default: ''
+            }
+        },
+        emits: ['changeRaces'],
         data() {
             return {
-            date: '',
+            date: this.date0,
 
             dispatchPointEmpty: false,
             dispatchPointFilled: false,
-            dispatchText: '',
+            dispatchText: this.dispatchEl0.name,
 
             arrivalPointEmpty: false,
             arrivalPointFilled: false,
-            arrivalText: '',
+            arrivalText: this.arrivalEl0.name,
             arrivalPointDisabled: true,
 
             dispatchData: [
@@ -180,14 +218,8 @@ export default{
                 }
             ],
 
-            dispatchEl: {
-                id: null,
-                name: null
-            }, 
-            arrivalEl: {
-                id: null,
-                name: null
-            }
+            dispatchEl: this.dispatchEl0, 
+            arrivalEl: this.arrivalEl0
         }
     },
     methods: {
@@ -207,7 +239,7 @@ export default{
                 this.dispatchText = this.dispatchEl.name
             }
         },
-        fillDispatch(event){
+        async fillDispatch(event){
             this.dispatchEl.id = event.target.dataset.id
             this.dispatchEl.name = event.target.dataset.name
             this.dispatchText = this.dispatchEl.name
@@ -216,6 +248,10 @@ export default{
             this.arrivalEl.name = null
             this.arrivalText = ''
             this.arrivalBlur()
+            const promise = axios
+                .get('http://alternative/api/arrival_points/'+this.dispatchEl.id)
+                .then(response => (this.arrivalData = JSON.parse(response.data)));
+            await promise
         },
 
         arrivalFocus(){
@@ -239,6 +275,11 @@ export default{
             this.arrivalEl.name = event.target.dataset.name
             this.arrivalText = this.arrivalEl.name
         },
+
+        findRaces(){
+            this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id)
+            router.push({ name: 'Races', params: { dispatch_id: this.dispatchEl.id, dispatch_name: this.dispatchEl.name, arrival_id: this.arrivalEl.id, arrival_name: this.arrivalEl.name, date: this.date } })
+        }
     },
     watch: {
         dispatchText(newDispatchText, oldDispatchText) {
@@ -267,9 +308,10 @@ export default{
                 this.arrivalBlur()
             }
         },
-        date(newDate){
-            console.log(newDate)
-        }
+        // date(newDate){
+        //     console.log(newDate)
+        //     router.push({ name: 'Races', params: { dispatch_id: '123', arrival_id: 'tsdfg', date: '12341234' } })
+        // }
     },
     computed: {
         filteredDispatchPoints(){
@@ -280,12 +322,21 @@ export default{
             });
         },
         filteredArrivalPoints(){
+            // console.log(this.arrivalData)
             return this.arrivalData.filter(el => {
                 return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
                 || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
                 || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
             });
+        },
+        disabledButton(){
+            return !this.dispatchEl.id || !this.arrivalEl.id || !this.date;
         }
+    },
+    mounted() {
+    axios
+      .get('http://alternative/api/dispatch_points')
+      .then(response => (this.dispatchData = response.data));
     }
 }
 </script>

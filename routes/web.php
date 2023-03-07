@@ -15,19 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/aptest', function () {
-    // $regions = Http::withHeaders([
+    // $arrival_points = Http::withHeaders([
     //     'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
-    // ])->get('https://cluster.avtovokzal.ru/gdstest/rest/regions/643')->object();
-    // $points = [];
-    // foreach($regions as $region){
-    //     $pointsTemp = Http::withHeaders([
-    //         'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
-    //     ])->get('https://cluster.avtovokzal.ru/gdstest/rest/dispatch_points/'.$region->id)->object();
-    //     if($pointsTemp){
-    //         foreach($pointsTemp as $point){
-    //             $points[] = $point;
-    //         }   
-    //     }
-    // }
-    // dd($points); 
+    // ])->get('https://cluster.avtovokzal.ru/gdstest/rest/arrival_points/1171')->object();
+    // dd(json_encode($arrival_points)); 
+    $january = new DateTime('2023-03-10 08:05:00');
+    $february = new DateTime('2023-03-10 13:05:00');
+    $interval = $february->diff($january);
+    
+    dd($interval);
+    dd($interval->format('%h час. %i мин.'));
 });

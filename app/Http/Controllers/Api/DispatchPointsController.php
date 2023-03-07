@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\DispatchPoint;
+use App\Http\Controllers\Controller;
 
 class DispatchPointsController extends Controller
 {
@@ -13,8 +14,9 @@ class DispatchPointsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
+    {   
+        $dispatch_points = DispatchPoint::all();
+        return json_encode($dispatch_points);
     }
 
     /**

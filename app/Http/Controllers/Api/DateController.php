@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
-class RacesController extends Controller
+class DateController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,12 +34,10 @@ class RacesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($date, Request $request)
+    public function show($id)
     {
-        $races = Http::withHeaders([
-            'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
-        ])->get('https://cluster.avtovokzal.ru/gdstest/rest/races/'.$request->dispatch_point_id.'/'.$request->arrival_point_id.'/'.$date)->object();
-        return json_encode($races);
+        
+        return;
     }
 
     /**

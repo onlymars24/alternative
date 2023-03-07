@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\CacheArrivalPoint;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 
 class ArrivalPointsController extends Controller
 {
@@ -36,7 +38,20 @@ class ArrivalPointsController extends Controller
      */
     public function show($id)
     {
-        //
+        $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $id)->first();
+        if($arrival_points){
+            $arrival_points = $arrival_points->arrival_points;
+        }
+        else{
+            $arrival_points = Http::withHeaders([
+                'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
+            ])->get('https://cluster.avtovokzal.ru/gdstest/rest/arrival_points/'.$id)->object();
+            CacheArrivalPoint::create([
+                'dispatch_point_id' => $id,
+                'arrival_points' => json_encode($arrival_points)
+            ]);
+        }
+        return json_encode($arrival_points);
     }
 
     /**
