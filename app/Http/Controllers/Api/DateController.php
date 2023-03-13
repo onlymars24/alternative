@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use Nette\Utils\DateTime;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class DateController extends Controller
 {
@@ -34,10 +35,22 @@ class DateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        
-        return;
+        $start = new DateTime($request->start);
+        $finish = new DateTime($request->finish);
+        $interval = $finish->diff($start);
+        $dateStr = '';
+        if($interval->d){
+            $dateStr .= '%d дн. ';
+        }
+        if($interval->h){
+            $dateStr .= '%h час. ';
+        }
+        if($interval->i){
+            $dateStr .= '%i мин.';
+        }
+        return $interval->format($dateStr);
     }
 
     /**

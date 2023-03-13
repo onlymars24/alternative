@@ -3,7 +3,7 @@
         <div class="container">
             <div class="header__inner">
                 <div class="header__logo">
-                    <a href="index.html"> <img src="../img/741411.png" alt="" class="header-inner-image"> <span>Автовокзал</span> </a>
+                    <a href="/"> <img src="../img/741411.png" alt="" class="header-inner-image"> <span>Автовокзал</span> </a>
                 </div>
                 <ul class="header__links">
                     <li>
@@ -98,8 +98,8 @@
                 </div>
             </form>
             <div class="main__another__date">
-                <a href="" class="main__another__date-fix">Завтра</a>
-                <a href="" class="main__another__date-fix">Послезавтра</a>
+                <!-- <router-link class="main__another__date-fix" v-if="tommorow" :to="{name: 'Races', params: {dispatch_id: dispatchEl0.id, dispatch_name: dispatchEl0.name, arrival_id: arrivalEl0.id, arrival_name: arrivalEl0.name, date: tommorow}}">Завтра</router-link> -->
+                <!-- <router-link class="main__another__date-fix" v-if="tommorow" :to="{name: 'Races', params: {dispatch_id: 12, dispatch_name: 'Москва', arrival_id: 87, arrival_name: 'jkklasdf', date: '1234'}}">Завтра</router-link> -->
             </div>
         </div>
     </div>
@@ -131,7 +131,15 @@ export default{
             date0: {
                 type: String,
                 default: ''
-            }
+            },
+            tommorow: {
+                type: String,
+                default: ''
+            },
+            afterTommorow: {
+                type: String,
+                default: ''
+            },
         },
         emits: ['changeRaces'],
         data() {
@@ -145,77 +153,77 @@ export default{
             arrivalPointEmpty: false,
             arrivalPointFilled: false,
             arrivalText: this.arrivalEl0.name,
-            arrivalPointDisabled: true,
+            // arrivalPointDisabled: true,
 
             dispatchData: [
-                {
-                    id: 80153,
-                    name: "Новосибирск",
-                    region: "Новосибирская обл",
-                    details: null,
-                    address: null,
-                    latitude: null,
-                    longitude: null,
-                    okato: "50401000000",
-                    place: true
-                },
-                {
-                    id: 1774915,
-                    name: "Энск",
-                    region: "Новосибирская обл",
-                    details: "Новосибирск г",
-                    address: null,
-                    latitude: null,
-                    longitude: null,
-                    okato: "",
-                    place: true
-                },
-                {
-                    id: 73707,
-                    name: "Псков",
-                    region: "Псковская обл",
-                    details: null,
-                    address: null,
-                    latitude: null,
-                    longitude: null,
-                    okato: "58401000000",
-                    place: true
-                }
+                // {
+                //     id: 80153,
+                //     name: "Новосибирск",
+                //     region: "Новосибирская обл",
+                //     details: null,
+                //     address: null,
+                //     latitude: null,
+                //     longitude: null,
+                //     okato: "50401000000",
+                //     place: true
+                // },
+                // {
+                //     id: 1774915,
+                //     name: "Энск",
+                //     region: "Новосибирская обл",
+                //     details: "Новосибирск г",
+                //     address: null,
+                //     latitude: null,
+                //     longitude: null,
+                //     okato: "",
+                //     place: true
+                // },
+                // {
+                //     id: 73707,
+                //     name: "Псков",
+                //     region: "Псковская обл",
+                //     details: null,
+                //     address: null,
+                //     latitude: null,
+                //     longitude: null,
+                //     okato: "58401000000",
+                //     place: true
+                // }
             ],
             arrivalData: [
-                {
-                    id: 1770608,
-                    name: "58-й километр (Орд. шоссе)",
-                    region: "Ордынский район",
-                    details: "от Новосибирск ЖД",
-                    address: null,
-                    latitude: null,
-                    longitude: null,
-                    okato: null,
-                    place: false
-                },
-                {
-                    id: 1770915,
-                    name: "58-й километр (Орд. шоссе)",
-                    region: "Ордынский район",
-                    details: "от Новосибирск ЮЗ",
-                    address: null,
-                    latitude: null,
-                    longitude: null,
-                    okato: null,
-                    place: false
-                },
-                {
-                    id: 1770610,
-                    name: "Автосервис (Тальменка)",
-                    region: "Алтайский край",
-                    details: "от Новосибирск ЖД",
-                    address: null,
-                    latitude: null,
-                    longitude: null,
-                    okato: null,
-                    place: false
-                }
+                // {
+                //     id: 1770608,
+                //     name: "58-й километр (Орд. шоссе)",
+                //     region: "Ордынский район",
+                //     details: "от Новосибирск ЖД",
+                //     address: null,
+                //     latitude: null,
+                //     longitude: null,
+                //     okato: null,
+                //     place: false
+                // },
+                // {
+                //     id: 1770915,
+                //     name: "58-й километр (Орд. шоссе)",
+                //     region: "Ордынский район",
+                //     details: "от Новосибирск ЮЗ",
+                //     address: null,
+                //     latitude: null,
+                //     longitude: null,
+                //     okato: null,
+                //     place: false
+                // },
+                // {
+                //     id: 1770610,
+                //     name: "Автосервис (Тальменка)",
+                //     region: "Алтайский край",
+                //     details: "от Новосибирск ЖД",
+                //     address: null,
+                //     latitude: null,
+                //     longitude: null,
+                //     okato: null,
+                //     place: false
+                // }
             ],
 
             dispatchEl: this.dispatchEl0, 
@@ -243,12 +251,15 @@ export default{
             this.dispatchEl.id = event.target.dataset.id
             this.dispatchEl.name = event.target.dataset.name
             this.dispatchText = this.dispatchEl.name
-            this.arrivalPointDisabled = false
             this.arrivalEl.id = null
             this.arrivalEl.name = null
             this.arrivalText = ''
             this.arrivalBlur()
-            const promise = axios
+            this.getArrivalData()
+        },
+
+        async getArrivalData(){
+             const promise = axios
                 .get('http://alternative/api/arrival_points/'+this.dispatchEl.id)
                 .then(response => (this.arrivalData = JSON.parse(response.data)));
             await promise
@@ -322,7 +333,6 @@ export default{
             });
         },
         filteredArrivalPoints(){
-            // console.log(this.arrivalData)
             return this.arrivalData.filter(el => {
                 return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
                 || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
@@ -331,12 +341,21 @@ export default{
         },
         disabledButton(){
             return !this.dispatchEl.id || !this.arrivalEl.id || !this.date;
+        },
+        arrivalPointDisabled(){
+            return !this.dispatchEl.name && !this.dispatchEl.id;
         }
     },
     mounted() {
     axios
       .get('http://alternative/api/dispatch_points')
       .then(response => (this.dispatchData = response.data));
+
+    if(this.dispatchEl.name && this.dispatchEl.id){
+        this.getArrivalData()
     }
+    
+    }
+    
 }
 </script>

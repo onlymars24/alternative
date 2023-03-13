@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\Api\ArrivalPointsController;
-use App\Http\Controllers\Api\DispatchPointsController;
-use App\Http\Controllers\Api\RacesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\DateController;
+use App\Http\Controllers\Api\RacesController;
+use App\Http\Controllers\Api\ArrivalPointsController;
+use App\Http\Controllers\Api\DispatchPointsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,4 +27,5 @@ Route::apiResources([
     'dispatch_points' => DispatchPointsController::class,
     'arrival_points' => ArrivalPointsController::class,
     'races' => RacesController::class,
+    'date' => DateController::class,
 ]);

@@ -14,7 +14,7 @@
 										</div>
 									</div>
 									<div class="left-ins__left-up-second">
-										<!-- <p>7 ч. 3 мин. в пути</p> -->
+										<p>{{ race.driving_time }}</p>
 									</div>
 								</div>
 								<div class="left-ins__left-down">
@@ -62,13 +62,14 @@
 				<div class="menu__ticket-medium">
 					<div class="ticket-medium__ins">
 						<div class="ticket-medium__ins-left">
-							<span @click="race.details_menu = !race.details_menu">Детали</span>
+							<span @click="race.details_menu = !race.details_menu">{{race.details_menu ? 'Скрыть детали' : 'Детали рейса'}}</span>
 							<p>Перевозчик: ИП Пыльнов Игорь Анатольевич</p>
 							<p>Автобус: Мерседес_20м</p>
 						</div>
 					</div>
 				</div>
-				<div class="menu__ticket-low" v-if="race.details_menu">
+				 <!-- v-show="race.details_menu" -->
+				<div class="menu__ticket-low" v-show="race.details_menu">
 					<div class="ticket-low__ins">
 						<div class="ticket-low__ins-up">
 							<p :class="{active: race.section == 'route'}" @click="race.section = 'route'">Маршрут</p>
@@ -127,7 +128,6 @@
 						</template>
 
 						<template v-if="race.section == 'driver'">
-							<div class="menu__ticket-low">
 								<div class="ticket-low__ins">
 									<!-- <div class="ticket-low__ins-up">
 										<a href="">Маршрут</a>
@@ -146,7 +146,6 @@
 										<p>{{ race.carrierPhone }}</p>
 									</div>
 								</div>
-							</div>
 						</template>
 
 						<template v-if="race.section == 'bus'">
@@ -248,9 +247,10 @@ button{
    background-color: rgb(255, 255, 255);
    border-radius: 4px;
    outline: none;
+   border: 1px solid grey;
 }
 
-.inro-sort__button button:focus {
+.inro-sort__button button.active {
 	font-size: 14px;
 	display: flex;
    -webkit-box-align: center;
@@ -309,14 +309,18 @@ button{
 
 .left-up-first__time-date {
 	display: block;
-   padding: 2px 5px 4px;
-   margin-top: 2px;
-   margin-left: 8px;
-   font-size: 12px;
-   white-space: nowrap;
-   background-color: rgb(245, 245, 245);
-   border-radius: 6px;
+   	margin-top: 2px;
+   	margin-left: 8px;
+   	font-size: 12px;
+   	white-space: nowrap;
 }
+
+.left-up-first__time-date p{
+   background-color: rgb(245, 245, 245);
+   border-radius: 6px;   	
+   padding: 2px 5px 4px;   
+}
+
 
 .left-ins__left-up-second {
 	margin-right: 20px;
@@ -918,6 +922,16 @@ button{
    font-size: 16px;
 }
 
+/* .menu__ticket-low{
+	overflow: hidden;
+	transition: max-height .9s ease;
+}
+
+.ticket-low__ins{
+	overflow: hidden;
+	transition: max-height .9s ease;
+} */
+
 @media screen and (min-width: 768px) and (max-width: 992px){
 	.left-ins__left-down {
 		font-size: 12px;
@@ -975,7 +989,55 @@ button{
 		props: ['race'],
 		data(){
 			return{
-
+				computed:{
+					styleShow(){
+						// console.log(this.$el.scrollHeight)
+						return `height: ${!this.race.details_menu ? this.$el.scrollHeight : 0}px`;
+					}
+				},
+				// race:  {
+				// 	"uid": "1770206:554599:20230311:650:275",
+				// 	"depotId": 1770206,
+				// 	"num": "568л",
+				// 	"name": "Новосибирск АВ Главный - Северное",
+				// 	"description": "льготный",
+				// 	"dispatchDate": "2023-03-11 11:40:00",
+				// 	"arrivalDate": "2023-03-11 17:15:00",
+				// 	"dispatchStationName": "Новосибирск АВ-Главный",
+				// 	"arrivalStationName": "Барабинск пов.",
+				// 	"dispatchPointId": 1770206,
+				// 	"arrivalPointId": 1770221,
+				// 	"supplierPrice": 1130,
+				// 	"price": 1130,
+				// 	"freeSeatCount": 45,
+				// 	"freeSeatEstimation": "25+",
+				// 	"busInfo": "45 мест",
+				// 	"carrier": "Северноеагротранс ОАО АТП",
+				// 	"carrierInn": "5435100070",
+				// 	"carrierPhone": null,
+				// 	"principal": "Артмарк",
+				// 	"principalInn": "2221122730",
+				// 	"dataRequired": false,
+				// 	"type": {
+				// 	"id": 1,
+				// 	"name": "Междугородный"
+				// 	},
+				// 	"clazz": {
+				// 	"id": 1,
+				// 	"name": "Регулярный"
+				// 	},
+				// 	"status": {
+				// 	"id": 1,
+				// 	"name": "Продажа"
+				// 	},
+				// 	"fromCache": true,
+				// 	"section": "route",
+				// 	"details_menu": true,
+				// 	"dispatchDay": "11 апр.",
+				// 	"arrivalDay": "11 апр.",
+				// 	"dispatchTime": "11:40",
+				// 	"arrivalTime": "17:15"
+				// }
 			}
 		}
 	}

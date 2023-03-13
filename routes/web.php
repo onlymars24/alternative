@@ -1,5 +1,6 @@
 <?php
 
+use Nette\Utils\DateTime;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +20,25 @@ Route::get('/aptest', function () {
     //     'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
     // ])->get('https://cluster.avtovokzal.ru/gdstest/rest/arrival_points/1171')->object();
     // dd(json_encode($arrival_points)); 
-    $january = new DateTime('2023-03-10 08:05:00');
-    $february = new DateTime('2023-03-10 13:05:00');
-    $interval = $february->diff($january);
+
+
+    // $arr = [
+    //     [
+    //         "firstName" => "Павел",
+    //         "lastName" => "Дуров",
+    //         "docTypeCode" => "1",
+    //         "docNum" => "112233",
+    //         "seatCode" => "118551",
+    //         "ticketTypeCode" => "1#1#0"
+    //     ]
+    // ];
+    // $arr = json_encode($arr);
+    // $arr = json_decode($arr);
+    // $response = Http::withHeaders([
+    //     'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
+    //     'sales' => $arr
+    // ])->post('https://cluster.avtovokzal.ru/gdstest/rest/order/book/1770607:558613:20230316:649:16')->object();
     
-    dd($interval);
-    dd($interval->format('%h час. %i мин.'));
+    // dd($response); 
+
 });
