@@ -1,6 +1,8 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Main from '../views/Main.vue'
 import Races from '../views/Races.vue'
+import SeatPage from '../views/SeatPage.vue'
+import form from '../views/form.vue'
 
 const routes = [
   {
@@ -12,6 +14,16 @@ const routes = [
     path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/:date',
     name: 'Races',
     component: Races
+  },
+  {
+    path: '/seats/:race_id',
+    name: 'SeatPage',
+    component: SeatPage
+  },
+  {
+    path: '/form/:race_id',
+    name: 'form',
+    component: form
   },
 ]
 

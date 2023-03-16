@@ -1,7 +1,7 @@
 <template>
 <HeaderMain @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date" :tommorow="tommorow" :afterTommorow="afterTommorow"/>
 <div>
-    RACES <pre>{{ races }}</pre>
+    <!-- RACES <pre>{{ races }}</pre> -->
     <div class="menu" style="margin-top: 50px;">
 		<div class="container">
             <div v-if="loadingRaces" class="loader__outside">
