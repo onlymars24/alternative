@@ -1,5 +1,6 @@
 <!-- eslint-disable -->
 <template>
+  <button @click="$emit('toSeats', race.uid)">Тест</button>
    <div class="menu__ticket">
 	 <div class="menu__ticket-up">
 	   <div class="ticket-up__left">
@@ -41,7 +42,7 @@
 		   </div>
 		 </div>
 	   </div>
-	   <div class="ticket-up__right">
+	   <div class="ticket-up__right" v-if="button_status">
 		 <div class="ticket-up__right-ins">
 		   <div class="right-ins__left">
 			 <p>{{ race.price }}</p>
@@ -49,8 +50,8 @@
 		   </div>
 		   <div class="right-ins__right">
 			 <div class="right-ins__right-button">
-			   <button @click="toSeats" class="buy__but">
-				 <div @click="toSeats" class="pc__but">Выбрать</div>
+			   <button class="buy__but">
+				 <div class="pc__but">Выбрать</div>
 				 <div class="mobil__but">
 				   <p>{{ race.price }}</p>
 				   <span>руб</span>
@@ -234,7 +235,7 @@
    outline: none;
  }
  
- .inro-sort__button button:focus {
+ /* .inro-sort__button button:focus {
    font-size: 14px;
    display: flex;
    -webkit-box-align: center;
@@ -246,7 +247,7 @@
    border-radius: 4px;
    color: #0275fe;
    border: 1px solid #0275fe;
- }
+ } */
  
  /* Верхний блок */
  
@@ -1010,20 +1011,10 @@
 	import router from '../router'
 	export default{
 		components: { DepartureArrival, TicketLow },
-		props: ['race'],
+		props: ['race', 'button_status'],
+    emits: ['toSeats'],
 		data(){
 			return{
-				computed:{
-					styleShow(){
-						// console.log(this.$el.scrollHeight)
-						return `height: ${!this.race.details_menu ? this.$el.scrollHeight : 0}px`;
-					}
-				},
-				methods: {
-					toSeats(){
-						router.push({ name: 'SeatPage', params: { race_id:  this.race.id} })
-					}
-				}
 				// race:  {
 				// 	"uid": "1770206:554599:20230311:650:275",
 				// 	"depotId": 1770206,
@@ -1068,6 +1059,16 @@
 				// 	"arrivalTime": "17:15"
 				// }
 			}
-		}
+		},
+    computed:{
+
+    },
+    methods: {
+
+    },
+    mounted(){
+      
+    }
+
 	}
 </script>

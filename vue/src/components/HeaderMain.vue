@@ -132,14 +132,14 @@ export default{
                 type: String,
                 default: ''
             },
-            tommorow: {
-                type: String,
-                default: ''
-            },
-            afterTommorow: {
-                type: String,
-                default: ''
-            },
+            // tommorow: {
+            //     type: String,
+            //     default: ''
+            // },
+            // afterTommorow: {
+            //     type: String,
+            //     default: ''
+            // },
         },
         emits: ['changeRaces'],
         data() {
@@ -290,6 +290,9 @@ export default{
         findRaces(){
             this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id)
             router.push({ name: 'Races', params: { dispatch_id: this.dispatchEl.id, dispatch_name: this.dispatchEl.name, arrival_id: this.arrivalEl.id, arrival_name: this.arrivalEl.name, date: this.date } })
+        },
+        testFunction(){
+            console.log('helloWorld!')
         }
     },
     watch: {

@@ -3,6 +3,9 @@ import Main from '../views/Main.vue'
 import Races from '../views/Races.vue'
 import SeatPage from '../views/SeatPage.vue'
 import form from '../views/form.vue'
+import AuthorizationPage from '../views/AuthorizationPage.vue'
+import PersonalAccount from '../views/PersonalAccount.vue'
+
 
 const routes = [
   {
@@ -24,6 +27,16 @@ const routes = [
     path: '/form/:race_id',
     name: 'form',
     component: form
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: AuthorizationPage
+  },
+    {
+    path: '/account',
+    name: 'Account',
+    component: PersonalAccount
   },
 ]
 

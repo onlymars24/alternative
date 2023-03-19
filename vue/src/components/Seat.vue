@@ -22,55 +22,14 @@
       <div class="center-bus-body">
         <div class="bus-body">
           <div class="all-seat">
-            <div class="line-seat">
-            <button class="seat-item">11</button>
-            <button class="seat-item">2</button>
-            <button class="seat-item seat-item-none-item">3</button>
-            <button class="seat-item seat-item-none-item">4</button>
-            <button class="seat-item">5</button>
-            <button class="seat-item">6</button>
-            <button class="seat-item">7</button>
-            <button class="seat-item">8</button>
-            </div>
-            <div class="line-seat">
-            <button class="seat-item">21</button>
-            <button class="seat-item">2</button>
-            <button class="seat-item">3</button>
-            <button class="seat-item ">4</button>
-            <button class="seat-item">5</button>
-            <button class="seat-item">6</button>
-            <button class="seat-item">7</button>
-            <button class="seat-item">8</button>
-            </div>
-            <div class="line-seat">
-            <button class="seat-item">31</button>
-            <button class="seat-item">2</button>
-            <button class="seat-item seat-item-none-item">3</button>
-            <button class="seat-item seat-item-none-item">4</button>
-            <button class="seat-item">5</button>
-            <button class="seat-item">6</button>
-            <button class="seat-item">7</button>
-            <button class="seat-item">8</button>
-            </div>
-            <div class="line-seat">
-            <button class="seat-item">31</button>
-            <button class="seat-item">2</button>
-            <button class="seat-item seat-item-none-item">3</button>
-            <button class="seat-item seat-item-none-item">4</button>
-            <button class="seat-item">5</button>
-            <button class="seat-item">6</button>
-            <button class="seat-item">7</button>
-            <button class="seat-item">8</button>
-            </div>
-            <div class="line-seat">
-            <button class="seat-item">31</button>
-            <button class="seat-item">2</button>
-            <button class="seat-item ">3</button>
-            <button class="seat-item ">4</button>
-            <button class="seat-item">5</button>
-            <button class="seat-item">6</button>
-            <button class="seat-item">7</button>
-            <button class="seat-item">8</button>
+            <!-- <button class="seat-item seat-active">1</button>
+            <button class="seat-item seat-item-busy">2</button>              
+            <button class="seat-item seat-item-none-item"></button> -->
+            <div class="line-seat" v-for="n in columnsAmount">
+              <template v-for="seat in seats[n-1]">
+                <button @click="chooseSeat($event)" :data-name="seat.name" :data-code="seat.code" class="seat-item" :class="{'seat-item-busy': !seat.code}">{{ seat.name }}</button>
+                <button v-if="seat.name % 4 == 2" class="seat-item seat-item-none-item"></button>
+              </template>
             </div>
           </div>
         </div>
@@ -157,13 +116,16 @@ body {
   display: inline-block;
   margin: 4px;
   color: var(--blue);
+  background-color: white;
 }
 .seat-item-busy {
   border: 2px solid rgb(161, 161, 161);
   color: rgb(161, 161, 161);
+  cursor: default !important;
 }
 .seat-item-none-item {
   opacity: 0;
+  cursor: default !important;
 }
 .seat-active {
   color: white;
@@ -171,7 +133,7 @@ body {
 }
 .all-seat {
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
   padding: 10px;
   height: 100%;
 }
@@ -193,7 +155,7 @@ body {
 .line-seat
 {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 @media (max-width: 700px) {
 .bus-body
@@ -208,11 +170,11 @@ body {
   .line-seat
 {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: row;
 }
 .all-seat
 {
-    flex-direction: row;
+    flex-direction: column;
 }
 
   .window-bus {
@@ -220,3 +182,30 @@ body {
   }
 }
 </style>
+
+<script>
+  export default {
+  props: ['seats', 'columnsAmount'],
+  data(){
+    return {
+      num: -2019,
+    }
+  },
+  computed:{
+
+  },
+  methods:{
+    chooseSeat(event){
+      event.target.toggle('seat-active')
+    }
+  },
+  mounted(){
+
+  },
+  watch: {
+
+  }
+
+
+}
+</script>

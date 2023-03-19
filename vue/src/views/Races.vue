@@ -1,7 +1,7 @@
 <template>
-<HeaderMain @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date" :tommorow="tommorow" :afterTommorow="afterTommorow"/>
+<HeaderMain @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date"/>
 <div>
-    <!-- RACES <pre>{{ races }}</pre> -->
+    RACES <pre>{{ races }}</pre>
     <div class="menu" style="margin-top: 50px;">
 		<div class="container">
             <div v-if="loadingRaces" class="loader__outside">
@@ -50,7 +50,7 @@
 			</div>
             
             <template v-for="race in sortedRaces">
-                <RaceCard :race="race"/> 
+                <RaceCard @toSeats="toSeats" :race="race"/> 
             </template>
             <!-- <RaceCard/>  -->
 		</div>
@@ -125,9 +125,24 @@
     margin-left: 2px;
     margin-top: 0px;
 }
+
 .inro-sort__button{
     text-align: center;
 }
+
+.inro-sort__button button.active {
+   font-size: 14px;
+   display: flex;
+   -webkit-box-align: center;
+   align-items: center;
+   height: 38px;
+   padding-right: 14px;
+   padding-left: 14px;
+   background-color: rgb(255, 255, 255);
+   border-radius: 4px;
+   color: #0275fe;
+   border: 1px solid #0275fe;
+ }
 </style>
 
 <script>
@@ -168,6 +183,7 @@ export default {
     },
     mounted(){
         this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id);
+        // this.toSeats()
     },
     computed: {
         sortedRaces(){
@@ -254,13 +270,16 @@ export default {
                 return num;
             }
         },
-        tommorow(){
-            let date = new Date(this.$route.params['date']);
-            return date.getFullYear() + '-' + this.addZero(date.getMonth() + 1) + '-' + this.addZero(date.getDate()+1);
-        },
-        afterTommorow(){
-            let date = new Date(this.$route.params['date']);
-            return date.getFullYear() + '-' + this.addZero(date.getMonth() + 1) + '-' + this.addZero(date.getDate()+2);
+        // tommorow(){
+        //     let date = new Date(this.$route.params['date']);
+        //     return date.getFullYear() + '-' + this.addZero(date.getMonth() + 1) + '-' + this.addZero(date.getDate()+1);
+        // },
+        // afterTommorow(){
+        //     let date = new Date(this.$route.params['date']);
+        //     return date.getFullYear() + '-' + this.addZero(date.getMonth() + 1) + '-' + this.addZero(date.getDate()+2);
+        // },
+        toSeats(raceId){
+            router.push({name: 'SeatPage', params: {race_id: raceId}})
         }
     }
     
