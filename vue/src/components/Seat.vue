@@ -34,7 +34,7 @@
           </div>
         </div>
       </div>
-      <button class="but-go">Продолжить</button>
+      <button @click="passToForm" class="but-go">Продолжить</button>
 </template>
 <style>
 body {
@@ -184,11 +184,14 @@ body {
 </style>
 
 <script>
+  import router from '../router'
   export default {
-  props: ['seats', 'columnsAmount'],
+  props: ['seats', 'columnsAmount', 'race'],
   data(){
     return {
       num: -2019,
+      chosenSeats: [],
+      loadingRace: true
     }
   },
   computed:{
@@ -196,14 +199,42 @@ body {
   },
   methods:{
     chooseSeat(event){
-      event.target.toggle('seat-active')
+      if(!event.target.classList.contains('seat-active')){
+        this.doChairActive(event.target)
+      }
+      else{
+        this.doChairInactive(event.target)
+      }
+      // console.log(this.chosenSeats)
+    },
+    doChairActive(btn){
+      if(this.chosenSeats.length >= 5){
+        return
+      }
+      btn.classList.add('seat-active')
+      this.chosenSeats.push(
+        {
+          name: btn.dataset.name,
+          code: btn.dataset.code
+        }
+      )
+    },
+    doChairInactive(btn){
+      btn.classList.remove('seat-active')
+      this.chosenSeats = this.chosenSeats.filter(el => {
+        return el.name != btn.dataset.name && el.code != btn.dataset.code;
+      })
+    },
+    passToForm(){
+      sessionStorage['chosenSeats'] = JSON.stringify(this.chosenSeats)
+      router.push({ name: 'Form', params: { race_id: this.race.race.uid} })
     }
   },
   mounted(){
 
   },
   watch: {
-
+    
   }
 
 

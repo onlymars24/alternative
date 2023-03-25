@@ -1,6 +1,6 @@
 <!-- eslint-disable -->
 <template>
-  <button @click="$emit('toSeats', race.uid)">Тест</button>
+  <!-- <button @click="$emit('toSeats', race.uid)">Тест</button> -->
    <div class="menu__ticket">
 	 <div class="menu__ticket-up">
 	   <div class="ticket-up__left">
@@ -42,7 +42,7 @@
 		   </div>
 		 </div>
 	   </div>
-	   <div class="ticket-up__right" v-if="button_status">
+	   <div class="ticket-up__right" v-if="true">
 		 <div class="ticket-up__right-ins">
 		   <div class="right-ins__left">
 			 <p>{{ race.price }}</p>
@@ -50,7 +50,7 @@
 		   </div>
 		   <div class="right-ins__right">
 			 <div class="right-ins__right-button">
-			   <button class="buy__but">
+			   <button @click="$emit('toSeats', race.uid)" class="buy__but">
 				 <div class="pc__but">Выбрать</div>
 				 <div class="mobil__but">
 				   <p>{{ race.price }}</p>

@@ -5,6 +5,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
+  <pre>{{ formData }}</pre>
   <HeaderСrumbsVue />
   <div class="container">
     <div class="form__content">
@@ -12,13 +13,14 @@
       <h5>О рейсе</h5>
       <hr>
       <DepartureArrival />
-      <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div>
-      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket">(1 взрослый)</span></p><p class="total-cost" >1050,00₽</p></div>
+      <!-- <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div> -->
+      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >1050,00₽</p></div>
       <hr>
       <a class="blue__link" @click="openWindow = !openWindow, NoScroll()">Условия возврата</a>
     </div>
+
     <form action="" class="">
-      <div class="form-reg">
+      <div v-for="el in formData" class="form-reg">
       <h5>Оформление билета</h5>
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
       <div class="ticket-registration">
@@ -32,6 +34,7 @@
                     id="inputName"
                     placeholder="Иванов"
                     maxlength="60"
+                    v-model="el.surname"
                     required
                   />
                   <label for="">Отчество</label>
@@ -42,6 +45,7 @@
                     id="inputName"
                     placeholder="Иванович"
                     maxlength="60"
+                    v-model="el.patronymic"
                     required
                   />
                   <label for="inputRegion" class="form-label">Пол</label>
@@ -50,10 +54,11 @@
                     name="region"
                     id="inputRegion"
                     maxlength="60"
+                    v-model="el.gender"
                     required
                   >
-                    <option value="man">Мужчина</option>
-                    <option value="woman">Женщина</option>
+                    <option data-gender="M" value="Мужчина">Мужчина</option>
+                    <option data-gender="F" value="Женщина">Женщина</option>
                   </select>
                   <label for="inputRegion" class="form-label">Документы</label>
                   <select
@@ -61,10 +66,21 @@
                     name="region"
                     id="inputRegion"
                     maxlength="60"
+                    v-model="el.doc"
                     required
                   >
-                    <option value="RUS">Российская Федерация</option>
-                    <option value="KAZ">Казахстан</option>
+                    <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.name">{{ doc.name }}</option>
+                  </select>
+                  <label for="inputRegion" class="form-label">Тип билета</label>
+                  <select
+                    class="form-select form-control"
+                    name="region"
+                    id="inputRegion"
+                    maxlength="60"
+                    v-model="el.ticket_type"
+                    required
+                  >
+                    <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.name">{{ ticket.name }}</option>
                   </select>
         </div>
         <div class="right-input all-input-item">
@@ -76,16 +92,18 @@
                     id="inputName"
                     placeholder="Иван"
                     maxlength="60"
+                    v-model="el.name"
                     required
                   />
                   <label for="">Дата рождения</label>
-        <input
+                  <input
                     type="date"
                     class="form-control is-invalid"
                     name="name"
                     id="inputName"
                     placeholder="Иван"
                     maxlength="60"
+                    v-model="el.birth_date"
                     required
                   />
                   <label for="inputRegion" class="form-label">Гражданство</label>
@@ -94,10 +112,10 @@
                     name="region"
                     id="inputRegion"
                     maxlength="60"
+                    v-model="el.citizenship"
                     required
                   >
-                    <option value="RUS">Российская Федерация</option>
-                    <option value="KAZ">Казахстан</option>
+                    <option v-for="countiry in countries" :data-id="countiry.id" :value="countiry.name">{{ countiry.name }}</option>
                   </select>
                   <label for="inputdoc" class="form-label">Номер документа</label>
                   <input type="text"
@@ -105,13 +123,24 @@
                     name="doc"
                     id="inputdoc"
                     maxlength='10'
+                    v-model="el.doc_number"
                     required
+                    placeholder="серия и номер: 10 цифр"
+                  >
+                  <label for="inputdoc" class="form-label">Серия документа</label>
+                  <input type="text"
+                    class="form-control"
+                    name="dc"
+                    id="inputdoc"
+                    maxlength='10'
+                    required
+                    v-model="el.doc_series"
                     placeholder="серия и номер: 10 цифр"
                   >
         </div>
       </div>
       <div class="seat-bus"><h5>Место в автобусе</h5>
-      <button class="seat-bus__but" type="button" @click="openWindow = !openWindow, NoScroll(), content=1">Место: 32</button>
+      <button class="seat-bus__but" type="button" @click="openWindow = !openWindow, NoScroll(), content=1">Место: {{ el.seat.name }}</button>
       </div>
       </div>
       </div>
@@ -179,6 +208,8 @@
 import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
 import DepartureArrival from '../components/DepartureArrival.vue';
 import PopupWindow from '../components/PopupWindow.vue';
+import router from '../router'
+import axios from 'axios';
 
 export default
 {
@@ -187,7 +218,11 @@ export default
     return {
       openWindow: false,
       content: 2,
-
+      chosenSeats: [],
+      race: [],
+      loadingRace: true,
+      countries: [],
+      formData: []
     };
   },
   methods: {
@@ -198,6 +233,40 @@ export default
       document.body.style.overflow = 'auto';
     },
   },
+  async mounted(){
+    console.log(this.$route.params['race_id'])
+    const promise = axios
+      .get('http://localhost:8000/api/race/'+this.$route.params['race_id'])
+      .then(response => (
+          this.race = response.data
+      ));
+    await promise
+
+    const promise1 = axios
+      .get('http://localhost:8000/api/countries')
+      .then(response => (
+          this.countries = response.data
+      ));
+    await promise1
+    this.chosenSeats = JSON.parse(sessionStorage['chosenSeats'])
+    this.chosenSeats.forEach(el => this.formData.push(
+      {
+        name: '',
+        surname: '',
+        patronymic: '',
+        birth_date: '',
+        gender: '',
+        citizenship: '',
+        doc: '',
+        doc_number: '',
+        doc_series: '',
+        ticket_type: '',
+        seat: el
+      }
+    ))
+    this.loadingRace = false
+    console.log(this.formData)
+  }
 
 };
 </script>

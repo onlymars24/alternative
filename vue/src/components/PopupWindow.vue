@@ -4,7 +4,7 @@
 <div class="background-close" @click="$emit('CloseWindow')"></div>
 <div class="popup-container">
     <div class="closeWindow" @click="$emit('CloseWindow')">✖</div>
-    <Seat v-if="this.content==1"></Seat>
+    <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
 </div>
 </template>

@@ -1,10 +1,10 @@
 <template>
     <HeaderСrumbsVue />
     <div class="container">
-      <!-- <pre>{{ race }}</pre> -->
+      <pre>{{ race }}</pre>
       <div class="window-bus">
         {{ $route.params['route_id'] }}
-        <Seat v-if="!loadingSeats" :seats="seats" :columnsAmount="columnsAmount"/>
+        <Seat v-if="!loadingSeats" :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
       </div>
     </div>
   </template>

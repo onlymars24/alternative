@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\Api\RacesController;
+use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\Api\DispatchPointsController;
 
@@ -30,4 +31,5 @@ Route::apiResources([
     'races' => RacesController::class,
     'race' => RaceController::class,
     'date' => DateController::class,
+    'countries' => CountriesController::class
 ]);
