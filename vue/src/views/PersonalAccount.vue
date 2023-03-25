@@ -8,6 +8,7 @@
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'UpcomingTrips'}" @click="activeTab = 'UpcomingTrips'" >Предстоящие поездки</li>
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'TravelHistory' }" @click="activeTab = 'TravelHistory'"> История поездок</li>
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'ContactInformation'}" @click="activeTab = 'ContactInformation'">Контактная информация</li>
+            <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'Person'}" @click="activeTab = 'Person'">Пользователи</li>
         </ul>
         </div>
     </div>
@@ -21,10 +22,11 @@
 import TravelHistory from '../components/TravelHistory.vue';
 import UpcomingTrips from '../components/UpcomingTrips.vue';
 import ContactInformation from '../components/ContactInformation.vue';
+import Person from '../components/PersonSave.vue';
 
 export default
 {
-  components: { TravelHistory, UpcomingTrips, ContactInformation },
+  components: { TravelHistory, UpcomingTrips, ContactInformation, Person },
   data() {
     return {
       activeTab: 'UpcomingTrips',

@@ -3,37 +3,8 @@
 <template>
     <div class="container">
         <div class="login-container">
-            <div class="login-block">
-                <a class="go-back" href="">&#8592; Вернуться назад</a>
-                <h2>Войти или зарегистрироваться</h2>
-                <div class="row">
-                    <div class="col-6 possible-block">
-                        <p class="possible">В личном кабинете вы можете:</p>
-                        <ul class="all-possible">
-                            <li class="possible-item">Выкупить забронированный билет</li>
-                            <li class="possible-item">Посмотреть информацию о рейсе</li>
-                            <li class="possible-item">Скачать купленный билет</li>
-                            <li class="possible-item">Вернуть билет</li>
-                            <li class="possible-item">Оставить отзыв о поездке</li>
-                        </ul>
-                    </div>
-                    <form action="" class="col-6 block-form" >
-                        <div class="tel" v-if="stepLog==1">
-                            <label for="tel" class="form-label label-gray">Телефон</label>
-                            <input type="text" class="form-control inp-gray" value="+7" id="tel">
-                            <button class="btn btn-primary btn-code" @click="stepLog=2" >Выслать код в СМС</button>
-                        </div>
-                        <div class="code" v-else-if="stepLog==2">
-                            <p class="code__tel">Введите код, отправленный на номер <strong>+79034569869</strong></p>
-                            <label for="tel" class="form-label label-gray">Код подтверждения</label>
-                            <input type="text" class="form-control inp-gray"  id="code">
-                            <span class="approval">Вы предоставляете и подтверждаете <a href="">согласие на обработку персональных данных.</a> </span>
-                            <button class="btn btn-primary btn-code">Подтвердить</button>
-                            <button class="btn-code btn__new-code">Повторное СМС</button>
-                        </div>
-                     </form>
-                </div>
-            </div>
+        <Login v-if="login" @log="login=false"/>
+        <Registration v-else @log="login=true"/>
         </div>
     </div>
     <div class="decor">
@@ -41,15 +12,20 @@
     </div>
 </template>
 <script>
-export default {
-  data() {
-    return {
-      stepLog: 1,
-    };
-  },
+import Login from '../components/Login.vue';
+import Registration from '../components/Registration.vue'
+
+export default
+{
+    components:{ Login, Registration },
+    data() {
+return {
+login: true,
 };
+},
+}
 </script>
-<style scoped>
+<style>
 .bus-stop-decor
 {
     background-image: url('/public/img/bus-stop.svg');
@@ -88,6 +64,20 @@ export default {
 {
     font-size: 14px;
 }
+.login-head
+{
+    display: flex;
+}
+.head-link
+{
+    color: var(--blue);
+    margin-top: 12px;
+    cursor: pointer;
+}
+.form-label
+{
+    margin-bottom: 0px;
+}
 .login-block
 {
     position: fixed;
@@ -100,7 +90,6 @@ export default {
     padding: 10px;
     z-index: 10;
     border-radius: 10px;
-    max-height: 80vh;
     padding: 30px 50px 50px 50px;
     box-shadow: rgb(0 0 0 / 10%) 0px 20px 90px 0px;
 
@@ -160,17 +149,10 @@ export default {
     }
 }
 @media (max-width: 580px) {
-.possible-block
+
+.row-mobil
 {
-    position: absolute;
-    top: 320px;
-    display: block;
-    width: 100%;
-}
-.block-form
-{
-    display: block;
-    width: 100%;
+    flex-direction: column-reverse;
 }
 }
 
