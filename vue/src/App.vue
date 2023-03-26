@@ -14,6 +14,9 @@
 :root{
   --blue: #2196F3;
 }
+p{
+  margin: 0px;
+}
 .blue__link
 {
   color: var(--blue);

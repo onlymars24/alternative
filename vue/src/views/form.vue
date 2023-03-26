@@ -27,9 +27,23 @@
       <h5>Оформление билета</h5>
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
       <div class="ticket-registration">
+        <select
+                    class="form-select form-control"
+                    name="region"
+                    id="inputRegion"
+                    maxlength="60"
+                    v-model="el.gender"
+                    required
+                  >
+                    <option value="" disabled selected hidden>Сохранённые пасажиры</option>
+                    <option value="">Акакий Акак Акакевович</option>
+                    <option value="">Атакий Атак Атакевович</option>
+                  </select>
+                  <hr>
       <div class="form__all-input">
         <div class="left-input all-input-item">
         <label for="">Фамилия</label>
+        <!--  -->
         <input
                     type="text"
                     class="form-control is-invalid"
@@ -40,53 +54,8 @@
                     v-model="el.surname"
                     required
                   />
-                  <label for="">Отчество</label>
-        <input
-                    type="text"
-                    class="form-control is-invalid"
-                    name="name"
-                    id="inputName"
-                    placeholder="Иванович"
-                    maxlength="60"
-                    v-model="el.patronymic"
-                    required
-                  />
-                  <label for="inputRegion" class="form-label">Пол</label>
-                  <select
-                    class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
-                    maxlength="60"
-                    v-model="el.gender"
-                    required
-                  >
-                    <option data-gender="M" value="M">Мужчина</option>
-                    <option data-gender="F" value="F">Женщина</option>
-                  </select>
-                  <label for="inputRegion" class="form-label">Документы</label>
-                  <select
-                    class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
-                    maxlength="60"
-                    v-model="el.doc_type_code"
-                    required
-                  >
-                    <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.code+'____'+doc.name">{{ doc.name }}</option>
-                  </select>
-                  <label for="inputRegion" class="form-label">Тип билета</label>
-                  <select
-                    class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
-                    maxlength="60"
-                    v-model="el.ticket_type_code"
-                    required
-                  >
-                    <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.code">{{ ticket.name }}</option>
-                  </select>
-        </div>
-        <div class="right-input all-input-item">
+                  <!--  -->
+                     <!--  -->
         <label for="">Имя</label>
         <input
                     type="text"
@@ -100,7 +69,36 @@
                     @focus="el.errors.name = ''"
                     required
                   />
-                  <label for="">Дата рождения</label>
+                  <!--  -->
+                  <!--  -->
+                  <label for="">Отчество</label>
+        <input
+                    type="text"
+                    class="form-control is-invalid"
+                    name="name"
+                    id="inputName"
+                    placeholder="Иванович"
+                    maxlength="60"
+                    v-model="el.patronymic"
+                    required
+                  />
+                  <!--  -->
+                  <!--  -->
+                  <label for="inputRegion" class="form-label">Пол</label>
+                  <select
+                    class="form-select form-control"
+                    name="region"
+                    id="inputRegion"
+                    maxlength="60"
+                    v-model="el.gender"
+                    required
+                  >
+                    <option data-gender="M" value="M">Мужчина</option>
+                    <option data-gender="F" value="F">Женщина</option>
+                  </select>
+                  <!--  -->
+                          <!--  -->
+                          <label for="">Дата рождения</label>
                   <input
                     type="date"
                     class="form-control is-invalid"
@@ -111,6 +109,41 @@
                     v-model="el.birth_date"
                     required
                   />
+                  <!--  -->
+       
+        </div>
+        <div class="right-input all-input-item">
+       
+          
+                             <!--  -->
+                             <label for="inputRegion" class="form-label">Документы</label>
+                  <select
+                    class="form-select form-control"
+                    name="region"
+                    id="inputRegion"
+                    maxlength="60"
+                    v-model="el.doc_type_code"
+                    required
+                  >
+                    <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.code+'____'+doc.name">{{ doc.name }}</option>
+                  </select>
+                  <!--  -->
+                  <!--  -->
+                  <label for="inputRegion" class="form-label">Тип билета</label>
+                  <select
+                    class="form-select form-control"
+                    name="region"
+                    id="inputRegion"
+                    maxlength="60"
+                    v-model="el.ticket_type_code"
+                    required
+                  >
+                    <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.code">{{ ticket.name }}</option>
+                  </select>
+        </div>
+        <div class="right-input all-input-item">
+                  <!--  -->
+                  <!--  -->
                   <label for="inputRegion" class="form-label">Гражданство</label>
                   <select
                     class="form-select form-control"
@@ -121,6 +154,8 @@
                   >
                     <option v-for="country in countries" :data-id="country.id" :value="country.name">{{ country.name }}</option>
                   </select>
+                  <!--  -->
+                  <!--  -->
                   <label for="inputdoc" class="form-label">Номер документа</label>
                   <input type="text"
                     class="form-control"
@@ -131,6 +166,8 @@
                     required
                     placeholder="номер"
                   >
+                  <!--  -->
+                  <!--  -->
                   <label for="inputdoc" class="form-label">Серия документа</label>
                   <input type="text"
                     class="form-control"
@@ -142,9 +179,6 @@
                     placeholder="серия"
                   >
         </div>
-      </div>
-      <div class="seat-bus"><h5>Место в автобусе</h5>
-      <button class="seat-bus__but" type="button" @click="openWindow = !openWindow, NoScroll(), content=1">Место: {{ el.seat.name }}</button>
       </div>
       </div>
       </div>
@@ -614,6 +648,15 @@ label
 
 @media (max-width: 768px)
 {
+  .form__all-input
+  {
+    display: block;
+  }
+  .all-input-item
+  {
+    display: block;
+    max-width: 100%;
+  }
   .form__content
   {
     display: block;
