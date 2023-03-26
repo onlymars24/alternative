@@ -5,8 +5,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
-  <pre>{{ formData }}</pre>
+  
   <HeaderСrumbsVue />
+  <pre>{{ race }}</pre>
+  <pre>{{ formData }}</pre>
   <div class="container">
     <div class="form__content">
     <div class="information-race">
@@ -19,8 +21,9 @@
       <a class="blue__link" @click="openWindow = !openWindow, NoScroll()">Условия возврата</a>
     </div>
 
-    <form action="" class="">
+    <form @submit.prevent="validateFrom" class="" novalidate>
       <div v-for="el in formData" class="form-reg">
+        <pre>{{ el.errors }}</pre>
       <h5>Оформление билета</h5>
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
       <div class="ticket-registration">
@@ -57,8 +60,8 @@
                     v-model="el.gender"
                     required
                   >
-                    <option data-gender="M" value="Мужчина">Мужчина</option>
-                    <option data-gender="F" value="Женщина">Женщина</option>
+                    <option data-gender="M" value="M">Мужчина</option>
+                    <option data-gender="F" value="F">Женщина</option>
                   </select>
                   <label for="inputRegion" class="form-label">Документы</label>
                   <select
@@ -66,10 +69,10 @@
                     name="region"
                     id="inputRegion"
                     maxlength="60"
-                    v-model="el.doc"
+                    v-model="el.doc_type_code"
                     required
                   >
-                    <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.name">{{ doc.name }}</option>
+                    <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.code+'____'+doc.name">{{ doc.name }}</option>
                   </select>
                   <label for="inputRegion" class="form-label">Тип билета</label>
                   <select
@@ -77,10 +80,10 @@
                     name="region"
                     id="inputRegion"
                     maxlength="60"
-                    v-model="el.ticket_type"
+                    v-model="el.ticket_type_code"
                     required
                   >
-                    <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.name">{{ ticket.name }}</option>
+                    <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.code">{{ ticket.name }}</option>
                   </select>
         </div>
         <div class="right-input all-input-item">
@@ -91,8 +94,10 @@
                     name="name"
                     id="inputName"
                     placeholder="Иван"
-                    maxlength="60"
+                    maxlength="5"
                     v-model="el.name"
+                    oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
+                    @focus="el.errors.name = ''"
                     required
                   />
                   <label for="">Дата рождения</label>
@@ -111,11 +116,10 @@
                     class="form-select form-control"
                     name="region"
                     id="inputRegion"
-                    maxlength="60"
                     v-model="el.citizenship"
                     required
                   >
-                    <option v-for="countiry in countries" :data-id="countiry.id" :value="countiry.name">{{ countiry.name }}</option>
+                    <option v-for="country in countries" :data-id="country.id" :value="country.name">{{ country.name }}</option>
                   </select>
                   <label for="inputdoc" class="form-label">Номер документа</label>
                   <input type="text"
@@ -125,7 +129,7 @@
                     maxlength='10'
                     v-model="el.doc_number"
                     required
-                    placeholder="серия и номер: 10 цифр"
+                    placeholder="номер"
                   >
                   <label for="inputdoc" class="form-label">Серия документа</label>
                   <input type="text"
@@ -135,7 +139,7 @@
                     maxlength='10'
                     required
                     v-model="el.doc_series"
-                    placeholder="серия и номер: 10 цифр"
+                    placeholder="серия"
                   >
         </div>
       </div>
@@ -210,6 +214,8 @@ import DepartureArrival from '../components/DepartureArrival.vue';
 import PopupWindow from '../components/PopupWindow.vue';
 import router from '../router'
 import axios from 'axios';
+import { useVuelidate } from '@vuelidate/core'
+import { required, email } from '@vuelidate/validators'
 
 export default
 {
@@ -232,6 +238,31 @@ export default
     Scroll() {
       document.body.style.overflow = 'auto';
     },
+    validateFrom(){
+      this.formData.forEach(el => {
+        let fields = ['name', 'surname', 'patronymic', 'birth_date', 'gender', 'citizenship', 'doc_type', 'doc_number', 'ticket_type']
+        fields.forEach(field => {
+          if(!el[field]){
+            el.errors[field] = 'Поле обязательно для заполнения!'
+          }
+          else{
+            el.errors[field] = ''
+          }
+        })
+        let doc_type_name = el.doc_type.split('____')[1]
+        if(el['doc_type'] && (doc_type_name == 'Паспорт гражданина РФ' 
+        || doc_type_name == 'Загранпаспорт гражданина РФ' 
+        || doc_type_name == 'Свидетельство о рождении РФ'
+        || doc_type_name == 'Военный билет военнослужащего срочной службы') )
+        {
+          el.errors.doc_series = 'Поле обязательно для заполнения!'
+        }
+        else{
+          el.errors.doc_series = ''
+        }
+
+      })
+    }
   },
   async mounted(){
     console.log(this.$route.params['race_id'])
@@ -257,17 +288,27 @@ export default
         birth_date: '',
         gender: '',
         citizenship: '',
-        doc: '',
+        doc_type: '',
         doc_number: '',
         doc_series: '',
-        ticket_type: '',
-        seat: el
+        ticket_type_code: '',
+        seat: el,
+        errors: {
+          name: '',
+          surname: '',
+          patronymic: '',
+          birth_date: '',
+          gender: '',
+          citizenship: '',
+          doc_type: '',
+          doc_number: '',
+          doc_series: '',
+          ticket_type_code: '',
+        }
       }
     ))
     this.loadingRace = false
-    console.log(this.formData)
   }
-
 };
 </script>
 <style>
