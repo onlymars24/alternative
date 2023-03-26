@@ -2,7 +2,17 @@
   <div>
     <ul>
       <li class="person-window">
-        <div class="form__all-input">
+        <div class="person-btn">
+          <div>Зубенко Михаил Петрович</div>
+          <div class="person__all-button">
+            <button class="btn btn-secondary" @click="openInputs=true">Редактировать</button>
+            <button class="btn btn-danger">Удалить</button>
+          </div>
+        </div>
+        <Transition name="animation">
+          <form action="" v-if="openInputs">
+          <div class="form__all-input">
+         
           <div class="left-input all-input-item">
             <label for="">Фамилия</label>
             <!--  -->
@@ -150,10 +160,11 @@
               placeholder="серия и номер: 10 цифр"
             />
           </div>
-        </div>
-        <div class="person-btn">
-        <button class="btn btn-secondary">Редактировать</button><button class="btn btn-primary">сохранить</button>
-        </div>
+          
+          </div>
+          <button class="btn btn-primary" @click="openInputs=false">сохранить</button>
+        </form>
+        </Transition>
       </li>
     </ul>
     <div class="personal-account__content-empty">
@@ -161,9 +172,20 @@
         </div>
   </div>
 </template>
+<script>
+export default
+{
+  data()
+  {
+    return{
+      openInputs: false,
+    }
+  }
+}
+</script>
 <style>
 .person-window {
-  margin-right: 20px;
+
   background-color: #fff;
   padding: 30px;
   border-radius: 10px;
@@ -174,5 +196,10 @@
 {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+.person__all-button *:nth-child(1)
+{
+  margin-right: 50px;
 }
 </style>

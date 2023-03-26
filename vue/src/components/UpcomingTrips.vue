@@ -1,6 +1,6 @@
 <template>
         <div class="personal-account__content" >
-        <RaceCard :race="race" :button-status="false"/>
+        <RaceCardAccount :race="race"/>
         <div class="personal-account__content-empty">
         <h2>У вас пока нет предстоящих поездок</h2>
         <p>Чтобы найти билеты на автобус выберите направление,
@@ -9,11 +9,11 @@
         </div>
 </template>
 <script>
-import RaceCard from '../components/RaceCard.vue';
+import RaceCardAccount from '../components/RaceCardAccount.vue';
 
 export default
 {
-  components: { RaceCard },
+  components: { RaceCardAccount },
   data(){
       return{
     		race:  {
