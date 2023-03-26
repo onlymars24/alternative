@@ -112,9 +112,8 @@
                   <!--  -->
        
         </div>
+
         <div class="right-input all-input-item">
-       
-          
                              <!--  -->
                              <label for="inputRegion" class="form-label">Документы</label>
                   <select
@@ -139,9 +138,7 @@
                     required
                   >
                     <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.code">{{ ticket.name }}</option>
-                  </select>
-        </div>
-        <div class="right-input all-input-item">
+                  </select>          
                   <!--  -->
                   <!--  -->
                   <label for="inputRegion" class="form-label">Гражданство</label>
