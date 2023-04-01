@@ -83,6 +83,7 @@ body {
 }
 .discr-bus {
   text-align: center;
+  margin-bottom: 20px;
 }
 .block-info-seat {
   display: flex;
@@ -182,6 +183,7 @@ body {
   }
 }
 </style>
+
 
 <script>
   import router from '../router'
