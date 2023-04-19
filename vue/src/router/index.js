@@ -5,6 +5,7 @@ import SeatPage from '../views/SeatPage.vue'
 import form from '../views/form.vue'
 import AuthorizationPage from '../views/AuthorizationPage.vue'
 import PersonalAccount from '../views/PersonalAccount.vue'
+import Faq from '../views/Faq.vue'
 
 
 const routes = [
@@ -12,6 +13,11 @@ const routes = [
     path: '/',
     name: 'Main',
     component: Main
+  },
+  {
+    path: '/Faq',
+    name: 'Faq',
+    component: Faq
   },
   {
     path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/:date',
