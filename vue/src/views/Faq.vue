@@ -111,10 +111,6 @@
     font-size: 16px;
     font-weight: 400;
 }
-
-.accordion-label:hover {
-    
-}
 .accordion-label::after {
     content: "\276F";
     width: 16px;
