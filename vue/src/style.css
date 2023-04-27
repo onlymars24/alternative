@@ -233,6 +233,10 @@ outline: none;
 .main__another__date{
   text-align: center;
   margin-top: 15px;
+  margin-left: 325px;
+}
+.main__another__date a{
+  margin-right: 4px;
 }
 .main__another__date-fix{
   text-decoration: dotted;

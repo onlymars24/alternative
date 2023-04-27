@@ -22,24 +22,20 @@
       <div class="more-detail-block" v-if="openMoreDetail">
         <div class="more-detail-block-left">
           <p>
-            Рейс № <strong>2847 Саларьево АВ - Воронеж</strong>, по маршруту
-            <strong>Москва - Воронеж, на 12 марта 2023</strong> года в <strong>21:30 </strong>
+            Рейс № <strong>{{race.race.num}} {{race.race.name}}</strong>,
+            <strong> на {{dispatchDay}} {{dispatchTime}}</strong>
           </p>
-          <p>Тип рейса: Регулярный</p>
-          <p>Отправление и прибытие по местному времени</p>
-            <DepartureArrival />
+          <p>Тип рейса: {{race.race.type.name}}</p>
+          <p>Класс рейса: {{race.race.type.clazz}}</p>
+            <!-- <DepartureArrival /> -->
         </div>
         <div class="more-detail-block-right">
-          <p><strong>Дополнительно</strong><br />Для посадки необходим паспорт</p>
+          <p><strong>Дополнительно</strong><br />{{race.race.description}}</p>
           <br>
           <strong>Перевозчик</strong>
-          <p>Бренд:ИП Дробышев Владимир Викторович <br>
-          Автобус: 46 мест<br>
-          Перевозчик: ИП Дробышев Владимир Викторович <br>
-          Адрес: Россия, Воронежская обл., г. Воронеж, ул. Вл. Невского 81, кв. кв. 121 <br>
-          ОГРН: 304366221500112 <br>
-          Время работы: Пн-Пт 10:00-17:00 (по местному времени)
-          </p>
+          <p>Организация перевозчика: {{race.race.carrier}}</p>
+          <p>ИНН организации перевозчика: {{race.race.carrierInn}}</p>
+          <p>Контактнй телефон: {{ race.race.carrierPhone }}</p>
         </div>
       </div>
 
@@ -47,11 +43,9 @@
       <div class="content-line">
         <div class="more-detail__short-inf">
           <div class="cities-head">
-            <div>Москва</div>
-            -
-            <div>Воронеж</div>
+            <div>{{race.race.name}}</div>
           </div>
-          <div class="short-description">12 марта в 2015, 1 взрослый, 1100</div>
+          <div class="short-description">{{dispatchDay}} {{dispatchTime}}</div>
         </div>
         <div class="more-detail" :class="{rotate: openMoreDetail}">
           <span class="blue__link"  @click="this.openMoreDetail = !this.openMoreDetail"
@@ -65,14 +59,25 @@
 </template>
 <script>
 import DepartureArrival from '../components/DepartureArrival.vue';
+import * as dayjs from 'dayjs'
 
 export default {
   components: { DepartureArrival },
+  props: ['race'],
   data() {
     return {
       openMoreDetail: false,
+      months: [
+                '', 'янв.', 'февр.', 'мар.', 'апр.', 'май.', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'ноябр.', 'дек.', 
+            ],
+      dispatchDate: '',
+      dispatchTime: ''
     };
   },
+  mounted(){
+    this.dispatchTime = dayjs(this.race.race.dispatchDate).format('HH:mm')
+    this.dispatchDay = dayjs(this.race.race.dispatchDate).format('D')+' '+this.months[dayjs(this.race.race.dispatchDate).format('M')]
+  }
 };
 </script>
 <style>
@@ -105,8 +110,8 @@ export default {
   display: flex;
   justify-content: space-between;
   overflow: auto;
-  height: 400px
-
+  height: 400px;
+  padding-top: 20px;
 }
 .more-detail-block-left
 {

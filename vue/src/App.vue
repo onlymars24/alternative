@@ -1,4 +1,34 @@
-<script setup>
+<script>
+import axiosClient from './axios';
+import router from './router'
+
+export default
+{
+  data()
+  {
+    return{
+      openInputs: false,
+    }
+  },
+  async mounted(){
+    let token = localStorage.getItem('authToken')
+    let user = []
+    if(token){
+      console.log('there is token')
+      const promise = axiosClient
+      .get('/user')
+      .then(response => {
+        user = response.data.user
+      })
+      .catch(error => {
+        console.log('there is user')
+        localStorage.removeItem('authToken')
+        router.push({name: 'Login'})        
+      })
+
+    }
+  }
+}
 </script>
 
 <template>

@@ -4,7 +4,7 @@
   <div class="container">
     <div class="login-container">
       <div class="login-block">
-        <a class="go-back" href="">&#8592; Вернуться назад</a>
+        <a class="go-back" href="/">&#8592; Вернуться назад</a>
         <Login v-if="login" @log="login = false" />
         <Registration v-else @log="login = true" />
       </div>

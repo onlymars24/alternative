@@ -1,6 +1,6 @@
 <template>
         <div class="personal-account__content" >
-        <RaceCardAccount :race="race" :button_status="false"/>
+        <!-- <RaceCardAccount :race="race" :button_status="false"/> -->
         <div class="personal-account__content-empty">
         <h2> "У вас пока нет завершенных поездок" </h2>
         <p>Чтобы найти билеты на автобус выберите направление,

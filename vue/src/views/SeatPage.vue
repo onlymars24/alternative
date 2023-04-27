@@ -1,10 +1,20 @@
 <template>
-    <HeaderСrumbsVue />
+    <div>
+      <div class="container"><Header/></div>
+    </div>
     <div class="container">
-      <pre>{{ race }}</pre>
+      <div v-if="loadingSeats" class="window-bus">
+          <img src="../assets/bus_loading.png">
+          <p style="color: grey;">Загрузка.....</p>  
+          <div class="loader"></div>
+      </div>      
+    </div>
+    <HeaderСrumbsVue v-if="!loadingSeats" :race="race" />
+    <div v-if="!loadingSeats" class="container">
+      <!-- <pre>{{ race }}</pre> -->
       <div class="window-bus">
         {{ $route.params['route_id'] }}
-        <Seat v-if="!loadingSeats" :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
+        <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
       </div>
     </div>
   </template>
@@ -12,16 +22,17 @@
 <script>
 import Seat from '../components/Seat.vue';
 import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
+import Header from '../components/Header.vue';
 import axios from 'axios';
 
 export default {
-  components: { Seat, HeaderСrumbsVue },
+  components: { Seat, HeaderСrumbsVue, Header },
   data(){
     return {
       race: [],
       seats: [12, 12],
       columnsAmount: 0,
-      loadingSeats: true
+      loadingSeats: true,
     }
   },
   async mounted(){

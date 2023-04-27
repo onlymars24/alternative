@@ -69,8 +69,7 @@
 		   <button class="race__details__but" @click="race.details_menu = !race.details_menu">
 			 {{ race.details_menu ? "Скрыть детали" : "Детали рейса" }}
 		   </button>
-		   <p>Перевозчик: ИП Пыльнов Игорь Анатольевич</p>
-		   <p>Автобус: Мерседес_20м</p>
+		   <p>Перевозчик: {{ race.carrier }}</p>
 		 </div>
 	   </div>
 	 </div>
@@ -83,7 +82,7 @@
 		   <p :class="{ active: race.section == 'driver' }" @click="race.section = 'driver'">
 			 Перевозчик
 		   </p>
-		   <p :class="{ active: race.section == 'bus' }" @click="race.section = 'bus'">Автобус</p>
+		   <!-- <p :class="{ active: race.section == 'bus' }" @click="race.section = 'bus'">Автобус</p> -->
 		   <p :class="{ active: race.section == 'conditions' }" @click="race.section = 'conditions'">
 			 Условия
 		   </p>
@@ -97,36 +96,30 @@
 				   <b>{{ race.dispatchStationName }} — {{ race.arrivalStationName }}</b>
 				 </p>
 				 <p>Тип рейса: {{ race.type.name }}</p>
+         <p>Класс рейса: {{ race.clazz.name }}</p>
 				 <p>Отправление и прибытие по местному времени</p>
 			   </div>
 			  
-			   <div class="Departure-Arrival"><DepartureArrival /></div>
+			   <!-- <div class="Departure-Arrival"><DepartureArrival :race="race"/></div> -->
 			 </div>
 			 <div class="ticket-low__ins-down-second">
-				<div class="ins-down-first__right">
-				 <p><b>Дополнительно</b></p>
-				 <p>Для посадки необходим паспорт</p>
-				 <p>Для посадки необходим распечатанный билет</p>
-			   </div>
-				
-			   <div class="ins-down-second__right">
-				 <p><b>Перевозчик</b></p>
-				 <p>Бренд: ИП Пыльнов Игорь Анатольевич</p>
-				 <p>Автобус: Мерседес_20м</p>
-				 <p>Перевозчик: ИП Пыльнов Игорь Анатольевич</p>
-				 <p>Адрес: Россия, Ставропольский кр., г. Ставрополь</p>
-				 <p>ОГРН: 311265129400063</p>
-				 <p>Время работы: Пн-Пт 10:00-17:00 (по местному времени)</p>
-			   </div>
 			 </div>
 		   </div>
 		 </template>
  
 		 <template v-if="race.section == 'driver'">
-		  <TicketLow :race="race"/>
+		  <!-- <TicketLow :race="race"/> -->
+      <div class="ticket-low__ins-down-second">
+        <div class="ins-down-second__right">
+				 <p><b>Перевозчик</b></p>
+				 <p>Организация перевозчика: {{race.carrier}}</p>
+         <p>ИНН организации перевозчика: {{race.carrierInn}}</p>
+				 <p>Контактнй телефон: {{ race.carrierPhone }}</p>
+			  </div>
+      </div>
 		 </template>
  
-		 <template v-if="race.section == 'bus'">
+		 <!-- <template v-if="race.section == 'bus'">
 		   <div class="ticket-low__ins">
 			 <div class="ticket-low__ins-down">
 			   <div class="ticket-low__ins-down-first">
@@ -142,7 +135,7 @@
 			   </div>
 			 </div>
 		   </div>
-		 </template>
+		 </template> -->
  
 		 <template v-if="race.section == 'conditions'">
 		   <div class="ticket-low__ins">
@@ -790,7 +783,7 @@
  }
  
  .agree__block-input input {
-   width: 164px;
+  width: 264px;
    height: 56px;
    padding: 10px 25px;
    font-size: 27px;
@@ -1015,49 +1008,7 @@
     emits: ['toSeats'],
 		data(){
 			return{
-				// race:  {
-				// 	"uid": "1770206:554599:20230311:650:275",
-				// 	"depotId": 1770206,
-				// 	"num": "568л",
-				// 	"name": "Новосибирск АВ Главный - Северное",
-				// 	"description": "льготный",
-				// 	"dispatchDate": "2023-03-11 11:40:00",
-				// 	"arrivalDate": "2023-03-11 17:15:00",
-				// 	"dispatchStationName": "Новосибирск АВ-Главный",
-				// 	"arrivalStationName": "Барабинск пов.",
-				// 	"dispatchPointId": 1770206,
-				// 	"arrivalPointId": 1770221,
-				// 	"supplierPrice": 1130,
-				// 	"price": 1130,
-				// 	"freeSeatCount": 45,
-				// 	"freeSeatEstimation": "25+",
-				// 	"busInfo": "45 мест",
-				// 	"carrier": "Северноеагротранс ОАО АТП",
-				// 	"carrierInn": "5435100070",
-				// 	"carrierPhone": null,
-				// 	"principal": "Артмарк",
-				// 	"principalInn": "2221122730",
-				// 	"dataRequired": false,
-				// 	"type": {
-				// 	"id": 1,
-				// 	"name": "Междугородный"
-				// 	},
-				// 	"clazz": {
-				// 	"id": 1,
-				// 	"name": "Регулярный"
-				// 	},
-				// 	"status": {
-				// 	"id": 1,
-				// 	"name": "Продажа"
-				// 	},
-				// 	"fromCache": true,
-				// 	"section": "route",
-				// 	"details_menu": true,
-				// 	"dispatchDay": "11 апр.",
-				// 	"arrivalDay": "11 апр.",
-				// 	"dispatchTime": "11:40",
-				// 	"arrivalTime": "17:15"
-				// }
+
 			}
 		},
     computed:{

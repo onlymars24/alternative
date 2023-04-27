@@ -5,12 +5,18 @@
     <p>Возможно вы ошиблись адресом или страница перенесена.
 
     Чтобы найти подходящий рейс, воспользуйтесь формой поиска на главной странице.</p>
-    <button class="but-go">Перейти на главную</button>
+    <button @click="toMain" class="but-go">Перейти на главную</button>
     </div>
 </template>
 <script>
+import router from '../router'
 export default
 {
+    methods: {
+        toMain(){
+            router.push({name: 'Main'})
+        }
+    }
 };
 </script>
 <style>

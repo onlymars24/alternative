@@ -1,6 +1,7 @@
 <?php
 
 use Nette\Utils\DateTime;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
@@ -42,3 +43,5 @@ Route::get('/aptest', function () {
     // dd($response); 
 
 });
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

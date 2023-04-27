@@ -5,39 +5,48 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
-  
-  <HeaderСrumbsVue />
-  <pre>{{ race }}</pre>
-  <pre>{{ formData }}</pre>
-  <div class="container">
+    <div>
+      <div class="container">
+        <Header :authForForm="authForForm" @authenticateForForm="authenticateForForm" @disauthenticateForForm="disauthenticateForForm"/>
+      </div>
+    </div>
+    <div class="container">
+      <div v-if="loadingRace" class="window-bus">
+          <img src="../assets/bus_loading.png">
+          <p style="color: grey;">Загрузка.....</p>  
+          <div class="loader"></div>
+      </div>  
+    </div>
+
+  <HeaderСrumbsVue :race="race" v-if="!loadingRace"/>
+  <!-- <pre>{{ race }}</pre>
+  <pre>{{ formData }}</pre> -->
+  <div class="container" v-if="!loadingRace">
     <div class="form__content">
     <div class="information-race">
       <h5>О рейсе</h5>
       <hr>
-      <DepartureArrival />
+      <DepartureArrival :race="race"/>
       <!-- <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div> -->
-      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >1050,00₽</p></div>
+      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{ totalCost }},00₽  </p></div>
       <hr>
-      <a class="blue__link" @click="openWindow = !openWindow, NoScroll()">Условия возврата</a>
+      <a class="blue__link" @click="openWindow = !openWindow">Условия возврата</a>
     </div>
 
-    <form @submit.prevent="validateFrom" class="" novalidate>
-      <div v-for="el in formData" class="form-reg">
-        <pre>{{ el.errors }}</pre>
+    <div class="">
+      <div v-for="(el, indexTicket) in formData" class="form-reg">
+        <!-- <pre>{{ el.errors }}</pre> -->
       <h5>Оформление билета</h5>
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
-      <div class="ticket-registration">
-        <select
+        <div class="ticket-registration">
+                  <select v-if="authForForm"
                     class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
                     maxlength="60"
-                    v-model="el.gender"
+                    @change="choosePassenger($event, indexTicket)"
                     required
                   >
                     <option value="" disabled selected hidden>Сохранённые пасажиры</option>
-                    <option value="">Акакий Акак Акакевович</option>
-                    <option value="">Атакий Атак Атакевович</option>
+                    <option v-for="(passenger, indexPassenger) in passengers" :value="indexPassenger">{{passenger.surname}} {{passenger.name}} {{passenger.patronymic}}</option>
                   </select>
                   <hr>
       <div class="form__all-input">
@@ -46,24 +55,23 @@
         <!--  -->
         <input
                     type="text"
-                    class="form-control is-invalid"
-                    name="name"
-                    id="inputName"
+                    class="form-control"
+                    :class="{'is-invalid': el.errors.surname}"
                     placeholder="Иванов"
                     maxlength="60"
                     v-model="el.surname"
+                    oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
+                    @focus="el.errors.surname = ''"
                     required
                   />
                   <!--  -->
-                     <!--  -->
+                  <!--  -->
         <label for="">Имя</label>
         <input
                     type="text"
-                    class="form-control is-invalid"
-                    name="name"
-                    id="inputName"
+                    class="form-control"
+                    :class="{'is-invalid': el.errors.name}"
                     placeholder="Иван"
-                    maxlength="5"
                     v-model="el.name"
                     oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
                     @focus="el.errors.name = ''"
@@ -74,148 +82,181 @@
                   <label for="">Отчество</label>
         <input
                     type="text"
-                    class="form-control is-invalid"
-                    name="name"
-                    id="inputName"
+                    class="form-control"
+                    :class="{'is-invalid': el.errors.patronymic}"
                     placeholder="Иванович"
                     maxlength="60"
                     v-model="el.patronymic"
+                    oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
+                    @focus="el.errors.patronymic = ''"
                     required
                   />
                   <!--  -->
                   <!--  -->
-                  <label for="inputRegion" class="form-label">Пол</label>
+                  <label for="" class="form-label">Пол</label>
                   <select
                     class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
+                    :class="{'is-invalid': el.errors.gender}"
                     maxlength="60"
                     v-model="el.gender"
+                    @focus="el.errors.gender = ''"
                     required
                   >
-                    <option data-gender="M" value="M">Мужчина</option>
-                    <option data-gender="F" value="F">Женщина</option>
+                    <!-- <option data-gender="M" value="M">Мужчина</option>
+                    <option data-gender="F" value="F">Женщина</option> -->
+                    <option :selected="el.gender == 'M'" data-gender="M" value="M">Мужчина</option>
+                    <option :selected="el.gender == 'F'" data-gender="F" value="F">Женщина</option>
                   </select>
                   <!--  -->
-                          <!--  -->
-                          <label for="">Дата рождения</label>
-                  <input
-                    type="date"
-                    class="form-control is-invalid"
-                    name="name"
-                    id="inputName"
-                    placeholder="Иван"
-                    maxlength="60"
-                    v-model="el.birth_date"
-                    required
-                  />
+                  <!--  -->
                   <!--  -->
        
         </div>
 
         <div class="right-input all-input-item">
-                             <!--  -->
-                             <label for="inputRegion" class="form-label">Документы</label>
+          <label for="" class="form-label">Тип билета</label>
                   <select
                     class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
-                    maxlength="60"
-                    v-model="el.doc_type_code"
-                    required
-                  >
-                    <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.code+'____'+doc.name">{{ doc.name }}</option>
-                  </select>
-                  <!--  -->
-                  <!--  -->
-                  <label for="inputRegion" class="form-label">Тип билета</label>
-                  <select
-                    class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
+                    :class="{'is-invalid': el.errors.ticket_type_code}"
                     maxlength="60"
                     v-model="el.ticket_type_code"
+                    @focus="el.errors.ticket_type_code = ''"
                     required
                   >
                     <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.code">{{ ticket.name }}</option>
-                  </select>          
+                  </select> 
+                             <!--  -->
+                  <!--  -->         
                   <!--  -->
                   <!--  -->
-                  <label for="inputRegion" class="form-label">Гражданство</label>
+                  <label for="" class="form-label">Гражданство</label>
                   <select
                     class="form-select form-control"
-                    name="region"
-                    id="inputRegion"
+                    :class="{'is-invalid': el.errors.citizenship}"
                     v-model="el.citizenship"
+                    @focus="el.errors.citizenship = ''"
                     required
                   >
                     <option v-for="country in countries" :data-id="country.id" :value="country.name">{{ country.name }}</option>
                   </select>
                   <!--  -->
                   <!--  -->
-                  <label for="inputdoc" class="form-label">Номер документа</label>
-                  <input type="text"
+                  <label for="">Дата рождения</label>
+                  <input
+                    type="date"
                     class="form-control"
-                    name="doc"
-                    id="inputdoc"
-                    maxlength='10'
-                    v-model="el.doc_number"
+                    :class="{'is-invalid': el.errors.birth_date}"
+                    placeholder="Иван"
+                    maxlength="60"
+                    v-model="el.birth_date"
+                    @focus="el.errors.birth_date = ''"
                     required
-                    placeholder="номер"
-                  >
-                  <!--  -->
-                  <!--  -->
-                  <label for="inputdoc" class="form-label">Серия документа</label>
-                  <input type="text"
-                    class="form-control"
-                    name="dc"
-                    id="inputdoc"
-                    maxlength='10'
-                    required
-                    v-model="el.doc_series"
-                    placeholder="серия"
-                  >
+                  />
         </div>
+
+        
       </div>
+      <!--  -->
+        <div class="bottom__inputs">
+                  <div>
+                    <label for="" class="form-label">Тип документа</label>
+                    <select
+                      class="form-select form-control"
+                      :class="{'is-invalid': el.errors.doc_type}"
+                      maxlength="60"
+                      v-model="el.doc_type"
+                      @focus="el.errors.doc_type = ''"
+                      required
+                    >
+                      <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.code+'____'+doc.name">{{ doc.name }}</option>
+                    </select>                
+                  </div>
+
+                  <!--  -->
+                  <!--  -->
+                  <div>
+                    <label for="" class="form-label">Серия документа</label>
+                    <input type="text"
+                      class="form-control"
+                      :class="{'is-invalid': el.errors.doc_series}"
+                      maxlength='10'
+                      required
+                      v-model="el.doc_series"
+                      placeholder="серия"
+                      @focus="el.errors.doc_series = ''"
+                    >                     
+                  </div>
+ 
+                  <!--  -->
+                  <div>
+                    <label for="" class="form-label">Номер документа</label>
+                    <input type="text"
+                      class="form-control"
+                      :class="{'is-invalid': el.errors.doc_number}"
+                      maxlength='10'
+                      v-model="el.doc_number"
+                      @focus="el.errors.doc_number = ''"
+                      required
+                      placeholder="Номер"
+                    >
+                  </div>
+        
+        </div>      
+      <div class="seat-bus"><h5>Место в автобусе</h5>
+        <select
+          class="form-select form-control"
+          :class="{'is-invalid': el.errors.doc_type}"
+          maxlength="60"
+          @change="changeSeat($event, el.seat.name)"
+          required
+        >
+          <template v-for="seat in race.seats">
+            <option v-if="(formData.filter(elem => {return seat.name == elem.seat.name}).length == 0) || (formData.filter(elem => {return seat.name == elem.seat.name}).length != 0  && el.seat.name == seat.name)" :selected="seat.name == el.seat.name" :value="seat.name">{{ seat.name }}</option>
+          </template>
+          
+        </select> 
+      </div>      
       </div>
       </div>
       <div class="form-reg">
-      <div class="information-buyer">
-        <Login v-if="login" @log="login=false"/>
-        <Registration v-else @log="login=true"/>
-      </div>
+        <div class="passenger__addition-outside">
+          <button class="seat-bus__but" type="button" @click="addPassenger">Добавить пассажира</button>
+          <button class="seat-bus__but" type="button" @click="removePassenger">Удалить последнего пассажира</button>
+        </div>
+
+      </div> 
+      <div v-if="!authForForm" class="form-reg" :class="{'unauth__user': unAuthMessage}">
+        <div class="information-buyer">
+          <Login v-if="option == 'login'" @resetSection="option = 'reset'" @registrationSection="option = 'registration'" :authForForm="authForForm" @authenticateForForm="authenticateForForm" @putRedFromLoginAway="putRedFromLoginAway" />
+          <Registration v-else-if="option == 'registration'" @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway"/>
+          <ResetPassword v-else @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway"/>
+        </div>
       </div>
       <div class="form-reg">
       <div class="pay">
-        <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >1050,00₽</p></div>
+        <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >{{ totalCost }},00₽</p></div>
         <hr class="line-pay">
         <div class="pay-discription">
-        <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
-        <div class="payment-systems">
-          <div class="maestro__logo pay-sys__logo"></div>
-          <div class="mastercard__logo pay-sys__logo"></div>
-          <div class="visa__logo pay-sys__logo"></div>
-          <div class="mir__logo pay-sys__logo"></div>
-        </div>
-        </div>
-        <div class="block__check">
-             <label class="check">Я принимаю условия <span class="blue__link" @click="openWindow = !openWindow, NoScroll(), content=2">Пользовательского соглашения</span> (публичной оферты) и <span class="blue__link" @click="openWindow = !openWindow, NoScroll()">политики конфиденциальности</span>
-              <input type="checkbox">
-              <span class="checkmark"></span>
-            </label>
-            <label class="check">Я даю <span class="blue__link" @click="openWindow = !openWindow, NoScroll()">Cогласие на обработку персональных данных</span>
-              <input type="checkbox">
-              <span class="checkmark"></span>
-            </label>
+          <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
+          <div class="payment-systems">
+            <div class="maestro__logo pay-sys__logo"></div>
+            <div class="mastercard__logo pay-sys__logo"></div>
+            <div class="visa__logo pay-sys__logo"></div>
+            <div class="mir__logo pay-sys__logo"></div>
           </div>
+        </div>  
       </div>
       </div>
-      <button class="pay-but">Перейти к оплате</button>
-    </form>
+      <div v-if="errorMessageFromAPI" style="color: red;" class="">
+        {{ errorMessageFromAPI }}
+      </div>
+      
+      <button @click="confirmBook" class="pay-but">Перейти к оплате</button>
+    </div>
     </div>
   </div>
   <Transition name="fade">
-    <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false, Scroll()" :content="content" />
+    <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" :content="content"/>
   </Transition>
 </template>
 <script>
@@ -224,16 +265,20 @@ import DepartureArrival from '../components/DepartureArrival.vue';
 import PopupWindow from '../components/PopupWindow.vue';
 import router from '../router'
 import axios from 'axios';
+import axiosClient from '../axios';
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
 import Login from '../components/Login.vue';
 import Registration from '../components/Registration.vue';
+import ResetPassword from '../components/ResetPassword.vue';
+import Header from '../components/Header.vue';
 
 export default
 {
-  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration },
+  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration, Header, ResetPassword },
   data() {
     return {
+      user: {},
       openWindow: false,
       content: 2,
       chosenSeats: [],
@@ -241,58 +286,274 @@ export default
       loadingRace: true,
       countries: [],
       formData: [],
+      code: '',
       login: true,
+      authForForm: false,
+      unAuthMessage: false,
+      sale: [],
+      order: [],
+      passengers: [],
+      option: 'login',
+      errorMessageFromAPI: ''
     };
   },
   methods: {
-    NoScroll() {
-      document.body.style.overflow = 'hidden';
-    },
-    Scroll() {
-      document.body.style.overflow = 'auto';
+    // NoScroll() {
+    //   document.body.style.overflow = 'hidden';
+    // },
+    // Scroll() {
+    //   document.body.style.overflow = 'auto';
+    // },
+    async confirmBook(code){
+      if(!this.validateFrom()){
+        this.formData.forEach(el => {this.sale.push(
+          {
+            lastName: el.surname,
+            firstName: el.name,
+            middleName: el.patronymic,
+            docTypeCode: el.doc_type.split('____')[0],
+            docTypeName: el.doc_type.split('____')[1],
+            docSeries: el.doc_series,
+            docNum: el.doc_number,
+            gender: el.gender,
+            citizenship: el.citizenship,
+            birthday: el.birth_date,
+            phone: this.user.phone,
+            email: this.user.email,
+            seatCode: el.seat.code,
+            ticketTypeCode: el.ticket_type_code,
+            ticketTypeName: this.race.ticketTypes.filter(elem => {
+                return elem.code == el.ticket_type_code
+            })[0].name,
+            saved: el.saved
+          }
+          )
+          
+          // if(!el.saved){
+          //   const promise3 = axiosClient
+          //   .post('/passenger/save', {
+          //     surname: el.surname,
+          //     name: el.name,
+          //     patronymic: el.patronymic,
+          //     doc_series: el.doc_series,
+          //     doc_number: el.doc_number,
+          //     gender: el.gender,
+          //     citizenship: el.citizenship,
+          //     birth_date: el.birth_date,
+          //   })
+          //   .then(response => {
+          //     this.order = response.data.order
+          //   })
+          //   await promise3
+          // }        
+        })
+        console.log(this.sale)
+        const promise2 = axiosClient
+        .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale})
+        .then(response => {
+          console.log(response)
+          this.order = response.data.order
+        })
+        .catch(error => {
+          console.log(error)
+          this.errorMessageFromAPI = error.response.data.error.errorMessage
+          console.log(this.errorMessageFromAPI)
+        })
+        await promise2
+        if(!this.errorMessageFromAPI){
+          router.push({name: 'Payment', params: { order_id: this.order.id} })     
+        }
+           
+      }
     },
     validateFrom(){
+      let formHasErrors = false
       this.formData.forEach(el => {
-        let fields = ['name', 'surname', 'patronymic', 'birth_date', 'gender', 'citizenship', 'doc_type', 'doc_number', 'ticket_type']
+        let fields = ['name', 'surname', 'patronymic', 'birth_date', 'gender', 'citizenship', 'doc_type', 'doc_number', 'ticket_type_code']
         fields.forEach(field => {
           if(!el[field]){
             el.errors[field] = 'Поле обязательно для заполнения!'
+            formHasErrors = true
           }
           else{
             el.errors[field] = ''
           }
         })
         let doc_type_name = el.doc_type.split('____')[1]
-        if(el['doc_type'] && (doc_type_name == 'Паспорт гражданина РФ' 
+        if(el.doc_type && (doc_type_name == 'Паспорт гражданина РФ' 
         || doc_type_name == 'Загранпаспорт гражданина РФ' 
         || doc_type_name == 'Свидетельство о рождении РФ'
-        || doc_type_name == 'Военный билет военнослужащего срочной службы') )
+        || doc_type_name == 'Военный билет военнослужащего срочной службы') && !el.doc_series)
         {
           el.errors.doc_series = 'Поле обязательно для заполнения!'
+          formHasErrors = true
         }
         else{
           el.errors.doc_series = ''
         }
-
       })
+      if(!this.authForForm){
+        this.unAuthMessage = 'Необходимо авторизоваться!'
+        formHasErrors = true
+      }
+      return formHasErrors
+    },
+    authenticateForForm(){
+      this.authForForm = true
+    },
+    disauthenticateForForm(){
+      this.authForForm = false
+    },
+    putRedFromLoginAway(){
+      this.unAuthMessage = ''
+    },
+    choosePassenger(event, indexTicket){
+      console.log(event.target.value)
+      let passenger = this.passengers[event.target.value]
+      this.formData[indexTicket].name = passenger.name
+      this.formData[indexTicket].surname = passenger.surname
+      this.formData[indexTicket].patronymic = passenger.patronymic
+      this.formData[indexTicket].birth_date = passenger.birth_date
+      this.formData[indexTicket].citizenship = passenger.citizenship
+      this.formData[indexTicket].doc_number = passenger.doc_number
+      this.formData[indexTicket].doc_series = passenger.doc_series
+      this.formData[indexTicket].gender = passenger.gender
+
+      this.formData[indexTicket].doc_type = this.race.docTypes.filter(el => {
+          return el.name == passenger.doc_type;
+        })[0].code+'____'+passenger.doc_type
+
+      this.formData[indexTicket].ticket_type_code = this.race.ticketTypes.filter(el => {
+          return el.name == passenger.ticket_type;
+        })[0].code
+
+      this.formData[indexTicket].saved = true
+    },
+    changeSeat(event, oldSeatName){
+      let newSeat = this.race.seats.filter(el => {
+        return el.name == event.target.value //имя места
+      })[0]
+      this.formData.forEach(function (el) {
+        if (el.seat.name == oldSeatName) {
+          el.seat = newSeat 
+        }    
+      });
+      this.updateSession()
+      console.log(this.race.seats)
+    },
+    updateSession(){
+      let tempChosenSeats = []
+      // console.log(this.race.seats)
+      let tempRaceSeats = this.race.seats
+      this.formData.forEach(function(el){
+        // console.log(tempRaceSeats)
+        let temp = tempRaceSeats.filter(elem => {
+          // console.log('Together: '+el.seat.code+' '+elem.code)
+          return el.seat.code == elem.code
+        })[0]
+        el.seat = temp
+        // console.log('Temp: '+temp)
+        tempChosenSeats.push(temp)
+      })
+
+      localStorage.setItem('chosenSeats', JSON.stringify(tempChosenSeats))
+    },
+    addPassenger(){
+      if(this.formData.length == 5){
+        return
+      }
+      let totalTicketCode = this.race.ticketTypes.filter(el => {
+        return el.name == 'Полный';
+      })
+      totalTicketCode = totalTicketCode[0].code
+      // let seat = this.formData.filter(el => {
+      //   return 
+      // })
+      let seat = []
+      this.race.seats.forEach(el => {
+        let tempSeat = this.formData.filter(elem => {
+          return elem.seat.name == el.name;
+        })
+        if(tempSeat.length == 0){
+          seat = el
+        }
+      })
+      this.formData.push(
+        {
+          name: '',
+          surname: '',
+          patronymic: '',
+          birth_date: '',
+          gender: '',
+          citizenship: '',
+          doc_type: '',
+          doc_number: '',
+          doc_series: '',
+          ticket_type_code: totalTicketCode,
+          seat: seat,
+          saved: false,
+          errors: {
+            name: '',
+            surname: '',
+            patronymic: '',
+            birth_date: '',
+            gender: '',
+            citizenship: '',
+            doc_type: '',
+            doc_number: '',
+            doc_series: '',
+            ticket_type_code: '',
+          }
+        }
+      )
+      this.updateSession()
+    },
+    removePassenger(){
+      if(this.formData.length == 1){
+        return
+      }
+      this.formData.pop();
+      this.updateSession()
+    }
+  },
+  computed: {
+    totalCost(){
+      let totalCost = 0;
+      this.formData.forEach(el => {
+        let ticket_type_code = el.ticket_type_code
+        let ticket_price = this.race.ticketTypes.filter(el => {
+          return el.code == ticket_type_code;
+        })
+        ticket_price = ticket_price[0].price
+        totalCost += ticket_price
+      })
+      return totalCost;
     }
   },
   async mounted(){
-    console.log(this.$route.params['race_id'])
-    const promise = axios
-      .get('http://localhost:8000/api/race/'+this.$route.params['race_id'])
+    this.loadingRace = true
+    if(localStorage.getItem('authToken')){
+      this.auth = true
+    }
+    const promise = axiosClient
+      .get('/race/'+this.$route.params['race_id'])
       .then(response => (
           this.race = response.data
       ));
     await promise
 
-    const promise1 = axios
-      .get('http://localhost:8000/api/countries')
+    const promise1 = axiosClient
+      .get('/countries')
       .then(response => (
           this.countries = response.data
       ));
     await promise1
-    this.chosenSeats = JSON.parse(sessionStorage['chosenSeats'])
+    this.chosenSeats = JSON.parse(localStorage.getItem('chosenSeats'))
+    let totalTicketCode = this.race.ticketTypes.filter(el => {
+      return el.name == 'Полный';
+    })
+    totalTicketCode = totalTicketCode[0].code
+
     this.chosenSeats.forEach(el => this.formData.push(
       {
         name: '',
@@ -304,8 +565,9 @@ export default
         doc_type: '',
         doc_number: '',
         doc_series: '',
-        ticket_type_code: '',
+        ticket_type_code: totalTicketCode,
         seat: el,
+        saved: false,
         errors: {
           name: '',
           surname: '',
@@ -320,6 +582,22 @@ export default
         }
       }
     ))
+    this.updateSession()
+    // let tempChosenSeats = []
+    // this.formData.forEach(function(el){
+    //   tempChosenSeats.push(el.seat)
+    // })
+    // localStorage.setItem('chosenSeats', JSON.stringify(tempChosenSeats))
+    const promise2 = axiosClient
+    .get('/passengers')
+    .then(response => {
+      this.passengers = response.data.passengers
+    })
+    .catch(error => {
+
+    })
+    await promise2
+    // console.log(this.formData)
     this.loadingRace = false
   }
 };
@@ -375,11 +653,11 @@ body
 .place-of-arrival
 {
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
 }
 .block__check label
 {
-  font-size: 18px !important;
+  font-size: 13px !important;
 }
 .information-race__price
 {
@@ -388,6 +666,7 @@ body
 }
 .information-race__payment
 {
+  width: 85%;
   display: flex;
   justify-content: space-between;
 }
@@ -625,6 +904,26 @@ label
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
 }
 
+.unauth__user{
+  border: 1px solid red;
+}
+.bottom__inputs{
+  display: flex;
+  justify-content: space-between;
+}
+.bottom__inputs div{
+  width: 30%;  
+}
+.bottom__inputs div input{
+  
+}
+.passenger__addition-outside{
+  display: flex;
+  justify-content: space-between;
+}
+.passenger__addition-outside button{
+  width: 48%;
+}
 @media (max-width: 768px)
 {
   .form__all-input
@@ -656,5 +955,16 @@ label
   .pay-but{
     margin-right: 0px;
   }
+  .bottom__inputs{
+    display: flex;
+    flex-direction: column;
+  }
+  .bottom__inputs div{
+    width: 100%;  
+  }
+  .bottom__inputs div input{
+    
+  }
+
 }
 </style>

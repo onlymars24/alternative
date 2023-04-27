@@ -1,25 +1,9 @@
 <template>
+    
 <div class="main__header">
         <div class="container">
-            <div class="header__inner">
-                <div class="header__logo">
-                    <a href="/"> <img src="../img/741411.png" alt="" class="header-inner-image"> <span>Автовокзал</span> </a>
-                </div>
-                <ul class="header__links">
-                    <li>
-                        <a href="">
-                            <img src="../img/headphones.png" alt="">
-                            <span>Служба поддержки</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/login.html">
-                            <img src="../img/login_man.png" alt="">
-                            <span>Личный кабинет</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <Header :blackText="false"/>
+
             <div class="main">
                 <h1 class="main__main">
                     Автовокзал Санкт-Петербурга
@@ -75,7 +59,7 @@
                 <div class="main__table-table">
                     <p class="">Дата поездки</p>
                     <input class="main__table-date" type="date" v-model="date">
-                    <p class="" style="position: absolute;
+                    <!-- <p class="" style="position: absolute;
                         bottom: 0;
                         font-size: 17px;
                         color: black;
@@ -85,21 +69,19 @@
                         width: 95px;
                         height: 20px;">
                         {{date}}
-                    </p>
+                    </p> -->
+                    
                 </div>
-                <!-- <div class="main__table-table">
-                    <p class="">Пассажиры</p>
-                    <input class="main__table-input" type="text">
-                </div> -->
                 <div class="main__table-button">
                     <button type="submit" class="main__button" :disabled="disabledButton">
                         Найти билет
                     </button>
                 </div>
             </form>
-            <div class="main__another__date">
-                <!-- <router-link class="main__another__date-fix" v-if="tommorow" :to="{name: 'Races', params: {dispatch_id: dispatchEl0.id, dispatch_name: dispatchEl0.name, arrival_id: arrivalEl0.id, arrival_name: arrivalEl0.name, date: tommorow}}">Завтра</router-link> -->
-                <!-- <router-link class="main__another__date-fix" v-if="tommorow" :to="{name: 'Races', params: {dispatch_id: 12, dispatch_name: 'Москва', arrival_id: 87, arrival_name: 'jkklasdf', date: '1234'}}">Завтра</router-link> -->
+            <div v-if="dispatchEl.id && arrivalEl.id" class="main__another__date">
+                <a href="" class="main__another__date-fix" @click="otherDay(dates.today)">Сегодня</a>
+                <a href="" class="main__another__date-fix" @click="otherDay(dates.tomorrow)">Завтра</a>
+                <a href="" class="main__another__date-fix" @click="otherDay(dates.afterTomorrow)">Послезавтра</a>
             </div>
         </div>
     </div>
@@ -108,7 +90,13 @@
 <script>
 import router from '../router'
 import axios, {isCancel, AxiosError} from 'axios';
+import axiosClient from '../axios'
+import Header from '../components/Header.vue'
+import * as dayjs from 'dayjs'
 export default{
+        components: {
+            Header
+        },
         props: {
             dispatchEl0: {
                 type: Object,
@@ -132,18 +120,12 @@ export default{
                 type: String,
                 default: ''
             },
-            // tommorow: {
-            //     type: String,
-            //     default: ''
-            // },
-            // afterTommorow: {
-            //     type: String,
-            //     default: ''
-            // },
         },
         emits: ['changeRaces'],
         data() {
             return {
+            auth: false,
+            
             date: this.date0,
 
             dispatchPointEmpty: false,
@@ -225,12 +207,20 @@ export default{
                 //     place: false
                 // }
             ],
-
+            dates: {
+                today: '0',
+                tomorrow: '0',
+                afterTomorrow: '0'
+            },
             dispatchEl: this.dispatchEl0, 
             arrivalEl: this.arrivalEl0
         }
     },
     methods: {
+        logout(){
+            localStorage.removeItem('authToken')
+            router.push({ name: 'Login'})
+        },
         dispatchFocus(){
             if(!this.dispatchText){
                 this.dispatchPointEmpty = true
@@ -259,8 +249,8 @@ export default{
         },
 
         async getArrivalData(){
-             const promise = axios
-                .get('http://alternative/api/arrival_points/'+this.dispatchEl.id)
+             const promise = axiosClient
+                .get('/arrival_points/'+this.dispatchEl.id)
                 .then(response => (this.arrivalData = JSON.parse(response.data)));
             await promise
         },
@@ -291,8 +281,10 @@ export default{
             this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id)
             router.push({ name: 'Races', params: { dispatch_id: this.dispatchEl.id, dispatch_name: this.dispatchEl.name, arrival_id: this.arrivalEl.id, arrival_name: this.arrivalEl.name, date: this.date } })
         },
-        testFunction(){
-            console.log('helloWorld!')
+        otherDay(date){
+            this.date = date
+            this.$emit('changeRaces', date, this.dispatchEl.id, this.arrivalEl.id)
+            router.push({ name: 'Races', params: { dispatch_id: this.dispatchEl.id, dispatch_name: this.dispatchEl.name, arrival_id: this.arrivalEl.id, arrival_name: this.arrivalEl.name, date: date } })
         }
     },
     watch: {
@@ -321,11 +313,7 @@ export default{
             if(this.arrivalText == this.arrivalEl.name){
                 this.arrivalBlur()
             }
-        },
-        // date(newDate){
-        //     console.log(newDate)
-        //     router.push({ name: 'Races', params: { dispatch_id: '123', arrival_id: 'tsdfg', date: '12341234' } })
-        // }
+        }
     },
     computed: {
         filteredDispatchPoints(){
@@ -347,16 +335,24 @@ export default{
         },
         arrivalPointDisabled(){
             return !this.dispatchEl.name && !this.dispatchEl.id;
-        }
+        },
     },
     mounted() {
-    axios
-      .get('http://alternative/api/dispatch_points')
-      .then(response => (this.dispatchData = response.data));
+        this.dates.today = dayjs().format('YYYY-MM-DD')
+        this.dates.tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD')
+        this.dates.afterTomorrow = dayjs().add(2, 'day').format('YYYY-MM-DD')
 
-    if(this.dispatchEl.name && this.dispatchEl.id){
-        this.getArrivalData()
-    }
+        console.log(this.dates)
+        if(localStorage.getItem('authToken')){
+            this.auth = true
+        }
+        axiosClient
+        .get('/dispatch_points')
+        .then(response => (this.dispatchData = response.data));
+
+        if(this.dispatchEl.name && this.dispatchEl.id){
+            this.getArrivalData()
+        }
     
     }
     

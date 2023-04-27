@@ -4,9 +4,9 @@
 <template>
       <div class="discr-bus">
         <h5>Выберите место на схеме автобуса</h5>
-        <p>
+        <!-- <p>
           Автобус: Автобус 51 место (Баг:102)
-        </p>
+        </p> -->
         <span class="gfg_tooltip"
             >!<span class="gfg_text"
               >Перевозчик имеет право заменить транспортное средство, в случае его не исправности,
@@ -87,6 +87,7 @@ body {
 .block-info-seat {
   display: flex;
   justify-content: center;
+  margin-bottom: 10px;
 }
 .bus-body {
   border: 4px solid rgb(204, 204, 204);
@@ -205,7 +206,6 @@ body {
       else{
         this.doChairInactive(event.target)
       }
-      // console.log(this.chosenSeats)
     },
     doChairActive(btn){
       if(this.chosenSeats.length >= 5){
@@ -226,7 +226,7 @@ body {
       })
     },
     passToForm(){
-      sessionStorage['chosenSeats'] = JSON.stringify(this.chosenSeats)
+      localStorage.setItem('chosenSeats', JSON.stringify(this.chosenSeats));
       router.push({ name: 'Form', params: { race_id: this.race.race.uid} })
     }
   },
