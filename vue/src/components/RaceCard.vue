@@ -275,6 +275,7 @@
  }
  
  .left-ins__left {
+   padding-right: 5px;
    max-width: 360px;
    width: 100%;
  }

@@ -1,7 +1,7 @@
 <template>
 <HeaderMain @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date"/>
 <div>
-    <!-- RACES <pre>{{ races }}</pre> -->
+    RACES <pre>{{ races }}</pre>
     <div class="menu" style="margin-top: 50px;">
 		<div class="container">
             <div v-if="loadingRaces" class="loader__outside">
@@ -125,14 +125,10 @@
     margin-left: 2px;
     margin-top: 0px;
 }
-.inro-sort__button button{
-    margin: 0px;
-}
+
 .inro-sort__button{
     text-align: center;
-    margin: 3px 5px 3px 5px;
 }
-
 
 .inro-sort__button button.active {
    font-size: 14px;
@@ -146,21 +142,6 @@
    border-radius: 4px;
    color: #0275fe;
    border: 1px solid #0275fe;
- }
- @media (max-width:540px)
- {
-    .menu__inro-sort
-    {
-        display: flex;
-        background-color: white;
-        border-radius: 10px;
-        padding: 10px;
-        overflow: auto;
-    }
-    .inro-sort__button button{
-        border: 1px solid #C8C8C8;
-    }
-    
  }
 </style>
 
