@@ -96,7 +96,7 @@
                     </div>
                     <div class="main__table-table">
                         <p class="">Дата поездки</p>
-                        <input class="main__table-date" type="date" v-model="date">
+                        <input class="main__table-date" type="date" :min="dateNew" :max="toMonth"  v-model="date">
                         <!-- <p class="" style="position: absolute;
                             bottom: 0;
                             font-size: 17px;
@@ -251,9 +251,12 @@
                     arrivalEl: this.arrivalEl0,
                     windowOpen: 0,
                     mobileMenuOpen: false, 
+                    dateNew: "",
+                    toMonth: "",
                 };
         },
         methods: {
+            
             NoScroll() {
                 document.body.style.overflow = 'hidden';
             },
@@ -382,6 +385,12 @@
             if (this.dispatchEl.name && this.dispatchEl.id) {
                 this.getArrivalData();
             }
+                // дата
+               var dateNewGet = new Date();
+               this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate()  ;
+                var toMonthGet = new Date()
+                this.toMonth = toMonthGet.getFullYear()+ "-" + (toMonthGet.getMonth() + 2 == 12? 1 : (toMonthGet.getMonth() + 2 > 9 ? toMonthGet.getMonth() + 2 : "0"+(toMonthGet.getMonth() + 2))) + "-" + toMonthGet.getDate()  ;
+                console.log( this.dateNew + " " + this.toMonth )
         },
     }
     </script>
