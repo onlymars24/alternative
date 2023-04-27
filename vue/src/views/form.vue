@@ -181,8 +181,29 @@
       </div>
       <div class="form-reg">
       <div class="information-buyer">
-        <Login v-if="login" @log="login=false"/>
-        <Registration v-else @log="login=true"/>
+        <h5>Оформление билета</h5>
+        <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
+        <div class="inf-buyer__input">
+          <label class="inf-buyer__input-item" for="">E-mail
+            <input type="email"
+            class="form-control"
+                      name="tel"
+                      id="inputTel"
+                      placeholder="name@mail.ru"
+                      required
+            >
+          </label>
+          <label class="inf-buyer__input-item" for="">Телефон
+            <input
+                      type="tel"
+                      class="form-control"
+                      name="tel"
+                      id="inputTel"
+                      placeholder="+7 (999) 999 9999"
+                      required
+                    />
+          </label>
+        </div>
       </div>
       </div>
       <div class="form-reg">
@@ -226,12 +247,10 @@ import router from '../router'
 import axios from 'axios';
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
-import Login from '../components/Login.vue';
-import Registration from '../components/Registration.vue';
 
 export default
 {
-  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration },
+  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow },
   data() {
     return {
       openWindow: false,
@@ -240,8 +259,7 @@ export default
       race: [],
       loadingRace: true,
       countries: [],
-      formData: [],
-      login: true,
+      formData: []
     };
   },
   methods: {

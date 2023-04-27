@@ -1,5 +1,6 @@
 <template>
-  
+  <div class="login-block">
+          <a class="go-back" href="">&#8592; Вернуться назад</a>
           <div class="login-head"><h2>Регистрация</h2><span class="head-link" @click="$emit('log')">&nbsp;Войти</span></div>
           
           <div class="row row-mobil">
@@ -33,7 +34,7 @@
                   </div>
                </form>
           </div>
-
+      </div>
 </template>
 <script>
 export default {
