@@ -201,7 +201,9 @@ export default{
                 afterTomorrow: '0'
             },
             dispatchEl: this.dispatchEl0, 
-            arrivalEl: this.arrivalEl0
+            arrivalEl: this.arrivalEl0,
+            dateNew: '',
+            toMount: '',
         }
     },
     methods: {
