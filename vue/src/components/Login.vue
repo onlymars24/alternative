@@ -1,7 +1,8 @@
 <template>
             <div class="row row-mobil">
                 <div class="col-sm-6 possible-block">
-                    <div class="login-head"><h2>Войти</h2><span class="head-link" @click="$emit('registrationSection')">&nbsp;Регистрация</span></div>
+                    <div class="login-head"><h2>Войти</h2></div>
+                    <span class="head-link" @click="$emit('registrationSection')">Регистрация</span>
                     <p class="possible">В личном кабинете вы можете:</p>
                     <ul class="all-possible">
                         <li class="possible-item">Выкупить забронированный билет</li>
@@ -98,6 +99,7 @@ export default {
                 this.$emit('authenticateForForm');
             })
             .catch(error => {
+                console.log(error)
                 if(error.response.status == 422){
                     this.wrongCredentialsMessage = error.response.data.message
                 }

@@ -1,7 +1,8 @@
 <template>
           <div class="row row-mobil">
               <div class="col-sm-6 possible-block">
-                <div class="login-head"><h2>Сброс пароля</h2><span class="head-link" @click="$emit('loginSection')">&nbsp;Войти</span></div>
+                <div class="login-head"><h2>Сброс пароля</h2></div>
+                <span class="head-link" @click="$emit('loginSection')">Войти</span>
                   <p class="possible">В личном кабинете вы можете:</p>
                   <ul class="all-possible">
                       <li class="possible-item">Выкупить забронированный билет</li>

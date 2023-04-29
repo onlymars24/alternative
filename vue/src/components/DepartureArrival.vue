@@ -5,7 +5,7 @@
                 <p class="inf-race__time">{{dispatchTime}}</p>
                 <p class="inf-race__date">{{dispatchDay}}</p>
             </div>
-            <div class="inf-race__place">
+            <div class="inf-race__place punktir">
                 <h6 class="inf-race__city">{{ race.race.dispatchStationName }}</h6><p style="" class="discr"><br></p>
             </div>
             </div>

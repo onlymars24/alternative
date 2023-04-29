@@ -14,13 +14,13 @@
         </div>
 
         <ul class="header__links">
-            <li>
-                <a @click="" @click.prevent="windowOpen = 1" href="">
+            <li @mouseleave="$store.commit('windowHeader', 0)">
+                <a @click="" @click.prevent="$store.commit('windowHeader', 1)" href="">
                     <img :src="blackText ? '/src/img/headphones.png': '/src/img/headphones-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Служба поддержки</span>
                 </a>
                 <transition name="anim-window">
-                    <nav class="header__links__window" v-show="windowOpen == 1" @mouseenter="windowOpen = 1" @mouseleave="windowOpen = 0">
+                    <nav class="header__links__window" v-show="$store.state.windowHeader == 1" @mouseenter="windowOpen = 1" @mouseleave="windowOpen = 0">
                         <a href="tel:8 (800) 700-42-12" class="header__links__window__phone-link">8 (800) 700-42-12</a>
                         <router-link to="/Faq" class="header__links__window__faq-link">
                             Вопросы и ответы
@@ -29,19 +29,19 @@
                 </transition>
             </li>
             <li v-if="!auth && !authForForm">
-                <a href="#" @click="openWindow = true">
+                <a href="#" @click.prevent="openWindow = true , NoScroll">
                     <img :src="blackText ? '/src/img/login_man.png': '/src/img/login_man-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Авторизоваться</span>
                 </a>
             </li>
             <!-- <li v-if="auth || authForForm"> -->
-            <li v-if="auth || authForForm">
-                <a @click.prevent="windowOpen = 2" href="/account">
+            <li v-if="auth || authForForm" @mouseleave="$store.commit('windowHeader', 0)">
+                <a @click.prevent="$store.commit('windowHeader', 2)" href="/account">
                     <img :src="blackText ? '/src/img/login_man.png': '/src/img/login_man-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Личный кабинет</span>
                 </a>
                 <transition name="anim-window">
-                    <nav @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
+                    <nav  class="header__links__window" v-show="$store.state.windowHeader == 2">
                         <a href="/account" class="header__links__window__myRace-link">Мои поездки</a>
                         <a @click.prevent="logout" href="" class="header__links__window__exit-link" >Выйти из аккаунта</a>
                     </nav>
@@ -55,12 +55,12 @@
             </li> -->
         </ul>
         <transition name="mob-menu">
-            <MobailMenu @logout="logout" :auth="auth || authForForm" v-if="mobileMenuOpen" @closeMobMenu="Scroll(), mobileMenuOpen = false"/>
+            <MobailMenu @logout="logout" @OpenWindowLogin="openWindow = true, mobileMenuOpen = false" :auth="auth || authForForm" v-if="mobileMenuOpen" @closeMobMenu="Scroll(), mobileMenuOpen = false"/>
         </transition>
     </div>
-    <Transition v-if="openWindow" name="fade">
-        <PopupWindow @CloseWindow="openWindow = false" @authenticateForForm="$emit('authenticateForForm')" @authSelf="authSelf" :content="3"/>
-    </Transition>
+    
+        <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" @authenticateForForm="$emit('authenticateForForm')" @authSelf="authSelf" :content="3"/>
+    
 </template>
 
 <script>
@@ -91,7 +91,6 @@ export default
         user: [],
         openWindow: false,
         mobileMenuOpen: false, 
-        windowOpen: 0,
     }
   },
   methods: {
@@ -103,6 +102,7 @@ export default
     authSelf(){
         this.auth = true
         this.openWindow = false
+        Scroll()
     },
     NoScroll() {
         document.body.style.overflow = 'hidden';
@@ -110,6 +110,18 @@ export default
     Scroll() {
         document.body.style.overflow = 'auto';
     },
+  },
+  watch: {
+    openWindow(newQuestion, oldQuestion){
+        if(newQuestion == true)
+        {
+            this.NoScroll()
+        }
+        else
+        {
+            this.Scroll()
+        }
+    }
   },
   async mounted(){
     console.log(localStorage.getItem('authToken'))

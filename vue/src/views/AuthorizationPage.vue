@@ -131,7 +131,11 @@ export default {
 }
 @media (max-width: 580px) {
   .row-mobil {
-    flex-direction: column-reverse;
+    flex-direction: column;
+  }
+  .possible-block
+  {
+    margin-bottom: 20px;
   }
 }
 </style>

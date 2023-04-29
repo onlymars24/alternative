@@ -6,8 +6,8 @@
     <!-- <div class="closeWindow" @click="$emit('CloseWindow')">✖</div> -->
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
-    <div v-if="this.content==3">
-      <a class="go-back" href="/">&#8592; Вернуться назад</a>
+    <div v-if="this.content==3" class="content-popap">
+      <a class="go-back-popap" href="/">&#8592; Вернуться назад</a>
         <Login v-if="option == 'login'" @resetSection="option = 'reset'" @registrationSection="option = 'registration'" @authSelf="$emit('authSelf')" @authenticateForForm="$emit('authenticateForForm')" @log="login = false" />
         <Registration v-else-if="option == 'registration'" @loginSection="option = 'login'" @log="login = true" />
         <ResetPassword v-else @loginSection="option = 'login'"/>
@@ -80,7 +80,7 @@ export default
     background-color: white;
     max-width: 800px;
     width: 100%;
-    padding: 20px;
+    padding: 40px;
     z-index: 10;
     border-radius: 20px;
     max-height: 80vh;
@@ -105,5 +105,18 @@ export default
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.521);
+}
+.content-popap
+{
+  position: relative;
+}
+.go-back-popap
+{
+  color: white;
+  position: absolute;
+  top: -80px;
+}
+.content-popap a{
+  color: white;
 }
 </style>

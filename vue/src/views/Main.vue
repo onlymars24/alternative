@@ -226,7 +226,8 @@ export default{
         list-style-type: none;
         max-height: 242px;
         width: 400px;
-        overflow-y: scroll;
+        overflow-y: auto;
+        overflow-x: hidden;
         background-color: #fff;
         position: absolute;
         top: 115%;
@@ -236,6 +237,30 @@ export default{
        -o-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
       box-shadow: 0px 0px 10px rgba(0,0,0,.8);
     }
+    /* 
+Firefox */
+   .hint {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(223, 223, 223) rgb(255, 255, 255);
+  padding: 10px;
+}
+
+
+.hint::-webkit-scrollbar {
+  height: 12px;
+  width: 6px;
+
+}
+.hint::-webkit-scrollbar-track {
+  background: rgb(255, 255, 255);
+
+}
+.hint::-webkit-scrollbar-thumb {
+  background-color: rgb(223, 223, 223) ;
+  border-radius: 5px;
+  border: 3px solid rgb(223, 223, 223);
+}
+
     li, ul{
         padding: 0;
         margin: 0;

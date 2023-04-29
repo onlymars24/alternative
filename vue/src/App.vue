@@ -33,7 +33,7 @@ export default
 
 <template>
   
-  <router-view></router-view>
+  <router-view @click.prevent="$store.commit('windowHeader', 0)"></router-view>
 
 </template>
 
@@ -67,6 +67,9 @@ body
     font-weight: bold;
     font-size: 20px;
     margin-top: 40px;
+}
+h2{
+  margin-bottom: 0px;
 }
 /* headerCrumbs */
 </style>

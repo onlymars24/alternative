@@ -131,7 +131,7 @@
                   <!--  -->
                   <label for="" class="form-label">Гражданство</label>
                   <select
-                    class="form-select form-control"
+                    class="form-select form-control form-select-cust"
                     :class="{'is-invalid': el.errors.citizenship}"
                     v-model="el.citizenship"
                     @focus="el.errors.citizenship = ''"
@@ -255,7 +255,7 @@
     </div>
     </div>
   </div>
-  <Transition name="fade">
+  <Transition name="fade" mode="out-in">
     <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" :content="content"/>
   </Transition>
 </template>
@@ -603,14 +603,12 @@ export default
 };
 </script>
 <style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 1s ease !important;
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+  transition-delay: 10s;
 }
-
-.fade-enter-from,
-.fade-leave-to {
-  transform: scale(0)!important;
+.fade-enter-from, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
 }
 :root{
   --blue: #2196F3;
@@ -626,6 +624,11 @@ body
   flex-direction: row-reverse;
   justify-content: space-between;
   align-items: start;
+}
+.form-select-cust
+{
+  overflow: hidden;
+  
 }
 .form-reg
 {
@@ -648,7 +651,7 @@ body
 .place__of__departure
 {
   display: flex;
-  justify-content: space-between;
+  justify-content:start;
 }
 .place-of-arrival
 {
@@ -739,14 +742,19 @@ label
   margin-bottom: 4px;
   min-height: 25px;
 }
-.discr::before
+.punktir::after
 {
   content: "";
-  position: relative;
+  height: 100%;
+  position: absolute;
   border: 1px dashed rgb(209, 209, 209);
   left: -21px;
-  top: -1px;
-  transform: scaleY(1.2);
+  top: 5px;
+
+}
+.punktir
+{
+  position: relative;
 }
 .container{
   max-width: 1044px;
@@ -792,7 +800,7 @@ label
 .seat-bus__but
 {
   width: 49%;
-  height: 40px;
+  min-height: 40px;
   border-radius: 10px;
   border: 1px solid var(--blue);
   color: var(--blue);
@@ -965,6 +973,12 @@ label
   .bottom__inputs div input{
     
   }
+}
 
+  @media (max-width: 768px)
+{
+  .seat-bus__but{
+    font-size: 14px;
+  }
 }
 </style>

@@ -68,7 +68,7 @@
       <a class="mobil__exit__account" href="" @click.prevent="$emit('logout')">Выйти из аккаунта</a>
     </div>
     <div v-if="!auth" class="mobil__exit__account__block">
-      <a class="mobil__exit__account" href="/login">Авторизоваться</a>
+      <a class="mobil__exit__account" @click.prevent="this.$emit('OpenWindowLogin')" href="/login">Авторизоваться</a>
     </div>
   </div>
 </template>

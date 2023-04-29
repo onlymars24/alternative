@@ -57,21 +57,9 @@
                     <input @click="arrivalFocus" @blur="arrivalBlur" v-model="arrivalText" :disabled="arrivalPointDisabled" class="main__table-input" list="OWNER" :placeholder="arrivalPointDisabled ? 'Укажите Откуда' : ''" type="text">
                 </div>
                 <div class="main__table-table">
-                    <p class="">Дата поездки</p>
-                    <input class="main__table-date" type="date" v-model="date">
-                    <!-- <p class="" style="position: absolute;
-                        bottom: 0;
-                        font-size: 17px;
-                        color: black;
-                        background: white;
-                        padding: 10px;
-                        padding-left: 0;
-                        width: 95px;
-                        height: 20px;">
-                        {{date}}
-                    </p> -->
-                    
-                </div>
+                        <p class="">Дата поездки</p>
+                        <input class="main__table-date" type="date" :min="dateNew" :max="toMonth"  v-model="date">
+                    </div>  
                 <div class="main__table-button">
                     <button type="submit" class="main__button" :disabled="disabledButton">
                         Найти билет
@@ -353,7 +341,12 @@ export default{
         if(this.dispatchEl.name && this.dispatchEl.id){
             this.getArrivalData()
         }
-    
+     // дата
+     var dateNewGet = new Date();
+               this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate()  ;
+                var toMonthGet = new Date()
+                this.toMonth = toMonthGet.getFullYear()+ "-" + (toMonthGet.getMonth() + 2 == 12? 1 : (toMonthGet.getMonth() + 2 > 9 ? toMonthGet.getMonth() + 2 : "0"+(toMonthGet.getMonth() + 2))) + "-" + toMonthGet.getDate()  ;
+                console.log( this.dateNew + " " + this.toMonth )
     }
     
 }
