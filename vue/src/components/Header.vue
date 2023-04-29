@@ -223,6 +223,10 @@ export default
           justify-content: space-between;
           align-items: center;
       }
+      .main__table-date
+      {
+        color: black;
+      }
       
       
       

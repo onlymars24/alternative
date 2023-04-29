@@ -242,7 +242,7 @@ Firefox */
    .hint {
   scrollbar-width: thin;
   scrollbar-color: rgb(223, 223, 223) rgb(255, 255, 255);
-  padding: 10px;
+  padding: 0px;
 }
 
 
