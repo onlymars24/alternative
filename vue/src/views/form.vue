@@ -34,8 +34,11 @@
     </div>
 
     <div class="">
-      <div v-for="(el, indexTicket) in formData" class="form-reg">
+      <div v-for="(el, indexTicket) in formData" class="form-reg" style="position: relative;">
         <!-- <pre>{{ el.errors }}</pre> -->
+        <svg @click="removePassenger(el.seat.code)" style="position: absolute; top: 7px; right: 7px;" xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
       <h5>Оформление билета</h5>
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
         <div class="ticket-registration">
@@ -223,7 +226,7 @@
       <div class="form-reg">
         <div class="passenger__addition-outside">
           <button class="seat-bus__but" type="button" @click="addPassenger">Добавить пассажира</button>
-          <button class="seat-bus__but" type="button" @click="removePassenger">Удалить последнего пассажира</button>
+          <button class="seat-bus__but" type="button" @click="removeLastPassenger">Удалить последнего пассажира</button>
         </div>
 
       </div> 
@@ -458,7 +461,6 @@ export default
         // console.log('Temp: '+temp)
         tempChosenSeats.push(temp)
       })
-
       localStorage.setItem('chosenSeats', JSON.stringify(tempChosenSeats))
     },
     addPassenger(){
@@ -511,11 +513,23 @@ export default
       )
       this.updateSession()
     },
-    removePassenger(){
+    removeLastPassenger(){
       if(this.formData.length == 1){
         return
       }
       this.formData.pop();
+      this.updateSession()
+    },
+    removePassenger(seatCode){
+      if(this.formData.length == 1){
+        return
+      }
+      let tempFormData = this.formData.filter(el => {
+        // console.log('Together: '+el.seat.code+' '+elem.code)
+        return el.seat.code != seatCode
+      })
+      
+      this.formData = tempFormData
       this.updateSession()
     }
   },
