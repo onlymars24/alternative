@@ -283,4 +283,11 @@ Firefox */
     .main__table{
         position: relative;
     }
+    @media (max-width: 993px){
+        .hint{
+            top: 150px;
+            min-width: 100%;
+            max-width: 100%;
+        }
+    }
 </style>

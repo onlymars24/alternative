@@ -47,6 +47,8 @@ export default
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
   height: 100%;
 }
+
+
 .personal-account__content-empty
 {
     text-align: center;
@@ -74,6 +76,10 @@ export default
 }
 .header-menu__all::-webkit-scrollbar {
   width: 0;
+}
+.btn-secondary
+{
+  margin-right:20px;
 }
 .header-menu__item
 {
@@ -105,5 +111,17 @@ export default
 .slide-pers-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+@media (max-width:542px){
+  .person__all-button
+  {
+    display: flex;
+    margin-top: 30px;
+  }
+  .btn-secondary
+  {
+    margin: 0px;
+    margin-right:20px;
+  }
 }
 </style>

@@ -264,11 +264,16 @@ export default
     justify-content: space-between;
     align-items: center;
 }
-.person__all-button *:nth-child(1)
-{
-  margin-right: 50px;
-}
+
 .spinner-border-sm{
   margin-right: 0;
+}
+@media (max-width:500px){
+  .person-btn
+{
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
 }
 </style>

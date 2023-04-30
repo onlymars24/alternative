@@ -13,14 +13,14 @@
             </div>                      
         </div>
 
-        <ul class="header__links">
-            <li @mouseleave="$store.commit('windowHeader', 0)">
+        <ul class="header__links header__links__place" @mouseleave="$store.commit('windowHeader', 0)">
+            <li >
                 <a @click="" @click.prevent="$store.commit('windowHeader', 1)" href="">
                     <img :src="blackText ? '/src/img/headphones.png': '/src/img/headphones-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Служба поддержки</span>
                 </a>
                 <transition name="anim-window">
-                    <nav class="header__links__window" v-show="$store.state.windowHeader == 1" @mouseenter="windowOpen = 1" @mouseleave="windowOpen = 0">
+                    <nav class="header__links__window" v-show="$store.state.windowHeader == 1" @mouseenter="$store.commit('windowHeader', 1)">
                         <a href="tel:8 (800) 700-42-12" class="header__links__window__phone-link">8 (800) 700-42-12</a>
                         <router-link to="/Faq" class="header__links__window__faq-link">
                             Вопросы и ответы
@@ -29,19 +29,19 @@
                 </transition>
             </li>
             <li v-if="!auth && !authForForm">
-                <a href="#" @click.prevent="openWindow = true , NoScroll">
+                <a href="#" @click.prevent="openWindow = true , NoScroll()">
                     <img :src="blackText ? '/src/img/login_man.png': '/src/img/login_man-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Авторизоваться</span>
                 </a>
             </li>
             <!-- <li v-if="auth || authForForm"> -->
-            <li v-if="auth || authForForm" @mouseleave="$store.commit('windowHeader', 0)">
+            <li v-if="auth || authForForm">
                 <a @click.prevent="$store.commit('windowHeader', 2)" href="/account">
                     <img :src="blackText ? '/src/img/login_man.png': '/src/img/login_man-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Личный кабинет</span>
                 </a>
                 <transition name="anim-window">
-                    <nav  class="header__links__window" v-show="$store.state.windowHeader == 2">
+                    <nav  class="header__links__window" v-show="$store.state.windowHeader == 2" @mouseenter="$store.commit('windowHeader', 2)">
                         <a href="/account" class="header__links__window__myRace-link">Мои поездки</a>
                         <a @click.prevent="logout" href="" class="header__links__window__exit-link" >Выйти из аккаунта</a>
                     </nav>
@@ -162,6 +162,7 @@ export default
           font-size: 14px;
           position: absolute;
           top: 51px;
+          z-index: 5;
       }
       .header__links__window a
       {
@@ -216,6 +217,10 @@ export default
           background-repeat: no-repeat;
           position: absolute;
           left: 17px;
+      }
+      .header__links__place
+      {
+        padding:20px;
       }
       .logo__and__hamburger
       {
@@ -280,6 +285,11 @@ export default
       @media (max-width: 768px) {
           .header__links{
               display: none;
+          }
+          .header__links__window
+          {
+            right: 0px;
+            top: 30px;
           }
       }
       @media (min-width: 768px) {

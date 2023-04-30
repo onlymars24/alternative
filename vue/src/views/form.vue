@@ -30,7 +30,7 @@
       <!-- <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div> -->
       <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{ totalCost }},00₽  </p></div>
       <hr>
-      <a class="blue__link" @click="openWindow = !openWindow">Условия возврата</a>
+      <a class="blue__link" @click="openWindow = !openWindow, NoScroll()">Условия возврата</a>
     </div>
 
     <div class="">
@@ -40,7 +40,7 @@
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
         <div class="ticket-registration">
                   <select v-if="authForForm"
-                    class="form-select form-control"
+                    class="form-select form-control "
                     maxlength="60"
                     @change="choosePassenger($event, indexTicket)"
                     required
@@ -93,20 +93,7 @@
                   />
                   <!--  -->
                   <!--  -->
-                  <label for="" class="form-label">Пол</label>
-                  <select
-                    class="form-select form-control"
-                    :class="{'is-invalid': el.errors.gender}"
-                    maxlength="60"
-                    v-model="el.gender"
-                    @focus="el.errors.gender = ''"
-                    required
-                  >
-                    <!-- <option data-gender="M" value="M">Мужчина</option>
-                    <option data-gender="F" value="F">Женщина</option> -->
-                    <option :selected="el.gender == 'M'" data-gender="M" value="M">Мужчина</option>
-                    <option :selected="el.gender == 'F'" data-gender="F" value="F">Женщина</option>
-                  </select>
+                
                   <!--  -->
                   <!--  -->
                   <!--  -->
@@ -129,15 +116,19 @@
                   <!--  -->         
                   <!--  -->
                   <!--  -->
-                  <label for="" class="form-label">Гражданство</label>
+                  <label for="" class="form-label">Пол</label>
                   <select
-                    class="form-select form-control form-select-cust"
-                    :class="{'is-invalid': el.errors.citizenship}"
-                    v-model="el.citizenship"
-                    @focus="el.errors.citizenship = ''"
+                    class="form-select form-control"
+                    :class="{'is-invalid': el.errors.gender}"
+                    maxlength="60"
+                    v-model="el.gender"
+                    @focus="el.errors.gender = ''"
                     required
                   >
-                    <option v-for="country in countries" :data-id="country.id" :value="country.name">{{ country.name }}</option>
+                    <!-- <option data-gender="M" value="M">Мужчина</option>
+                    <option data-gender="F" value="F">Женщина</option> -->
+                    <option :selected="el.gender == 'M'" data-gender="M" value="M">Мужчина</option>
+                    <option :selected="el.gender == 'F'" data-gender="F" value="F">Женщина</option>
                   </select>
                   <!--  -->
                   <!--  -->
@@ -148,6 +139,7 @@
                     :class="{'is-invalid': el.errors.birth_date}"
                     placeholder="Иван"
                     maxlength="60"
+                    :max="dateNew"
                     v-model="el.birth_date"
                     @focus="el.errors.birth_date = ''"
                     required
@@ -156,9 +148,19 @@
 
         
       </div>
+      <label for="" class="form-label">Гражданство</label>
+                  <select
+                    class="form-select form-control form-select-cust select2-results__options"
+                    :class="{'is-invalid': el.errors.citizenship}"
+                    v-model="el.citizenship"
+                    @focus="el.errors.citizenship = ''"
+                    required
+                  >
+                    <option v-for="country in countries" :data-id="country.id" :value="country.name">{{ country.name }}</option>
+                  </select>
       <!--  -->
         <div class="bottom__inputs">
-                  <div>
+                  <div class="bottom__inputs__container">
                     <label for="" class="form-label">Тип документа</label>
                     <select
                       class="form-select form-control"
@@ -174,7 +176,7 @@
 
                   <!--  -->
                   <!--  -->
-                  <div>
+                  <div  class="bottom__inputs__container">
                     <label for="" class="form-label">Серия документа</label>
                     <input type="text"
                       class="form-control"
@@ -188,7 +190,7 @@
                   </div>
  
                   <!--  -->
-                  <div>
+                  <div class="bottom__inputs__container">
                     <label for="" class="form-label">Номер документа</label>
                     <input type="text"
                       class="form-control"
@@ -255,9 +257,9 @@
     </div>
     </div>
   </div>
-  <Transition name="fade" mode="out-in">
-    <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" :content="content"/>
-  </Transition>
+  <transition name="fade" >
+    <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false, Scroll()" :content="content"/>
+  </transition>
 </template>
 <script>
 import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
@@ -294,16 +296,17 @@ export default
       order: [],
       passengers: [],
       option: 'login',
-      errorMessageFromAPI: ''
+      errorMessageFromAPI: '',
+      dateNew: '',
     };
   },
   methods: {
-    // NoScroll() {
-    //   document.body.style.overflow = 'hidden';
-    // },
-    // Scroll() {
-    //   document.body.style.overflow = 'auto';
-    // },
+    NoScroll() {
+      document.body.style.overflow = 'hidden';
+    },
+    Scroll() {
+      document.body.style.overflow = 'auto';
+    },
     async confirmBook(code){
       if(!this.validateFrom()){
         this.formData.forEach(el => {this.sale.push(
@@ -531,6 +534,8 @@ export default
     }
   },
   async mounted(){
+    var dateNewGet = new Date();
+               this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate()  ;
     this.loadingRace = true
     if(localStorage.getItem('authToken')){
       this.auth = true
@@ -609,6 +614,9 @@ export default
 }
 .fade-enter-from, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
   opacity: 0;
+}
+.fade-enter-to, .fade-leave-frome{
+  opacity: 1;
 }
 :root{
   --blue: #2196F3;
@@ -759,7 +767,7 @@ label
 .container{
   max-width: 1044px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 15px;
 }
 .form__all-input
 {
@@ -919,12 +927,33 @@ label
   display: flex;
   justify-content: space-between;
 }
-.bottom__inputs div{
-  width: 30%;  
+.bottom__inputs__container{
+  width: 32%;  
 }
-.bottom__inputs div input{
-  
+/* select */
+.select2-results__options::-webkit-scrollbar {
+  width: 6px;
 }
+.select2-results__options::-webkit-scrollbar-track {
+  background-color: transparent;
+  height: 8px;
+
+
+}
+
+.select2-results__options::-webkit-scrollbar-thumb {
+
+  background-color: #c4c4c4;
+  border-radius: 20px;
+
+}
+select
+{
+  max-height: 300px;
+  overflow: hidden;
+}
+
+/*  */
 .passenger__addition-outside{
   display: flex;
   justify-content: space-between;
@@ -937,6 +966,7 @@ label
   .form__all-input
   {
     display: block;
+    margin-top: 20px;
   }
   .all-input-item
   {
@@ -973,12 +1003,32 @@ label
   .bottom__inputs div input{
     
   }
+  .passenger__addition-outside{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
-
-  @media (max-width: 768px)
-{
-  .seat-bus__but{
+.passenger__addition-outside button{
+  width: 100%;
+}
+.passenger__addition-outside button:nth-child(1){
+  margin-bottom: 20px;
+}
+.seat-bus__but{
     font-size: 14px;
   }
+  h3{
+    font-size: 22px;
+  }
+  .total-cost
+  {
+    font-size: 22px;
+  }
+  .information-race__payment
+  {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
+  
 </style>

@@ -230,19 +230,7 @@ outline: none;
 .main__table-date{
   padding: 8px 30px 12px 31px;
 }
-.main__another__date{
-  text-align: center;
-  margin-top: 15px;
-  margin-left: 325px;
-}
-.main__another__date a{
-  margin-right: 4px;
-}
-.main__another__date-fix{
-  text-decoration: dotted;
-  color: white;
-  border-bottom: 1px white dashed;
-}
+
 .disp__disp{
   margin-left: 5px;
   margin-right: 20px;

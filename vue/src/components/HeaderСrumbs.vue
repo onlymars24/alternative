@@ -49,7 +49,7 @@
         </div>
         <div class="more-detail" :class="{rotate: openMoreDetail}">
           <span class="blue__link"  @click="this.openMoreDetail = !this.openMoreDetail"
-            >Показать подробности</span
+            ><span class="more-detail-short-discr">Показать</span> подробности</span
           >
           <span class="arrow arrow-more" :class="{'arrow-more-rotate': openMoreDetail}"></span>
         </div>
@@ -101,11 +101,6 @@ export default {
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
   margin-bottom: 20px;
 }
-.container {
-  max-width: 1044px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
 .more-detail-block {
   display: flex;
   justify-content: space-between;
@@ -123,17 +118,19 @@ export default {
 }
 .race-progress {
   display: flex;
+  align-items: center;
 }
 .not-passed {
   color: rgb(145, 145, 145);
   padding: 10px;
-  font-size: 16px;
+  font-size: 14px;
   position: relative;
+  text-align: center;
 }
 .passed {
   padding: 10px;
   padding-left: 0px;
-  font-size: 16px;
+  font-size: 15px;
   position: relative;
   color: black;
   font-weight: 700;
@@ -192,6 +189,18 @@ export default {
   .more-detail-block
   {
     display: block;
+  }
+  .more-detail-short-discr
+  {
+    display: none;
+  }
+  .more-detail-block-right
+  {
+    margin: 0;
+  }
+  .more-detail-block-left
+  {
+    margin: 0;
   }
 }
 </style>

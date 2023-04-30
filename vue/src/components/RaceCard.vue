@@ -212,6 +212,8 @@
  
  .menu__inro-sort {
    display: flex;
+   overflow-x: auto;
+   overflow-y: hidden;
  }
  
  .inro-sort__button button {
@@ -401,7 +403,8 @@
  
  .ticket-medium__ins {
    -webkit-box-align: center;
-   padding-left: 15px;
+   padding: 10px 5px 10px 15px;
+   line-height: .8rem;
  }
  
  .ticket-medium__ins-left {

@@ -87,7 +87,7 @@ body {
 .block-info-seat {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
 }
 .bus-body {
   border: 4px solid rgb(204, 204, 204);

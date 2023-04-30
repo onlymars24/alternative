@@ -346,10 +346,34 @@ export default{
      // дата
      var dateNewGet = new Date();
                this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate()  ;
-                var toMonthGet = new Date()
-                this.toMonth = toMonthGet.getFullYear()+ "-" + (toMonthGet.getMonth() + 2 == 12? 1 : (toMonthGet.getMonth() + 2 > 9 ? toMonthGet.getMonth() + 2 : "0"+(toMonthGet.getMonth() + 2))) + "-" + toMonthGet.getDate()  ;
+
+                this.toMonth = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 2 == 12? 1 : (dateNewGet.getMonth() + 2 > 9 ? dateNewGet.getMonth() + 2 : "0"+(dateNewGet.getMonth() + 2))) + "-" + dateNewGet.getDate()  ;
                 console.log( this.dateNew + " " + this.toMonth )
     }
     
 }
 </script>
+<style>
+.main__another__date{
+  text-align: center;
+  margin-top: 15px;
+  margin-left: 325px;
+}
+.main__another__date a{
+  margin-right: 4px;
+  color: white
+}
+.main__another__date-fix{
+  text-decoration: dotted;
+  color: white;
+  border-bottom: 1px white dashed;
+}
+@media (max-width: 992px)
+{
+    .main__another__date{
+  text-align: center;
+  margin-top: 15px;
+  margin-left: 0px;
+}
+}
+</style>
