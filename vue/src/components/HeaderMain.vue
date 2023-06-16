@@ -331,8 +331,6 @@ export default{
         this.dates.today = dayjs().format('YYYY-MM-DD')
         this.dates.tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD')
         this.dates.afterTomorrow = dayjs().add(2, 'day').format('YYYY-MM-DD')
-
-        console.log(this.dates)
         if(localStorage.getItem('authToken')){
             this.auth = true
         }
@@ -343,12 +341,9 @@ export default{
         if(this.dispatchEl.name && this.dispatchEl.id){
             this.getArrivalData()
         }
-     // дата
-     var dateNewGet = new Date();
-               this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate()  ;
-
-                this.toMonth = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 2 == 12? 1 : (dateNewGet.getMonth() + 2 > 9 ? dateNewGet.getMonth() + 2 : "0"+(dateNewGet.getMonth() + 2))) + "-" + dateNewGet.getDate()  ;
-                console.log( this.dateNew + " " + this.toMonth )
+        var dateNewGet = new Date();
+        this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();
+        this.toMonth = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 2 == 12? 1 : (dateNewGet.getMonth() + 2 > 9 ? dateNewGet.getMonth() + 2 : "0"+(dateNewGet.getMonth() + 2))) + "-" + dateNewGet.getDate()  ;
     }
     
 }

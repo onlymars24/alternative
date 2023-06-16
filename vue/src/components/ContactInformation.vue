@@ -35,18 +35,24 @@
 </style>
 <script>
 import axiosClient from '../axios'
+import BusLoading from '../components/BusLoading.vue'
 
 export default
 {
+  components: {
+      BusLoading,
+  },
   data() {
     return {
       activeTab: 'UpcomingTrips',
       user: [],
       editEmailActive: false,
-      email: ''
+      email: '',
+      contactLoading: false
     };
   },
   async mounted(){
+    this.contactLoading = true
     const promise = axiosClient
     .get('/user')
     .then(response => {
@@ -54,13 +60,13 @@ export default
     })
     await promise
     this.email = this.user.email
+    this.contactLoading = false
   },
   methods: {
     async editEmail(){
         const promise = axiosClient
         .post('/edit/email', {email: this.email})
         .then(response => {
-            console.log(response)
         })
         await promise
         this.editEmailActive = false

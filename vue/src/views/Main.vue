@@ -9,7 +9,38 @@ export default{
         Footer,
     },
     data() {
-        return {}
+        return {
+            drawer: false,
+            size: 'default',
+            value1: '',
+            shortcuts: [
+                {
+                    text: 'Today',
+                    value: new Date(),
+                },
+                {
+                    text: 'Yesterday',
+                    value: () => {
+                    const date = new Date()
+                    date.setTime(date.getTime() - 3600 * 1000 * 24)
+                    return date
+                    },
+                },
+                {
+                    text: 'A week ago',
+                    value: () => {
+                    const date = new Date()
+                    date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+                    return date
+                    },
+                },
+            ],
+            disabledDate: (Date) => {
+            return time.getTime() > Date.now()
+            }
+
+            // innerDrawer: false
+        }
     },
     methods: {
         
@@ -24,6 +55,22 @@ export default{
 </script>
 
 <template>
+    <!-- <button style="margin-left: 16px" @click="drawer = true">
+        open
+    </button>
+
+    <el-drawer v-model="drawer" title="I am the title" :with-header="false">
+        <span>Hi there!</span>
+    </el-drawer>
+    <div class="block">
+      <el-date-picker
+        v-model="value1"
+        type="date"
+        placeholder="Pick a day"
+        :size="size"
+      />
+    </div> -->
+
     <HeaderMain/>
     <div class="choice">
         <div class="container">

@@ -14,14 +14,12 @@ export default
     let token = localStorage.getItem('authToken')
     let user = []
     if(token){
-      console.log('there is token')
       const promise = axiosClient
       .get('/user')
       .then(response => {
         user = response.data.user
       })
       .catch(error => {
-        console.log('there is user')
         localStorage.removeItem('authToken')
         router.push({name: 'Login'})        
       })

@@ -38,17 +38,6 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
-        // $validator = Validator::make($request->all(), [
-        //     'phone' => 'required',
-        //     'password' => 'required'
-        // ]);
-        // if($validator->fails()){
-        //     return response(
-        //         [
-        //             'errors' => $validator->errors()
-        //         ], 422
-        //     );
-        // }
         if(!Auth::attempt($request->all())){
             return response(['message' => 'Неверный номер или пароль!'], 422);
         }

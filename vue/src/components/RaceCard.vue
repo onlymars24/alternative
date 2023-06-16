@@ -69,7 +69,7 @@
 		   <button class="race__details__but" @click="race.details_menu = !race.details_menu">
 			 {{ race.details_menu ? "Скрыть детали" : "Детали рейса" }}
 		   </button>
-		   <p>Перевозчик: {{ race.carrier }}</p>
+		   <p style="margin-top: 0; margin-bottom: 0;">Перевозчик: {{ race.carrier }}</p>
 		 </div>
 	   </div>
 	 </div>
@@ -425,8 +425,9 @@
  
  .ticket-low__ins {
    padding: 0px 20px 20px;
+   padding-left: 10px;
    background-color: rgb(255, 255, 255);
-   border-top: 2px solid rgb(245, 245, 245);
+   /* border-top: 2px solid rgb(245, 245, 245); */
    border-bottom-right-radius: 6px;
    border-bottom-left-radius: 6px;
  }
@@ -976,27 +977,27 @@
  
  @media screen and (min-width: 0px) and (max-width: 767px) {
    .ticket-low__ins-down-first {
-	 display: block;
+	  display: block;
    }
  
    .ins-down-first__right {
-	 margin-left: 0px;
+	  margin-left: 0px;
    }
  
    .ticket-low__ins-down-second {
-	 display: block;
+	  display: block;
    }
  
    .ins-down-second__right {
-	 margin-left: 0px;
+	  margin-left: 0px;
    }
  
    .info__text p:nth-of-type(3) {
-	 font-size: 20px;
+	  font-size: 20px;
    }
    .ticket-low__ins-down
    {
-	display: block;
+	  display: block;
    }
  }
  </style>

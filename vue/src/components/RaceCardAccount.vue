@@ -49,7 +49,7 @@
 			 <p>{{ race.order.total }}</p>
 			 <p>руб</p>
 		   </div>
-		   <div class="right-ins__right">
+		   <div class="right-ins__right" v-if="!expired">
 			 <div class="right-ins__right-button">
 			   <button v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" @click="tickets = !tickets" class="buy__but" >
 				  Список билетов 
@@ -59,7 +59,7 @@
 			   </button>
 			 </div>
        	<ul class="tickets-list" v-show="tickets">
-          <li v-for="ticket in race.order.tickets"><a :href="'http://localhost:8000/tickets/'+ticket.hash+'.pdf'" target="_blank">Место {{ticket.seat}}</a></li>
+          <li v-for="ticket in race.order.tickets"><a :href="race.order.status == 'R' ? 'http://localhost:8000/tickets/'+ticket.hash+'_r.pdf' : 'http://localhost:8000/tickets/'+ticket.hash+'.pdf'" target="_blank">Место {{ticket.seat}}</a></li>
         </ul>
 		   </div>
 		 </div>
@@ -68,15 +68,15 @@
 	 <div class="menu__ticket-medium">
 	   <div class="ticket-medium__ins">
 		 <div class="ticket-medium__ins-left">
-		   <!-- <button class="race__details__but" @click="race.details_menu = !race.details_menu">
-			 {{ race.details_menu ? "Скрыть информацию о возврате" : "Информация о возврате" }}
-		   </button> -->
 		   <div>
-			<p v-if="race.order.status == 'S'">Билет оплачен</p>
-			<p style="color: #dc3545;" v-if="race.order.status == 'B'">Билет забронирован, но не оплачен!</p>			
+			<p v-if="race.order.status == 'S'">Заказ оплачен</p>
+			<p style="color: #dc3545;" v-if="race.order.status == 'B' && !expired">Заказ забронирован, но не оплачен!</p>
+			<p v-if="race.order.status == 'R'">Заказ возвращён</p>
+			<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
+			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>
 		   </div>
 		   <div>
-			<a @click.prevent="windowOpen = 2" href="">
+			<a @click.prevent="windowOpen = 2" href="" v-if="!expired">
 				Ещё
 			</a>
 			<transition name="anim-window">
@@ -88,35 +88,9 @@
 		 </div>
 	   </div>
 	 </div>
-	 <!-- <div class="menu__ticket-low" v-if="race.details_menu">
-	   <div class="ticket-low__ins">
- 
-		   <div class="ticket-low__ins">
-			 <div class="ticket-low__ins-down">
-			   <div class="ticket-low__ins-down-first">
-				 <div class="ins-down-first__right">
-				   <p><b>Информация о возврате билетов:</b></p>
-					<template v-for="ticket in race.order.tickets">
-						<p v-if="!ticket.supplierRepayment">Билет <strong>Место {{ticket.seat}}</strong> возврату не подлежит</p>
-						<p v-else>Сумма, подлежащая возврату покупателю за билет Место {{ticket.seat}} - {{ticket.repayment}}р. <a href="">Вернуть в один клик</a> </p>
-					</template>			   
-				 </div>
-			   </div>
-			 </div>
-		   </div>
- 
-		 <template v-if="race.section == 'conditions'">
-		   <div class="ticket-low__ins">
-			 <div class="ticket-low__ins-fourth">
-			   <a href="#">Условия возврата</a>
-			 </div>
-		   </div>
-		 </template> -->
-	   <!-- </div>
-	 </div> -->
    </div>
    	<template v-if="popupOpen">
-        <PopupWindow @CloseWindow="popupOpen = false;" :content="4" :order="race.order" @returnTicket="returnTicket" :returnInfo="returnInfo"/>
+        <PopupWindow @CloseWindow="popupOpen = false; returnInfo.step = 1;" :content="4" :order="race.order" @returnTicket="returnTicket" :returnInfo="returnInfo"/>
 	</template>
  </template>
 <script>
@@ -129,7 +103,7 @@ import axiosClient from '../axios';
 	export default{
 		components: { DepartureArrival, TicketLow, PopupWindow },
 		props: ['button_status', 'order'],
-    	emits: ['toSeats'],
+    	emits: ['toSeats', 'updateOrders'],
 		data(){
 			return{
 				race:  {
@@ -186,8 +160,9 @@ import axiosClient from '../axios';
 					step: 1,
 					status: null,
 					loading: false,
-					response: []
-				}
+					response: [  ]
+				},
+				expired: false
 			}
 		},
     computed:{
@@ -201,18 +176,13 @@ import axiosClient from '../axios';
 			if(!confirm('Вы вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
 				return
 			}
-			// window.location.reload()
-			// return
-			console.log(ticketId, orderId)
 			this.returnInfo.loading = true
 			this.returnInfo.step = 2
 			const promise = axiosClient
 			.post('/ticket/return', {ticketId: ticketId, orderId: orderId})
 			.then(response => {
-				console.log(response.data)
 			})
 			.catch(error => {
-				console.log(error)
 			})
 			await promise
 			this.returnInfo.loading = false
@@ -223,6 +193,13 @@ import axiosClient from '../axios';
 		this.race.arrivalDay = dayjs(this.race.order.tickets[0].arrivalDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].arrivalDate).format('M')]
 		this.race.dispatchTime = dayjs(this.race.order.tickets[0].dispatchDate).format('HH:mm')
 		this.race.arrivalTime = dayjs(this.race.order.tickets[0].arrivalDate).format('HH:mm')
+		let bookTime = dayjs(dayjs(this.order.created_at).format('YYYY-MM-DDTHH:mm:ss'))
+		let nowTime = dayjs(dayjs().format('YYYY-MM-DDTHH:mm:ss'))
+		let difference = nowTime.diff(bookTime) / 60000
+		if(difference > 20 && this.race.order.status == 'B'){
+			
+			this.expired = true
+		}
     }
 	}
 </script>

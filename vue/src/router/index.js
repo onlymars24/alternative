@@ -10,6 +10,12 @@ import Payment from '../views/Payment.vue'
 import Faq from '../views/Faq.vue'
 import RacesWithoutDate from '../views/RacesWithoutDate.vue'
 import Avtobus from '../views/Avtobus.vue'
+import ALogin from '../views/admin/ALogin.vue'
+import Tickets from '../views/admin/Tickets.vue'
+import Order from '../views/admin/Order.vue'
+import Admin from '../components/admin/Admin.vue'
+
+
 
 
 const routes = [
@@ -33,7 +39,6 @@ const routes = [
     name: 'Avtobus',
     component: Avtobus
   },
-
   {
     path: '/seats/:race_id',
     name: 'SeatPage',
@@ -64,15 +69,33 @@ const routes = [
     name: 'Faq',
     component: Faq
   },
-
-
-
-
   {
-    path: '/:catchAll(.*)',
-    name: 'Error',
-    component: Error
+    path: '/admin',
+    component: Admin,
+    children: [
+      {
+        path: 'login',
+        component: ALogin,
+        name: 'ALogin'
+      },
+      {
+        path: 'tickets',
+        component: Tickets,
+        name: 'Tickets'
+      },
+      {
+        path: 'order/:order_id',
+        component: Order,
+        name: 'Order'
+      },
+    ]
   },
+  // {
+  //   path: '/:catchAll(.*)',
+  //   name: 'Error',
+  //   component: Error
+  // },
+
 ]
 
 const router = createRouter({
@@ -82,6 +105,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authToken = localStorage.getItem('authToken')
+  const authAdminToken = localStorage.getItem('authAdminToken')
 
   if(authToken){
     if(to.name === 'Login'){
@@ -91,6 +115,17 @@ router.beforeEach((to, from, next) => {
   else{
     if(to.name === 'Account'){
       return next({name: 'Login'})
+    }
+  }
+
+  if(authAdminToken){
+    if(to.name === 'ALogin'){
+      return next({name: 'Tickets'})
+    }
+  }
+  else{
+    if(to.name === 'Tickets' || to.name === 'Order'){
+      return next({name: 'ALogin'})
     }
   }
 

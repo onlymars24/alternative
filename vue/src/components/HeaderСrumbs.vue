@@ -7,8 +7,8 @@
   <div class="line-head">
     <div class="container">
       <div class="race-progress">
-        <div class="passed">Выбор рейса <span class="arrow"></span></div>
-        <div class="not-passed">Пассажиры <span class="arrow"></span></div>
+        <div class="passed">Выбор места <span class="arrow"></span></div>
+        <div class="not-passed">Оформление <span class="arrow"></span></div>
         <div class="not-passed">Оплата</div>
       </div>
       <div class="race__info-head"></div>
@@ -27,10 +27,9 @@
           </p>
           <p>Тип рейса: {{race.race.type.name}}</p>
           <p>Класс рейса: {{race.race.type.clazz}}</p>
-            <!-- <DepartureArrival /> -->
         </div>
         <div class="more-detail-block-right">
-          <p><strong>Дополнительно</strong><br />{{race.race.description}}</p>
+          <p><strong>Дополнительно</strong><br/>{{race.race.description}}</p>
           <br>
           <strong>Перевозчик</strong>
           <p>Организация перевозчика: {{race.race.carrier}}</p>

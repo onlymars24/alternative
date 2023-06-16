@@ -138,10 +138,6 @@ export default {
         input.addEventListener("blur", mask, false);
         input.addEventListener("keydown", mask, false);
     });
-    // if(!Object.keys(this.userErrors).length){
-    //     console.log(this.userErrors)
-    // }
-    
     },
     methods: {
         async sendCode(){
@@ -189,7 +185,6 @@ export default {
             ));
             await promise
             this.registerLoading = false;
-            console.log(this.sms)
             if(this.sms){
                 this.wrongCodeMessage = ''
                 this.register()
@@ -202,7 +197,6 @@ export default {
             const promise = axiosClient
             .post('/register', this.user)
             .then(response => {
-                console.log(response)
                 this.successfulRegisterMessage = 'Вы успешно зарегистрировались.'
                 this.user.phone = ''
                 this.user.password = ''

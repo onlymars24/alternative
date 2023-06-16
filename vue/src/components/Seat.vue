@@ -22,19 +22,17 @@
       <div class="center-bus-body">
         <div class="bus-body">
           <div class="all-seat">
-            <!-- <button class="seat-item seat-active">1</button>
-            <button class="seat-item seat-item-busy">2</button>              
-            <button class="seat-item seat-item-none-item"></button> -->
             <div class="line-seat" v-for="n in columnsAmount">
               <template v-for="seat in seats[n-1]">
-                <button @click="chooseSeat($event)" :data-name="seat.name" :data-code="seat.code" class="seat-item" :class="{'seat-item-busy': !seat.code}">{{ seat.name }}</button>
+                <button v-if="!seat.code" :data-name="seat.name" :data-code="seat.code" class="seat-item seat-item-busy">{{ seat.name }}</button>
+                <button v-else @click="chooseSeat($event)" :data-name="seat.name" :data-code="seat.code" class="seat-item">{{ seat.name }}</button>
                 <button v-if="seat.name % 4 == 2" class="seat-item seat-item-none-item"></button>
               </template>
             </div>
           </div>
         </div>
       </div>
-      <button @click="passToForm" class="but-go">Продолжить</button>
+      <button @click="passToForm" class="but-go" :disabled="!chosenSeats.length > 0">Продолжить</button>
 </template>
 <style>
 body {

@@ -102,7 +102,7 @@ export default
     authSelf(){
         this.auth = true
         this.openWindow = false
-        Scroll()
+        this.Scroll()
     },
     NoScroll() {
         document.body.style.overflow = 'hidden';
@@ -124,7 +124,6 @@ export default
     }
   },
   async mounted(){
-    console.log(localStorage.getItem('authToken'))
     if(localStorage.getItem('authToken')){
         this.auth = true
         this.$emit('authenticateForForm')
@@ -132,7 +131,6 @@ export default
         .get('/user')
         .then(response => {
             this.user = response.data.user
-            console.log(this.user)
         })
         .catch(error => {
 

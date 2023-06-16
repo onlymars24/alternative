@@ -19,7 +19,6 @@ export default{
         
     },
     mounted() {
-        // this.$route.params['date']
         this.today = dayjs().format('YYYY-MM-DD')
         router.push({ name: "Races", params: { dispatch_id: this.$route.params['dispatch_id'], dispatch_name: this.$route.params['dispatch_name'], arrival_id: this.$route.params['arrival_id'], arrival_name: this.$route.params['arrival_name'], date: this.today } });
     },

@@ -2,16 +2,11 @@
     <div>
       <div class="container"><Header/></div>
     </div>
-    <div class="container">
-      <div v-if="loadingSeats" class="window-bus">
-          <img src="../assets/bus_loading.png">
-          <p style="color: grey;">Загрузка.....</p>  
-          <div class="loader"></div>
-      </div>      
+    <div class="container"> 
+      <BusLoading v-if="loadingSeats"/>
     </div>
     <HeaderСrumbsVue v-if="!loadingSeats" :race="race" />
     <div v-if="!loadingSeats" class="container">
-      <!-- <pre>{{ race }}</pre> -->
       <div class="window-bus">
         {{ $route.params['route_id'] }}
         <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
@@ -23,10 +18,11 @@
 import Seat from '../components/Seat.vue';
 import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
 import Header from '../components/Header.vue';
+import BusLoading from '../components/BusLoading.vue';
 import axios from 'axios';
 
 export default {
-  components: { Seat, HeaderСrumbsVue, Header },
+  components: { Seat, HeaderСrumbsVue, Header, BusLoading },
   data(){
     return {
       race: [],
@@ -80,8 +76,6 @@ export default {
       temp = []
       this.columnsAmount = Math.ceil( this.seats.length/4)
       this.seats = newSeats
-      
-      console.log(this.columnsAmount)
     }
   }
 

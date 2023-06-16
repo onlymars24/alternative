@@ -99,8 +99,7 @@ export default {
                 this.$emit('authenticateForForm');
             })
             .catch(error => {
-                console.log(error)
-                if(error.response.status == 422){
+                if(error.response.status || error.response.status == 422){
                     this.wrongCredentialsMessage = error.response.data.message
                 }
             })

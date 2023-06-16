@@ -36,8 +36,6 @@ export default{
             return el.name && el.name.toUpperCase().indexOf(this.dispatchEl.name.toUpperCase()) !== -1
         });
         this.dispatchEl.id = tempDispatchEl[0].id
-
-        console.log(this.dispatchEl.id)
         const promise2 = axiosClient
             .get('/arrival_points/'+this.dispatchEl.id)
             .then(response => (this.arrivalData = JSON.parse(response.data)));
@@ -46,10 +44,6 @@ export default{
             return el.name && el.name.toUpperCase().indexOf(this.arrivalEl.name.toUpperCase()) !== -1
         });
         this.arrivalEl.id = tempArrivalEl[0].id
-        console.log(this.arrivalEl.id)
-
-        console.log(tempDispatchEl, tempArrivalEl)
-        console.log(this.dispatchEl, this.arrivalEl)
         this.today = dayjs().format('YYYY-MM-DD')
         router.push({ name: 'Races', params: { dispatch_id: this.dispatchEl.id, dispatch_name: this.dispatchEl.name, arrival_id: this.arrivalEl.id, arrival_name: this.arrivalEl.name, date: this.today } })
 

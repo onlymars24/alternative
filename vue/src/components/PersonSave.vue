@@ -229,7 +229,6 @@ export default
       this.deleteLoading = false
     },
     async editPassanger(passengerId, index){
-      console.log(this.passengers[index])
       this.editLoading = true
       this.passengers[index].errors = {}
       const promise = axiosClient
@@ -243,7 +242,6 @@ export default
         
       })
       await promise
-      console.log(this.passengers[index].errors)
       this.editLoading = false
     }
   }

@@ -11,16 +11,10 @@
       </div>
     </div>
     <div class="container">
-      <div v-if="loadingRace" class="window-bus">
-          <img src="../assets/bus_loading.png">
-          <p style="color: grey;">Загрузка.....</p>  
-          <div class="loader"></div>
-      </div>  
+      <BusLoading v-if="loadingRace"/>
     </div>
 
   <HeaderСrumbsVue :race="race" v-if="!loadingRace"/>
-  <!-- <pre>{{ race }}</pre>
-  <pre>{{ formData }}</pre> -->
   <div class="container" v-if="!loadingRace">
     <div class="form__content">
     <div class="information-race">
@@ -36,7 +30,7 @@
     <div class="">
       <div v-for="(el, indexTicket) in formData" class="form-reg" style="position: relative;">
         <!-- <pre>{{ el.errors }}</pre> -->
-        <svg @click="removePassenger(el.seat.code)" style="position: absolute; top: 7px; right: 7px;" xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+        <svg @click="removePassenger(el.seat.code)" style="position: absolute; top: 7px; right: 7px; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
       <h5>Оформление билета</h5>
@@ -277,13 +271,14 @@ import Login from '../components/Login.vue';
 import Registration from '../components/Registration.vue';
 import ResetPassword from '../components/ResetPassword.vue';
 import Header from '../components/Header.vue';
+import BusLoading from '../components/BusLoading.vue';
 
 export default
 {
-  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration, Header, ResetPassword },
+  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration, Header, ResetPassword, BusLoading },
   data() {
     return {
-      user: {},
+      user: [],
       openWindow: false,
       content: 2,
       chosenSeats: [],
@@ -334,36 +329,14 @@ export default
             saved: el.saved
           }
           )
-          
-          // if(!el.saved){
-          //   const promise3 = axiosClient
-          //   .post('/passenger/save', {
-          //     surname: el.surname,
-          //     name: el.name,
-          //     patronymic: el.patronymic,
-          //     doc_series: el.doc_series,
-          //     doc_number: el.doc_number,
-          //     gender: el.gender,
-          //     citizenship: el.citizenship,
-          //     birth_date: el.birth_date,
-          //   })
-          //   .then(response => {
-          //     this.order = response.data.order
-          //   })
-          //   await promise3
-          // }        
         })
-        console.log(this.sale)
         const promise2 = axiosClient
         .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale})
         .then(response => {
-          console.log(response)
           this.order = response.data.order
         })
         .catch(error => {
-          console.log(error)
           this.errorMessageFromAPI = error.response.data.error.errorMessage
-          console.log(this.errorMessageFromAPI)
         })
         await promise2
         if(!this.errorMessageFromAPI){
@@ -404,17 +377,32 @@ export default
       }
       return formHasErrors
     },
-    authenticateForForm(){
+    async authenticateForForm(){
+      const promise1 = axiosClient
+      .get('/user')
+      .then(response => (
+          this.user = response.data.user
+      ));
+      await promise1
+      const promise2 = axiosClient
+      .get('/passengers')
+      .then(response => {
+        this.passengers = response.data.passengers
+      })
+      .catch(error => {
+
+      })
+      await promise2  
       this.authForForm = true
     },
     disauthenticateForForm(){
       this.authForForm = false
+      this.user = []
     },
     putRedFromLoginAway(){
       this.unAuthMessage = ''
     },
     choosePassenger(event, indexTicket){
-      console.log(event.target.value)
       let passenger = this.passengers[event.target.value]
       this.formData[indexTicket].name = passenger.name
       this.formData[indexTicket].surname = passenger.surname
@@ -445,20 +433,15 @@ export default
         }    
       });
       this.updateSession()
-      console.log(this.race.seats)
     },
     updateSession(){
       let tempChosenSeats = []
-      // console.log(this.race.seats)
       let tempRaceSeats = this.race.seats
       this.formData.forEach(function(el){
-        // console.log(tempRaceSeats)
         let temp = tempRaceSeats.filter(elem => {
-          // console.log('Together: '+el.seat.code+' '+elem.code)
           return el.seat.code == elem.code
         })[0]
         el.seat = temp
-        // console.log('Temp: '+temp)
         tempChosenSeats.push(temp)
       })
       localStorage.setItem('chosenSeats', JSON.stringify(tempChosenSeats))
@@ -525,13 +508,34 @@ export default
         return
       }
       let tempFormData = this.formData.filter(el => {
-        // console.log('Together: '+el.seat.code+' '+elem.code)
         return el.seat.code != seatCode
       })
       
       this.formData = tempFormData
       this.updateSession()
-    }
+    },
+    checkChosenSeats(){
+      if(!this.chosenSeats){
+        return false
+      }
+      let tempRaceSeats = this.race.seats
+      let invalidSeats = false
+      this.chosenSeats.forEach(function(el){
+        let temp = tempRaceSeats.filter(elem => {
+          return el.code && elem.code && el.code == elem.code
+        })[0]
+        if(!temp){
+          invalidSeats = true
+        }
+      })
+      if(invalidSeats){
+        return false
+      }
+      else{
+        return true        
+      }
+
+    }//[{"cdode":"118011","name":"Место 20","type":null}]
   },
   computed: {
     totalCost(){
@@ -549,10 +553,11 @@ export default
   },
   async mounted(){
     var dateNewGet = new Date();
-               this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate()  ;
+    this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();
     this.loadingRace = true
     if(localStorage.getItem('authToken')){
       this.auth = true
+      this.authenticateForForm()
     }
     const promise = axiosClient
       .get('/race/'+this.$route.params['race_id'])
@@ -560,7 +565,6 @@ export default
           this.race = response.data
       ));
     await promise
-
     const promise1 = axiosClient
       .get('/countries')
       .then(response => (
@@ -568,11 +572,16 @@ export default
       ));
     await promise1
     this.chosenSeats = JSON.parse(localStorage.getItem('chosenSeats'))
+    
+    if(!this.checkChosenSeats()){
+      router.push({ name: 'SeatPage', params: { race_id: this.race.race.uid} })
+      localStorage.removeItem('chosenSeats')  
+      return    
+    }
     let totalTicketCode = this.race.ticketTypes.filter(el => {
       return el.name == 'Полный';
     })
     totalTicketCode = totalTicketCode[0].code
-
     this.chosenSeats.forEach(el => this.formData.push(
       {
         name: '',
@@ -602,21 +611,17 @@ export default
       }
     ))
     this.updateSession()
-    // let tempChosenSeats = []
-    // this.formData.forEach(function(el){
-    //   tempChosenSeats.push(el.seat)
-    // })
-    // localStorage.setItem('chosenSeats', JSON.stringify(tempChosenSeats))
-    const promise2 = axiosClient
-    .get('/passengers')
-    .then(response => {
-      this.passengers = response.data.passengers
-    })
-    .catch(error => {
+    if(this.authForForm){
+      const promise2 = axiosClient
+      .get('/passengers')
+      .then(response => {
+        this.passengers = response.data.passengers
+      })
+      .catch(error => {
 
-    })
-    await promise2
-    // console.log(this.formData)
+      })
+      await promise2      
+    }
     this.loadingRace = false
   }
 };
@@ -1013,9 +1018,6 @@ select
   }
   .bottom__inputs div{
     width: 100%;  
-  }
-  .bottom__inputs div input{
-    
   }
   .passenger__addition-outside{
   display: flex;

@@ -11,7 +11,6 @@ export default
             const promise = axiosClient
             .post('/order/confirm', {order_id: this.$route.params['order_id']})
             .then(response => {
-                console.log(response)
             })
             await promise
             router.push({ name: 'Account'})            

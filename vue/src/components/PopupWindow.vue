@@ -1,7 +1,7 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <!-- eslint-disable max-len -->
 <template>
-<div class="background-close" @click="$emit('CloseWindow')"></div>
+<div class="background-close" @click=" reloadPage(); $emit('CloseWindow');"></div>
 <div class="popup-container">
     <!-- <div class="closeWindow" @click="$emit('CloseWindow')">✖</div> -->
     <!-- <Seat v-if="this.content==1"></Seat> -->
@@ -24,7 +24,7 @@
       </div> 
       <div v-if="returnInfo.step==2">
           <div v-if="returnInfo.loading" class="loader__outside">
-            <img src="../assets/bus_loading.png">
+            <img src="../assets/bus_loading.png" style="max-width: 90%;">
             <p style="color: grey;">Загрузка.....</p>  
             <div class="loader"></div>
           </div>
@@ -64,7 +64,11 @@ export default
     },
   },
   methods: {
-
+		reloadPage(){
+			if(this.content==4 && this.returnInfo.step == 2){
+				location.reload(); return false;
+			}
+		}
   }
 };
 </script>

@@ -1,36 +1,39 @@
 <template>
-        <div class="personal-account__content">
-		<template v-for="order in orders">
-        	<RaceCardAccount :order="order"/>
-		</template>
-        <!-- <div class="personal-account__content-empty">
-        <h2>У вас пока нет предстоящих поездок</h2>
-        <p>Чтобы найти билеты на автобус выберите направление,
-             дату поездки и количество пассажиров</p>
-        </div> -->
-        </div>
+  <BusLoading v-if="loading"/>
+  <div v-else class="personal-account__content">
+    <template v-for="order in orders">
+          <RaceCardAccount :order="order" @updateOrders="updateOrders"/>
+    </template>
+  </div>
 </template>
 <script>
 import axiosClient from '../axios';
 import RaceCardAccount from '../components/RaceCardAccount.vue';
+import BusLoading from '../components/BusLoading.vue';
 
 export default
 {
-  components: { RaceCardAccount },
+  components: { RaceCardAccount, BusLoading },
   data(){
       return{
-			orders: {},
-			loading: false 
+        orders: {},
+        loading: false 
       }
   },
   async mounted(){
-	const promise = axiosClient
-	.get('/orders')
-	.then(response => {
-		this.orders = response.data.orders
-		console.log(this.orders)
-	})
-	await promise
+	  this.updateOrders()
+  },
+  methods: {
+    async updateOrders(){
+      this.loading = true
+      const promise = axiosClient
+      .get('/orders')
+      .then(response => {
+        this.orders = response.data.orders
+      })
+      await promise
+      this.loading = false
+    }
   }
 
 };

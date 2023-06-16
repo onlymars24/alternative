@@ -44,7 +44,7 @@ class ArrivalPointsController extends Controller
         }
         else{
             $arrival_points = Http::withHeaders([
-                'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
+                'Authorization' => env('AVTO_SERVICE_KEY'),
             ])->get('https://cluster.avtovokzal.ru/gdstest/rest/arrival_points/'.$id)->object();
             CacheArrivalPoint::create([
                 'dispatch_point_id' => $id,

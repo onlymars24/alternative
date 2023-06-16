@@ -38,7 +38,7 @@ class RacesController extends Controller
     public function show($date, Request $request)
     {
         $races = Http::withHeaders([
-            'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
+            'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get('https://cluster.avtovokzal.ru/gdstest/rest/races/'.$request->dispatch_point_id.'/'.$request->arrival_point_id.'/'.$date)->object();
         return json_encode($races);
     }

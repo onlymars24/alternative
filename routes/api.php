@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\Api\DateController;
@@ -50,6 +51,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/sms/reset', [SmsController::class, 'sendReset']);
 Route::get('/sms/reset', [SmsController::class, 'getReset']);
 Route::post('/reset', [AuthController::class, 'reset']);
+
+
+Route::post('/admin/login', [AdminController::class, 'login']);
+Route::get('/tickets', [TicketController::class, 'all']);
+Route::get('/order', [OrderController::class, 'one']);
 
 
 Route::apiResources([

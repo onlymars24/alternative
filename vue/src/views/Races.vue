@@ -4,11 +4,7 @@
     <!-- RACES <pre>{{ races }}</pre> -->
     <div class="menu" style="margin-top: 50px;">
 		<div class="container">
-            <div v-if="loadingRaces" class="loader__outside">
-                <img src="../assets/bus_loading.png">
-                <p style="color: grey;">Загрузка.....</p>  
-                <div class="loader"></div>
-            </div>
+            <BusLoading v-if="loadingRaces"/>
             <div v-else-if="!races.length" class="not__found">
                 <div class="not__found-img">
                     <img src="../assets/free-icon-sad-3350122.png">
@@ -47,11 +43,12 @@
                 	</button>
             	</div>
 				</div>
+                <template v-for="race in sortedRaces">
+                    <RaceCard @toSeats="toSeats" :race="race"/> 
+                </template>                
 			</div>
             
-            <template v-for="race in sortedRaces">
-                <RaceCard @toSeats="toSeats" :race="race"/> 
-            </template>
+
             <!-- <RaceCard/>  -->
 		</div>
 	</div>
@@ -149,6 +146,7 @@
 import HeaderMain from '../components/HeaderMain.vue';
 import Footer from '../components/Footer.vue';
 import RaceCard from '../components/RaceCard.vue';
+import BusLoading from '../components/BusLoading.vue';
 import router from '../router';
 import axios from 'axios';
 import * as dayjs from 'dayjs'
@@ -157,7 +155,8 @@ export default {
     components: {
         HeaderMain,
         Footer,
-        RaceCard
+        RaceCard,
+        BusLoading
     },
     data(){
         return{
@@ -218,45 +217,18 @@ export default {
                 ));
             await promise
             
-            // console.log(this.races)
-            this.races.forEach(race => {
-                race.section = 'route'
-                race.details_menu = false
-                // console.log(dayjs(race.dispatchDate))
-                // race.dispatchDateObj = dayjs(race.dispatchDate)
-                // race.arrivalObj = dayjs(race.arrivalDate)
-                race.dispatchDay = dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')]
-                race.arrivalDay = dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')]
-                
-                race.dispatchTime = dayjs(race.dispatchDate).format('HH:mm')
-                race.arrivalTime = dayjs(race.arrivalDate).format('HH:mm')
-                console.log()
-                // this.get_driving_time(race.dispatchDate, race.arrivalDate)
-                // .then(response => (
-                //     race.driving_time = response
-                // ))
+            if(this.races.length > 0){
+                this.races.forEach(race => {
+                    race.section = 'route'
+                    race.details_menu = false
+                    race.dispatchDay = dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')]
+                    race.arrivalDay = dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')]
+                    race.dispatchTime = dayjs(race.dispatchDate).format('HH:mm')
+                    race.arrivalTime = dayjs(race.arrivalDate).format('HH:mm')
+                });                
+            }
 
-
-                // difference = dayjs(race.arrivalDate).diff(dayjs(race.dispatchDate))/1000
-                
-                // race.difference = ''
-                // if(~~(difference / 3600) != 0){
-                //     race.difference = difference -(difference / 3600)+'ч.'
-                // }
-                
-            });
             this.loadingRaces = false
-        },
-        async get_driving_time(dispatchDate, arrivalDate){
-            let driving_time = ''
-            const promise1 = axios
-                .get('http://localhost:8000/api/date/format?start='+dispatchDate+'&finish='+arrivalDate)
-                .then(response => (
-                    driving_time = response.data
-                ));
-                await promise1
-                console.log(driving_time)
-            return driving_time;
         },
         sort(event, param){
             this.sortingParams.param = param;
@@ -269,14 +241,6 @@ export default {
                 return num;
             }
         },
-        // tommorow(){
-        //     let date = new Date(this.$route.params['date']);
-        //     return date.getFullYear() + '-' + this.addZero(date.getMonth() + 1) + '-' + this.addZero(date.getDate()+1);
-        // },
-        // afterTommorow(){
-        //     let date = new Date(this.$route.params['date']);
-        //     return date.getFullYear() + '-' + this.addZero(date.getMonth() + 1) + '-' + this.addZero(date.getDate()+2);
-        // },
         toSeats(raceId){
             router.push({name: 'SeatPage', params: {race_id: raceId}})
         }

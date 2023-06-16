@@ -129,9 +129,6 @@ export default {
         input.addEventListener("blur", mask, false);
         input.addEventListener("keydown", mask, false);
     });
-    // if(!Object.keys(this.userErrors).length){
-    //     console.log(this.userErrors)
-    // }
     
     },
     methods: {
@@ -152,7 +149,6 @@ export default {
                 }
             });
             await promise
-            // console.log(this.sms)
             this.resetLoading = false;
             if(!this.notExistingUserMessage){
                 this.stepLog=2
@@ -176,18 +172,15 @@ export default {
             this.sms = []
             this.resetLoading = true;
             this.wrongCodeMessage = ''
-            console.log(this.code, this.user.phone)
             const promise = axiosClient
             .get('/sms/reset?code='+this.code+'&phone='+this.user.phone)
             .then(response => {
                 this.sms = response.data
-                console.log(this.sms)
             })
             .catch(error => {
                 if(error.response.status == 422){
                     this.wrongCodeMessage = error.response.data.error
                 }
-                console.log(error)
             })
             await promise
             this.resetLoading = false;
@@ -208,42 +201,20 @@ export default {
                 password_confirmation: this.user.password_confirmation, 
             })
             .then(response => {
-                console.log(response)
                 this.resetResponseStatus = response.status
-                console.log('DA')
             })
             .catch(error => {
                 if(error.response.status == 422){
                     this.userErrors = error.response.data.errors
-                    console.log(this.userErrors)
                 }
-                console.log(error)
             })
             await promise
             this.resetLoading = false;
             if(this.resetResponseStatus == 200){
                 this.successfulResetMessage = 'Пароль успешно изменён!'
                 this.stepLog=1
-                console.log(this.resetResponseStatus)
             }            
         },
-        // async register(){
-        //     const promise = axiosClient
-        //     .post('/register', this.user)
-        //     .then(response => {
-        //         console.log(response)
-        //         this.successfulRegisterMessage = 'Вы успешно зарегистрировались.'
-        //         this.user.phone = ''
-        //         this.user.password = ''
-        //         this.user.password_confirmation = ''
-        //         this.stepLog=1
-        //     })
-        //     .catch(error => {
-        //         if(error.response.status == 422){
-        //             this.userErrors = error.response.data.errors
-        //         }
-        //     })
-        // }
     }
 };
 </script>
