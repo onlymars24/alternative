@@ -42,6 +42,7 @@
 			 </div>
 		   </div>
 		 </div>
+		 
 	   </div>
 	   <div class="ticket-up__right" v-if="true">
 		 <div class="ticket-up__right-ins">
@@ -59,7 +60,7 @@
 			   </button>
 			 </div>
        	<ul class="tickets-list" v-show="tickets">
-          <li v-for="ticket in race.order.tickets"><a :href="race.order.status == 'R' ? 'http://localhost:8000/tickets/'+ticket.hash+'_r.pdf' : 'http://localhost:8000/tickets/'+ticket.hash+'.pdf'" target="_blank">Место {{ticket.seat}}</a></li>
+          <li v-for="ticket in race.order.tickets"><a :href="race.order.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">Место {{ticket.seat}}</a></li>
         </ul>
 		   </div>
 		 </div>
@@ -73,19 +74,24 @@
 			<p style="color: #dc3545;" v-if="race.order.status == 'B' && !expired">Заказ забронирован, но не оплачен!</p>
 			<p v-if="race.order.status == 'R'">Заказ возвращён</p>
 			<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
-			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>
+			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>					
 		   </div>
+
 		   <div>
 			<a @click.prevent="windowOpen = 2" href="" v-if="!expired">
 				Ещё
 			</a>
+
 			<transition name="anim-window">
 				<nav style="z-index: 5;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
 					<a href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
 				</nav>
 			</transition>	
 		   </div>
+   
 		 </div>
+		<!-- <div><p>Заказ оформлен: {{ race.order.created }}</p></div>
+		<div><p>Заказ оплачен: {{ race.order.finished }}</p></div>		 -->
 	   </div>
 	 </div>
    </div>
@@ -98,7 +104,7 @@
 	import TicketLow from './TicketLow.vue';
 	import router from '../router'
 	import PopupWindow from '../components/PopupWindow.vue';
-	import * as dayjs from 'dayjs'
+	import dayjs from 'dayjs'
 import axiosClient from '../axios';
 	export default{
 		components: { DepartureArrival, TicketLow, PopupWindow },
@@ -162,7 +168,8 @@ import axiosClient from '../axios';
 					loading: false,
 					response: [  ]
 				},
-				expired: false
+				expired: false,
+				baseUrl: ''
 			}
 		},
     computed:{
@@ -189,6 +196,7 @@ import axiosClient from '../axios';
 		}
     },
     mounted(){
+		this.baseUrl = import.meta.env.VITE_API_BASE_URL
 		this.race.dispatchDay = dayjs(this.race.order.tickets[0].dispatchDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].dispatchDate).format('M')]
 		this.race.arrivalDay = dayjs(this.race.order.tickets[0].arrivalDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].arrivalDate).format('M')]
 		this.race.dispatchTime = dayjs(this.race.order.tickets[0].dispatchDate).format('HH:mm')
@@ -197,7 +205,6 @@ import axiosClient from '../axios';
 		let nowTime = dayjs(dayjs().format('YYYY-MM-DDTHH:mm:ss'))
 		let difference = nowTime.diff(bookTime) / 60000
 		if(difference > 20 && this.race.order.status == 'B'){
-			
 			this.expired = true
 		}
     }

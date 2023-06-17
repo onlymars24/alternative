@@ -16,7 +16,7 @@
         <ul class="header__links header__links__place" @mouseleave="$store.commit('windowHeader', 0)">
             <li >
                 <a @click="" @click.prevent="$store.commit('windowHeader', 1)" href="">
-                    <img :src="blackText ? '/src/img/headphones.png': '/src/img/headphones-white.png'" alt="">
+                    <img :src="blackText ? '/img/headphones.png': '/img/headphones-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Служба поддержки</span>
                 </a>
                 <transition name="anim-window">
@@ -30,14 +30,14 @@
             </li>
             <li v-if="!auth && !authForForm">
                 <a href="#" @click.prevent="openWindow = true , NoScroll()">
-                    <img :src="blackText ? '/src/img/login_man.png': '/src/img/login_man-white.png'" alt="">
+                    <img :src="blackText ? '/img/login_man.png': '/img/login_man-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Авторизоваться</span>
                 </a>
             </li>
             <!-- <li v-if="auth || authForForm"> -->
             <li v-if="auth || authForForm">
                 <a @click.prevent="$store.commit('windowHeader', 2)" href="/account">
-                    <img :src="blackText ? '/src/img/login_man.png': '/src/img/login_man-white.png'" alt="">
+                    <img :src="blackText ? '/img/login_man.png': '/img/login_man-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Личный кабинет</span>
                 </a>
                 <transition name="anim-window">

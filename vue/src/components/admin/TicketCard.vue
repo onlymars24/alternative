@@ -11,12 +11,12 @@
         <div class="text item" v-if="ticket.order_id"><strong>Заказ с ID:</strong> {{ticket.order_id}}</div>
         <div class="text item"><strong>Статус:</strong> {{ ticketStatuses[ticket.status].label }}</div>
         <div class="text item"><strong style="margin-right: 5px;">Билет:</strong>
-            <el-link v-if="ticket.status == 'S' || ticket.status == 'R'" type="primary" :href="'http://localhost:8000/tickets/'+ticket.hash+'.pdf'" target="_blank" alt="">
+            <el-link v-if="ticket.status == 'S' || ticket.status == 'R'" type="primary" :href="baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank" alt="">
                 PDF<i class="el-icon-tickets el-icon--right"></i>
             </el-link>
         </div>
         <div class="text item"><strong style="margin-right: 5px;">Квитанция о возврате:</strong>
-            <el-link type="primary" v-if="ticket.status == 'R'" :href="'http://localhost:8000/tickets/'+ticket.hash+'_r.pdf'" target="_blank" alt="">
+            <el-link type="primary" v-if="ticket.status == 'R'" :href="baseUrl+'/tickets/'+ticket.hash+'_r.pdf'" target="_blank" alt="">
                 PDF<i class="el-icon-tickets el-icon--right"></i>
             </el-link>
         </div>
@@ -50,20 +50,21 @@
 <script>
 import { ref } from "vue";
 import router from '../../router'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 
 export default
 {
     props: ['ticket', 'ticketStatuses'],
     data() {
         return {
-
+            baseUrl: ''
         }
     },
     methods: {
 
     },
     mounted(){
+        this.baseUrl = import.meta.env.VITE_API_BASE_URL
         this.ticket.dispatchDate = dayjs(this.ticket.dispatchDate).format('YYYY-MM-DD hh:mm')
         this.ticket.birthday = dayjs(this.ticket.birthday).format('YYYY-MM-DD')
     }

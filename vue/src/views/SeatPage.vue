@@ -20,6 +20,7 @@ import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
 import Header from '../components/Header.vue';
 import BusLoading from '../components/BusLoading.vue';
 import axios from 'axios';
+import axiosClient from '../axios'
 
 export default {
   components: { Seat, HeaderСrumbsVue, Header, BusLoading },
@@ -32,8 +33,8 @@ export default {
     }
   },
   async mounted(){
-    const promise = axios
-      .get('http://localhost:8000/api/race/'+this.$route.params['race_id'])
+    const promise = axiosClient
+      .get('/race/'+this.$route.params['race_id'])
       .then(response => (
           this.race = response.data
       ));

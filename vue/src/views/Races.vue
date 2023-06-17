@@ -24,22 +24,22 @@
 				<div class="menu__inro-sort">
 				<div class="inro-sort__button">
                 	<button @click="sort($event, 'dispatchDate')" :class="{active: sortingParams.param == 'dispatchDate'}">
-                		Время отправления <img v-if="sortingParams.param == 'dispatchDate'" :src="sortingParams.arrowUp ?  '/src/assets/arrow_up.svg' : '/src/assets/arrow_down.svg'" alt="">
+                		Время отправления <img v-if="sortingParams.param == 'dispatchDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
                 	</button>
             	</div>
             	<div class="inro-sort__button">
                 	<button @click="sort($event, 'freeSeatCount')" :class="{active: sortingParams.param == 'freeSeatCount'}">
-                		Количество билетов <img v-if="sortingParams.param == 'freeSeatCount'" :src="sortingParams.arrowUp ?  '/src/assets/arrow_up.svg' : '/src/assets/arrow_down.svg'" alt="">
+                		Количество билетов <img v-if="sortingParams.param == 'freeSeatCount'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
                 	</button>
             	</div>
             	<div class="inro-sort__button">
                 	<button @click="sort($event, 'arrivalDate')" :class="{active: sortingParams.param == 'arrivalDate'}">
-                		Время прибытия <img v-if="sortingParams.param == 'arrivalDate'" :src="sortingParams.arrowUp ?  '/src/assets/arrow_up.svg' : '/src/assets/arrow_down.svg'" alt="">
+                		Время прибытия <img v-if="sortingParams.param == 'arrivalDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
                 	</button>
             	</div>
             	<div class="inro-sort__button">
                 	<button @click="sort($event, 'price')" :class="{active: sortingParams.param == 'price'}">
-                		Стоимость <img v-if="sortingParams.param == 'price'" :src="sortingParams.arrowUp ?  '/src/assets/arrow_up.svg' : '/src/assets/arrow_down.svg'" alt="">
+                		Стоимость <img v-if="sortingParams.param == 'price'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
                 	</button>
             	</div>
 				</div>
@@ -149,7 +149,8 @@ import RaceCard from '../components/RaceCard.vue';
 import BusLoading from '../components/BusLoading.vue';
 import router from '../router';
 import axios from 'axios';
-import * as dayjs from 'dayjs'
+import axiosClient from '../axios'
+import dayjs from 'dayjs'
 
 export default {
     components: {
@@ -210,8 +211,8 @@ export default {
         async changeRaces0(date, dispatch_id, arrival_id){
             this.loadingRaces = true
             this.races = []
-            const promise = axios
-                .get('http://localhost:8000/api/races/'+date+'/?dispatch_point_id='+dispatch_id+'&arrival_point_id='+arrival_id)
+            const promise = axiosClient
+                .get('/races/'+date+'/?dispatch_point_id='+dispatch_id+'&arrival_point_id='+arrival_id)
                 .then(response => (
                     this.races = response.data
                 ));

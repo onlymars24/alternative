@@ -91,7 +91,7 @@
 <script>
 import { ref } from "vue";
 import Calendar from '../../components/admin/Calendar.vue'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import router from '../../router'
 import Header from '../../components/admin/Header.vue'
 import TicketCard from '../../components/admin/TicketCard.vue'

@@ -80,7 +80,7 @@ import router from '../router'
 import axios, {isCancel, AxiosError} from 'axios';
 import axiosClient from '../axios'
 import Header from '../components/Header.vue'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 export default{
         components: {
             Header

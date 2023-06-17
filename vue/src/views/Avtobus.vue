@@ -1,7 +1,7 @@
 <script>
 import Header from '../components/Header.vue'
 import axiosClient from '../axios'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import router from '../router'
 
 export default{

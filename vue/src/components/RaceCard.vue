@@ -504,6 +504,7 @@
    font-size: 14px;
    flex-direction: column;
    justify-content: space-between;
+   padding: 22px 12px 12px;
  }
  
  .ins-down-second__left {

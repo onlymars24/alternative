@@ -7,7 +7,7 @@ export default
   data()
   {
     return{
-      openInputs: false,
+      openInputs: false
     }
   },
   async mounted(){

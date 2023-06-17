@@ -249,8 +249,11 @@
       <div v-if="errorMessageFromAPI" style="color: red;" class="">
         {{ errorMessageFromAPI }}
       </div>
-      
-      <button @click="confirmBook" class="pay-but">Перейти к оплате</button>
+      <div v-if="confirmBookLoading" class="text-center" style="margin: 10px 0;">
+          <div class="spinner-border" role="status"></div>
+      </div>      
+      <button @click="confirmBook" :disabled="confirmBookLoading" class="pay-but">Перейти к оплате</button>
+
     </div>
     </div>
   </div>
@@ -296,6 +299,7 @@ export default
       option: 'login',
       errorMessageFromAPI: '',
       dateNew: '',
+      confirmBookLoading: false
     };
   },
   methods: {
@@ -307,6 +311,7 @@ export default
     },
     async confirmBook(code){
       if(!this.validateFrom()){
+        this.confirmBookLoading = true
         this.formData.forEach(el => {this.sale.push(
           {
             lastName: el.surname,
@@ -342,7 +347,7 @@ export default
         if(!this.errorMessageFromAPI){
           router.push({name: 'Payment', params: { order_id: this.order.id} })     
         }
-           
+        this.confirmBookLoading = false  
       }
     },
     validateFrom(){

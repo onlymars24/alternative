@@ -58,7 +58,7 @@
 </template>
 <script>
 import DepartureArrival from '../components/DepartureArrival.vue';
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 
 export default {
   components: { DepartureArrival },

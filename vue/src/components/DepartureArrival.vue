@@ -16,7 +16,7 @@
         </div></div>
 </template>
 <script>
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 export default
 {
     props: ['race'],

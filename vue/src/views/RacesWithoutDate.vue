@@ -1,7 +1,7 @@
 <script>
 import Footer from '../components/Footer.vue'
 import HeaderMain from '../components/HeaderMain.vue'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import router from '../router'
 
 export default{
