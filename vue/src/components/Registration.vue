@@ -159,10 +159,11 @@ export default {
             console.log(this.sms)
             this.registerLoading = false;
             if(!Object.keys(this.userErrors).length){
-                this.stepLog=2
-                this.sendingCodeDisable = true
-                this.countDown = 60
-                this.countDownTimer()
+                // this.stepLog=2
+                // this.sendingCodeDisable = true
+                // this.countDown = 60
+                // this.countDownTimer()
+                this.register() //temp
             }
         },
         countDownTimer () {

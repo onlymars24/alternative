@@ -33,7 +33,7 @@
                         </template>
                     </ul>
                     <p class="">Откуда</p>
-                    <input :data-id="dispatchEl.id" :data-name="dispatchEl.name" @focus="dispatchFocus" @blur="dispatchBlur" v-model="dispatchText" class="main__table-input-1" type="text">
+                    <input :data-id="dispatchEl.id" :data-name="dispatchEl.name" @focus="dispatchFocus" @blur="dispatchBlur" v-model="dispatchText" class="main__table-input-1" type="text" placeholder="Заполните откуда">
                 </div>
                 <div class="main__table-table">
                     <ul v-if="arrivalPointEmpty" class="hint">
@@ -54,12 +54,12 @@
                         </template>
                     </ul>
                     <p class="">Куда</p>
-                    <input @click="arrivalFocus" @blur="arrivalBlur" v-model="arrivalText" :disabled="arrivalPointDisabled" class="main__table-input" list="OWNER" :placeholder="arrivalPointDisabled ? 'Укажите Откуда' : ''" type="text">
+                    <input @click="arrivalFocus" @blur="arrivalBlur" v-model="arrivalText" :disabled="arrivalPointDisabled" class="main__table-input" list="OWNER" placeholder="Заполните куда" type="text">
                 </div>
                 <div class="main__table-table">
                         <p class="">Дата поездки</p>
-                        <input class="main__table-date" type="date" :min="dateNew" :max="toMonth"  v-model="date">
-                    </div>  
+                        <input class="main__table-date" type="date" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
+                </div>  
                 <div class="main__table-button">
                     <button type="submit" class="main__button" :disabled="disabledButton">
                         Найти билет
@@ -349,6 +349,14 @@ export default{
 }
 </script>
 <style>
+/* ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+} */
+::-webkit-calendar-picker-indicator{
+    width: 100%;
+    position: absolute;
+    opacity: 0;
+}
 .main__another__date{
   text-align: center;
   margin-top: 15px;

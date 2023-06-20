@@ -1,5 +1,5 @@
 <template>
-    <button @click="pay">Списать деньги за заказ</button>
+    <button @click="pay" style="width: 400px; height: 200px; background-color: grey;">Списать деньги за заказ</button>
 </template>
 <script>
 import axiosClient from '../axios';

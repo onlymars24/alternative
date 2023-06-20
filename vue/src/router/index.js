@@ -49,11 +49,11 @@ const routes = [
     name: 'Form',
     component: form
   },
-  {
-    path: '/login',
-    name: 'Login',
-    component: AuthorizationPage
-  },
+  // {
+  //   path: '/login',
+  //   name: 'Login',
+  //   component: AuthorizationPage
+  // },
   {
     path: '/account',
     name: 'Account',
@@ -64,11 +64,11 @@ const routes = [
     name: 'Payment',
     component: Payment
   },
-  {
-    path: '/faq',
-    name: 'Faq',
-    component: Faq
-  },
+  // {
+  //   path: '/faq',
+  //   name: 'Faq',
+  //   component: Faq
+  // },
   {
     path: '/admin',
     component: Admin,
@@ -107,14 +107,9 @@ router.beforeEach((to, from, next) => {
   const authToken = localStorage.getItem('authToken')
   const authAdminToken = localStorage.getItem('authAdminToken')
 
-  if(authToken){
-    if(to.name === 'Login'){
-      return next({name: 'Main'})
-    }
-  }
-  else{
+  if(!authToken){
     if(to.name === 'Account'){
-      return next({name: 'Login'})
+      return next({name: 'Main'})
     }
   }
 

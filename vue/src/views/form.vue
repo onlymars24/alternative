@@ -224,6 +224,7 @@
         </div>
 
       </div> 
+      <label v-if="unAuthMessage" style="color: red; font-size: 12px;">Для оформления билета необходимо авторизоваться!</label>
       <div v-if="!authForForm" class="form-reg" :class="{'unauth__user': unAuthMessage}">
         <div class="information-buyer">
           <Login v-if="option == 'login'" @resetSection="option = 'reset'" @registrationSection="option = 'registration'" :authForForm="authForForm" @authenticateForForm="authenticateForForm" @putRedFromLoginAway="putRedFromLoginAway" />
@@ -312,6 +313,8 @@ export default
     async confirmBook(code){
       if(!this.validateFrom()){
         this.confirmBookLoading = true
+        this.errorMessageFromAPI = ''
+        this.sale = []
         this.formData.forEach(el => {this.sale.push(
           {
             lastName: el.surname,

@@ -22,7 +22,7 @@
                 <transition name="anim-window">
                     <nav class="header__links__window" v-show="$store.state.windowHeader == 1" @mouseenter="$store.commit('windowHeader', 1)">
                         <a href="tel:8 (800) 700-42-12" class="header__links__window__phone-link">8 (800) 700-42-12</a>
-                        <router-link to="/Faq" class="header__links__window__faq-link">
+                        <router-link to="#" class="header__links__window__faq-link">
                             Вопросы и ответы
                         </router-link>
                     </nav>
@@ -98,6 +98,9 @@ export default
         localStorage.removeItem('authToken')
         this.auth = false
         this.$emit('disauthenticateForForm')
+        if(router.currentRoute._value.name == 'Account'){
+            router.push({ name: 'Main'})
+        }
     },
     authSelf(){
         this.auth = true
@@ -137,6 +140,7 @@ export default
         })
         await promise
     }
+    console.log(router.currentRoute._value.name)
   }
 }
 </script>

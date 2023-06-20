@@ -140,6 +140,20 @@
    color: #0275fe;
    border: 1px solid #0275fe;
  }
+
+ @media (max-width: 425px)
+{
+    .not__found{
+        flex-direction: column;
+    }
+    .not__found-text {
+        margin-left: 0px;
+    }
+    .not__found-title {
+        margin-top: 10px;
+        line-height: 35px;
+    }
+}
 </style>
 
 <script>
