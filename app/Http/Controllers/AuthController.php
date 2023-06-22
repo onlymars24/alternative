@@ -34,7 +34,13 @@ class AuthController extends Controller
             return response()->json(['success' => false, 'message' => 'Registration is failed'], 500);
         }
 
-        return response()->json(['success' => true, 'message' => 'Registration is succeeded'], 200);;
+        Auth::loginUsingId($user->id);
+        $token = Auth::user()->createToken('authToken')->accessToken;
+
+        return response([
+            'token' => $token
+        ]);
+        // return response()->json(['success' => true, 'message' => 'Registration is succeeded'], 200);;
     }
 
     public function login(Request $request){
@@ -83,10 +89,17 @@ class AuthController extends Controller
         }
         $user->password = Hash::make($request->password);
         $user->save();
+        
+        Auth::loginUsingId($user->id);
+        $token = Auth::user()->createToken('authToken')->accessToken;
 
         return response([
-            'sms' => $sms
+            'token' => $token
         ]);
+
+        // return response([
+        //     'sms' => $sms
+        // ]);
     }
 
     public function user(){

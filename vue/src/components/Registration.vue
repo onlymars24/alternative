@@ -47,7 +47,8 @@
                             <div v-if="userErrors['formConditionBottom']" class="invalid-feedback">{{ userErrors['formConditionBottom'][0] }}</div>
                         </label>
                     </div>
-                    <button @click="sendCode" class="btn btn-primary btn-code" ><div>Выслать код в СМС</div></button>
+                    <!-- <button @click="sendCode" class="btn btn-primary btn-code" ><div>Выслать код в СМС</div></button> -->
+                    <button @click="sendCode" class="btn btn-primary btn-code"><div>Регистрация</div></button>
                     <div v-if="registerLoading" class="text-center" style="margin-top: 10px;">
                         <div class="spinner-border" role="status"></div>
                     </div>
@@ -76,7 +77,7 @@ import axios from 'axios'
 import axiosClient from '../axios'
 
 export default {
-    emits: ["log", 'putRedFromLoginAway', 'loginSection'], 
+    emits: ["log", 'putRedFromLoginAway', 'loginSection', 'authSelf', 'authenticateForForm'], 
     data() {
         return {
             stepLog: 1,
@@ -198,18 +199,37 @@ export default {
             const promise = axiosClient
             .post('/register', this.user)
             .then(response => {
-                this.successfulRegisterMessage = 'Вы успешно зарегистрировались.'
-                this.user.phone = ''
-                this.user.password = ''
-                this.user.password_confirmation = ''
-                this.stepLog=1
+                // this.successfulRegisterMessage = 'Вы успешно зарегистрировались.'
+                // this.user.phone = ''
+                // this.user.password = ''
+                // this.user.password_confirmation = ''
+                // this.stepLog=1
+                localStorage.setItem('authToken', response.data.token)
+                this.$emit('authSelf');
+                this.$emit('authenticateForForm');
             })
             .catch(error => {
                 if(error.response.status == 422){
                     this.userErrors = error.response.data.errors
                 }
             })
-        }
+        },
+        // async login(){
+        //     const promise = axiosClient
+        //     .post('/login', this.user)
+        //     .then(response => {
+        //         localStorage.setItem('authToken', response.data.token)
+        //         this.$emit('authSelf');
+        //         this.$emit('authenticateForForm');
+        //     })
+        //     .catch(error => {
+        //         if(error.response.status || error.response.status == 422){
+        //             this.wrongCredentialsMessage = error.response.data.message
+        //         }
+        //     })
+        //     await promise
+        //     this.loginLoading = false
+        // }
     }
 };
 </script>

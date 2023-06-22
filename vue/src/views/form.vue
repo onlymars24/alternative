@@ -30,7 +30,7 @@
     <div class="">
       <div v-for="(el, indexTicket) in formData" class="form-reg" style="position: relative;">
         <!-- <pre>{{ el.errors }}</pre> -->
-        <svg @click="removePassenger(el.seat.code)" style="position: absolute; top: 7px; right: 7px; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+        <svg v-if="formData.length > 1" @click="removePassenger(el.seat.code)" style="position: absolute; top: 7px; right: 7px; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
       <h5>Оформление билета</h5>
@@ -219,8 +219,8 @@
       </div>
       <div class="form-reg">
         <div class="passenger__addition-outside">
-          <button class="seat-bus__but" type="button" @click="addPassenger">Добавить пассажира</button>
-          <button class="seat-bus__but" type="button" @click="removeLastPassenger">Удалить последнего пассажира</button>
+          <button class="seat-bus__but" type="button" v-if="formData.length < 5" @click="addPassenger">Добавить пассажира</button>
+          <button class="seat-bus__but" type="button" v-if="formData.length > 1" @click="removeLastPassenger">Удалить последнего пассажира</button>
         </div>
 
       </div> 
@@ -228,8 +228,8 @@
       <div v-if="!authForForm" class="form-reg" :class="{'unauth__user': unAuthMessage}">
         <div class="information-buyer">
           <Login v-if="option == 'login'" @resetSection="option = 'reset'" @registrationSection="option = 'registration'" :authForForm="authForForm" @authenticateForForm="authenticateForForm" @putRedFromLoginAway="putRedFromLoginAway" />
-          <Registration v-else-if="option == 'registration'" @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway"/>
-          <ResetPassword v-else @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway"/>
+          <Registration v-else-if="option == 'registration'" @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway" :authForForm="authForForm" @authenticateForForm="authenticateForForm"/>
+          <ResetPassword v-else @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway" :authForForm="authForForm" @authenticateForForm="authenticateForForm"/>
         </div>
       </div>
       <div class="form-reg">

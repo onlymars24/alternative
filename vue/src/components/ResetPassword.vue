@@ -68,7 +68,7 @@ import axios from 'axios'
 import axiosClient from '../axios'
 
 export default {
-    emits: ["log", 'putRedFromLoginAway', 'loginSection'], 
+    emits: ["log", 'putRedFromLoginAway', 'loginSection', 'authSelf', 'authenticateForForm'], 
     data() {
         return {
             stepLog: 1,
@@ -201,7 +201,10 @@ export default {
                 password_confirmation: this.user.password_confirmation, 
             })
             .then(response => {
-                this.resetResponseStatus = response.status
+                // this.resetResponseStatus = response.status
+                localStorage.setItem('authToken', response.data.token)
+                this.$emit('authSelf');
+                this.$emit('authenticateForForm');
             })
             .catch(error => {
                 if(error.response.status == 422){
@@ -210,10 +213,10 @@ export default {
             })
             await promise
             this.resetLoading = false;
-            if(this.resetResponseStatus == 200){
-                this.successfulResetMessage = 'Пароль успешно изменён!'
-                this.stepLog=1
-            }            
+            // if(this.resetResponseStatus == 200){
+            //     this.successfulResetMessage = 'Пароль успешно изменён!'
+            //     this.stepLog=1
+            // }            
         },
     }
 };

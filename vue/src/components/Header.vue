@@ -140,7 +140,6 @@ export default
         })
         await promise
     }
-    console.log(router.currentRoute._value.name)
   }
 }
 </script>

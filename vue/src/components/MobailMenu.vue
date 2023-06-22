@@ -58,14 +58,14 @@
     <nav>
       <ul class="mobail-menu__links2">
         <li><router-link to="/Faq">Вопросы и ответы</router-link></li>
-        <li><router-link to="">Сотрудничество</router-link></li>
+        <!-- <li><router-link to="">Сотрудничество</router-link></li> -->
         <li><router-link to="">О нас</router-link></li>
-        <li><router-link to="">Блог</router-link></li>
+        <!-- <li><router-link to="">Блог</router-link></li> -->
       </ul>
     </nav>
     <hr />
     <div v-if="auth" class="mobil__exit__account__block">
-      <a class="mobil__exit__account" href="" @click.prevent="$emit('logout')">Выйти из аккаунта</a>
+      <a class="mobil__exit__account" href="" @click.prevent="$emit('logout'), this.$emit('closeMobMenu')">Выйти из аккаунта</a>
     </div>
     <div v-if="!auth" class="mobil__exit__account__block">
       <a class="mobil__exit__account" @click.prevent="this.$emit('OpenWindowLogin')" href="/login">Авторизоваться</a>
@@ -87,7 +87,7 @@ hr{
 }
 .mobail__container {
   background-color: white;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;

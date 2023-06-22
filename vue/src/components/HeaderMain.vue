@@ -58,7 +58,7 @@
                 </div>
                 <div class="main__table-table">
                         <p class="">Дата поездки</p>
-                        <input class="main__table-date" type="date" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
+                        <input class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
                 </div>  
                 <div class="main__table-button">
                     <button type="submit" class="main__button" :disabled="disabledButton">
@@ -329,6 +329,9 @@ export default{
     },
     mounted() {
         this.dates.today = dayjs().format('YYYY-MM-DD')
+        if(this.date == ''){
+            this.date = this.dates.today
+        }
         this.dates.tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD')
         this.dates.afterTomorrow = dayjs().add(2, 'day').format('YYYY-MM-DD')
         if(localStorage.getItem('authToken')){
@@ -345,17 +348,21 @@ export default{
         this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();
         this.toMonth = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 2 == 12? 1 : (dateNewGet.getMonth() + 2 > 9 ? dateNewGet.getMonth() + 2 : "0"+(dateNewGet.getMonth() + 2))) + "-" + dateNewGet.getDate()  ;
     }
-    
 }
 </script>
 <style>
 /* ::-webkit-calendar-picker-indicator {
     filter: invert(1);
 } */
+.main__table-date{
+    position: relative;
+    z-index: 0;
+}
 ::-webkit-calendar-picker-indicator{
     width: 100%;
     position: absolute;
     opacity: 0;
+    /* z-index: -1; */
 }
 .main__another__date{
   text-align: center;
