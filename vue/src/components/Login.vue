@@ -21,7 +21,7 @@
                         <input @focus="$emit('putRedFromLoginAway')" type="text" class="form-control inp-gray phone__input" v-model="user.phone" maxlength="17" id="tel">
                         <label for="tel" class="form-label label-gray">Пароль</label>
                         <input @focus="$emit('putRedFromLoginAway')" type="password" class="form-control inp-gray" v-model="user.password" id="pas">
-                        <button @click="login" class="btn btn-primary btn-code" >Войти</button>
+                        <button @click="login" :disabled="loginLoading" class="btn btn-primary btn-code" >Войти</button>
                         <p style="margin-top: 10px;" class="possible">Забыли пароль? Можете его <span class="head-link" @click="$emit('resetSection')">&nbsp;сбросить</span></p>
                         <div v-if="loginLoading" class="text-center" style="margin-top: 10px;">
                             <div class="spinner-border" role="status"></div>

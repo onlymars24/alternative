@@ -48,7 +48,7 @@
                         </label>
                     </div>
                     <!-- <button @click="sendCode" class="btn btn-primary btn-code" ><div>Выслать код в СМС</div></button> -->
-                    <button @click="sendCode" class="btn btn-primary btn-code"><div>Регистрация</div></button>
+                    <button @click="sendCode" :disabled="registerLoading" class="btn btn-primary btn-code"><div>Регистрация</div></button>
                     <div v-if="registerLoading" class="text-center" style="margin-top: 10px;">
                         <div class="spinner-border" role="status"></div>
                     </div>
@@ -88,7 +88,7 @@ export default {
                 formConditionTop: false,
                 formConditionBottom: false,
             },
-            userErrors: {},
+            userErrors: [],
             wrongCodeMessage: '',
             successfulRegisterMessage: '',
             code: '',
@@ -153,12 +153,15 @@ export default {
             ))
             .catch(error => {
                 if(error.response.status == 422){
+                    console.log('No Valid')
+                    console.log(error.response.data.errors)
                     this.userErrors =  error.response.data.errors
+                    this.registerLoading = false;
                 }
             });
             await promise
             console.log(this.sms)
-            this.registerLoading = false;
+            
             if(!Object.keys(this.userErrors).length){
                 // this.stepLog=2
                 // this.sendingCodeDisable = true
@@ -166,6 +169,7 @@ export default {
                 // this.countDownTimer()
                 this.register() //temp
             }
+            // this.registerLoading = false;
         },
         countDownTimer () {
             if (this.countDown > 0) {
@@ -207,6 +211,7 @@ export default {
                 localStorage.setItem('authToken', response.data.token)
                 this.$emit('authSelf');
                 this.$emit('authenticateForForm');
+                this.registerLoading = false;
             })
             .catch(error => {
                 if(error.response.status == 422){

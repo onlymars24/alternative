@@ -8,7 +8,7 @@
             <div class="contact-information__block ">
                 <p>На электронную почту высылаем маршрутные квитанции</p>
                 <label for="" class="label-gray">E-mail</label>
-                <input type="text" class="form-control inp-gray" v-model="email" :disabled="!editEmailActive">
+                <input type="text" class="form-control inp-gray" v-model="email" :disabled="!editEmailActive" placeholder="E-mail не указан">
                 <div class="filled-email">
                 <a href="#" v-if="!editEmailActive" @click="editEmailActive = true"> &#9998; Изменить</a> <a href="#" v-if="editEmailActive" @click="editEmailActive = false">Отменить</a> <a href="#" v-if="editEmailActive" @click="editEmail">Сохранить</a>
                 </div>
