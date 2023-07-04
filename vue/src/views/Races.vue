@@ -259,7 +259,10 @@ export default {
         toSeats(raceId){
             router.push({name: 'SeatPage', params: {race_id: raceId}})
         }
-    }
+    },
+    // created() {
+    //   document.title = 'Результаты поиска';
+    // }
     
 }
 </script>

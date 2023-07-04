@@ -6,7 +6,7 @@
 
             <div class="main">
                 <h1 class="main__main">
-                    Автовокзал Санкт-Петербурга
+                    Автовокзалы России
                 </h1>
                 <p class="main__main-p">
                     Билеты на автобус онлайн
@@ -15,7 +15,7 @@
             
             <form @submit.prevent="findRaces" class="main__table">
                 <div class="main__table-table">
-                    <ul v-if="dispatchPointEmpty" class="hint">
+                    <!-- <ul v-if="dispatchPointEmpty" class="hint">
                         <li class="hint__title">
                             <span>Популярные направления:</span>
                         </li>
@@ -23,12 +23,12 @@
                             <strong data-id="73707" data-name="Псков">Псков, </strong>
                             <span data-id="73707" data-name="Псков">Псковская обл,</span>
                         </li>
-                    </ul>
+                    </ul> -->
                     <ul v-if="dispatchPointFilled" class="hint">
                         <template v-for="el in filteredDispatchPoints" :key="el.id">
                             <li @mousedown="fillDispatch" :data-id="el.id" :data-name="el.name">
-                                <strong :data-id="el.id" :data-name="el.name">{{el.name}}, </strong>
-                                <span :data-id="el.id" :data-name="el.name">{{el.region}}, {{el.details}}</span>
+                                <strong :data-id="el.id" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
+                                <span :data-id="el.id" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
                             </li>
                         </template>
                     </ul>
@@ -40,16 +40,20 @@
                         <li class="hint__title">
                             <span>Популярные направления:</span>
                         </li>
-                        <li @mousedown="fillArrival" data-id="1770608" data-name="58-й километр (Орд. шоссе)">
+                        <!-- <li @mousedown="fillArrival" data-id="1770608" data-name="58-й километр (Орд. шоссе)">
                             <strong data-id="1770608" data-name="58-й километр (Орд. шоссе)">58-й километр (Орд. шоссе), </strong>
                             <span data-id="1770608" data-name="58-й километр (Орд. шоссе)">Ордынский район, от Новосибирск ЖД</span>
-                        </li>
+                        </li> -->
+                        <template v-for="el in popularPoints">
+                            <PopularPoint :id="el.id" :name="el.name" :region="el.region" :details="el.details" @fillArrival="fillArrival"/>
+                        </template>
+                        
                     </ul>
                     <ul v-if="arrivalPointFilled" class="hint">
                         <template v-for="el in filteredArrivalPoints" :key="el.id">
                             <li @mousedown="fillArrival" :data-id="el.id" :data-name="el.name">
-                                <strong :data-id="el.id" :data-name="el.name">{{el.name}}, </strong>
-                                <span :data-id="el.id" :data-name="el.name">{{el.region}}, {{el.details}}</span>
+                                <strong :data-id="el.id" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
+                                <span :data-id="el.id" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
                             </li>
                         </template>
                     </ul>
@@ -57,8 +61,8 @@
                     <input @click="arrivalFocus" @blur="arrivalBlur" v-model="arrivalText" :disabled="arrivalPointDisabled" class="main__table-input" list="OWNER" placeholder="Заполните куда" type="text">
                 </div>
                 <div class="main__table-table">
-                        <p class="">Дата поездки</p>
-                        <input class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
+                    <p class="">Дата поездки</p>
+                    <input class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
                 </div>  
                 <div class="main__table-button">
                     <button type="submit" class="main__button" :disabled="disabledButton">
@@ -80,10 +84,12 @@ import router from '../router'
 import axios, {isCancel, AxiosError} from 'axios';
 import axiosClient from '../axios'
 import Header from '../components/Header.vue'
+import PopularPoint from '../components/PopularPoint.vue'
 import dayjs from 'dayjs'
 export default{
         components: {
-            Header
+            Header,
+            PopularPoint
         },
         props: {
             dispatchEl0: {
@@ -204,6 +210,32 @@ export default{
             arrivalEl: this.arrivalEl0,
             dateNew: '',
             toMount: '',
+            popularPoints: [
+                {
+                    "id": 34388,
+                    "name": "Томск",
+                    "region": "Томская обл",
+                    "details": null,
+                },
+                {
+                    "id": 66690,
+                    "name": "Барнаул",
+                    "region": "Алтайский край",
+                    "details": null,
+                },
+                {
+                    "id": 19803,
+                    "name": "Кемерово",
+                    "region": "Кемеровская обл",
+                    "details": null,
+                },
+                // {
+                //     "id": 34388,
+                //     "name": "Томск",
+                //     "region": "Томская обл",
+                //     "details": null,
+                // },
+            ]
         }
     },
     methods: {
@@ -262,6 +294,7 @@ export default{
             }
         },
         fillArrival(event){
+            console.log(event)
             this.arrivalEl.id = event.target.dataset.id
             this.arrivalEl.name = event.target.dataset.name
             this.arrivalText = this.arrivalEl.name

@@ -50,7 +50,10 @@ export default{
     },
     computed: {
 
-    }
+    },
+    // created() {
+    //   document.title = 'Главная';
+    // }
 }
 </script>
 
@@ -72,7 +75,7 @@ export default{
     </div> -->
 
     <HeaderMain/>
-    <div class="choice">
+    <!-- <div class="choice">
         <div class="container">
             <div class="choice__inner">
                 <div class="choice__fact">
@@ -179,14 +182,13 @@ export default{
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="about">
         <div class="container">
             <div class="about__inner">
-                <div class="about__info">
+                <!-- <div class="about__info">
                     <div class="about__info-main">
-                        <!-- <a href="">Страны</a> -->
                     </div>
                     <div class="about__info-text">
                         <a href="">Беларусь</a>
@@ -201,7 +203,7 @@ export default{
                         <br>
                         <a href="">Армения</a>
                     </div>
-                </div>
+                </div> -->
                 <div class="about__info">
                     <div class="about__info-main">
                         <!-- <a href="">Расписание</a> -->

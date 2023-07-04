@@ -1,9 +1,9 @@
 <!-- eslint-disable vuejs-accessibility/click-events-have-key-events -->
 <!-- eslint-disable max-len -->
 <template>
-<div class="background-close" @click=" reloadPage(); $emit('CloseWindow');"></div>
+<div class="background-close" @click="reloadPage(); $emit('CloseWindow');"></div>
 <div class="popup-container">
-    <!-- <div class="closeWindow" @click="$emit('CloseWindow')">✖</div> -->
+    <div class="closeWindow" @click="$emit('CloseWindow')">✖</div>
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
     <div v-if="this.content==3" class="content-popap">
@@ -69,6 +69,16 @@ export default
 				location.reload(); return false;
 			}
 		}
+  },
+  mounted(){
+    // v-on:keydown.enter="reloadPage(); $emit('CloseWindow');"
+    let that = this
+    window.addEventListener('keyup', function (evt) {
+        if (evt.keyCode === 27) {
+          that.reloadPage(); 
+          that.$emit('CloseWindow');
+        }
+    });
   }
 };
 </script>
@@ -78,7 +88,7 @@ export default
 {
     position: fixed;
     top: 50%;
-     left: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     /* text-align: center; */
     background-color: white;
@@ -97,8 +107,9 @@ export default
 {
     cursor: pointer;
     color: var(--blue);
-    position: relative;
-    text-align: end;
+    position: absolute;
+    right: 15px;
+    top: 8px;
 }
 .background-close
 {

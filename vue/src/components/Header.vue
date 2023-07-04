@@ -4,7 +4,7 @@
             <div class="header__logo">
                 <a href="/" style="align-items: center;"> 
                     <img src="../img/741411.png" alt="" class="header-inner-image"> 
-                    <span :class="{'black__text': blackText}">Автовокзал</span>
+                    <span :class="{'black__text': blackText}">Росвокзалы.рф</span>
                 </a>
 
             </div>  
@@ -58,9 +58,7 @@
             <MobailMenu @logout="logout" @OpenWindowLogin="openWindow = true, mobileMenuOpen = false" :auth="auth || authForForm" v-if="mobileMenuOpen" @closeMobMenu="Scroll(), mobileMenuOpen = false"/>
         </transition>
     </div>
-    
         <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" @authenticateForForm="$emit('authenticateForForm')" @authSelf="authSelf" :content="3"/>
-    
 </template>
 
 <script>
@@ -170,6 +168,7 @@ export default
           color: black ;
           padding: 8px 20px 8px 43px;
           white-space: nowrap;
+          line-height: 15px;
       }
       .header__links__window a:hover
       {
@@ -222,6 +221,12 @@ export default
       .header__links__place
       {
         padding:20px;
+      }
+      .header__links__place li a span{
+        line-height: 15px;
+      }
+      .header__links__window{
+        
       }
       .logo__and__hamburger
       {

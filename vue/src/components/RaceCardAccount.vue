@@ -6,6 +6,7 @@
 	 <div class="menu__ticket-up">
 	   <div class="ticket-up__left">
 		 <div class="ticket-up__left-ins">
+			
 		   <div class="left-ins__left">
 			 <div class="left-ins__left-up">
 			   <div class="left-ins__left-up-first">
@@ -44,9 +45,11 @@
 		 </div>
 		 
 	   </div>
-	   <div class="ticket-up__right" v-if="true">
+	   <div class="ticket-up__right">
+		<!-- <p>Заказ оформлен: 341234</p> -->
 		 <div class="ticket-up__right-ins">
-		   <div class="right-ins__left">
+			
+		   <div class="right-ins__left" style="min-width: 113px;">
 			 <p>{{ race.order.total }}</p>
 			 <p>руб</p>
 		   </div>
@@ -59,9 +62,9 @@
 				  Оплатить 
 			   </button>
 			 </div>
-       	<ul class="tickets-list" v-show="tickets">
-          <li v-for="ticket in race.order.tickets"><a :href="race.order.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">Место {{ticket.seat}}</a></li>
-        </ul>
+			<ul class="tickets-list" v-show="tickets">
+				<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">Место {{ticket.seat}}</a></li>
+			</ul>
 		   </div>
 		 </div>
 	   </div>
@@ -69,18 +72,20 @@
 	 <div class="menu__ticket-medium">
 	   <div class="ticket-medium__ins">
 		 <div class="ticket-medium__ins-left">
-		   <div>
+		   <div style="margin: 0; margin-right: 10px;">
 			<p v-if="race.order.status == 'S'">Заказ оплачен</p>
 			<p style="color: #dc3545;" v-if="race.order.status == 'B' && !expired">Заказ забронирован, но не оплачен!</p>
 			<p v-if="race.order.status == 'R'">Заказ возвращён</p>
 			<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
-			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>					
+			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>			
+				
 		   </div>
 
 		   <div>
-			<a @click.prevent="windowOpen = 2" href="" v-if="!expired">
+			<a @click.prevent="windowOpen = 2" href="" v-if="!expired && !wentOut">
 				Ещё
 			</a>
+			<!-- <span>Дата покупки</span>	 -->
 
 			<transition name="anim-window">
 				<nav style="z-index: 5;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
@@ -169,6 +174,7 @@ import axiosClient from '../axios';
 					response: [  ]
 				},
 				expired: false,
+				wentOut: false,
 				baseUrl: ''
 			}
 		},
@@ -180,7 +186,7 @@ import axiosClient from '../axios';
 			router.push({name: 'Payment', params: {order_id: this.order.id}})
 		},
 		async returnTicket(ticketId, orderId){
-			if(!confirm('Вы вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
+			if(!confirm('Вы уверены, что хотите вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
 				return
 			}
 			this.returnInfo.loading = true
@@ -197,20 +203,28 @@ import axiosClient from '../axios';
     },
     mounted(){
 		this.baseUrl = import.meta.env.VITE_API_BASE_URL
+		// console.log(this.race.order.tickets[0].dispatchDate)
 		this.race.dispatchDay = dayjs(this.race.order.tickets[0].dispatchDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].dispatchDate).format('M')]
 		this.race.arrivalDay = dayjs(this.race.order.tickets[0].arrivalDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].arrivalDate).format('M')]
 		this.race.dispatchTime = dayjs(this.race.order.tickets[0].dispatchDate).format('HH:mm')
 		this.race.arrivalTime = dayjs(this.race.order.tickets[0].arrivalDate).format('HH:mm')
 		let bookTime = dayjs(dayjs(this.order.created_at).format('YYYY-MM-DDTHH:mm:ss'))
 		let nowTime = dayjs(dayjs().format('YYYY-MM-DDTHH:mm:ss'))
+		let nowTimeForDispatch = dayjs().format('YYYY-MM-DD HH:mm:ss')
 		let difference = nowTime.diff(bookTime) / 60000
 		if(difference > 20 && this.race.order.status == 'B'){
 			this.expired = true
 		}
+		console.log(this.race.order.tickets[0].dispatchDate)
+		console.log(nowTimeForDispatch)
+		if(this.race.order.tickets[0].dispatchDate < nowTimeForDispatch){
+			this.wentOut = true
+		}
+		console.log(this.wentOut)
     }
 	}
 </script>
-<style>
+<style scoped>
 
 .tickets-list
 {
@@ -224,12 +238,21 @@ import axiosClient from '../axios';
   width: 100px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
 }
+
+.ticket-up__left-ins{
+	padding: 12px 25px;
+	justify-content: space-between;
+}
 @media (max-width:550px)
 {
-  .tickets-list
+.tickets-list
 {
   right: 150px;
   top: 60px;
+}
+.ticket-up__left-ins{
+	padding: 12px 16px;
+	justify-content: space-around;
 }
 }
 </style>

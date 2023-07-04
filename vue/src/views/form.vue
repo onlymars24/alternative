@@ -15,6 +15,8 @@
     </div>
 
   <HeaderСrumbsVue :race="race" v-if="!loadingRace"/>
+  <pre>{{ race }}</pre>
+  <pre>{{ formData }}</pre>
   <div class="container" v-if="!loadingRace">
     <div class="form__content">
     <div class="information-race">
@@ -33,6 +35,7 @@
         <svg v-if="formData.length > 1" @click="removePassenger(el.seat.code)" style="position: absolute; top: 7px; right: 7px; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
         </svg>
+        
       <h5>Оформление билета</h5>
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
         <div class="ticket-registration">
@@ -51,16 +54,16 @@
         <label for="">Фамилия</label>
         <!--  -->
         <input
-                    type="text"
-                    class="form-control"
-                    :class="{'is-invalid': el.errors.surname}"
-                    placeholder="Иванов"
-                    maxlength="60"
-                    v-model="el.surname"
-                    oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
-                    @focus="el.errors.surname = ''"
-                    required
-                  />
+                  type="text"
+                  class="form-control"
+                  :class="{'is-invalid': el.errors.surname}"
+                  placeholder="Укажите фамилию"
+                  maxlength="60"
+                  v-model="el.surname"
+                  oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
+                  @focus="el.errors.surname = ''"
+                  required
+                />
                   <!--  -->
                   <!--  -->
         <label for="">Имя</label>
@@ -68,7 +71,7 @@
                     type="text"
                     class="form-control"
                     :class="{'is-invalid': el.errors.name}"
-                    placeholder="Иван"
+                    placeholder="Укажите имя"
                     v-model="el.name"
                     oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
                     @focus="el.errors.name = ''"
@@ -81,7 +84,7 @@
                     type="text"
                     class="form-control"
                     :class="{'is-invalid': el.errors.patronymic}"
-                    placeholder="Иванович"
+                    placeholder="Укажите отчество"
                     maxlength="60"
                     v-model="el.patronymic"
                     oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
@@ -134,7 +137,6 @@
                     type="date"
                     class="form-control"
                     :class="{'is-invalid': el.errors.birth_date}"
-                    placeholder="Иван"
                     maxlength="60"
                     :max="dateNew"
                     v-model="el.birth_date"
@@ -181,7 +183,7 @@
                       maxlength='10'
                       required
                       v-model="el.doc_series"
-                      placeholder="серия"
+                      placeholder="Укажите серию документа"
                       @focus="el.errors.doc_series = ''"
                     >                     
                   </div>
@@ -196,7 +198,7 @@
                       v-model="el.doc_number"
                       @focus="el.errors.doc_number = ''"
                       required
-                      placeholder="Номер"
+                      placeholder="Укажите номер документа"
                     >
                   </div>
         
@@ -481,7 +483,7 @@ export default
           patronymic: '',
           birth_date: '',
           gender: '',
-          citizenship: '',
+          citizenship: 'РОССИЯ',
           doc_type: '',
           doc_number: '',
           doc_series: '',
@@ -597,7 +599,7 @@ export default
         patronymic: '',
         birth_date: '',
         gender: '',
-        citizenship: '',
+        citizenship: 'РОССИЯ',
         doc_type: '',
         doc_number: '',
         doc_series: '',
@@ -704,9 +706,10 @@ body
 }
 .information-race__payment
 {
-  width: 85%;
-  display: flex;
+  /* width: 85%; */
+  /* display: flex; */
   justify-content: space-between;
+  margin-top: 10px;
 }
 .inf-race__date-and-time
 {
