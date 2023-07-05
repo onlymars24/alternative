@@ -60,15 +60,15 @@
                         <p>Документы</p>
                     </div>
                     <div class="footer__info-about__pass">
-                        <a href="">Договор оферты</a>
+                        <a :href="baseUrl+'/agreement/offercontract.pdf'">Договор оферты</a>
                         <br>
-                        <a href="">Политика конфиденциальности</a>
+                        <a :href="baseUrl+'/agreement/privacypolicy.pdf'">Политика конфиденциальности</a>
                     </div>
                 </div>
                 <div class="footer__info-about"></div>
             </div>
             <div class="cookies__text">
-                <p>Мы используем информацию, зарегистрированную в <a href="">файлах «cookies»</a>, в частности, в рекламных и статистических целях, а также для того, чтобы адаптировать наши сайты к индивидуальным потребностям Пользователей. Вы можете изменить настройки касающиеся «cookies» в вашем браузере. Изменение настроек может ограничить функциональность сайта.</p>
+                <p>Мы используем информацию, зарегистрированную в <a :href="baseUrl+'/agreement/privacypolicy.pdf'">файлах «cookies»</a>, в частности, в рекламных и статистических целях, а также для того, чтобы адаптировать наши сайты к индивидуальным потребностям Пользователей. Вы можете изменить настройки касающиеся «cookies» в вашем браузере. Изменение настроек может ограничить функциональность сайта.</p>
             </div>            
         </div>
     </footer>
@@ -76,8 +76,28 @@
     <div class="copyright">
         <div class="container">
             <div class="copyright__text">
-                <p>© 2023, OOO «Lorem». Все права защищены. «Lorem» — Онлайн сервис продажи lorem'ов</p>
+                <p>© 2023, OOO АЛЬТЕРНАТИВА. Все права защищены. АЛЬТЕРНАТИВА — Онлайн сервис продажи билетов</p>
             </div>
         </div>
     </div>
 </template>
+
+<script>
+import axiosClient from '../axios';
+	export default{
+		data(){
+			return{
+				baseUrl: ''
+			}
+		},
+    computed:{
+
+    },
+    methods: {
+
+    },
+    mounted(){
+		this.baseUrl = import.meta.env.VITE_API_BASE_URL
+    }
+	}
+</script>

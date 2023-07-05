@@ -15,8 +15,8 @@
     </div>
 
   <HeaderСrumbsVue :race="race" v-if="!loadingRace"/>
-  <pre>{{ race }}</pre>
-  <pre>{{ formData }}</pre>
+  <!-- <pre>{{ race }}</pre> -->
+  <!-- <pre>{{ formData }}</pre> -->
   <div class="container" v-if="!loadingRace">
     <div class="form__content">
     <div class="information-race">
@@ -39,13 +39,14 @@
       <h5>Оформление билета</h5>
         <p class="form-description">Указанные данные необходимы для совершения бронирования и будут проверены при посадке в автобус.</p>
         <div class="ticket-registration">
-                  <select v-if="authForForm"
+                  <select v-if="authForForm && passengers.length > 0"
                     class="form-select form-control "
                     maxlength="60"
                     @change="choosePassenger($event, indexTicket)"
                     required
                   >
                     <option value="" disabled selected hidden>Сохранённые пасажиры</option>
+                    <option value="new"><strong>Новый пассажир</strong></option>
                     <option v-for="(passenger, indexPassenger) in passengers" :value="indexPassenger">{{passenger.surname}} {{passenger.name}} {{passenger.patronymic}}</option>
                   </select>
                   <hr>
@@ -63,6 +64,7 @@
                   oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
                   @focus="el.errors.surname = ''"
                   required
+                  :disabled="el.saved"
                 />
                   <!--  -->
                   <!--  -->
@@ -76,6 +78,7 @@
                     oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
                     @focus="el.errors.name = ''"
                     required
+                    :disabled="el.saved"
                   />
                   <!--  -->
                   <!--  -->
@@ -90,6 +93,7 @@
                     oninput="this.value=this.value.replace(/[^a-zA-ZА-Яа-яЁё]/g,'');"
                     @focus="el.errors.patronymic = ''"
                     required
+                    :disabled="el.saved"
                   />
                   <!--  -->
                   <!--  -->
@@ -109,6 +113,7 @@
                     v-model="el.ticket_type_code"
                     @focus="el.errors.ticket_type_code = ''"
                     required
+                    :disabled="el.saved"
                   >
                     <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.code">{{ ticket.name }}</option>
                   </select> 
@@ -124,6 +129,7 @@
                     v-model="el.gender"
                     @focus="el.errors.gender = ''"
                     required
+                    :disabled="el.saved"
                   >
                     <!-- <option data-gender="M" value="M">Мужчина</option>
                     <option data-gender="F" value="F">Женщина</option> -->
@@ -135,6 +141,8 @@
                   <label for="">Дата рождения</label>
                   <input
                     type="date"
+                    name="date"
+                    id="date"
                     class="form-control"
                     :class="{'is-invalid': el.errors.birth_date}"
                     maxlength="60"
@@ -142,6 +150,7 @@
                     v-model="el.birth_date"
                     @focus="el.errors.birth_date = ''"
                     required
+                    :disabled="el.saved"
                   />
         </div>
 
@@ -154,6 +163,7 @@
                     v-model="el.citizenship"
                     @focus="el.errors.citizenship = ''"
                     required
+                    :disabled="el.saved"
                   >
                     <option v-for="country in countries" :data-id="country.id" :value="country.name">{{ country.name }}</option>
                   </select>
@@ -168,6 +178,7 @@
                       v-model="el.doc_type"
                       @focus="el.errors.doc_type = ''"
                       required
+                      :disabled="el.saved"
                     >
                       <option :data-code="doc.code" v-for="doc in race.docTypes" :value="doc.code+'____'+doc.name">{{ doc.name }}</option>
                     </select>                
@@ -185,6 +196,7 @@
                       v-model="el.doc_series"
                       placeholder="Укажите серию документа"
                       @focus="el.errors.doc_series = ''"
+                      :disabled="el.saved"
                     >                     
                   </div>
  
@@ -199,6 +211,7 @@
                       @focus="el.errors.doc_number = ''"
                       required
                       placeholder="Укажите номер документа"
+                      :disabled="el.saved"
                     >
                   </div>
         
@@ -408,30 +421,54 @@ export default
     disauthenticateForForm(){
       this.authForForm = false
       this.user = []
+      this.formData.forEach(el => {
+        el.saved = false
+      })
     },
     putRedFromLoginAway(){
       this.unAuthMessage = ''
     },
     choosePassenger(event, indexTicket){
       let passenger = this.passengers[event.target.value]
-      this.formData[indexTicket].name = passenger.name
-      this.formData[indexTicket].surname = passenger.surname
-      this.formData[indexTicket].patronymic = passenger.patronymic
-      this.formData[indexTicket].birth_date = passenger.birth_date
-      this.formData[indexTicket].citizenship = passenger.citizenship
-      this.formData[indexTicket].doc_number = passenger.doc_number
-      this.formData[indexTicket].doc_series = passenger.doc_series
-      this.formData[indexTicket].gender = passenger.gender
+      if(event.target.value == 'new'){
+        this.formData[indexTicket].name = ''
+        this.formData[indexTicket].surname = ''
+        this.formData[indexTicket].patronymic = ''
+        this.formData[indexTicket].birth_date = ''
+        this.formData[indexTicket].citizenship = 'РОССИЯ'
+        this.formData[indexTicket].doc_number = ''
+        this.formData[indexTicket].doc_series = ''
+        this.formData[indexTicket].gender = ''
 
-      this.formData[indexTicket].doc_type = this.race.docTypes.filter(el => {
-          return el.name == passenger.doc_type;
-        })[0].code+'____'+passenger.doc_type
+        this.formData[indexTicket].doc_type = ''
 
-      this.formData[indexTicket].ticket_type_code = this.race.ticketTypes.filter(el => {
-          return el.name == passenger.ticket_type;
+        this.formData[indexTicket].ticket_type_code = this.race.ticketTypes.filter(el => {
+          return el.name == 'Полный';
         })[0].code
 
-      this.formData[indexTicket].saved = true
+        this.formData[indexTicket].saved = false     
+      }
+      else{
+        this.formData[indexTicket].name = passenger.name
+        this.formData[indexTicket].surname = passenger.surname
+        this.formData[indexTicket].patronymic = passenger.patronymic
+        this.formData[indexTicket].birth_date = passenger.birth_date
+        this.formData[indexTicket].citizenship = passenger.citizenship
+        this.formData[indexTicket].doc_number = passenger.doc_number
+        this.formData[indexTicket].doc_series = passenger.doc_series
+        this.formData[indexTicket].gender = passenger.gender
+
+        this.formData[indexTicket].doc_type = this.race.docTypes.filter(el => {
+            return el.name == passenger.doc_type;
+          })[0].code+'____'+passenger.doc_type
+
+        this.formData[indexTicket].ticket_type_code = this.race.ticketTypes.filter(el => {
+            return el.name == passenger.ticket_type;
+          })[0].code
+
+        this.formData[indexTicket].saved = true        
+      }
+
     },
     changeSeat(event, oldSeatName){
       let newSeat = this.race.seats.filter(el => {
@@ -637,6 +674,7 @@ export default
 };
 </script>
 <style>
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
   transition-delay: 10s;

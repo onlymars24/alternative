@@ -209,17 +209,18 @@ export default{
                         <!-- <a href="">Расписание</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a href="">Краснодар</a>
+                        <a target="_blank" href="/avtobus/Новосибирск/Томск/">Новосибирск → Томск</a>
                         <br>
-                        <a href="">Москва</a>
+                        <a target="_blank" href="/avtobus/Новосибирск/Барнаул/">Новосибирск → Барнаул</a>
                         <br>
-                        <a href="">Нижний Новгород</a>
+                        <a target="_blank" href="/avtobus/Новосибирск/Кемерово/">Новосибирск → Кемерово</a>
                         <br>
-                        <a href="">Ростов-на-Дону</a>
+                        <a target="_blank" href="/avtobus/Новосибирск/Алейск/">Новосибирск → Алейск</a>
                         <br>
-                        <a href="">Санкт-Петербург</a>
+                        <a target="_blank" href="/avtobus/Новосибирск/Белово/">Новосибирск → Белово</a>
                         <br>
-                        <a href="">Волгоград</a>
+                        <a target="_blank" href="/avtobus/Новосибирск/Буланиха/">Новосибирск → Буланиха</a>
+                        <br>
                     </div>
                 </div>
                 <div class="about__info">
@@ -227,17 +228,17 @@ export default{
                         <!-- <a href="">Международные</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a href="">Москва → Минск</a>
+                        <a target="_blank" href="/avtobus/Барнаул/Томск/">Барнаул → Томск</a>
                         <br>
-                        <a href="">Минск → Москва</a>
+                        <a target="_blank" href="/avtobus/Барнаул/Кемерово/">Барнаул → Кемерово</a>
                         <br>
-                        <a href="">Москва → Тблиси</a>
+                        <a target="_blank" href="/avtobus/Барнаул/Абай/">Барнаул → Абай</a>
                         <br>
-                        <a href="">Москва → Ереван</a>
+                        <a target="_blank" href="/avtobus/Барнаул/Акташ/">Барнаул → Акташ</a>
                         <br>
-                        <a href="">Москва → Берлин</a>
+                        <a target="_blank" href="/avtobus/Барнаул/Акулово/">Барнаул → Акулово</a>
                         <br>
-                        <a href="">Москва → Вильнюс</a>
+                        <a target="_blank" href="/avtobus/Барнаул/Алейск/">Барнаул → Алейск</a>
                         <br>
                     </div>
                 </div>
@@ -246,17 +247,17 @@ export default{
                         <!-- <a href="">Внутренние</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a href="">Москва → Санкт-Петербург</a>
+                        <a target="_blank" href="/avtobus/Энск/Алейск/">Энск → Алейск</a>
                         <br>
-                        <a href="">Санкт-Петербург → Москва</a>
+                        <a target="_blank" href="/avtobus/Энск/Баево с./">Энск → Баево с.</a>
                         <br>
-                        <a href="">Москва → Ростов-на-Дону</a>
+                        <a target="_blank" href="/avtobus/Энск/Колпашево АС/">Энск → Колпашево АС</a>
                         <br>
-                        <a href="">Москва → Пенза</a>
+                        <a target="_blank" href="/avtobus/Энск/Новосибирск/">Энск → Новосибирск</a>
                         <br>
-                        <a href="">Москва → Чебоксары</a>
+                        <a target="_blank" href="/avtobus/Энск/Акулово/">Энск → Акулово</a>
                         <br>
-                        <a href="">Москва → Биробиджан</a>
+                        <a target="_blank" href="/avtobus/Энск/Белово/">Энск → Белово</a>
                         <br>
                     </div>
                 </div>

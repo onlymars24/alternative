@@ -17,8 +17,8 @@
         <h6>Выберите билет, который хотите вернуть</h6>
         <ul>
           <template v-for="ticket in order.tickets">
-            <li v-if="ticket.status == 'S'"><span>Вернуть билет - <a href="" @click.prevent="$emit('returnTicket', ticket.id, order.id)">Место {{ticket.seat}}</a></span></li>
-            <li v-if="ticket.status == 'R'"><span>Билет Место {{ticket.seat}} возвращён</span></li>
+            <li v-if="ticket.status == 'S'"><span>Вернуть билет - <a href="" @click.prevent="$emit('returnTicket', ticket.id, order.id)">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></span></li>
+            <li v-if="ticket.status == 'R'"><span>Билет {{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - возвращён</span></li>
           </template>
         </ul>
       </div> 

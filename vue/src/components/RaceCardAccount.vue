@@ -63,7 +63,7 @@
 			   </button>
 			 </div>
 			<ul class="tickets-list" v-show="tickets">
-				<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">Место {{ticket.seat}}</a></li>
+				<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></li>
 			</ul>
 		   </div>
 		 </div>
@@ -235,7 +235,7 @@ import axiosClient from '../axios';
   border-radius: 10px;
   top: 0px;
   right: 190px;
-  width: 100px;
+  width: 250px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
 }
 
@@ -247,7 +247,7 @@ import axiosClient from '../axios';
 {
 .tickets-list
 {
-  right: 150px;
+  right: 0px;
   top: 60px;
 }
 .ticket-up__left-ins{

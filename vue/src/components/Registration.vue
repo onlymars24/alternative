@@ -36,12 +36,12 @@
                         {{userErrors['password_confirmation'][0]}}
                       </div>
                       <div class="block__check">
-                        <label @click="userErrors['formConditionTop'][0] = ''" class="check">Я принимаю условия <span class="blue__link">Пользовательского соглашения</span> (публичной оферты) и <span class="blue__link">политики конфиденциальности</span>
+                        <label @click="userErrors['formConditionTop'][0] = ''" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/offercontract.pdf'" target="_blank" style="color: var(--blue);">Пользовательского соглашения</a>
                             <input type="checkbox" v-model="user.formConditionTop">
                             <span class="checkmark is-invalid"></span>
                             <div v-if="userErrors['formConditionTop']" class="invalid-feedback">{{ userErrors['formConditionTop'][0] }}</div>
                         </label>
-                        <label @click="userErrors['formConditionBottom'][0] = ''" class="check">Я даю <span class="blue__link">Cогласие на обработку персональных данных</span>
+                        <label @click="userErrors['formConditionBottom'][0] = ''" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank" style="color: var(--blue);">Политики конфиденциальности</a>
                             <input type="checkbox" v-model="user.formConditionBottom">
                             <span class="checkmark is-invalid"></span>
                             <div v-if="userErrors['formConditionBottom']" class="invalid-feedback">{{ userErrors['formConditionBottom'][0] }}</div>
@@ -97,6 +97,7 @@ export default {
             sms: [],
             resUser: [],
             registerLoading: false,
+            baseUrl: ''
         };
     },
     mounted(){
@@ -139,6 +140,7 @@ export default {
         input.addEventListener("blur", mask, false);
         input.addEventListener("keydown", mask, false);
     });
+    this.baseUrl = import.meta.env.VITE_API_BASE_URL
     },
     methods: {
         async sendCode(){
