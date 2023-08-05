@@ -50,6 +50,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/sms/reset', [SmsController::class, 'sendReset']);
 Route::get('/sms/reset', [SmsController::class, 'getReset']);
+Route::post('/sms/register', [SmsController::class, 'sendRegister']);
+Route::get('/sms/register', [SmsController::class, 'getRegister']);
 Route::post('/reset', [AuthController::class, 'reset']);
 
 

@@ -141,10 +141,11 @@ export default {
             .post('/sms/reset', {  phone: this.user.phone })
             .then(response => {
                 this.sms = response.data.sms
-                console.log(this.sms)
+                console.log(response)
             })
             .catch(error => {
                 if(error.response.status == 422){
+                    console.log(error)
                     this.notExistingUserMessage =  error.response.data.error
                 }
             });
@@ -153,7 +154,7 @@ export default {
             if(!this.notExistingUserMessage){
                 this.stepLog=2
                 this.sendingCodeDisable = true
-                this.countDown = 10
+                this.countDown = 60
                 this.countDownTimer()
             }
         },

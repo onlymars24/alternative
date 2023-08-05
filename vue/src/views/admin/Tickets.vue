@@ -333,6 +333,7 @@ export default
         const promise = axiosClient
         .get('/tickets')
         .then(response => {
+            console.log(response.data)
             this.tickets = response.data.tickets
             console.log(this.filteredTickets)
         })

@@ -34,7 +34,6 @@ class SendSmsController extends Controller
             'formConditionTop' => 'accepted',
             'formConditionBottom' => 'accepted',
         ]);
-
         if($validator->fails()){
             return response(
                 [
@@ -61,7 +60,7 @@ class SendSmsController extends Controller
     {
         $sms = Sms::where([
             ['phone', '=', $phone],
-            ['code', '=', $request->code],
+            // ['code', '=', $request->code],
             ['type', '=', $request->type]
         ])->first();
         return json_encode($sms);

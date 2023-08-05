@@ -73,7 +73,6 @@ export default{
         :size="size"
       />
     </div> -->
-
     <HeaderMain/>
     <!-- <div class="choice">
         <div class="container">
@@ -247,17 +246,17 @@ export default{
                         <!-- <a href="">Внутренние</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a target="_blank" href="/avtobus/Энск/Алейск/">Энск → Алейск</a>
+                        <a target="_blank" href="/avtobus/Гдов/Бегуницы/">Гдов → Бегуницы</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Энск/Баево с./">Энск → Баево с.</a>
+                        <a target="_blank" href="/avtobus/Гдов/Блынки/">Гдов → Блынки</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Энск/Колпашево АС/">Энск → Колпашево АС</a>
+                        <a target="_blank" href="/avtobus/Гдов/Верхоляне/">Гдов → Верхоляне</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Энск/Новосибирск/">Энск → Новосибирск</a>
+                        <a target="_blank" href="/avtobus/Гдов/Глушь/">Гдов → Глушь</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Энск/Акулово/">Энск → Акулово</a>
+                        <a target="_blank" href="/avtobus/Гдов/Гнилище/">Гдов → Гнилище</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Энск/Белово/">Энск → Белово</a>
+                        <a target="_blank" href="/avtobus/Гдов/Гологляг/">Гдов → Гологляг</a>
                         <br>
                     </div>
                 </div>

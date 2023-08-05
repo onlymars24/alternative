@@ -149,29 +149,29 @@ export default {
             this.wrongCodeMessage = ''
             this.userErrors = {};
             const promise = axiosClient
-            .post('/sms', { user: this.user, type: 'register' })
+            .post('/sms/register', { user: this.user })
             .then(response => (
                 this.sms = response.data
             ))
             .catch(error => {
                 if(error.response.status == 422){
                     console.log('No Valid')
+                    console.log(error)
                     console.log(error.response.data.errors)
-                    this.userErrors =  error.response.data.errors
-                    this.registerLoading = false;
+                    this.userErrors = error.response.data.errors
                 }
             });
             await promise
             console.log(this.sms)
             
             if(!Object.keys(this.userErrors).length){
-                // this.stepLog=2
-                // this.sendingCodeDisable = true
-                // this.countDown = 60
-                // this.countDownTimer()
-                this.register() //temp
+                this.stepLog=2
+                this.sendingCodeDisable = true
+                this.countDown = 60
+                this.countDownTimer()
+                // this.register() //register without sms
             }
-            // this.registerLoading = false;
+            this.registerLoading = false;
         },
         countDownTimer () {
             if (this.countDown > 0) {
@@ -186,40 +186,35 @@ export default {
         },
         async confirmCode(){
             this.registerLoading = true;
+            this.wrongCodeMessage = ''
             const promise = axiosClient
-            .get('/sms/'+this.user.phone+'?code='+this.code+'&type=register')
-            .then(response => (
+            .get('/sms/register?phone='+this.user.phone+'&code='+this.code)
+            .then(response => {
+                console.log(response.data)
                 this.sms = response.data
-            ));
+                this.register()
+            })
+            .catch(error => {
+                console.log(error)
+                this.wrongCodeMessage = error.response.data.error
+            })
             await promise
             this.registerLoading = false;
-            if(this.sms){
-                this.wrongCodeMessage = ''
-                this.register()
-            }
-            else{
-                this.wrongCodeMessage = 'Код подтверждения неверный!'
-            }
         },
         async register(){
             const promise = axiosClient
             .post('/register', this.user)
             .then(response => {
-                // this.successfulRegisterMessage = 'Вы успешно зарегистрировались.'
-                // this.user.phone = ''
-                // this.user.password = ''
-                // this.user.password_confirmation = ''
-                // this.stepLog=1
                 localStorage.setItem('authToken', response.data.token)
                 this.$emit('authSelf');
                 this.$emit('authenticateForForm');
-                this.registerLoading = false;
             })
             .catch(error => {
                 if(error.response.status == 422){
                     this.userErrors = error.response.data.errors
                 }
             })
+
         },
         // async login(){
         //     const promise = axiosClient

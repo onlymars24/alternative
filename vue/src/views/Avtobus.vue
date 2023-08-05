@@ -3,11 +3,13 @@ import Header from '../components/Header.vue'
 import axiosClient from '../axios'
 import dayjs from 'dayjs'
 import router from '../router'
+import BusLoading from '../components/BusLoading.vue';
 
 export default{
     name: "Avtobus",
     components: {
-        Header
+        Header,
+        BusLoading
     },
     data() {
         return {
@@ -57,11 +59,7 @@ export default{
 <template>
     <div class="container">
         <Header/>
-        <div style="margin-top: 30px;" class="loader__outside">
-            <img src="../assets/bus_loading.png">
-            <p style="color: grey;">Загрузка.....</p>  
-            <div class="loader"></div>
-        </div>
+        <BusLoading v-if="loadingRace"/>
     </div>
     
    
