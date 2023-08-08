@@ -129,6 +129,15 @@ export default {
         input.addEventListener("blur", mask, false);
         input.addEventListener("keydown", mask, false);
     });
+
+    console.log(window.location.href)
+    console.log(window.location.protocol)
+    console.log(window.location.host)
+    console.log(window.location.hostname)
+    console.log(window.location.port )
+    console.log(window.location.pathname )
+    console.log(window.location.search )
+    console.log(window.location.hash )
     
     },
     methods: {
@@ -138,7 +147,7 @@ export default {
             this.userErrors = {};
             this.notExistingUserMessage = ''
             const promise = axiosClient
-            .post('/sms/reset', {  phone: this.user.phone })
+            .post('/sms/reset', {  phone: this.user.phone, url: window.location.host })
             .then(response => {
                 this.sms = response.data.sms
                 console.log(response)
