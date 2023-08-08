@@ -52,7 +52,7 @@ class SmsController extends Controller
         ]);
         $smsService = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
-        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Ваш код на '.$request->url.': '.$sms->code);
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$sms->code);
         // $smsService = Http::withHeaders([
         //     'Authorization' => env('SMS_SERVICE_KEY'),
         // ])->post('https://email:api_key@gate.smsaero.ru/v2/balance');
@@ -108,7 +108,7 @@ class SmsController extends Controller
         ]);
         $smsService = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
-        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Ваш код на '.$request->url.': '.$sms->code);
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$request->url.': '.$sms->code);
         return response([
             'sms' => $sms
         ]);
