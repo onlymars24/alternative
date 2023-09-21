@@ -90,7 +90,7 @@ class OrderController extends Controller
         ));
         $payment = curl_exec($curl); // Выполняем запрос
         $payment = json_decode($payment);
-        
+
         $orderFromDB->bankOrderId = $payment->orderId;
         $orderFromDB->formUrl = $payment->formUrl;
         $orderFromDB->save();
@@ -106,21 +106,9 @@ class OrderController extends Controller
         if(empty($request->orderNumber) || $request->operation != 'deposited'){
             return;
         }
-        $order = Order::find($request->orderNumber);
-        $options = [];
-        foreach($order->tickets as $ticket){
-            $options[] = (object)[
-                'fare' => 10.00,
-                'due' => 12.00,
-                'ticketId' => $ticket->id,
-                'ticketCode' => $ticket->ticketCode
-            ];
-        }
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->withBody(json_encode([
-            'options' => $options
-        ]), 'application/json')->post('https://cluster.avtovokzal.ru/gdstest/rest/order/confirm/'.$request->orderNumber.'/По банковской карте');
+        ])->post('https://cluster.avtovokzal.ru/gdstest/rest/order/confirm/'.$request->orderNumber.'/По банковской карте');
         Log::info('obj_json: '.$order_json);
         $order_obj = json_decode($order_json);
         $transaction = Transaction::create([
