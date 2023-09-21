@@ -14,7 +14,7 @@ import ALogin from '../views/admin/ALogin.vue'
 import Tickets from '../views/admin/Tickets.vue'
 import Order from '../views/admin/Order.vue'
 import Admin from '../components/admin/Admin.vue'
-
+import Transactions from '../views/admin/Transactions.vue'
 
 
 
@@ -87,6 +87,11 @@ const routes = [
         path: 'order/:order_id',
         component: Order,
         name: 'Order'
+      },
+      {
+        path: 'transactions',
+        component: Transactions,
+        name: 'Transactions'
       },
     ]
   },

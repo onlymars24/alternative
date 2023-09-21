@@ -36,6 +36,26 @@
 
       </div>
     </div>
+    <div v-if="this.content==5" style="min-height: 200px;">
+      <div v-if="returnTransactionsInfo.loading" class="loader__outside">
+        <img src="../assets/bus_loading.png" style="max-width: 90%;">
+        <p style="color: grey;">Загрузка.....</p>  
+        <div class="loader"></div>
+      </div>
+      <div v-else>
+        <h6>История операций</h6>
+        <ul>
+          <template v-for="transaction in returnTransactionsInfo.response">
+
+            <p v-if="transaction.StatusCode != 2">Чек {{transaction.type == 'Income' ? ' платежа' : ' возврата'}} ещё не готов</p>
+            <p v-if="transaction.StatusCode == 2"><a :href="transaction.OfdReceiptUrl" target="_blank">Чек</a>{{transaction.type == 'Income' ? ' платежа' : ' возврата'}}</p>
+          </template>
+        </ul>
+      </div> 
+      <div>
+
+      </div>
+    </div>
 </div>
 </template>
 <script scoped>
@@ -55,7 +75,7 @@ export default
       option: 'login',
     }
   },
-  props: ['content', 'user', 'order', 'returnInfo'],
+  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo'],
   emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow'],
   components: { Seat, Login, Registration, ResetPassword },
   computed: {

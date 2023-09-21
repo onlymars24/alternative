@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Ticket;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
@@ -12,7 +14,21 @@ class Order extends Model
     protected $fillable = [
         'id',
         'order_info',
-        'user_id'
+        'user_id',
+        'bankOrderId',
+        'formUrl',
+        'pan',
+        'ip'
     ];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 
 }

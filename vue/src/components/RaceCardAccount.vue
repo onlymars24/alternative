@@ -82,26 +82,30 @@
 		   </div>
 
 		   <div>
-			<a @click.prevent="windowOpen = 2" href="" v-if="!expired && !wentOut">
+			<a @click.prevent="windowOpen = 2" href="">
 				Ещё
 			</a>
 			<!-- <span>Дата покупки</span>	 -->
 
 			<transition name="anim-window">
-				<nav style="z-index: 5;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
-					<a href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
+				<nav style="z-index: 5; display: flex; flex-direction: column;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
+					<a v-if="!expired && !wentOut && (race.order.status == 'S' || race.order.status == 'P')" href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
+					<a href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class="header__links__window__myRace-link">Транзакции</a>
 				</nav>
 			</transition>	
 		   </div>
    
 		 </div>
 		<!-- <div><p>Заказ оформлен: {{ race.order.created }}</p></div>
-		<div><p>Заказ оплачен: {{ race.order.finished }}</p></div>		 -->
+		<div><p>Заказ оплачен: {{ race.order.finished }}</p></div> -->
 	   </div>
 	 </div>
    </div>
    	<template v-if="popupOpen">
         <PopupWindow @CloseWindow="popupOpen = false; returnInfo.step = 1;" :content="4" :order="race.order" @returnTicket="returnTicket" :returnInfo="returnInfo"/>
+	</template>
+	<template v-if="popupTransactionsOpen">
+        <PopupWindow @CloseWindow="popupTransactionsOpen = false;" :content="5" :order="race.order" :returnTransactionsInfo="returnTransactionsInfo"/>
 	</template>
  </template>
 <script>
@@ -163,6 +167,7 @@ import axiosClient from '../axios';
 				}, 
 				windowOpen: 0,
 				popupOpen: false,
+				popupTransactionsOpen: false,
 				months: [
 					'', 'янв.', 'февр.', 'мар.', 'апр.', 'май.', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'ноябр.', 'дек.', 
 				],
@@ -170,6 +175,10 @@ import axiosClient from '../axios';
 				returnInfo: {
 					step: 1,
 					status: null,
+					loading: false,
+					response: [  ]
+				},
+				returnTransactionsInfo: {
 					loading: false,
 					response: [  ]
 				},
@@ -183,7 +192,8 @@ import axiosClient from '../axios';
     },
     methods: {
 		toPayment(){
-			router.push({name: 'Payment', params: {order_id: this.order.id}})
+			// router.push({name: 'Payment', params: {order_id: this.order.id}})
+			window.open(this.order.formUrl, '_self');
 		},
 		async returnTicket(ticketId, orderId){
 			if(!confirm('Вы уверены, что хотите вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
@@ -194,11 +204,27 @@ import axiosClient from '../axios';
 			const promise = axiosClient
 			.post('/ticket/return', {ticketId: ticketId, orderId: orderId})
 			.then(response => {
+				console.log(response)
 			})
 			.catch(error => {
+				console.log(error)
 			})
 			await promise
 			this.returnInfo.loading = false
+		},
+		async getTransactions(){
+			this.returnTransactionsInfo.loading = true
+			const promise = axiosClient
+			.post('/order/transactions', {orderId: this.race.order.id})
+			.then(response => {
+				console.log(response.data.transactions)
+				this.returnTransactionsInfo.response = response.data.transactions
+			})
+			.catch(error => {
+				console.log(error)
+			})
+			await promise
+			this.returnTransactionsInfo.loading = false
 		}
     },
     mounted(){

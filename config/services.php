@@ -29,5 +29,9 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'payment' => [
+        'userName' => env('PAYMENT_SERVICE_USER_NAME'),
+        'password' => env('PAYMENT_SERVICE_PASSWORD'),
+    ]
 
 ];

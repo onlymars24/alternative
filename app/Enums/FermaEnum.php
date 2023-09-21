@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Enums;
+
+class FermaEnum
+{    
+    public static $body =  [
+        "Request" => [
+              "Inn" => "7017479680", 
+              "Type" => null, 
+              "InvoiceId" => null, 
+              "CustomerReceipt" => [
+                 "TaxationSystem" => 2, 
+                 "PaymentType" => 1, 
+                 "BillAddress" => "https://росвокзалы.рф/", 
+                 "Items" => [], 
+                 "PaymentItems" => [
+                    [
+                        "PaymentType" => 1, 
+                        "Sum" => null 
+                    ] 
+                ] 
+              ] 
+           ] 
+    ];
+
+    public static $item = [
+        "Label" => null, 
+        "Price" => null, 
+        "Quantity" => 1, 
+        "Amount" => null, 
+        "Vat" => "VatNo", 
+        "PaymentMethod" => 4, 
+        "PaymentType" => 4, 
+        "PaymentAgentInfo" => [
+           "AgentType" => "AGENT", 
+           "SupplierInn" => "2221122730", 
+           "SupplierName" => "\"Артмарк\" ООО", 
+           "SupplierPhone" => "73852359311" 
+        ] 
+    ];
+
+    public static $percent = [
+        "Label" => "Сервисный сбор", 
+        "Price" => null, 
+        "Quantity" => 1, 
+        "Amount" => null, 
+        "Vat" => "VatNo", 
+        "PaymentMethod" => 4, 
+        "PaymentType" => 4 
+    ];
+}

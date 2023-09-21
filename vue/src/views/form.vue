@@ -315,7 +315,8 @@ export default
       option: 'login',
       errorMessageFromAPI: '',
       dateNew: '',
-      confirmBookLoading: false
+      confirmBookLoading: false,
+      payment: []
     };
   },
   methods: {
@@ -356,14 +357,18 @@ export default
         const promise2 = axiosClient
         .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale})
         .then(response => {
+          console.log(response)
           this.order = response.data.order
+          this.payment = response.data.payment
+          console.log(this.payment.formUrl)
         })
         .catch(error => {
+          console.log(error)
           this.errorMessageFromAPI = error.response.data.error.errorMessage
         })
         await promise2
         if(!this.errorMessageFromAPI){
-          router.push({name: 'Payment', params: { order_id: this.order.id} })     
+          window.open(this.payment.formUrl, '_self');
         }
         this.confirmBookLoading = false  
       }

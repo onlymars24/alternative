@@ -7,11 +7,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\Api\RacesController;
 use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\Api\SendSmsController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\Api\DispatchPointsController;
@@ -32,7 +34,7 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/sms/order', [SmsController::class, 'sendOrder']);
     Route::get('/sms/order', [SmsController::class, 'getOrder']);
     Route::post('/order/book', [OrderController::class, 'book']);
-    Route::post('/order/confirm', [OrderController::class, 'confirm']);
+    // Route::post('/order/confirm', [OrderController::class, 'confirm']);
     Route::get('/orders', [OrderController::class, 'all']);
     Route::get('/passengers', [PassengersController::class, 'all']);
     Route::post('/passenger/delete', [PassengersController::class, 'delete']);
@@ -53,6 +55,8 @@ Route::get('/sms/reset', [SmsController::class, 'getReset']);
 Route::post('/sms/register', [SmsController::class, 'sendRegister']);
 Route::get('/sms/register', [SmsController::class, 'getRegister']);
 Route::post('/reset', [AuthController::class, 'reset']);
+Route::post('/payment/register', [PaymentController::class, 'register']);
+Route::post('/order/transactions', [TransactionController::class, 'all']);
 
 
 Route::post('/admin/login', [AdminController::class, 'login']);

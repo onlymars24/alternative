@@ -60,7 +60,9 @@ class Ticket extends Model
         'returned',
         'benefit',
         'hash',
-        'order_id'
+        'order_id',
+        'orderBundle',
+        'customerItem'
     ];
     public function passengers()
     {
