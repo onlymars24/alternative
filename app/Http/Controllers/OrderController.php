@@ -90,10 +90,7 @@ class OrderController extends Controller
         ));
         $payment = curl_exec($curl); // Выполняем запрос
         $payment = json_decode($payment);
-        return response([
-            'data' => $data,
-            'payment' => $payment
-        ]); 
+        
         $orderFromDB->bankOrderId = $payment->orderId;
         $orderFromDB->formUrl = $payment->formUrl;
         $orderFromDB->save();
@@ -144,7 +141,7 @@ class OrderController extends Controller
             $file_name = basename($url);
             file_put_contents('tickets/'.$file_name, file_get_contents($url));
             //start
-            
+
             $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
             $item['Price'] = $ticket->price;
             $item['Amount'] = $ticket->price;
