@@ -90,8 +90,7 @@ class SmsController extends Controller
         $validator = Validator::make($user, [
             'phone' => 'required|size:17|unique:users',
             'password' => 'required|between:7,30|confirmed',
-            'formConditionTop' => 'accepted',
-            'formConditionBottom' => 'accepted',
+            'formConditionTop' => 'accepted'
         ]);
         if($validator->fails()){
             return response(

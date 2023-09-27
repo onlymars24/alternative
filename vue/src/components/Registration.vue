@@ -36,17 +36,17 @@
                         {{userErrors['password_confirmation'][0]}}
                       </div>
                       <div class="block__check">
-                        <label @click="userErrors['formConditionTop'][0] = ''" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/offercontract.pdf'" target="_blank" style="color: var(--blue);">Пользовательского соглашения</a>
+                        <label @click="userErrors['formConditionTop'][0] = ''" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/offercontract.pdf'" target="_blank" style="color: var(--blue);">Пользовательского соглашения</a> и <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank" style="color: var(--blue);">Политики конфиденциальности</a>
                             <input type="checkbox" v-model="user.formConditionTop">
                             <span class="checkmark is-invalid"></span>
                             <div v-if="userErrors['formConditionTop']" class="invalid-feedback">{{ userErrors['formConditionTop'][0] }}</div>
                         </label>
-                        <label @click="userErrors['formConditionBottom'][0] = ''" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank" style="color: var(--blue);">Политики конфиденциальности</a>
+                        <!-- <label @click="userErrors['formConditionBottom'][0] = ''" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank" style="color: var(--blue);">Политики конфиденциальности</a>
                             <input type="checkbox" v-model="user.formConditionBottom">
                             <span class="checkmark is-invalid"></span>
                             <div v-if="userErrors['formConditionBottom']" class="invalid-feedback">{{ userErrors['formConditionBottom'][0] }}</div>
-                        </label>
-                    </div>
+                        </label> -->
+                      </div>
                     <!-- <button @click="sendCode" class="btn btn-primary btn-code" ><div>Выслать код в СМС</div></button> -->
                     <button @click="sendCode" :disabled="registerLoading" class="btn btn-primary btn-code"><div>Регистрация</div></button>
                     <div v-if="registerLoading" class="text-center" style="margin-top: 10px;">
@@ -66,7 +66,7 @@
                       <button v-else @click="sendCode" class="btn-code btn__new-code">Повторное СМС</button>
                       <div v-if="registerLoading" class="text-center" style="margin-top: 10px;">
                         <div class="spinner-border" role="status"></div>
-                    </div>
+                      </div>
                   </div>
                 </div>
           </div>
@@ -86,7 +86,7 @@ export default {
                 password: '',
                 password_confirmation: '',
                 formConditionTop: false,
-                formConditionBottom: false,
+                // formConditionBottom: false,
             },
             userErrors: [],
             wrongCodeMessage: '',
@@ -210,6 +210,7 @@ export default {
                 this.$emit('authenticateForForm');
             })
             .catch(error => {
+                console.log(error)
                 if(error.response.status == 422){
                     this.userErrors = error.response.data.errors
                 }

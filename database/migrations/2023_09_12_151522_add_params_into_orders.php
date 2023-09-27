@@ -17,6 +17,8 @@ return new class extends Migration
             $table->after('formUrl', function ($table) {
                 $table->string('ip')->nullable();
                 $table->string('pan')->nullable();
+                $table->integer('duePercent')->nullable();
+                $table->integer('duePrice')->nullable();
             });
         });
     }
@@ -29,7 +31,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['ip', 'pan']);
+            $table->dropColumn(['ip', 'pan', 'duePercent', 'duePrice']);
         });
     }
 };

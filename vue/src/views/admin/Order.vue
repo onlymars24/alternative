@@ -5,14 +5,16 @@
             <el-container v-if="!orderLoading">
                 <el-main>
                     <el-descriptions :title="'Информация о заказе с ID: '+order.id" direction="vertical" :column="4" border>
-                        <el-descriptions-item label="Сумма заказа">{{order.total}}</el-descriptions-item>
-                        <el-descriptions-item label="Сумма возврата">{{order.repayment}}</el-descriptions-item>
+                        <el-descriptions-item label="Сумма заказа">{{order.total}}₽</el-descriptions-item>
+                        <el-descriptions-item label="Сумма возврата">{{order.repayment}}₽</el-descriptions-item>
                         <el-descriptions-item label="Статус заказа" :span="2">{{ orderStatus }}</el-descriptions-item>
                         <el-descriptions-item label="Дата создания заказа">{{order.created}}</el-descriptions-item>
                         <el-descriptions-item label="Истечение срока действия неоплаченного заказа">{{order.expired}}</el-descriptions-item>
                         <el-descriptions-item label="Завершение обработки заказа">{{order.finished}}</el-descriptions-item>
                         <el-descriptions-item label="IP плательщика">{{order_outside.ip}}</el-descriptions-item>
                         <el-descriptions-item label="Номер карты">{{order_outside.pan}}</el-descriptions-item>
+                        <el-descriptions-item label="Сервисный сбор">{{order_outside.duePercent}}%</el-descriptions-item>
+                        <el-descriptions-item label="Сумма сервисного сбора">{{order_outside.duePrice}}₽</el-descriptions-item>
                     </el-descriptions>
                     <div style="margin-top: 20px;">
                         <el-card class="box-card">

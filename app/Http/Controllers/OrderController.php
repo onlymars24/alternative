@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Ticket;
+use App\Models\Setting;
 use App\Enums\FermaEnum;
 use App\Models\Passenger;
 use App\Models\Transaction;
@@ -38,11 +39,12 @@ class OrderController extends Controller
                 'items' => []
             ]
         ];
+        $lastKey = 0;
         foreach($order->tickets as $key => $ticket){
             $ticketNew = (array)$ticket;
             $ticketNew['order_id'] = $order->id;
             $orderBundleEl = [ "positionId"=> $key+1,
-                "name" => 'Бил'.!empty($ticketNew['ticketNum']) ? ' №' : ''.$ticketNew['ticketNum'].' '.$ticketNew['ticketNum'].' '.$ticketNew['dispatchDate'].' Мст№'.$ticketNew['seat'].' '.$ticketNew['lastName'].' '.mb_substr($ticketNew['firstName'], 0, 1).'. '.mb_substr($ticketNew['middleName'], 0, 1).'.',
+                "name" => 'Бил'.(!empty($ticketNew['ticketNum']) ? ' №' : '').' '.$ticketNew['ticketNum'].' '.$ticketNew['dispatchDate'].' Мст№'.$ticketNew['seat'].' '.$ticketNew['lastName'].' '.mb_substr($ticketNew['firstName'], 0, 1).'. '.mb_substr($ticketNew['middleName'], 0, 1).'.',
                 "quantity" => [ "value"=> 1, "measure" => 0 ],
                 "itemCode" => "NM-".($key+1),
                 "tax"=> ["taxType"=> 0, "taxSum"=> 0],
@@ -54,7 +56,23 @@ class OrderController extends Controller
                 $ticketNew
             );
             $orderBundle['cartItems']['items'][] = $orderBundleEl;
+            $lastKey = $key+1;
         }
+        $duePercent = json_decode(Setting::where('name', 'dues')->first()->data);
+        $duePercent = (array)$duePercent;
+        $duePercent = $duePercent['clusterDue'];
+        $duePrice = ceil($order->total * $duePercent / 100);
+        $orderFromDB->duePercent = $duePercent;
+        $orderFromDB->duePrice = $duePrice;
+        $orderBundle['cartItems']['items'][] = [
+            "positionId"=> $lastKey+1,
+            "name" => 'Сервисный сбор',
+            "quantity" => [ "value"=> 1, "measure" => 0 ],
+            "itemCode" => "NM-".($lastKey+1),
+            "tax"=> ["taxType"=> 0, "taxSum"=> 0],
+            "itemPrice"=> $duePrice * 100
+        ];
+
         foreach($request->sale as $el){
             if(!$el['saved']){
                 $passenger = Passenger::create([
@@ -76,7 +94,8 @@ class OrderController extends Controller
             'userName' => config('services.payment.userName'),
             'password' => config('services.payment.password'),
             'orderNumber' => $order->id,
-            'amount' => $order->total * 100,
+            'amount' => ($order->total + $duePrice) * 100,
+            'orderBundle' => json_encode($orderBundle),
             'returnUrl' => env('FRONTEND_URL').'/account',
             'dynamicCallbackUrl' => env('BACKEND_URL').'/order/confirm/'
         ];
@@ -111,6 +130,7 @@ class OrderController extends Controller
         ])->post('https://cluster.avtovokzal.ru/gdstest/rest/order/confirm/'.$request->orderNumber.'/По банковской карте');
         Log::info('obj_json: '.$order_json);
         $order_obj = json_decode($order_json);
+
         $transaction = Transaction::create([
             'StatusCode' => 0,
             'type' => 'Income',
@@ -142,10 +162,10 @@ class OrderController extends Controller
         $order = Order::find($request->orderNumber);
         $order->order_info = $order_json;
 
-        $percent['Price'] = $percent['Amount'] = $order_obj->agent->extra == null ? 0 : $order_obj->agent->extra;
+        $percent['Price'] = $percent['Amount'] = $order->duePrice;
 
         $body['Request']['CustomerReceipt']['Items'][] = $percent;
-        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total;
+        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice;
         Log::info('Body: '.json_encode($body));
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);

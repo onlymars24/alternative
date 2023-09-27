@@ -24,7 +24,8 @@
       <hr>
       <DepartureArrival :race="race"/>
       <!-- <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div> -->
-      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{ totalCost }},00₽  </p></div>
+      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{totalCost}},00₽  </p></div>
+      <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
       <hr>
       <a class="blue__link" @click="openWindow = !openWindow, NoScroll()">Условия возврата</a>
     </div>
@@ -250,6 +251,7 @@
       <div class="form-reg">
       <div class="pay">
         <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >{{ totalCost }},00₽</p></div>
+        <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
         <hr class="line-pay">
         <div class="pay-discription">
           <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
@@ -316,7 +318,9 @@ export default
       errorMessageFromAPI: '',
       dateNew: '',
       confirmBookLoading: false,
-      payment: []
+      payment: [],
+      duePercent: 0,
+      duePrice: 0,
     };
   },
   methods: {
@@ -600,7 +604,8 @@ export default
         ticket_price = ticket_price[0].price
         totalCost += ticket_price
       })
-      return totalCost;
+      this.duePrice = Math.ceil(totalCost * this.duePercent / 100)
+      return totalCost+this.duePrice;
     }
   },
   async mounted(){
@@ -674,6 +679,16 @@ export default
       })
       await promise2      
     }
+    const promise3 = axiosClient
+    .get('/settings/cluster/due')
+    .then(response => {
+      console.log(response.data.clusterDue)
+      this.duePercent = response.data.clusterDue
+    })
+    .catch(error => {
+      console.log(error)
+    })
+    await promise3
     this.loadingRace = false
   }
 };

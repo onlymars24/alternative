@@ -273,7 +273,10 @@ export default{
         async getArrivalData(){
              const promise = axiosClient
                 .get('/arrival_points/'+this.dispatchEl.id)
-                .then(response => (this.arrivalData = JSON.parse(response.data)));
+                .then(response => {
+                    console.log(response)    
+                    this.arrivalData = JSON.parse(response.data)
+                });
             await promise
         },
 

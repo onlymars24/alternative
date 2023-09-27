@@ -10,6 +10,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\Api\RaceController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Api\RacesController;
 use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\Api\SendSmsController;
@@ -57,6 +58,10 @@ Route::get('/sms/register', [SmsController::class, 'getRegister']);
 Route::post('/reset', [AuthController::class, 'reset']);
 Route::post('/payment/register', [PaymentController::class, 'register']);
 Route::post('/order/transactions', [TransactionController::class, 'all']);
+
+
+Route::get('/settings/cluster/due', [SettingsController::class, 'getClusterDue']);
+Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 
 
 Route::post('/admin/login', [AdminController::class, 'login']);

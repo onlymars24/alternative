@@ -3,7 +3,7 @@
 <template>
 <div class="background-close" @click="reloadPage(); $emit('CloseWindow');"></div>
 <div class="popup-container">
-    <div class="closeWindow" @click="$emit('CloseWindow')">✖</div>
+    <div class="closeWindow" @click="reloadPage(); $emit('CloseWindow')">✖</div>
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
     <div v-if="this.content==3" class="content-popap">
@@ -46,7 +46,6 @@
         <h6>История операций</h6>
         <ul>
           <template v-for="transaction in returnTransactionsInfo.response">
-
             <p v-if="transaction.StatusCode != 2">Чек {{transaction.type == 'Income' ? ' платежа' : ' возврата'}} ещё не готов</p>
             <p v-if="transaction.StatusCode == 2"><a :href="transaction.OfdReceiptUrl" target="_blank">Чек</a>{{transaction.type == 'Income' ? ' платежа' : ' возврата'}}</p>
           </template>

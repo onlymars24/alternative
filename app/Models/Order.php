@@ -18,7 +18,9 @@ class Order extends Model
         'bankOrderId',
         'formUrl',
         'pan',
-        'ip'
+        'ip',
+        'duePercent',
+        'duePrice'
     ];
 
     public function transactions()

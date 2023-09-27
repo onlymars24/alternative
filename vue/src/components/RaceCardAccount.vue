@@ -50,7 +50,7 @@
 		 <div class="ticket-up__right-ins">
 			
 		   <div class="right-ins__left" style="min-width: 113px;">
-			 <p>{{ race.order.total }}</p>
+			 <p>{{ race.order.total + duePrice}}</p>
 			 <p>руб</p>
 		   </div>
 		   <div class="right-ins__right" v-if="!expired">
@@ -184,7 +184,8 @@ import axiosClient from '../axios';
 				},
 				expired: false,
 				wentOut: false,
-				baseUrl: ''
+				baseUrl: '',
+				duePrice: this.order.duePrice
 			}
 		},
     computed:{
