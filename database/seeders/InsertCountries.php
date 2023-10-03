@@ -17,8 +17,8 @@ class InsertCountries extends Seeder
     public function run()
     {
         $countries = Http::withHeaders([
-            'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
-        ])->get('https://cluster.avtovokzal.ru/gdstest/rest/countries')->object();
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/countries')->object();
         Setting::create([
             'name' => 'countries',
             'data' => json_encode($countries)

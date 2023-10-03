@@ -17,13 +17,13 @@ class InsertDispatchPoints extends Seeder
     public function run()
     {
         $regions = Http::withHeaders([
-            'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
-        ])->get('https://cluster.avtovokzal.ru/gdstest/rest/regions/643')->object();
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
         $points = [];
         foreach($regions as $region){
             $pointsTemp = Http::withHeaders([
-                'Authorization' => 'Basic YWx0NzAxNzQ3OTY4MDpEYlhqRk0zQWZV',
-            ])->get('https://cluster.avtovokzal.ru/gdstest/rest/dispatch_points/'.$region->id)->object();
+                'Authorization' => env('AVTO_SERVICE_KEY'),
+            ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
             if($pointsTemp){
                 foreach($pointsTemp as $point){
                     DispatchPoint::create([

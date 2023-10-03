@@ -23,7 +23,7 @@ class TicketController extends Controller
     public function getBack(Request $request){
         $ticket_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->post('https://cluster.avtovokzal.ru/gdstest/rest/ticket/return/'.$request->ticketId);
+        ])->post(env('AVTO_SERVICE_URL').'/ticket/return/'.$request->ticketId);
         $ticket = json_decode($ticket_json);
         if(!isset($ticket->hash)){
             return response([
@@ -32,17 +32,44 @@ class TicketController extends Controller
         }
         $ticketFromDB = Ticket::find($ticket->id);
         $ticketFromDB->update((array)$ticket);
-        $url = 'https://cluster.avtovokzal.ru/gdstest/mvc/download/'.$ticket->hash.'.pdf';
+        $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket->hash.'.pdf';
         $file_name = basename($url);
         file_put_contents('tickets/'.$ticket->hash.'_r.pdf', file_get_contents($url));
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->get('https://cluster.avtovokzal.ru/gdstest/rest/order/'.$request->orderId);
+        ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
         $orderFromDb = Order::find($request->orderId);
         $orderFromDb->order_info = $order_json;
         $orderFromDb->save();
 
         //begin createPayment
+        // $orderBundle = (array)$ticketFromDB->orderBundle;
+
+        // $race_json = Http::withHeaders([
+        //     'Authorization' => env('AVTO_SERVICE_KEY'),
+        // ])->post(env('AVTO_SERVICE_KEY').'/race/summary/'.$ticketFromDB->raceUid);
+        // $race = json_decode($race_json);
+        // date_default_timezone_set($race->depot->timezone);
+        // Log::info(strtotime($ticketFromDB->dispatchDate).' - '.strtotime("now"));
+        // $timeUntillDispatch = strtotime($ticketFromDB->dispatchDate) - strtotime("now");
+        // if($race->race->RaceStatus->name == 'Отменён'){
+            
+        // }
+        // elseif($timeUntillDispatch > 2 * 3600){
+
+        // }
+        // elseif($timeUntillDispatch < 2 * 3600 && $timeUntillDispatch > 0){
+            
+        // }
+        // elseif($timeUntillDispatch < 0 && $timeUntillDispatch > 3 * 3600){
+
+        // }
+        // else{
+        //     return response([
+        //         'error' => null
+        //     ], 422);
+        // }
+
         $refundItems = ['items' => [json_decode($ticketFromDB->orderBundle)]];
         $data = [
             'userName' => config('services.payment.userName'),
@@ -54,7 +81,7 @@ class TicketController extends Controller
         $curl = curl_init(); // Инициализируем запрос
         curl_setopt_array($curl, array(
             // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
-            CURLOPT_URL => 'https://alfa.rbsuat.com/payment/rest/refund.do', 
+            CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/refund.do', 
             CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
             CURLOPT_POST => true, // Метод POST
             CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе

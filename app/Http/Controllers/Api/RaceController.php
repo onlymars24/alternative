@@ -39,7 +39,7 @@ class RaceController extends Controller
     {
         $race = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->get('https://cluster.avtovokzal.ru/gdstest/rest/race/summary/'.$uid)->object();
+        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$uid)->object();
         return json_encode($race);
     }
 

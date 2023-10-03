@@ -368,13 +368,19 @@ export default
         })
         .catch(error => {
           console.log(error)
-          this.errorMessageFromAPI = error.response.data.error.errorMessage
+          if(error.response.data.error == null || error.response.data.error.errorMessage == null){
+            this.errorMessageFromAPI = 'Произошла непредвиденная ошибка. Повторите ещё раз позже!'
+          }
+          else{
+            this.errorMessageFromAPI = error.response.data.error.errorMessage
+            
+          }
         })
         await promise2
         if(!this.errorMessageFromAPI){
           window.open(this.payment.formUrl, '_self');
         }
-        this.confirmBookLoading = false  
+        this.confirmBookLoading = false
       }
     },
     validateFrom(){

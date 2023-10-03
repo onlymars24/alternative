@@ -11,34 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class SmsController extends Controller
 {
-    // public function sendOrder(Request $request){
-    //     $sms = Sms::create([
-    //         'phone' => $request->phone,
-    //         'code' => random_int(100000, 999999),
-    //         'type' => 'order'
-    //     ]);
-
-    //     return response([
-    //         'sms' => $sms
-    //     ]);
-    // }
-
-    // public function getOrder(Request $request){
-    //     $sms = Sms::where([
-    //         ['phone', '=', $request->phone],
-    //         ['code', '=', $request->code],
-    //         ['type', '=', 'order']
-    //     ])->first();
-
-    //     return response([
-    //         'sms' => $request
-    //     ]);
-    // }
-
     public function sendReset(Request $request){
-        // return response([
-        //     'url' => $request->url
-        // ]);
         $user = User::where('phone', $request->phone)->first();
         if(!$user){
             return response([
@@ -53,9 +26,6 @@ class SmsController extends Controller
         $smsService = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
         ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$sms->code);
-        // $smsService = Http::withHeaders([
-        //     'Authorization' => env('SMS_SERVICE_KEY'),
-        // ])->post('https://email:api_key@gate.smsaero.ru/v2/balance');
         return response([
             'sms' => $sms,
             'service' => json_decode($smsService)
@@ -63,10 +33,6 @@ class SmsController extends Controller
     }
 
     public function getReset(Request $request){
-        // $temp = env("AVTO_SERVICE_KEY");
-        // return response([
-        //     'sms' => $temp
-        // ]);
         $sms = Sms::where([
             ['phone', '=', '+'.$request->phone],
             // ['code', '=', $request->code],

@@ -21,7 +21,7 @@ class OrderController extends Controller
         $body = json_encode($request->sale);
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->withBody($body, 'application/json')->post('https://cluster.avtovokzal.ru/gdstest/rest/order/book/'.$request->uid);
+        ])->withBody($body, 'application/json')->post(env('AVTO_SERVICE_URL').'/order/book/'.$request->uid);
         $order = json_decode($order_json);
         if(!isset($order->id)){
             return response([
@@ -102,14 +102,23 @@ class OrderController extends Controller
         $curl = curl_init(); // Инициализируем запрос
         curl_setopt_array($curl, array(
             // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
-            CURLOPT_URL => 'https://alfa.rbsuat.com/payment/rest/register.do', 
+            CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/register.do', 
             CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
             CURLOPT_POST => true, // Метод POST
             CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
         ));
         $payment = curl_exec($curl); // Выполняем запрос
+        Log::info('payment: '.$payment);
         $payment = json_decode($payment);
-
+        if(!isset($payment->orderId)){
+            foreach($orderFromDB->tickets as $ticket){
+                $ticket->delete();
+            }
+            $orderFromDB->delete();
+            return response([
+                'error' => $payment
+            ], 422);
+        }
         $orderFromDB->bankOrderId = $payment->orderId;
         $orderFromDB->formUrl = $payment->formUrl;
         $orderFromDB->save();
@@ -127,9 +136,12 @@ class OrderController extends Controller
         }
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->post('https://cluster.avtovokzal.ru/gdstest/rest/order/confirm/'.$request->orderNumber.'/По банковской карте');
+        ])->post(env('AVTO_SERVICE_URL').'/order/confirm/'.$request->orderNumber.'/По банковской карте');
         Log::info('obj_json: '.$order_json);
         $order_obj = json_decode($order_json);
+        if(!isset($order_obj->id)){
+            return;
+        }
 
         $transaction = Transaction::create([
             'StatusCode' => 0,
@@ -144,11 +156,9 @@ class OrderController extends Controller
         foreach($order_obj->tickets as $ticket){
             $ticketFromDB = Ticket::find($ticket->id);
             $ticketFromDB->update((array)$ticket);
-            
-            $url = 'https://cluster.avtovokzal.ru/gdstest/mvc/download/'.$ticket->hash.'.pdf';
+            $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket->hash.'.pdf';
             $file_name = basename($url);
             file_put_contents('tickets/'.$file_name, file_get_contents($url));
-            //start
 
             $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
             $item['Price'] = $ticket->price;
@@ -156,7 +166,6 @@ class OrderController extends Controller
             $body['Request']['CustomerReceipt']['Items'][] = $item;
             $ticketFromDB->customerItem = json_encode($item);
             $ticketFromDB->save();
-            //end
         }
 
         $order = Order::find($request->orderNumber);
@@ -189,7 +198,7 @@ class OrderController extends Controller
         $curl = curl_init(); // Инициализируем запрос
         curl_setopt_array($curl, array(
             // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
-            CURLOPT_URL => 'https://alfa.rbsuat.com/payment/rest/getOrderStatus.do', 
+            CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/getOrderStatus.do', 
             CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
             CURLOPT_POST => true, // Метод POST
             CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
@@ -205,28 +214,6 @@ class OrderController extends Controller
 
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
     }
-
-    // public function confirm($order_id){
-    //     $order_json = Http::withHeaders([
-    //         'Authorization' => env('AVTO_SERVICE_KEY'),
-    //     ])->post('https://cluster.avtovokzal.ru/gdstest/rest/order/confirm/'.$order_id.'/По банковской карте');
-    //     $order_obj = json_decode($order_json);
-
-    //     foreach($order_obj->tickets as $ticket){
-    //         $ticketFromDB = Ticket::find($ticket->id);
-    //         $ticketFromDB->update((array)$ticket);
-    //         $url = 'https://cluster.avtovokzal.ru/gdstest/mvc/download/'.$ticket->hash.'.pdf';
-    //         $file_name = basename($url);
-    //         file_put_contents('tickets/'.$file_name, file_get_contents($url));
-    //     }
-    //     $order = Order::find($order_id);
-    //     $order->order_info = $order_json;
-    //     $order->save();
-    //     return redirect('http://localhost:5173/account');
-    //     // return response([
-    //     //     'order' => $order_obj
-    //     // ]);
-    // }
 
     public function all(){
         $user = Auth::user();
