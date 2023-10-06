@@ -95,8 +95,8 @@
 				   Маршрут № <b>{{ race.num }} {{ race.name }} </b>, по маршруту
 				   <b>{{ race.dispatchStationName }} — {{ race.arrivalStationName }}</b>
 				 </p>
-				 <p>Тип рейса: {{ race.type.name }}</p>
-         <p>Класс рейса: {{ race.clazz.name }}</p>
+				 <p v-if="race.type != null">Тип рейса: {{ race.type.name }}</p>
+         <p v-if="race.clazz != null">Класс рейса: {{ race.clazz.name }}</p>
 				 <p>Отправление и прибытие по местному времени</p>
 			   </div>
 			  

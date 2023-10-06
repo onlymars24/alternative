@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
-    public function book(Request $request){        
+    public function book(Request $request){
         $body = json_encode($request->sale);
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
@@ -213,6 +213,38 @@ class OrderController extends Controller
         $order->save();
 
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
+    }
+
+    public function getBack(Request $request){
+        //найти заказ
+        $order_json = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
+        $order = json_decode($order_json);
+        $orderFromDB = Order::find($request->orderId);
+        $tickets = $orderFromDB->tickets->where('status', 'S');
+
+
+        //перебрать невозвращённые билеты: для каждого вызвать возврат, обновить бд билета, засунуть в массив для экваринга, засунуть в массив для чека, обновить файл билета
+        if($tickets->count() == 0){
+            return response([
+                'errorMessage' => 'Все билеты возвращены'
+            ]);
+        }
+        foreach($tickets as $ticket){
+            
+        }
+        return response([
+            'tickets' => $tickets->count()
+        ]);
+        
+        //проверить рейс на отмену и если что добавить комиссию
+        
+        //обновить бд заказа
+        
+        //выполнять возврат по экварингу
+
+        //распечатать чек
     }
 
     public function all(){

@@ -44,6 +44,7 @@
             	</div>
 				</div>
                 <template v-for="race in sortedRaces">
+                    <!-- <pre>{{ race }}</pre> -->
                     <RaceCard @toSeats="toSeats" :race="race"/> 
                 </template>                
 			</div>

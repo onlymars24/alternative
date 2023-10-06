@@ -7,6 +7,7 @@
     </div>
     <HeaderСrumbsVue v-if="!loadingSeats" :race="race" />
     <div v-if="!loadingSeats" class="container">
+      <!-- <pre>{{ race }}</pre> -->
       <div class="window-bus">
         {{ $route.params['route_id'] }}
         <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
@@ -52,7 +53,9 @@ export default {
       let lastNum = 0
 
       this.seats.forEach((seat) => {
-        seat.name = Number(seat.name.substring(6))
+        if(seat.name.substring(0, 6) == 'Место '){
+          seat.name = Number(seat.name.substring(6))
+        }
       })
 
       this.seats.forEach((seat) => {

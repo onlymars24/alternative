@@ -24,12 +24,10 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
-    $order = Order::find(2083682);
-    foreach($order->tickets as $ticket){
-        $ticket->delete();
-    }
-    $order->delete();
-    dd('done');
+    // date_default_timezone_set('Asia/Novosibirsk');
+    // Log::info(strtotime($ticketFromDB->dispatchDate).' - '.strtotime("now"));
+    $order = Order::find(2083704);
+    dd($order->tickets->count());
 });
 
 

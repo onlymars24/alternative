@@ -15,7 +15,7 @@
     </div>
 
   <HeaderСrumbsVue :race="race" v-if="!loadingRace"/>
-  <!-- <pre>{{ race }}</pre> -->
+  <pre>{{ race }}</pre>
   <!-- <pre>{{ formData }}</pre> -->
   <div class="container" v-if="!loadingRace">
     <div class="form__content">
@@ -458,7 +458,7 @@ export default
         this.formData[indexTicket].doc_type = ''
 
         this.formData[indexTicket].ticket_type_code = this.race.ticketTypes.filter(el => {
-          return el.name == 'Полный';
+          return el.name == 'Полный' || 'Пассажирский';
         })[0].code
 
         this.formData[indexTicket].saved = false     
@@ -513,7 +513,7 @@ export default
         return
       }
       let totalTicketCode = this.race.ticketTypes.filter(el => {
-        return el.name == 'Полный';
+        return el.name == 'Полный' || 'Пассажирский';
       })
       totalTicketCode = totalTicketCode[0].code
       // let seat = this.formData.filter(el => {
@@ -642,7 +642,7 @@ export default
       return    
     }
     let totalTicketCode = this.race.ticketTypes.filter(el => {
-      return el.name == 'Полный';
+      return el.name == 'Полный' || 'Пассажирский';
     })
     totalTicketCode = totalTicketCode[0].code
     this.chosenSeats.forEach(el => this.formData.push(

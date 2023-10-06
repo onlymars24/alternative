@@ -21,6 +21,7 @@ class TicketController extends Controller
         ]);
     }
     public function getBack(Request $request){
+        //возврат на е-трафике
         $ticket_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->post(env('AVTO_SERVICE_URL').'/ticket/return/'.$request->ticketId);
@@ -30,6 +31,7 @@ class TicketController extends Controller
                 'error' => $ticket
             ], 422);
         }
+        //обновление в БД
         $ticketFromDB = Ticket::find($ticket->id);
         $ticketFromDB->update((array)$ticket);
         $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket->hash.'.pdf';
@@ -44,17 +46,12 @@ class TicketController extends Controller
 
         //begin createPayment
         // $orderBundle = (array)$ticketFromDB->orderBundle;
+        // $customerItem = (array)$ticketFromDB->customerItem;
 
-        // $race_json = Http::withHeaders([
-        //     'Authorization' => env('AVTO_SERVICE_KEY'),
-        // ])->post(env('AVTO_SERVICE_KEY').'/race/summary/'.$ticketFromDB->raceUid);
-        // $race = json_decode($race_json);
         // date_default_timezone_set($race->depot->timezone);
         // Log::info(strtotime($ticketFromDB->dispatchDate).' - '.strtotime("now"));
         // $timeUntillDispatch = strtotime($ticketFromDB->dispatchDate) - strtotime("now");
-        // if($race->race->RaceStatus->name == 'Отменён'){
-            
-        // }
+
         // elseif($timeUntillDispatch > 2 * 3600){
 
         // }
@@ -70,26 +67,51 @@ class TicketController extends Controller
         //     ], 422);
         // }
 
-        $refundItems = ['items' => [json_decode($ticketFromDB->orderBundle)]];
+        //проверка на отмену рейса
+        $orderBundle = (array)json_decode($ticketFromDB->orderBundle);
+        $orderBundle['itemPrice'] = $ticketFromDB->repayment * 100;
+        $refundItems = ['items' => [$orderBundle]];
+        $race_json = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
+        Log::info('race_json: '.$race_json);
+        $race = json_decode($race_json);
+        
+        // if($race->race->status->name == 'Отменён'){
+        //     $refundItems['items'][] = [
+        //         "positionId"=> $orderFromDb->tickets->count()+1,
+        //         "name" => 'Сервисный сбор',
+        //         "quantity" => [ "value"=> 1, "measure" => 0 ],
+        //         "itemCode" => "NM-".($orderFromDb->tickets->count()+1),
+        //         "tax"=> ["taxType"=> 0, "taxSum"=> 0],
+        //         "itemPrice"=> ceil($orderFromDb->duePercent * $ticketFromDB->price / 100) * 100
+        //     ];
+        // }
+
+        //возврат в экваринге
         $data = [
             'userName' => config('services.payment.userName'),
             'password' => config('services.payment.password'),
             'orderId' => $orderFromDb->bankOrderId,
-            'amount' => $ticketFromDB->price * 100,
-            'refundItems' => json_encode($refundItems)
+            'amount' => $ticketFromDB->repayment * 100,
+            'positionId' => $orderBundle['positionId']
         ];
+        if($race->race->status->name == 'Отменён'){
+            $data['amount'] = ($ticketFromDB->repayment + ceil($orderFromDb->duePercent * $ticketFromDB->price / 100)) * 100;
+        }
+
         $curl = curl_init(); // Инициализируем запрос
         curl_setopt_array($curl, array(
             // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
-            CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/refund.do', 
+            CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do', 
             CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
             CURLOPT_POST => true, // Метод POST
             CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
         ));
         $repayment = curl_exec($curl); // Выполняем запрос
-        
         $repayment = json_decode($repayment);
         
+        //пробитие чека
         $transaction = Transaction::create([
             'StatusCode' => 0,
             'type' => 'IncomeReturn',
@@ -102,8 +124,14 @@ class TicketController extends Controller
         $body['Request']['InvoiceId'] = $transaction->id;
 
         $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticketFromDB->customerItem);
+        $body['Request']['CustomerReceipt']['Items'][0]['price'] = $body['Request']['CustomerReceipt']['Items'][0]['amount'] = $ticketFromDB->repayment;
 
-        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->price;
+        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
+        if($race->race->status->name == 'Отменён'){
+            $percent['Price'] = $percent['Amount'] = ceil($orderFromDb->duePercent * $ticketFromDB->price / 100);
+            $body['Request']['CustomerReceipt']['Items'][] = $percent;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = ceil($orderFromDb->duePercent * $ticketFromDB->price / 100) + $ticketFromDB->repayment;
+        }
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);
         $ReceiptId = json_decode($ReceiptId);
