@@ -44,29 +44,6 @@ class TicketController extends Controller
         $orderFromDb->order_info = $order_json;
         $orderFromDb->save();
 
-        //begin createPayment
-        // $orderBundle = (array)$ticketFromDB->orderBundle;
-        // $customerItem = (array)$ticketFromDB->customerItem;
-
-        // date_default_timezone_set($race->depot->timezone);
-        // Log::info(strtotime($ticketFromDB->dispatchDate).' - '.strtotime("now"));
-        // $timeUntillDispatch = strtotime($ticketFromDB->dispatchDate) - strtotime("now");
-
-        // elseif($timeUntillDispatch > 2 * 3600){
-
-        // }
-        // elseif($timeUntillDispatch < 2 * 3600 && $timeUntillDispatch > 0){
-            
-        // }
-        // elseif($timeUntillDispatch < 0 && $timeUntillDispatch > 3 * 3600){
-
-        // }
-        // else{
-        //     return response([
-        //         'error' => null
-        //     ], 422);
-        // }
-
         //проверка на отмену рейса
         $orderBundle = (array)json_decode($ticketFromDB->orderBundle);
         $orderBundle['itemPrice'] = $ticketFromDB->repayment * 100;

@@ -16,6 +16,7 @@
       <div v-if="returnInfo.step==1">
         <h6>Выберите билет, который хотите вернуть</h6>
         <ul>
+          <li v-if="order.status != 'R'"><span><a href="" @click.prevent="$emit('returnOrder', order.id)">Вернуть весь заказ</a></span></li>
           <template v-for="ticket in order.tickets">
             <li v-if="ticket.status == 'S'"><span>Вернуть билет - <a href="" @click.prevent="$emit('returnTicket', ticket.id, order.id)">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></span></li>
             <li v-if="ticket.status == 'R'"><span>Билет {{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - возвращён</span></li>
@@ -75,7 +76,7 @@ export default
     }
   },
   props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo'],
-  emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow'],
+  emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder'],
   components: { Seat, Login, Registration, ResetPassword },
   computed: {
     UserAgreement() {

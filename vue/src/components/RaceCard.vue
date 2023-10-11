@@ -83,9 +83,9 @@
 			 Перевозчик
 		   </p>
 		   <!-- <p :class="{ active: race.section == 'bus' }" @click="race.section = 'bus'">Автобус</p> -->
-		   <p :class="{ active: race.section == 'conditions' }" @click="race.section = 'conditions'">
+		   <!-- <p :class="{ active: race.section == 'conditions' }" @click="race.section = 'conditions'">
 			 Условия
-		   </p>
+		   </p> -->
 		 </div>
 		 <template v-if="race.section == 'route'">
 		   <div class="ticket-low__ins-down">
@@ -108,7 +108,6 @@
 		 </template>
  
 		 <template v-if="race.section == 'driver'">
-		  <!-- <TicketLow :race="race"/> -->
       <div class="ticket-low__ins-down-second">
         <div class="ins-down-second__right">
 				 <p><b>Перевозчик</b></p>
@@ -119,31 +118,13 @@
       </div>
 		 </template>
  
-		 <!-- <template v-if="race.section == 'bus'">
-		   <div class="ticket-low__ins">
-			 <div class="ticket-low__ins-down">
-			   <div class="ticket-low__ins-down-first">
-				 <div class="ins-down-first__left">
-				   <p>Модель автобуса: Ик-250_42м</p>
-				   <p>{{ race.busInfo }}</p>
-				 </div>
-				 <div class="ins-down-first__right">
-				   <p><b>Условия на рейсе</b></p>
-				   <p>Для посадки необходим паспорт</p>
-				   <p>Для посадки необходим распечатанный билет</p>
-				 </div>
-			   </div>
-			 </div>
-		   </div>
-		 </template> -->
- 
-		 <template v-if="race.section == 'conditions'">
+		 <!-- <template v-if="race.section == 'conditions'">
 		   <div class="ticket-low__ins">
 			 <div class="ticket-low__ins-fourth">
 			   <a href="#">Условия возврата</a>
 			 </div>
 		   </div>
-		 </template>
+		 </template> -->
 	   </div>
 	 </div>
    </div>

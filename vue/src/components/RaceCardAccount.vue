@@ -78,21 +78,17 @@
 			<p v-if="race.order.status == 'R'">Заказ возвращён</p>
 			<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
 			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>			
-				
 		   </div>
-
 		   <div>
-			<a @click.prevent="windowOpen = 2" href="">
-				Ещё
-			</a>
+			<a v-if="!expired && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" @click.prevent="windowOpen = 2" href="">Ещё</a>
 			<!-- <span>Дата покупки</span>	 -->
 
 			<transition name="anim-window">
 				<nav style="z-index: 5; display: flex; flex-direction: column;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
-					<a v-if="!expired && !wentOut && (race.order.status == 'S' || race.order.status == 'P')" href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
+					<a v-if="!wentOut" href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
 					<a href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class="header__links__window__myRace-link">Транзакции</a>
 				</nav>
-			</transition>	
+			</transition>
 		   </div>
    
 		 </div>
@@ -102,7 +98,7 @@
 	 </div>
    </div>
    	<template v-if="popupOpen">
-        <PopupWindow @CloseWindow="popupOpen = false; returnInfo.step = 1;" :content="4" :order="race.order" @returnTicket="returnTicket" :returnInfo="returnInfo"/>
+        <PopupWindow @CloseWindow="popupOpen = false; returnInfo.step = 1;" :content="4" :order="race.order" @returnTicket="returnTicket" @returnOrder="returnOrder" :returnInfo="returnInfo"/>
 	</template>
 	<template v-if="popupTransactionsOpen">
         <PopupWindow @CloseWindow="popupTransactionsOpen = false;" :content="5" :order="race.order" :returnTransactionsInfo="returnTransactionsInfo"/>
@@ -195,6 +191,23 @@ import axiosClient from '../axios';
 		toPayment(){
 			// router.push({name: 'Payment', params: {order_id: this.order.id}})
 			window.open(this.order.formUrl, '_self');
+		},
+		async returnOrder(orderId){
+			if(!confirm('Вы уверены, что хотите вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
+				return
+			}
+			this.returnInfo.loading = true
+			this.returnInfo.step = 2
+			const promise = axiosClient
+			.post('/order/return', {orderId: orderId})
+			.then(response => {
+				console.log(response)
+			})
+			.catch(error => {
+				console.log(error)
+			})
+			await promise
+			this.returnInfo.loading = false
 		},
 		async returnTicket(ticketId, orderId){
 			if(!confirm('Вы уверены, что хотите вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){

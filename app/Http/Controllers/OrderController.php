@@ -217,10 +217,10 @@ class OrderController extends Controller
 
     public function getBack(Request $request){
         //найти заказ
-        $order_json = Http::withHeaders([
-            'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
-        $order = json_decode($order_json);
+        // $order_json = Http::withHeaders([
+        //     'Authorization' => env('AVTO_SERVICE_KEY'),
+        // ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
+        // $order = json_decode($order_json);
         $orderFromDB = Order::find($request->orderId);
         $tickets = $orderFromDB->tickets->where('status', 'S');
 
@@ -231,20 +231,116 @@ class OrderController extends Controller
                 'errorMessage' => 'Все билеты возвращены'
             ]);
         }
+
+        $body = FermaEnum::$body;
+        $body['Request']['Type'] = 'IncomeReturn';
+        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = 0;
         foreach($tickets as $ticket){
+            //возврат на е-трафике
+            $ticket_json = Http::withHeaders([
+                'Authorization' => env('AVTO_SERVICE_KEY'),
+            ])->post(env('AVTO_SERVICE_URL').'/ticket/return/'.$ticket->id);
+            $ticket_obj = json_decode($ticket_json);
+            if(!isset($ticket_obj->hash)){
+                continue;
+            }
+
+
+            //возврат в бд
+            $ticketFromDB = Ticket::find($ticket->id);
+            $ticketFromDB->update((array) $ticket_obj);
+            $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket_obj->hash.'.pdf';
+            $file_name = basename($url);
+            file_put_contents('tickets/'.$ticket_obj->hash.'_r.pdf', file_get_contents($url));
             
+
+            //возврат позиции на эквайринге
+            $orderBundle = (array)json_decode($ticketFromDB->orderBundle);
+            $data = [
+                'userName' => config('services.payment.userName'),
+                'password' => config('services.payment.password'),
+                'orderId' => $orderFromDB->bankOrderId,
+                'amount' => $ticketFromDB->repayment * 100,
+                'positionId' => $orderBundle['positionId']
+            ];
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
+                CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+                CURLOPT_POST => true, // Метод POST
+                CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+            ));
+            $repayment = curl_exec($curl); // Выполняем запрос
+            $repayment = json_decode($repayment);
+            if($repayment->errorCode != 0){
+                continue;
+            }
+            $item = FermaEnum::$item;
+            $item['Label'] = 'Бил'.(!empty($ticketFromDB->ticketNum) ? ' №' : '').$ticketFromDB->ticketNum.' '.$ticketFromDB->dispatchDate.' Мст№'.$ticketFromDB->seat.' '.$ticketFromDB->lastName.' '.mb_substr($ticketFromDB->firstName, 0, 1).'. '.mb_substr($ticketFromDB->middleName, 0, 1).'.';
+            $item['Price'] = $item['Amount'] = $ticketFromDB->repayment;
+            $body['Request']['CustomerReceipt']['Items'][] = $item;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $ticketFromDB->repayment;
         }
+
+        //проверить рейс на отмену и если что добавить комиссию
+        $race_json = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
+        // Log::info('race_json: '.$race_json);
+        $race = json_decode($race_json);
+        if($race->race->status->name == 'Отменён'){
+            $data = [
+                'userName' => config('services.payment.userName'),
+                'password' => config('services.payment.password'),
+                'orderId' => $orderFromDB->bankOrderId,
+                'amount' => $orderFromDB->duePrice * 100,
+                'positionId' => $orderFromDB->tickets->count()+1
+            ];
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
+                CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+                CURLOPT_POST => true, // Метод POST
+                CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+            ));
+            $repayment = curl_exec($curl); // Выполняем запрос
+            $repayment = json_decode($repayment);
+            $percent = FermaEnum::$percent;
+            $percent['Price'] = $percent['Amount'] = $orderFromDB->duePrice;
+            $body['Request']['CustomerReceipt']['Items'][] = $percent;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum']  += $orderFromDB->duePrice;
+        }
+
+        //обновить бд заказа
+        $order_json = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
+        $orderFromDB->order_info = $order_json;
+        $orderFromDB->save();
+
+
+        //распечатать чек
+        $transaction = Transaction::create([
+            'StatusCode' => 0,
+            'type' => 'IncomeReturn',
+            'order_id' => $request->orderId
+        ]);
+        $body['Request']['InvoiceId'] = $transaction->id;
+        $ReceiptId = FermaService::receipt($body);
+        $ReceiptId = json_decode($ReceiptId);
+        $ReceiptId = $ReceiptId->Data->ReceiptId;
+        $receipt = FermaService::getStatus($ReceiptId);
+        $receipt = json_decode($receipt);
+        $transaction->StatusCode = $receipt->Data->StatusCode;
+        $transaction->ReceiptId = $receipt->Data->ReceiptId;
+        if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+            $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+        }
+        $transaction->save();
         return response([
             'tickets' => $tickets->count()
         ]);
         
-        //проверить рейс на отмену и если что добавить комиссию
-        
-        //обновить бд заказа
-        
-        //выполнять возврат по экварингу
-
-        //распечатать чек
     }
 
     public function all(){

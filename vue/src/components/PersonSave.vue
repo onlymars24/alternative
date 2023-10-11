@@ -1,6 +1,20 @@
 <template>
   <div>
-    <ul>
+    <BusLoading v-if="loading"/>
+    <div v-else-if="passengers.length == 0" class="not__found">
+        <div class="not__found-img">
+            <img src="../assets/free-icon-sad-3350122.png">
+        </div>
+        <div class="not__found-text">
+            <p class="not__found-title">
+                У вас нет сохранённых пассажиров
+            </p>
+            <!-- <p class="not__found-descr">
+                К сожалению, такого маршрута у нас нет. Мы делаем всё возможное, чтобы подключать как можно больше маршрутов. Возможно, он скоро появится.
+            </p> -->
+        </div>
+    </div>
+    <ul v-else>
       <li v-for="(passenger, index) in passengers" class="person-window">
         <div class="person-btn">
           <div>{{passenger.surname}} {{passenger.name}} {{passenger.patronymic}}</div>
@@ -180,9 +194,11 @@
 </template>
 <script>
 import axiosClient from '../axios';
+import BusLoading from '../components/BusLoading.vue';
 
 export default
 {
+  components: { BusLoading },
   data()
   {
     return{
@@ -190,10 +206,12 @@ export default
       passengers: [],
       countries: [],
       deleteLoading: false,
-      editLoading: false
+      editLoading: false,
+      loading: false
     }
   },
   async mounted(){
+    this.loading = true
     const promise = axiosClient
     .get('/passengers')
     .then(response => {
@@ -211,6 +229,7 @@ export default
       this.countries = response.data
     })
     await promise1
+    this.loading = false
   },
   methods: {
     async deletePassanger(passengerId){

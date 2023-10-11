@@ -1,9 +1,22 @@
 <template>
   <BusLoading v-if="loading"/>
-  <div v-else class="personal-account__content">
+  <div v-else-if="orders.length != 0" class="personal-account__content">
     <template v-for="order in orders">
           <RaceCardAccount :order="order" @updateOrders="updateOrders"/>
     </template>
+  </div>
+  <div v-else class="not__found">
+      <div class="not__found-img">
+          <img src="../assets/free-icon-sad-3350122.png">
+      </div>
+      <div class="not__found-text">
+          <p class="not__found-title">
+              У вас нет заказов
+          </p>
+          <!-- <p class="not__found-descr">
+              К сожалению, такого маршрута у нас нет. Мы делаем всё возможное, чтобы подключать как можно больше маршрутов. Возможно, он скоро появится.
+          </p> -->
+      </div>
   </div>
 </template>
 <script>
@@ -33,6 +46,7 @@ export default
       })
       await promise
       this.loading = false
+      console.log(this.orders.length)
     }
   }
 

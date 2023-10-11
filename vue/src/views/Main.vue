@@ -208,17 +208,17 @@ export default{
                         <!-- <a href="">Расписание</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a target="_blank" href="/avtobus/Новосибирск/Томск/">Новосибирск → Томск</a>
+                        <a target="_blank" href="/avtobus/Томск/Новосибирск/">Томск → Новосибирск</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Новосибирск/Барнаул/">Новосибирск → Барнаул</a>
+                        <a target="_blank" href="/avtobus/Томск/Барнаул/">Томск → Барнаул</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Новосибирск/Кемерово/">Новосибирск → Кемерово</a>
+                        <a target="_blank" href="/avtobus/Томск/Кемерово/">Томск → Кемерово</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Новосибирск/Алейск/">Новосибирск → Алейск</a>
+                        <a target="_blank" href="/avtobus/Томск/Алейск/">Томск → Алейск</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Новосибирск/Белово/">Новосибирск → Белово</a>
+                        <a target="_blank" href="/avtobus/Томск/Белово/">Томск → Белово</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Новосибирск/Буланиха/">Новосибирск → Буланиха</a>
+                        <a target="_blank" href="/avtobus/Томск/Казачий/">Томск → Казачий</a>
                         <br>
                     </div>
                 </div>
@@ -227,17 +227,17 @@ export default{
                         <!-- <a href="">Международные</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a target="_blank" href="/avtobus/Барнаул/Томск/">Барнаул → Томск</a>
+                        <a target="_blank" href="/avtobus/Кемерово/Новосибирск/">Кемерово → Новосибирск</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Барнаул/Кемерово/">Барнаул → Кемерово</a>
+                        <a target="_blank" href="/avtobus/Кемерово/Сокур/">Кемерово → Сокур</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Барнаул/Абай/">Барнаул → Абай</a>
+                        <a target="_blank" href="/avtobus/Кемерово/Вороново/">Кемерово → Вороново</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Барнаул/Акташ/">Барнаул → Акташ</a>
+                        <a target="_blank" href="/avtobus/Кемерово/Березовка/">Кемерово → Березовка</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Барнаул/Акулово/">Барнаул → Акулово</a>
+                        <a target="_blank" href="/avtobus/Кемерово/Новая Балахонка/">Кемерово → Новая Балахонка</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Барнаул/Алейск/">Барнаул → Алейск</a>
+                        <a target="_blank" href="/avtobus/Кемерово/Барановский/">Кемерово → Барановский</a>
                         <br>
                     </div>
                 </div>
@@ -246,17 +246,17 @@ export default{
                         <!-- <a href="">Внутренние</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a target="_blank" href="/avtobus/Гдов/Бегуницы/">Гдов → Бегуницы</a>
+                        <a target="_blank" href="/avtobus/Красноярск/Бакчет/">Красноярск → Бакчет</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Гдов/Блынки/">Гдов → Блынки</a>
+                        <a target="_blank" href="/avtobus/Красноярск/Агинское/">Красноярск → Агинское</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Гдов/Верхоляне/">Гдов → Верхоляне</a>
+                        <a target="_blank" href="/avtobus/Красноярск/Томск/">Красноярск → Томск</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Гдов/Глушь/">Гдов → Глушь</a>
+                        <a target="_blank" href="/avtobus/Красноярск/Антропово/">Красноярск → Антропово</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Гдов/Гнилище/">Гдов → Гнилище</a>
+                        <a target="_blank" href="/avtobus/Красноярск/Абан/">Красноярск → Абан</a>
                         <br>
-                        <a target="_blank" href="/avtobus/Гдов/Гологляг/">Гдов → Гологляг</a>
+                        <a target="_blank" href="/avtobus/Красноярск/Абаза/">Красноярск → Абаза</a>
                         <br>
                     </div>
                 </div>
