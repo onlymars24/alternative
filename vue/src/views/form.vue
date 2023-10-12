@@ -15,7 +15,7 @@
     </div>
 
   <HeaderСrumbsVue :race="race" v-if="!loadingRace"/>
-  <!-- <pre>{{ race }}</pre> -->
+  <pre>{{ race }}</pre>
   <!-- <pre>{{ formData }}</pre> -->
   <div class="container" v-if="!loadingRace">
     <div class="form__content">

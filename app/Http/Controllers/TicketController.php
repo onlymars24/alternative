@@ -101,7 +101,7 @@ class TicketController extends Controller
         $body['Request']['InvoiceId'] = $transaction->id;
 
         $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticketFromDB->customerItem);
-        $body['Request']['CustomerReceipt']['Items'][0]['price'] = $body['Request']['CustomerReceipt']['Items'][0]['amount'] = $ticketFromDB->repayment;
+        $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment;
 
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
         if($race->race->status->name == 'Отменён'){
