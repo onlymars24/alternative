@@ -209,7 +209,7 @@ export default
             this.page = page_num
             this.paginationOffset = (this.ticketsPerPage * page_num) - this.ticketsPerPage
             if(page_num === 1){
-                this.$router.push('/admin/tickets')
+                this.$router.push({name: 'Tickets'})
             }
             else{
                 this.$router.push('?page='+page_num)

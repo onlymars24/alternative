@@ -45,7 +45,8 @@
                       </div>
                   </div>
                   <div class="code" v-else-if="stepLog==3">
-                      <label for="tel" class="form-label label-gray">Новый пароль</label>
+                      <input type="hidden" name="phone" :value="user.phone">
+                      <label for="tel" class="form-label label-gray">Новый пароль</label><input style="max-width: 2px;" type="text" name="phone" :value="user.phone">
                       <input @focus="$emit('putRedFromLoginAway')" type="password" v-model="user.password" class="form-control inp-gray" :class="{'is-invalid': userErrors['password']}" id="pas">
                       <div v-if="userErrors['password']" id="validationServer03Feedback" class="invalid-feedback" style="margin-bottom: 10px;">
                         {{userErrors['password'][0]}}

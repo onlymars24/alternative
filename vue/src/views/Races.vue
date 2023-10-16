@@ -27,11 +27,11 @@
                 		Время отправления <img v-if="sortingParams.param == 'dispatchDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
                 	</button>
             	</div>
-            	<div class="inro-sort__button">
+            	<!-- <div class="inro-sort__button">
                 	<button @click="sort($event, 'freeSeatCount')" :class="{active: sortingParams.param == 'freeSeatCount'}">
                 		Количество билетов <img v-if="sortingParams.param == 'freeSeatCount'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
                 	</button>
-            	</div>
+            	</div> -->
             	<div class="inro-sort__button">
                 	<button @click="sort($event, 'arrivalDate')" :class="{active: sortingParams.param == 'arrivalDate'}">
                 		Время прибытия <img v-if="sortingParams.param == 'arrivalDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
@@ -191,8 +191,8 @@ export default {
                 '', 'янв.', 'февр.', 'мар.', 'апр.', 'май.', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'ноябр.', 'дек.', 
             ],
             sortingParams: {
-                arrowUp: true,
-                param: 'price'
+                arrowUp: false,
+                param: 'dispatchDate'
             }
         }
     },

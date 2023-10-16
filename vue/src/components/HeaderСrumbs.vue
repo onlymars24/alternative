@@ -8,7 +8,7 @@
     <div class="container">
       <div class="race-progress">
         <div class="passed">Выбор места <span class="arrow"></span></div>
-        <div class="not-passed">Оформление <span class="arrow"></span></div>
+        <div :class="{'not-passed': step == 'first', 'passed': step == 'second'}">Оформление <span class="arrow"></span></div>
         <div class="not-passed">Оплата</div>
       </div>
       <div class="race__info-head"></div>
@@ -26,15 +26,15 @@
             <strong> на {{dispatchDay}} {{dispatchTime}}</strong>
           </p>
           <p>Тип рейса: {{race.race.type.name}}</p>
-          <p>Класс рейса: {{race.race.type.clazz}}</p>
+          <p v-if="race.race.type.clazz">Класс рейса: {{race.race.type.clazz}}</p>
         </div>
         <div class="more-detail-block-right">
-          <p><strong>Дополнительно</strong><br/>{{race.race.description}}</p>
-          <br>
+          <p v-if="race.race.description"><strong>Дополнительно</strong><br/>{{race.race.description}}</p>
+          <br v-if="race.race.description">
           <strong>Перевозчик</strong>
           <p>Организация перевозчика: {{race.race.carrier}}</p>
           <p>ИНН организации перевозчика: {{race.race.carrierInn}}</p>
-          <p>Контактнй телефон: {{ race.race.carrierPhone }}</p>
+          <p v-if="race.race.carrierPhone">Контактнй телефон: {{ race.race.carrierPhone }}</p>
         </div>
       </div>
 
@@ -62,7 +62,7 @@ import dayjs from 'dayjs'
 
 export default {
   components: { DepartureArrival },
-  props: ['race'],
+  props: ['race', 'step'],
   data() {
     return {
       openMoreDetail: false,
@@ -128,14 +128,14 @@ export default {
 }
 .passed {
   padding: 10px;
-  padding-left: 0px;
+  /* padding-left: 0px; */
   font-size: 15px;
   position: relative;
   color: black;
   font-weight: 700;
   display: flex;
   flex-direction: column;
-  padding-bottom: 12px;
+  /* padding-bottom: 12px; */
   border-bottom: 3px solid #2196f3;
 }
 .short-description {

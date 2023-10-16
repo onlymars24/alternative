@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Http;
 class TicketController extends Controller
 {
     public function all(){
-        $tickets = Ticket::all();
+        $tickets = Ticket::orderByDesc('id')->get();
         return response([
             'tickets' => $tickets
         ]);

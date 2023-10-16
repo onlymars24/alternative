@@ -51,11 +51,7 @@
 		   <div class="right-ins__right">
 			 <div class="right-ins__right-button">
 			   <button @click="$emit('toSeats', race.uid)" class="buy__but">
-				 <div class="pc__but">Выбрать</div>
-				 <div class="mobil__but">
-				   <p>{{ race.price }}</p>
-				   <span>руб</span>
-				 </div>
+				 Выбрать
 			   </button>
 			 </div>
 			 <div class="right-ins__right-text">Количество мест: {{ race.freeSeatCount }}</div>
@@ -927,10 +923,11 @@
 	margin: 0px;
    }
    .right-ins__left {
-	 display: none;
+	  justify-content: flex-end;
+    margin-right: 8px;
    }
    .ticket-up__right-ins {
-	 display: block;
+	  display: block;
    }
  }
  @media (max-width: 550px) {

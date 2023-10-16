@@ -14,8 +14,8 @@
       <BusLoading v-if="loadingRace"/>
     </div>
 
-  <HeaderСrumbsVue :race="race" v-if="!loadingRace"/>
-  <pre>{{ race }}</pre>
+  <HeaderСrumbsVue :step="'second'" :race="race" v-if="!loadingRace"/>
+  <!-- <pre>{{ race }}</pre> -->
   <!-- <pre>{{ formData }}</pre> -->
   <div class="container" v-if="!loadingRace">
     <div class="form__content">
@@ -27,7 +27,7 @@
       <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{totalCost}},00₽  </p></div>
       <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
       <hr>
-      <a class="blue__link" @click="openWindow = !openWindow, NoScroll()">Условия возврата</a>
+      <a href="/return/conditions" class="blue__link" target="_blank">Условия возврата</a>
     </div>
 
     <div class="">

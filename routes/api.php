@@ -35,7 +35,6 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/sms/order', [SmsController::class, 'sendOrder']);
     Route::get('/sms/order', [SmsController::class, 'getOrder']);
     Route::post('/order/book', [OrderController::class, 'book']);
-    // Route::post('/order/confirm', [OrderController::class, 'confirm']);
     Route::get('/orders', [OrderController::class, 'all']);
     Route::get('/passengers', [PassengersController::class, 'all']);
     Route::post('/passenger/delete', [PassengersController::class, 'delete']);
@@ -43,6 +42,12 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/passenger/save', [PassengersController::class, 'save']);
     Route::post('/ticket/return', [TicketController::class, 'getBack']);
     Route::post('/order/return', [OrderController::class, 'getBack']);
+    Route::post('/order/transactions', [TransactionController::class, 'all']);
+
+    Route::post('/admin/login', [AdminController::class, 'login']);
+    Route::get('/tickets', [TicketController::class, 'all']);
+    Route::get('/order', [OrderController::class, 'one']);    
+    Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 });
 
 
@@ -57,17 +62,14 @@ Route::get('/sms/reset', [SmsController::class, 'getReset']);
 Route::post('/sms/register', [SmsController::class, 'sendRegister']);
 Route::get('/sms/register', [SmsController::class, 'getRegister']);
 Route::post('/reset', [AuthController::class, 'reset']);
-Route::post('/payment/register', [PaymentController::class, 'register']);
-Route::post('/order/transactions', [TransactionController::class, 'all']);
+
 
 
 Route::get('/settings/cluster/due', [SettingsController::class, 'getClusterDue']);
-Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 
 
-Route::post('/admin/login', [AdminController::class, 'login']);
-Route::get('/tickets', [TicketController::class, 'all']);
-Route::get('/order', [OrderController::class, 'one']);
+
+
 
 
 Route::apiResources([

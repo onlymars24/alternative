@@ -390,7 +390,7 @@ export default{
 /* ::-webkit-calendar-picker-indicator {
     filter: invert(1);
 } */
-.main__table-date{
+/* .main__table-date{
     position: relative;
     z-index: 0;
 }
@@ -398,8 +398,8 @@ export default{
     width: 100%;
     position: absolute;
     opacity: 0;
-    /* z-index: -1; */
-}
+
+} */
 .main__another__date{
   text-align: center;
   margin-top: 15px;

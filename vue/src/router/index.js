@@ -15,6 +15,7 @@ import Tickets from '../views/admin/Tickets.vue'
 import Order from '../views/admin/Order.vue'
 import Admin from '../components/admin/Admin.vue'
 import Transactions from '../views/admin/Transactions.vue'
+import ReturnConditions from '../views/ReturnConditions.vue'
 
 
 
@@ -64,13 +65,18 @@ const routes = [
     name: 'Payment',
     component: Payment
   },
+  {
+    path: '/return/conditions',
+    name: 'ReturnConditions',
+    component: ReturnConditions
+  },
   // {
   //   path: '/faq',
   //   name: 'Faq',
   //   component: Faq
   // },
   {
-    path: '/admin',
+    path: '/fj239f3j984jsdiaisja',
     component: Admin,
     children: [
       {
