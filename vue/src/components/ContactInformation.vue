@@ -7,7 +7,7 @@
   <div class="row g-5">
     <div class="col-sm-6 ">
         <div class="contact-information__block ">
-            <p>На электронную почту высылаем маршрутные квитанции</p>
+            <p>На электронную почту вам может быть отправлен чек</p>
             <label for="" class="label-gray">E-mail</label>
             <input type="text" class="form-control inp-gray" v-model="email" :disabled="!editEmailActive" placeholder="E-mail не указан">
             <div class="filled-email">
@@ -19,7 +19,7 @@
     </div>
     <div class="col-sm-6">
       <div class=" contact-information__block">
-        <p>С помощью телефона мы сможем связаться с вами, в случае отмены, переноса рейса или в других критических случаях</p>
+        <p>Ваш номер, указанный при регистрации на сайте, является логином для входа в личный кабинет и может быть использован для общения с технической поддержкой сайта, а также для передачи технической информации и уведомлений</p>
         <label for="" class="label-gray">Телефон</label>
         <input type="text" class="form-control inp-gray" :value="this.user.phone" disabled>
       </div>

@@ -15,6 +15,7 @@ import Tickets from '../views/admin/Tickets.vue'
 import Order from '../views/admin/Order.vue'
 import Admin from '../components/admin/Admin.vue'
 import Transactions from '../views/admin/Transactions.vue'
+import Reports from '../views/admin/Reports.vue'
 import ReturnConditions from '../views/ReturnConditions.vue'
 
 
@@ -99,13 +100,18 @@ const routes = [
         component: Transactions,
         name: 'Transactions'
       },
+      {
+        path: 'reports',
+        component: Reports,
+        name: 'Reports'
+      },
     ]
   },
-  // {
-  //   path: '/:catchAll(.*)',
-  //   name: 'Error',
-  //   component: Error
-  // },
+  {
+    path: '/:catchAll(.*)',
+    name: 'Error',
+    component: Error
+  },
 
 ]
 
@@ -130,7 +136,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   else{
-    if(to.name === 'Tickets' || to.name === 'Order'){
+    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports'){
       return next({name: 'ALogin'})
     }
   }

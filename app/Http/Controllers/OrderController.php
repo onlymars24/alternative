@@ -39,6 +39,12 @@ class OrderController extends Controller
                 'items' => []
             ]
         ];
+
+        $duePercent = json_decode(Setting::where('name', 'dues')->first()->data);
+        $duePercent = (array)$duePercent;
+        $duePercent = $duePercent['clusterDue'];
+        $duePrice = 0;
+
         $lastKey = 0;
         foreach($order->tickets as $key => $ticket){
             $ticketNew = (array)$ticket;
@@ -52,16 +58,17 @@ class OrderController extends Controller
             ];
 
             $ticketNew['orderBundle'] = json_encode($orderBundleEl);
-            Ticket::create(
+            $ticketFromDB = Ticket::create(
                 $ticketNew
             );
+            $ticketFromDB->duePercent = $duePercent;
+            $ticketFromDB->duePrice = ceil($ticketFromDB->price * $duePercent / 100);
+            $ticketFromDB->save();
+            $duePrice += $ticketFromDB->duePrice;
             $orderBundle['cartItems']['items'][] = $orderBundleEl;
             $lastKey = $key+1;
         }
-        $duePercent = json_decode(Setting::where('name', 'dues')->first()->data);
-        $duePercent = (array)$duePercent;
-        $duePercent = $duePercent['clusterDue'];
-        $duePrice = ceil($order->total * $duePercent / 100);
+
         $orderFromDB->duePercent = $duePercent;
         $orderFromDB->duePrice = $duePrice;
         $orderBundle['cartItems']['items'][] = [
@@ -217,10 +224,6 @@ class OrderController extends Controller
 
     public function getBack(Request $request){
         //найти заказ
-        // $order_json = Http::withHeaders([
-        //     'Authorization' => env('AVTO_SERVICE_KEY'),
-        // ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
-        // $order = json_decode($order_json);
         $orderFromDB = Order::find($request->orderId);
         $tickets = $orderFromDB->tickets->where('status', 'S');
 
@@ -289,11 +292,17 @@ class OrderController extends Controller
         // Log::info('race_json: '.$race_json);
         $race = json_decode($race_json);
         if($race->race->status->name == 'Отменён'){
+            $duePrice = 0;
+            foreach($tickets as $ticket){
+                $duePrice += $ticket->duePrice;
+                $ticket->raceCanceled = 0;
+                $ticket->save();
+            }
             $data = [
                 'userName' => config('services.payment.userName'),
                 'password' => config('services.payment.password'),
                 'orderId' => $orderFromDB->bankOrderId,
-                'amount' => $orderFromDB->duePrice * 100,
+                'amount' => $duePrice * 100,
                 'positionId' => $orderFromDB->tickets->count()+1
             ];
             $curl = curl_init();
@@ -306,9 +315,9 @@ class OrderController extends Controller
             $repayment = curl_exec($curl); // Выполняем запрос
             $repayment = json_decode($repayment);
             $percent = FermaEnum::$percent;
-            $percent['Price'] = $percent['Amount'] = $orderFromDB->duePrice;
+            $percent['Price'] = $percent['Amount'] = $duePrice;
             $body['Request']['CustomerReceipt']['Items'][] = $percent;
-            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum']  += $orderFromDB->duePrice;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum']  += $duePrice;
         }
 
         //обновить бд заказа
@@ -340,7 +349,6 @@ class OrderController extends Controller
         return response([
             'tickets' => $tickets->count()
         ]);
-        
     }
 
     public function all(){

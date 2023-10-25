@@ -43,29 +43,12 @@ class TicketController extends Controller
         $orderFromDb = Order::find($request->orderId);
         $orderFromDb->order_info = $order_json;
         $orderFromDb->save();
-
-        //проверка на отмену рейса
         $orderBundle = (array)json_decode($ticketFromDB->orderBundle);
         $orderBundle['itemPrice'] = $ticketFromDB->repayment * 100;
         $refundItems = ['items' => [$orderBundle]];
-        $race_json = Http::withHeaders([
-            'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
-        Log::info('race_json: '.$race_json);
-        $race = json_decode($race_json);
-        
-        // if($race->race->status->name == 'Отменён'){
-        //     $refundItems['items'][] = [
-        //         "positionId"=> $orderFromDb->tickets->count()+1,
-        //         "name" => 'Сервисный сбор',
-        //         "quantity" => [ "value"=> 1, "measure" => 0 ],
-        //         "itemCode" => "NM-".($orderFromDb->tickets->count()+1),
-        //         "tax"=> ["taxType"=> 0, "taxSum"=> 0],
-        //         "itemPrice"=> ceil($orderFromDb->duePercent * $ticketFromDB->price / 100) * 100
-        //     ];
-        // }
 
-        //возврат в экваринге
+
+        //возврат в экваринге        
         $data = [
             'userName' => config('services.payment.userName'),
             'password' => config('services.payment.password'),
@@ -73,9 +56,7 @@ class TicketController extends Controller
             'amount' => $ticketFromDB->repayment * 100,
             'positionId' => $orderBundle['positionId']
         ];
-        if($race->race->status->name == 'Отменён'){
-            $data['amount'] = ($ticketFromDB->repayment + ceil($orderFromDb->duePercent * $ticketFromDB->price / 100)) * 100;
-        }
+
 
         $curl = curl_init(); // Инициализируем запрос
         curl_setopt_array($curl, array(
@@ -104,10 +85,35 @@ class TicketController extends Controller
         $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment;
 
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
+        //проверка на отмену рейса
+        $race_json = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
+        Log::info('race_json: '.$race_json);
+        $race = json_decode($race_json);
         if($race->race->status->name == 'Отменён'){
-            $percent['Price'] = $percent['Amount'] = ceil($orderFromDb->duePercent * $ticketFromDB->price / 100);
+            $data = [
+                'userName' => config('services.payment.userName'),
+                'password' => config('services.payment.password'),
+                'orderId' => $orderFromDb->bankOrderId,
+                'amount' => $ticketFromDB->duePrice * 100,
+                'positionId' => $orderFromDb->tickets->count()+1
+            ];
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
+                CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+                CURLOPT_POST => true, // Метод POST
+                CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+            ));
+            $repayment = curl_exec($curl); // Выполняем запрос
+            $repayment = json_decode($repayment);
+            $percent = FermaEnum::$percent;
+            $percent['Price'] = $percent['Amount'] = $ticketFromDB->duePrice;
             $body['Request']['CustomerReceipt']['Items'][] = $percent;
-            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = ceil($orderFromDb->duePercent * $ticketFromDB->price / 100) + $ticketFromDB->repayment;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum']  += $ticketFromDB->duePrice;
+            $ticketFromDB->raceCanceled = true;
+            $ticketFromDB->save();
         }
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);

@@ -1,6 +1,5 @@
 <template>
     <div class="common-layout" v-loading.fullscreen.lock="ticketsLoading">
-        <div class="container">  
             <Header/>
             <el-container>
                 <el-aside width="200px" style="padding-top: 20px;">
@@ -84,7 +83,6 @@
                     </div>
                 </el-main>
             </el-container>
-        </div>
     </div>
 </template>
 
@@ -110,7 +108,7 @@ export default
             drawer: false,
             isCollapse: true,
             page: 1,
-            ticketsPerPage: 2,
+            ticketsPerPage: 8,
             paginationOffset: 0,
             filterArr: {
                 firstName: {

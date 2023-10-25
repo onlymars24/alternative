@@ -609,8 +609,8 @@ export default
         })
         ticket_price = ticket_price[0].price
         totalCost += ticket_price
+        this.duePrice += Math.ceil(ticket_price * this.duePercent / 100)
       })
-      this.duePrice = Math.ceil(totalCost * this.duePercent / 100)
       return totalCost+this.duePrice;
     }
   },

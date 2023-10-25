@@ -11,10 +11,12 @@
                 </div>
                 <div class="not__found-text">
                     <p class="not__found-title">
+                        {{dispatchEl.name}} — {{arrivalEl.name}}<br>
+                        на {{ dateForError }}<br>
                         Билеты не найдены
                     </p>
                     <p class="not__found-descr">
-                        К сожалению, такого маршрута у нас нет. Мы делаем всё возможное, чтобы подключать как можно больше маршрутов. Возможно, он скоро появится.
+                        Выберите другую дату или токчи отправления и прибытия.
                     </p>
                 </div>
             </div>
@@ -185,6 +187,7 @@ export default {
                 name: this.$route.params['dispatch_name']
             },
             date: this.$route.params['date'],
+            dateForError: '',
             races: [],
             loadingRaces: true,
             months: [
@@ -198,6 +201,7 @@ export default {
     },
     mounted(){
         this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id);
+        this.dateForError = dayjs(this.date).format('D.M.YY')
     },
     computed: {
         sortedRaces(){

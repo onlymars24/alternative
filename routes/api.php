@@ -44,9 +44,8 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/order/return', [OrderController::class, 'getBack']);
     Route::post('/order/transactions', [TransactionController::class, 'all']);
 
-    
     Route::get('/tickets', [TicketController::class, 'all']);
-    Route::get('/order', [OrderController::class, 'one']);    
+    Route::get('/order', [OrderController::class, 'one']);
     Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 });
 

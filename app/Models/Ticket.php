@@ -62,7 +62,9 @@ class Ticket extends Model
         'hash',
         'order_id',
         'orderBundle',
-        'customerItem'
+        'customerItem',
+        'duePercent',
+        'duePrice'
     ];
     public function passengers()
     {

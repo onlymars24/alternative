@@ -44,7 +44,7 @@
           >
           <div class="accordion-content mobail-accordion-content">
             <p class="mobil_phone_link">
-              <a href="tel:8 (800) 700-42-12">8 (800) 700-42-12</a>
+              <!-- <a href="tel:8 (800) 700-42-12">8 (800) 700-42-12</a> -->
             </p>
           </div>
         </div>
