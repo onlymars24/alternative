@@ -15,9 +15,10 @@
     </div>
 
   <HeaderСrumbsVue :step="'second'" :race="race" v-if="!loadingRace"/>
-  <!-- <pre>{{ race }}</pre> -->
-  <!-- <pre>{{ formData }}</pre> -->
+
   <div class="container" v-if="!loadingRace">
+  <!-- <pre>{{ date1 }}</pre> -->
+  <!-- <pre>{{ formData }}</pre>     -->
     <div class="form__content">
     <div class="information-race">
       <h5>О рейсе</h5>
@@ -321,6 +322,7 @@ export default
       payment: [],
       duePercent: 0,
       duePrice: 0,
+      date1: ''
     };
   },
   methods: {
@@ -615,6 +617,7 @@ export default
     }
   },
   async mounted(){
+    this.loading = true
     var dateNewGet = new Date();
     this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();
     this.loadingRace = true

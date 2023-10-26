@@ -115,6 +115,10 @@ class TicketController extends Controller
             $ticketFromDB->raceCanceled = true;
             $ticketFromDB->save();
         }
+        $user = $orderFromDb->user;
+        if($user->email){
+            $body['Request']['CustomerReceipt']['Email'] = $user->email;
+        }
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);
         $ReceiptId = json_decode($ReceiptId);

@@ -6,22 +6,23 @@ class FermaEnum
 {    
     public static $body =  [
         "Request" => [
-              "Inn" => "7017479680", 
-              "Type" => null, 
-              "InvoiceId" => null, 
-              "CustomerReceipt" => [
-                 "TaxationSystem" => 2, 
-                 "PaymentType" => 1, 
-                 "BillAddress" => "https://росвокзалы.рф/", 
-                 "Items" => [], 
-                 "PaymentItems" => [
-                    [
-                        "PaymentType" => 1, 
-                        "Sum" => null 
-                    ] 
-                ] 
-              ] 
-           ] 
+            "Inn" => "7017479680", 
+            "Type" => null, 
+            "InvoiceId" => null, 
+            "CustomerReceipt" => [
+                "TaxationSystem" => 2, 
+                "Email" => "alternative.docs@gmail.com",
+                "PaymentType" => 1, 
+                "BillAddress" => "https://росвокзалы.рф/", 
+                "Items" => [], 
+                "PaymentItems" => [
+                [
+                    "PaymentType" => 1,
+                    "Sum" => null
+                ]
+            ]
+            ]
+        ] 
     ];
 
     public static $item = [

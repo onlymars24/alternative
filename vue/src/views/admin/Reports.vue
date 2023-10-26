@@ -1,4 +1,5 @@
 <template>
+    {{ value2[0] }}
     <div class="common-layout">
         <Header/>
             
@@ -11,7 +12,6 @@
                                     <span>Статистика за период</span>
                                 </div>
                                 <div class="block" style="margin-top: 10px;" v-if="!loading">
-                                    <!-- {{ value2 }} -->
                                     <el-date-picker
                                     v-model="value2"
                                     type="datetimerange"
@@ -50,16 +50,16 @@
                                         <td></td>
                                         <td>{{ returnsSupplierDues }}₽</td>
                                         <td>{{ returnsDues }}₽</td>
-                                        <td>{{ repayments }}₽</td>
+                                        <td>{{ repayments.toFixed(2) }}₽</td>
                                         <td>{{ returnsSiteCommission }}₽</td>
                                     </tr>
                                     <tr>
                                         <td>Удержание</td>
                                         <td>{{  }}</td>
-                                        <td>{{ holds }}₽</td>
+                                        <td>{{ holds.toFixed(2) }}₽</td>
                                         <td>{{ holdsSupplierDues }}₽</td>
                                         <td>{{ holdsDues }}₽</td>
-                                        <td>{{ holdsTotal }}₽</td>
+                                        <td>{{ holdsTotal.toFixed(2) }}₽</td>
                                         <td>{{ holdsSiteCommission }}₽</td>
                                     </tr>
                                 </tbody>
@@ -74,22 +74,23 @@
                                 <div class="card-header" style="display: flex; justify-content: space-between;">
                                     <span>Список билетов</span>
                                 </div>
-                                
                             </template>
                             <el-table :data="tickets" style="width: 100%">
-                                <el-table-column prop="dispatchDate" label="Дата и время отправления" width="200" />
+                                <el-table-column prop="dispatchDate" label="Дата и время отправления(местное)" width="200" />
                                 <el-table-column prop="created_at" label="Дата и время брони" width="200" />
                                 <el-table-column prop="ticketNum" label="Номер билета" width="120" />
                                 <el-table-column prop="order_id" label="ID заказа" width="120" />
                                 <el-table-column prop="dispatchStation" label="Пункт отправления" width="180" />
-                                <el-table-column prop="arrivalStation" label="Пункт прибытия" width="180" />                                
+                                <el-table-column prop="arrivalStation" label="Пункт прибытия" width="180" />
                                 <el-table-column prop="lastName" label="Фамилия" width="150" />
                                 <el-table-column prop="firstName" label="Имя" width="150" />
                                 <el-table-column prop="middleName" label="Отчество" width="150" />
                                 <el-table-column prop="status" label="Статус" width="120" />
                                 <el-table-column prop="price" label="Стоимость" width="120" />
-                                <el-table-column prop="diffPrice" label="Сбор поставщика" width="150" />
-                                <el-table-column prop="duePrice" label="Сбор агента" width="150" />
+                                <el-table-column prop="supplierDues" label="Сбор поставщика" width="150" />
+                                <el-table-column prop="dues" label="Сбор агента" width="150" />
+                                <el-table-column prop="diffPrice" label="Удержание" width="150" />
+                                <el-table-column prop="duePrice" label="Комиссия сайта" width="150" />
                             </el-table>
                         </el-card>
                     </div>
@@ -117,12 +118,15 @@ export default
             defaultTime2: [],
             newDate: '',
             loading: false,
-            value2: null
+            value2: null,
+            date1: null
         }
     },
     async mounted(){
         this.loading = true
         let date = new Date();
+        this.date1 = new Date()
+        console.log(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59))
         this.defaultTime2 = [
             new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0),
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
@@ -145,7 +149,13 @@ export default
         })
         await promise
         this.ticketsArray.forEach(ticket => {
-            ticket.diffPrice = ticket.price - ticket.repayment
+            if(ticket.status == 'R'){
+                ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
+            }
+            else{
+                ticket.diffPrice = 0
+            }
+            
             ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
         })
         

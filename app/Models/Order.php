@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\Ticket;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Model;
@@ -33,4 +34,8 @@ class Order extends Model
         return $this->hasMany(Ticket::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

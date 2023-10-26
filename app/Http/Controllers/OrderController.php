@@ -182,6 +182,10 @@ class OrderController extends Controller
 
         $body['Request']['CustomerReceipt']['Items'][] = $percent;
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice;
+        $user = $order->user;
+        if($user->email){
+            $body['Request']['CustomerReceipt']['Email'] = $user->email;
+        }
         Log::info('Body: '.json_encode($body));
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);
@@ -295,7 +299,6 @@ class OrderController extends Controller
             $duePrice = 0;
             foreach($tickets as $ticket){
                 $duePrice += $ticket->duePrice;
-                $ticket->raceCanceled = 0;
                 $ticket->save();
             }
             $data = [
@@ -335,6 +338,10 @@ class OrderController extends Controller
             'order_id' => $request->orderId
         ]);
         $body['Request']['InvoiceId'] = $transaction->id;
+        $user = $orderFromDB->user;
+        if($user->email){
+            $body['Request']['CustomerReceipt']['Email'] = $user->email;
+        }
         $ReceiptId = FermaService::receipt($body);
         $ReceiptId = json_decode($ReceiptId);
         $ReceiptId = $ReceiptId->Data->ReceiptId;
