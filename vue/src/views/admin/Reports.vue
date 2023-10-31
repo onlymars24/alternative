@@ -1,8 +1,7 @@
 <template>
-    {{ value2[0] }}
+    <!-- {{ value2[0] }} -->
     <div class="common-layout">
         <Header/>
-            
             <el-container>
                 <el-main>
                     <div style="margin-top: 20px;">
@@ -50,16 +49,16 @@
                                         <td></td>
                                         <td>{{ returnsSupplierDues }}₽</td>
                                         <td>{{ returnsDues }}₽</td>
-                                        <td>{{ repayments.toFixed(2) }}₽</td>
+                                        <td>{{ repayments }}₽</td>
                                         <td>{{ returnsSiteCommission }}₽</td>
                                     </tr>
                                     <tr>
                                         <td>Удержание</td>
                                         <td>{{  }}</td>
-                                        <td>{{ holds.toFixed(2) }}₽</td>
+                                        <td>{{ holds }}₽</td>
                                         <td>{{ holdsSupplierDues }}₽</td>
                                         <td>{{ holdsDues }}₽</td>
-                                        <td>{{ holdsTotal.toFixed(2) }}₽</td>
+                                        <td>{{ holdsTotal }}₽</td>
                                         <td>{{ holdsSiteCommission }}₽</td>
                                     </tr>
                                 </tbody>
@@ -107,6 +106,7 @@ import axiosClient from '../../axios'
 import router from '../../router'
 import Header from '../../components/admin/Header.vue'
 import dayjs from 'dayjs'
+import axios from 'axios'
 
 export default
 {
@@ -114,7 +114,7 @@ export default
     data() {
         return {
             ticketsArray: [],
-            testArr: [{name: 'Marsel', surname: 'Galimov' }, {name: 'Marsel1', surname: 'Galimov1' }],
+            testArr: [{name: 'Marsel', surname: 'Galimov', patr: 'qwert' }, {name: 'Marsel1', surname: 'Galimov1', patr: 'qwerty' }],
             defaultTime2: [],
             newDate: '',
             loading: false,
@@ -123,6 +123,7 @@ export default
         }
     },
     async mounted(){
+        console.log(this.downloadExcel)
         this.loading = true
         let date = new Date();
         this.date1 = new Date()
@@ -163,22 +164,8 @@ export default
     },
     methods: {
         exportDataToCsv(){
-            const csvContent = this.convertToCSV(this.testArr)
-            console.log(csvContent)
-            const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8'})
-            const url = URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute('download', 'export_data.csv')
-            link.click()
+            window.open(this.downloadExcel, '_blank');
         },
-        convertToCSV(data){
-            const headers = Object.keys(data[0])
-            const rows = data.map(obj => headers.map(header => obj[header]))
-            const headerRow = headers.join(',')
-            const csvRows = [headerRow, ...rows.map(row => row.join(','))]
-            return csvRows.join('\n')
-        }
     },
     watch: {
         value2(value2){
@@ -188,6 +175,27 @@ export default
         }
     },
     computed: {
+        downloadExcel(){
+            return import.meta.env.VITE_API_BASE_URL+
+            '/export/excel/?comparingDate1='+dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss')
+            +'&comparingDate2='+dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
+            +'&salesAmount='+this.salesAmount
+            +'&salesSupplierFares='+this.salesSupplierFares
+            +'&salesSupplierDues='+this.salesSupplierDues
+            +'&salesDues='+this.salesDues
+            +'&salesTotal='+this.salesTotal
+            +'&salesSiteCommission='+this.salesSiteCommission
+            +'&returnsAmount='+this.returnsAmount
+            +'&returnsSupplierDues='+this.returnsSupplierDues
+            +'&returnsDues='+this.returnsDues
+            +'&repayments='+this.repayments
+            +'&returnsSiteCommission='+this.returnsSiteCommission
+            +'&holds='+this.holds
+            +'&holdsSupplierDues='+this.holdsSupplierDues
+            +'&holdsDues='+this.holdsDues
+            +'&holdsTotal='+this.holdsTotal
+            +'&holdsSiteCommission='+this.holdsSiteCommission
+        },
         comparingDates(){
             let date = new Date()
             if(this.value2){
@@ -281,7 +289,7 @@ export default
             this.returnedTickets.forEach(ticket => {
                 repayments += Number(ticket.repayment)
             })
-            return repayments;
+            return repayments.toFixed(2);
         },
         returnsSiteCommission(){
             let returnsSiteCommission = 0
@@ -300,7 +308,7 @@ export default
                 }
                 holds += (ticket.price - ticket.repayment)
             })
-            return holds;
+            return holds.toFixed(2);
         },
         holdsSupplierDues(){
             let holdsSupplierDues = 0
@@ -309,7 +317,7 @@ export default
                     holdsSupplierDues += Number(ticket.supplierDues)
                 }
             })
-            return holdsSupplierDues
+            return holdsSupplierDues.toFixed(2)
         },
         holdsDues(){
             let holdsDues = 0
@@ -319,10 +327,11 @@ export default
                 }
                 
             })
-            return holdsDues
+            return holdsDues.toFixed(2)
         },
         holdsTotal(){
-            return this.holdsDues + this.holdsSupplierDues + this.holds
+            let total = Number(this.holdsDues) + Number(this.holdsSupplierDues) + Number(this.holds)
+            return total.toFixed(2)
         },
         holdsSiteCommission(){
             let returnsDues = 0

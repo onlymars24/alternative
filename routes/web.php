@@ -1,14 +1,19 @@
 <?php
 
+use App\Models\User;
 use App\Models\Order;
+use App\Models\Ticket;
 use App\Enums\FermaEnum;
 use Nette\Utils\DateTime;
 use Illuminate\Http\Request;
+use App\Exports\ReportsExport;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 
@@ -24,16 +29,17 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
-    // date_default_timezone_set('Asia/Novosibirsk');
-    // Log::info(strtotime($ticketFromDB->dispatchDate).' - '.strtotime("now"));
-    $order = Order::find(2083704);
-    dd($order->tickets->count());
+    $tickets = Ticket::all()->except(['id']);
+    dd($tickets->toArray());
 });
 
 
-Route::post('/kassa/callback', function (Request $request) {
-    Log::info('Kassa is done '.$request);
+Route::get('/kassa/callback', function (Request $request) {
+
 });
+
+Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');
+
 
 Route::get('/order/confirm/', [OrderController::class, 'confirm'])->name('order.confirm');
 

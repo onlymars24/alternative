@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
@@ -42,12 +43,16 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/passenger/save', [PassengersController::class, 'save']);
     Route::post('/ticket/return', [TicketController::class, 'getBack']);
     Route::post('/order/return', [OrderController::class, 'getBack']);
+    
+});
     Route::post('/order/transactions', [TransactionController::class, 'all']);
-
     Route::get('/tickets', [TicketController::class, 'all']);
     Route::get('/order', [OrderController::class, 'one']);
     Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
-});
+
+
+
+
 
 Route::post('/admin/login', [AdminController::class, 'login']);
 
