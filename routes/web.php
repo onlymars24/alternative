@@ -38,7 +38,7 @@ Route::get('/kassa/callback', function (Request $request) {
 
 });
 
-Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');
+// Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');
 
 
 Route::get('/order/confirm/', [OrderController::class, 'confirm'])->name('order.confirm');
