@@ -21,6 +21,11 @@ import ReturnConditions from '../views/ReturnConditions.vue'
 
 
 const routes = [
+  // {
+  //   path: '/:catchAll(.*)',
+  //   name: 'Error',
+  //   component: Error
+  // },
   {
     path: '/',
     name: 'Main',
