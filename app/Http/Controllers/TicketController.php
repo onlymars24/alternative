@@ -91,7 +91,7 @@ class TicketController extends Controller
         ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
         Log::info('race_json: '.$race_json);
         $race = json_decode($race_json);
-        if($race->race->status->name == 'Отменён'){
+        if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
             $data = [
                 'userName' => config('services.payment.userName'),
                 'password' => config('services.payment.password'),

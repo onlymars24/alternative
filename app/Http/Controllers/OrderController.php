@@ -295,11 +295,10 @@ class OrderController extends Controller
         ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
         // Log::info('race_json: '.$race_json);
         $race = json_decode($race_json);
-        if($race->race->status->name == 'Отменён'){
+        if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
             $duePrice = 0;
             foreach($tickets as $ticket){
                 $duePrice += $ticket->duePrice;
-                $ticket->save();
             }
             $data = [
                 'userName' => config('services.payment.userName'),

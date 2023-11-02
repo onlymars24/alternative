@@ -11,14 +11,17 @@
                                     <span>Статистика за период</span>
                                 </div>
                                 <div class="block" style="margin-top: 10px;" v-if="!loading">
+                                    <el-config-provider :locale="locale">
                                     <el-date-picker
-                                    v-model="value2"
-                                    type="datetimerange"
-                                    start-placeholder="Start Date"
-                                    end-placeholder="End Date"
-                                    :default-time="defaultTime2"
-                                    :clearable="true"
+                                        v-model="value2"
+                                        type="datetimerange"
+                                        start-placeholder="От"
+                                        end-placeholder="До"
+                                        :default-time="defaultTime2"
+                                        :clearable="true"
                                     />
+                                    </el-config-provider>
+
                                 </div>
                             </template>
                             <table class="table" style="width: 100%">
@@ -84,7 +87,8 @@
                                 <el-table-column prop="lastName" label="Фамилия" width="150" />
                                 <el-table-column prop="firstName" label="Имя" width="150" />
                                 <el-table-column prop="middleName" label="Отчество" width="150" />
-                                <el-table-column prop="status" label="Статус" width="120" />
+                                <el-table-column prop="raceCancelledLabel" label="Статус рейса" width="120" />
+                                <el-table-column prop="fullStatus" label="Статус билета" width="120" />
                                 <el-table-column prop="price" label="Стоимость" width="120" />
                                 <el-table-column prop="supplierDues" label="Сбор поставщика" width="150" />
                                 <el-table-column prop="dues" label="Сбор агента" width="150" />
@@ -107,6 +111,8 @@ import router from '../../router'
 import Header from '../../components/admin/Header.vue'
 import dayjs from 'dayjs'
 import axios from 'axios'
+import ticketStatuses from '../../data/TicketStatuses'
+import ru from 'element-plus/dist/locale/ru.mjs'
 
 export default
 {
@@ -119,11 +125,13 @@ export default
             newDate: '',
             loading: false,
             value2: null,
-            date1: null
+            date1: null,
+            ticketStatuses: ticketStatuses,
+            locale: ru
         }
     },
     async mounted(){
-        console.log(this.downloadExcel)
+        console.log(this.ticketStatuses)
         this.loading = true
         let date = new Date();
         this.date1 = new Date()
@@ -154,10 +162,17 @@ export default
                 ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
             }
             else{
-                ticket.diffPrice = 0
+                ticket.diffPrice = (0).toFixed(2)
             }
-            
+            if(ticket.raceCancelled){
+                ticket.raceCancelledLabel = 'Отменён'
+            }
+            else{
+                ticket.raceCancelledLabel = 'Не отменён'
+            }
+            ticket.duePrice = ticket.duePrice.toFixed(2)
             ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
+            ticket.fullStatus = ticketStatuses[ticket.status].label
         })
         
         this.loading = false
@@ -227,39 +242,39 @@ export default
             return this.tickets.length;
         },
         salesSupplierFares(){
-            let price = 0
+            let supplierFare = 0
             this.tickets.forEach(ticket => {
-                price += Number(ticket.price)
+                supplierFare += Number(ticket.supplierFare)
             })
-            return price;
+            return supplierFare.toFixed(2);
         },
         salesSupplierDues(){
             let supplierDues = 0
             this.tickets.forEach(ticket => {
                 supplierDues += Number(ticket.supplierDues)
             })
-            return supplierDues
+            return supplierDues.toFixed(2)
         },
         salesDues(){
             let dues = 0
             this.tickets.forEach(ticket => {
                 dues += Number(ticket.dues)
             })
-            return dues
+            return dues.toFixed(2)
         },
         salesTotal(){
             let prices = 0
             this.tickets.forEach(ticket => {
                 prices += Number(ticket.price)
             })
-            return prices
+            return prices.toFixed(2)
         },
         salesSiteCommission(){
             let siteCommission = 0
             this.tickets.forEach(ticket => {
-                siteCommission += ticket.duePrice
+                siteCommission += Number(ticket.duePrice)
             })
-            return siteCommission;
+            return siteCommission.toFixed(2);
         },
         returnsAmount(){
             return this.returnedTickets.length;
@@ -272,7 +287,7 @@ export default
                 }
                 
             })
-            return returnsSupplierDues
+            return returnsSupplierDues.toFixed(2)
         },
         returnsDues(){
             let returnsDues = 0
@@ -282,7 +297,7 @@ export default
                 }
                 
             })
-            return returnsDues
+            return returnsDues.toFixed(2)
         },
         repayments(){
             let repayments = 0
@@ -298,7 +313,7 @@ export default
                     returnsSiteCommission += Number(ticket.duePrice)
                 }
             })
-            return returnsSiteCommission;
+            return returnsSiteCommission.toFixed(2);
         },
         holds(){
             let holds = 0;
@@ -339,9 +354,8 @@ export default
                 if(!ticket.raceCanceled){
                     returnsDues += Number(ticket.duePrice)
                 }
-                
             })
-            return returnsDues
+            return returnsDues.toFixed(2)
         },
     }
 }
