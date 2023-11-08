@@ -64,6 +64,15 @@
                                         <td>{{ holdsTotal }}₽</td>
                                         <td>{{ holdsSiteCommission }}₽</td>
                                     </tr>
+                                    <tr>
+                                        <td>Сумма для E-traffic</td>
+                                        <td>{{  }}</td>
+                                        <td>{{  }}</td>
+                                        <td>{{  }}</td>
+                                        <td>{{  }}</td>
+                                        <td>{{ eTrafficTotal }}₽</td>
+                                        <td>{{  }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
 
@@ -78,8 +87,9 @@
                                 </div>
                             </template>
                             <el-table :data="tickets" style="width: 100%">
-                                <el-table-column prop="dispatchDate" label="Дата и время отправления(местное)" width="200" />
-                                <el-table-column prop="created_at" label="Дата и время брони" width="200" />
+                                <el-table-column prop="dispatchDate" label="Дата и время отправления (местное)" width="200" />
+                                <el-table-column prop="created_at" label="Дата и время брони (GMT +3)" width="160" />
+                                <el-table-column prop="returned" label="Дата и время возврата (местное)" width="180" />
                                 <el-table-column prop="ticketNum" label="Номер билета" width="120" />
                                 <el-table-column prop="order_id" label="ID заказа" width="120" />
                                 <el-table-column prop="dispatchStation" label="Пункт отправления" width="180" />
@@ -170,7 +180,7 @@ export default
             else{
                 ticket.raceCancelledLabel = 'Не отменён'
             }
-            ticket.duePrice = ticket.duePrice.toFixed(2)
+            ticket.duePrice = Number(ticket.duePrice).toFixed(2)
             ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
             ticket.fullStatus = ticketStatuses[ticket.status].label
         })
@@ -340,7 +350,6 @@ export default
                 if(!ticket.raceCanceled){
                     holdsDues += Number(ticket.dues)
                 }
-                
             })
             return holdsDues.toFixed(2)
         },
@@ -357,6 +366,9 @@ export default
             })
             return returnsDues.toFixed(2)
         },
+        eTrafficTotal(){
+            return this.salesTotal - this.repayments;
+        }
     }
 }
 </script>
