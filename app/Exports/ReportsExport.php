@@ -66,7 +66,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
 агента', 'Удержание', 'Комиссия 
 сайта'];
         foreach($this->tickets as $ticket){
-            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->returned, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], $ticket->price, $ticket->supplierDues, $ticket->dues, $ticket->status == 'R' ? ($ticket->price - $ticket->repayment) : '0', $ticket->duePrice ];
+            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->returned, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], $ticket->price, $ticket->supplierDues, $ticket->dues, $ticket->status == 'R' ? ($ticket->price - $ticket->repayment) : 0, $ticket->duePrice ];
         }
 
         return 
