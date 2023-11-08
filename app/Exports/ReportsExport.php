@@ -52,7 +52,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
         $tickets[] = ['Продажа билетов', $this->request->salesAmount, $this->request->salesSupplierFares, $this->request->salesSupplierDues, $this->request->salesDues, $this->request->salesTotal, $this->request->salesSiteCommission, ];
         $tickets[] = ['Возврат', $this->request->returnsAmount, '', $this->request->returnsSupplierDues, $this->request->returnsDues, $this->request->repayments, $this->request->returnsSiteCommission ];
         $tickets[] = ['Удержание', '', $this->request->holds, $this->request->holdsSupplierDues, $this->request->holdsDues, $this->request->holdsTotal, $this->request->holdsSiteCommission ];
-        $tickets[] = ['Сумма для E-traffic', '', '', '', '', 12345, ''];    
+        $tickets[] = ['Сумма для E-traffic', '', '', '', '', $this->request->eTrafficTotal, ''];    
         $tickets[] = [''];        
         $tickets[] = [
 'Дата и время отправления
@@ -121,12 +121,12 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
                         ]    
                     ],                  
                 ],
-                'A6:G8' => [    'borders' => [
+                'A6:G9' => [    'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     ],
                 ],],
-                'A6:A8' => [ 'font' => 
+                'A6:A9' => [ 'font' => 
                 [
                     'bold' => true,
                 ],
@@ -136,7 +136,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
                     'bold' => true,
                 ],
                 ],
-                'A10:Q10' => [ 
+                'A11:Q11' => [ 
                         'font' => [
                             'bold' => true,
                         ],

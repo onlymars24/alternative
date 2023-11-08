@@ -220,6 +220,7 @@ export default
             +'&holdsDues='+this.holdsDues
             +'&holdsTotal='+this.holdsTotal
             +'&holdsSiteCommission='+this.holdsSiteCommission
+            +'&eTrafficTotal='+this.eTrafficTotal
         },
         comparingDates(){
             let date = new Date()
@@ -367,7 +368,8 @@ export default
             return returnsDues.toFixed(2)
         },
         eTrafficTotal(){
-            return this.salesTotal - this.repayments;
+            let eTrafficTotal = this.salesTotal - this.repayments
+            return eTrafficTotal.toFixed(2);
         }
     }
 }
