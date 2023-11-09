@@ -229,12 +229,6 @@ export default{
                     "region": "Кемеровская обл",
                     "details": null,
                 },
-                // {
-                //     "id": 34388,
-                //     "name": "Томск",
-                //     "region": "Томская обл",
-                //     "details": null,
-                // },
             ]
         }
     },
@@ -343,18 +337,69 @@ export default{
     },
     computed: {
         filteredDispatchPoints(){
-            return this.dispatchData.filter(el => {
+            // return this.dispatchData.filter(el => {
+            //     return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
+            //     || el.region && el.region.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
+            //     || el.details && el.details.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
+            // });
+            let cities = this.dispatchData.filter(el => {
                 return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
+            });
+
+            if(cities.length != 0){
+                let wholeArr = this.dispatchData.filter(el => {
+                    return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1 
+                    || el.region && el.region.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
+                    || el.details && el.details.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
+                });
+                cities.forEach(function(city, indCity) {
+                    let indWhole = wholeArr.findIndex(el => city.name === el.name && city.region === el.region && city.details === el.details);
+                    let temp = wholeArr[indWhole];
+                    wholeArr[indWhole] = wholeArr[indCity]
+                    wholeArr[indCity] = temp
+                })
+                return wholeArr
+            }
+            return this.dispatchData.filter(el => {
+                return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1 
                 || el.region && el.region.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
                 || el.details && el.details.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-            });
+            })
         },
         filteredArrivalPoints(){
-            return this.arrivalData.filter(el => {
+            //  let temp = this.arrivalData.filter(el => {
+            //     return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase(), 0) !== -1
+            //     || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
+            //     || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
+            // });
+            
+            // console.log(temp)
+            
+            // return temp
+            let cities = this.arrivalData.filter(el => {
                 return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
+            });
+
+            if(cities.length != 0){
+                let wholeArr = this.arrivalData.filter(el => {
+                    return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1 
+                    || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
+                    || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
+                });
+                cities.forEach(function(city, indCity) {
+                    let indWhole = wholeArr.findIndex(el => city.name === el.name && city.region === el.region && city.details === el.details);
+                    let temp = wholeArr[indWhole];
+                    wholeArr[indWhole] = wholeArr[indCity]
+                    wholeArr[indCity] = temp
+                })
+                return wholeArr
+            }
+            return this.arrivalData.filter(el => {
+                return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1 
                 || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
                 || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
-            });
+            })
+            
         },
         disabledButton(){
             return !this.dispatchEl.id || !this.arrivalEl.id || !this.date;
@@ -363,7 +408,7 @@ export default{
             return !this.dispatchEl.name && !this.dispatchEl.id;
         },
     },
-    mounted() {
+    mounted(){
         this.dates.today = dayjs().format('YYYY-MM-DD')
         if(this.date == ''){
             this.date = this.dates.today
@@ -387,19 +432,7 @@ export default{
 }
 </script>
 <style>
-/* ::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-} */
-/* .main__table-date{
-    position: relative;
-    z-index: 0;
-}
-::-webkit-calendar-picker-indicator{
-    width: 100%;
-    position: absolute;
-    opacity: 0;
 
-} */
 .main__another__date{
   text-align: center;
   margin-top: 15px;
@@ -410,16 +443,16 @@ export default{
   color: white
 }
 .main__another__date-fix{
-  text-decoration: dotted;
-  color: white;
-  border-bottom: 1px white dashed;
+    text-decoration: dotted;
+    color: white;
+    border-bottom: 1px white dashed;
 }
 @media (max-width: 992px)
 {
     .main__another__date{
-  text-align: center;
-  margin-top: 15px;
-  margin-left: 0px;
-}
+        text-align: center;
+        margin-top: 15px;
+        margin-left: 0px;
+    }
 }
 </style>

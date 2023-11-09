@@ -641,7 +641,7 @@ export default
     
     if(!this.checkChosenSeats()){
       router.push({ name: 'SeatPage', params: { race_id: this.race.race.uid} })
-      localStorage.removeItem('chosenSeats')  
+      localStorage.removeItem('chosenSeats')
       return    
     }
     let totalTicketCode = this.race.ticketTypes.filter(el => {
