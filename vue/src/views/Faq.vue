@@ -1,6 +1,8 @@
 <template>
   <div class="container">
     <Header/>
+  </div>
+    <div class="container">
     <h1 style="text-align: center; margin: 30px 0;">Вопросы и ответы</h1>
     <div class="faq__menu-and-accord">
     <ul class="faq__menu">

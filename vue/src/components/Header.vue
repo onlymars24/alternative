@@ -22,9 +22,9 @@
                 <transition name="anim-window">
                     <nav class="header__links__window" v-show="$store.state.windowHeader == 1" @mouseenter="$store.commit('windowHeader', 1)">
                         <!-- <a href="tel:8 (800) 700-42-12" class="header__links__window__phone-link">8 (800) 700-42-12</a> -->
-                        <router-link to="#" class="header__links__window__faq-link">
+                        <a href="/faq" class="header__links__window__faq-link">
                             Вопросы и ответы
-                        </router-link>
+                        </a>
                     </nav>
                 </transition>
             </li>

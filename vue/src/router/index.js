@@ -56,11 +56,6 @@ const routes = [
     name: 'Form',
     component: form
   },
-  // {
-  //   path: '/login',
-  //   name: 'Login',
-  //   component: AuthorizationPage
-  // },
   {
     path: '/account',
     name: 'Account',
