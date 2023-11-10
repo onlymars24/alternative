@@ -76,11 +76,11 @@ const routes = [
     name: 'ReturnConditions',
     component: ReturnConditions
   },
-  // {
-  //   path: '/faq',
-  //   name: 'Faq',
-  //   component: Faq
-  // },
+  {
+    path: '/faq',
+    name: 'Faq',
+    component: Faq
+  },
   {
     path: '/fj239f3j984jsdiaisja',
     component: Admin,

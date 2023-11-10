@@ -90,6 +90,7 @@
                                 <el-table-column prop="dispatchDate" label="Дата и время отправления (местное)" width="200" />
                                 <el-table-column prop="created_at" label="Дата и время брони (GMT +3)" width="160" />
                                 <el-table-column prop="returned" label="Дата и время возврата (местное)" width="180" />
+                                <el-table-column prop="timezone" label="Часовой пояс" width="135" />
                                 <el-table-column prop="ticketNum" label="Номер билета" width="120" />
                                 <el-table-column prop="order_id" label="ID заказа" width="120" />
                                 <el-table-column prop="dispatchStation" label="Пункт отправления" width="180" />

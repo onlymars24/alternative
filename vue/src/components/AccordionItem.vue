@@ -1,11 +1,12 @@
 <template>
-    <div class="accordion" v-for="Accord in AccordItem" :key="Accord.id">
-      <input class="input-accord" type="checkbox" name="radio-a" :id="Accord.id">
-      <label class="accordion-label" :for="Accord.id">{{ Accord.header }}</label>
-      <div class="accordion-content">
-        <p>{{ Accord.text }}</p>
-      </div>
-  </div>
+    <div @click="Accord.open = !Accord.open" class="accordion" v-for="Accord in AccordItem" :key="Accord.id">
+      <label class="accordion-label">{{ Accord.header }}</label>
+      <Transition name="animation">
+        <div class="accordion-content" v-if="Accord.open">
+          <p>{{ Accord.text }}</p>
+        </div>
+      </Transition>
+    </div>
 </template>
 <script>
 export default

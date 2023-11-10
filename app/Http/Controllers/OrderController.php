@@ -28,6 +28,16 @@ class OrderController extends Controller
                 'error' => $order
             ], 422);
         }
+
+        $race_json = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid);
+        Log::info('race_json: '.$race_json);
+        $race = json_decode($race_json);
+        // timezone saving
+        $timezone = $race->depot->timezone;
+
+
         $orderFromDB = Order::create([
             'id' => $order->id,
             'order_info' => $order_json,
@@ -63,6 +73,8 @@ class OrderController extends Controller
             );
             $ticketFromDB->duePercent = $duePercent;
             $ticketFromDB->duePrice = ceil($ticketFromDB->price * $duePercent / 100);
+            // timezone saving 
+            $ticketFromDB->timezone = $timezone;
             $ticketFromDB->save();
             $duePrice += $ticketFromDB->duePrice;
             $orderBundle['cartItems']['items'][] = $orderBundleEl;

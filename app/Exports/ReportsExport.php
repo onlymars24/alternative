@@ -58,7 +58,8 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
 'Дата и время отправления
 (местное)', 'Дата и время брони
 (GMT +3)', 'Дата и время возврата
-(местное)', 'Номер 
+(местное)', 'Часовой 
+пояс', 'Номер 
 билета', 'ID заказа', 'Пункт 
 отправления', 'Пункт прибытия', 'Фамилия', 'Имя', 'Отчество', 'Статус рейса', 'Статус 
 билета', 'Стоимость', 'Сбор 
@@ -66,7 +67,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
 агента', 'Удержание', 'Комиссия 
 сайта'];
         foreach($this->tickets as $ticket){
-            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->returned, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], $ticket->price, $ticket->supplierDues, $ticket->dues, $ticket->status == 'R' ? (string)($ticket->price - $ticket->repayment) : '0', $ticket->duePrice ];
+            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->returned, $ticket->timezone, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], $ticket->price, $ticket->supplierDues, $ticket->dues, $ticket->status == 'R' ? (string)($ticket->price - $ticket->repayment) : '0', $ticket->duePrice ];
         }
 
         return 
@@ -79,21 +80,22 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
         return [
             'A' => 19,
             'B' => 20,  
-            'C' => 18,  
-            'D' => 16,  
-            'E' => 13,  
-            'F' => 18,  
-            'G' => 17,  
-            'H' => 12,  
+            'C' => 18,
+            'D' => 16, 
+            'E' => 16,  
+            'F' => 13,  
+            'G' => 18,  
+            'H' => 17,  
             'I' => 12,  
-            'J' => 15,  
-            'K' => 13,  
+            'J' => 12,  
+            'K' => 15,  
             'L' => 13,  
             'M' => 13,  
-            'N' => 12,  
-            'O' => 11,  
-            'P' => 12,   
-            'Q' => 10,    
+            'N' => 13,  
+            'O' => 12,  
+            'P' => 11,  
+            'Q' => 12,   
+            'R' => 10,    
         ];
     }
 
@@ -136,7 +138,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
                     'bold' => true,
                 ],
                 ],
-                'A11:Q11' => [ 
+                'A11:R11' => [ 
                         'font' => [
                             'bold' => true,
                         ],

@@ -64,7 +64,8 @@ class Ticket extends Model
         'orderBundle',
         'customerItem',
         'duePercent',
-        'duePrice'
+        'duePrice',
+        'timezone'
     ];
     public function passengers()
     {

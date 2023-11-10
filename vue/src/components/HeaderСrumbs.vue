@@ -82,8 +82,8 @@ export default {
 <style>
 .animation-enter-active,
 .animation-leave-active {
-  height: 400px !important;
-  transition: all 1s ease !important;
+  /* height: 400px; */
+  transition: all 1s ease;
   overflow: hidden !important;
 }
 
