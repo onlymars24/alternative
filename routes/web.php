@@ -5,6 +5,7 @@ use App\Models\Order;
 use App\Models\Ticket;
 use App\Enums\FermaEnum;
 use Nette\Utils\DateTime;
+use App\Enums\InsuranceEnum;
 use Illuminate\Http\Request;
 use App\Exports\ReportsExport;
 use App\Services\FermaService;
@@ -29,13 +30,97 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
-    $tickets = Ticket::all()->except(['id']);
-    dd($tickets->toArray());
+  $regions = Http::withHeaders([
+      'Authorization' => env('AVTO_SERVICE_KEY'),
+  ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
+  $points = [];
+  foreach($regions as $region){
+      $pointsTemp = Http::withHeaders([
+          'Authorization' => env('AVTO_SERVICE_KEY'),
+      ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
+      if($pointsTemp){
+          foreach($pointsTemp as $point){
+              // DispatchPoint::create([
+              //     'id' => $point->id,
+              //     'name' => $point->name,
+              //     'region' => $point->region,
+              //     'details' => $point->details,
+              //     'address' => $point->address,
+              //     'latitude' => $point->latitude,
+              //     'longitude' => $point->longitude,
+              //     'okato' => $point->okato,
+              //     'place' => $point->place
+              // ]);
+              $points[] = $point;
+          }   
+      }
+  }
+  dd($points);
+  // dd($points); 
+  // dd(date('Y-m-d\TH:i', strtotime('1992-07-23 00:00:00')));
+    // $body = '{
+    //     "product": {
+    //       "code": "ON_ANTICOVID_BUS_2"
+    //     },
+    //     "customer_email": "customer@email.com",
+    //     "customer_phone": "79201111222",
+    //     "insureds": [
+    //       {
+    //         "first_name": "Владимир4",
+    //         "last_name": "Мельников4",
+    //         "patronymic": "Александрович2",
+    //         "birth_date": "2000-06-10",
+    //         "gender": "MALE",
+    //         "phone": {
+    //           "number": "79201111333"
+    //         },
+    //         "ticket": {
+    //           "price": {
+    //             "value": 900.00,
+    //             "currency": "RUB"
+    //           },
+    //           "issue_date": "2023-06-10",
+    //           "number": "5723574320584"
+    //         }
+    //       }
+    //     ],
+    //     "segments": [
+    //       {
+    //         "departure": {
+    //           "date": "2023-12-22T08:00:01",
+    //           "point": "Казань"
+    //         },
+    //         "arrival": {
+    //           "date": "2024-01-12T12:00:00",
+    //           "point": "Тольятти"
+    //         }
+    //       }
+    //     ]
+    //   }';
+    
+    // $response = Http::withHeaders([
+    //     'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+    // ])->withBody($body, 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies');
+
+    // $response = json_decode($response);
+    // // $response = $response->policies;
+    // dd($response);
+    // dd($response[0]->rate[0]->value);
+    // return response(['response' => json_decode($response)]);
+
+    // $response = Http::withHeaders([
+    //     'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+    // ])->withBody($body, 'application/json')->put(env('ALFASTRAH_SERVICE_URL').'/policies/'.(28939787).'/confirm');
+    // $response = json_decode($response);
+    // $response = $response->policies;
+    // dd($response);
+
+    // dd(InsuranceEnum::$body, InsuranceEnum::$insured);
 });
 
 
 Route::get('/kassa/callback', function (Request $request) {
-
+    dd('sdafsd');
 });
 
 Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');

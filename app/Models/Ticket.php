@@ -65,7 +65,8 @@ class Ticket extends Model
         'customerItem',
         'duePercent',
         'duePrice',
-        'timezone'
+        'timezone',
+        'insurance'
     ];
     public function passengers()
     {

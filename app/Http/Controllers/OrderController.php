@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Enums\FermaEnum;
 use App\Models\Passenger;
 use App\Models\Transaction;
+use App\Enums\InsuranceEnum;
 use Illuminate\Http\Request;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
@@ -73,6 +74,7 @@ class OrderController extends Controller
             );
             $ticketFromDB->duePercent = $duePercent;
             $ticketFromDB->duePrice = ceil($ticketFromDB->price * $duePercent / 100);
+            
             // timezone saving 
             $ticketFromDB->timezone = $timezone;
             $ticketFromDB->save();
@@ -83,11 +85,67 @@ class OrderController extends Controller
 
         $orderFromDB->duePercent = $duePercent;
         $orderFromDB->duePrice = $duePrice;
+
+        //insurance info
+        if($request->insured){
+
+            $orderFromDB->insured = $request->insured;
+            // $policiesTotalRate = 0;
+            
+            // foreach($orderFromDB->tickets as $ticket){
+                
+            //     $insuranceBody = InsuranceEnum::$body;
+            //     $insuranceBody['segments'][0]['departure']['date'] = date('Y-m-d\TH:i', strtotime($ticket->dispatchDate));
+            //     $insuranceBody['segments'][0]['departure']['point'] = $ticket->dispatchStation;
+            //     $insuranceBody['segments'][0]['arrival']['date'] = date('Y-m-d\TH:i', strtotime($ticket->arrivalDate));
+            //     $insuranceBody['segments'][0]['arrival']['point'] = $ticket->arrivalStation;
+
+            //     $insuranceBodyInsured = InsuranceEnum::$insured;
+            //     $insuranceBodyInsured['first_name'] = $ticket->firstName;
+            //     $insuranceBodyInsured['last_name'] = $ticket->lastName;
+            //     $insuranceBodyInsured['patronymic'] = $ticket->middleName;
+            //     $insuranceBodyInsured['birth_date'] = date('Y-m-d', strtotime($ticket->birthday));
+            //     $insuranceBodyInsured['gender'] = $ticket->gender == 'M' ? 'MALE' : 'FEMALE';
+            //     $insuranceBodyInsured['phone']['number'] = $orderFromDB->user->phone;
+            //     $insuranceBodyInsured['ticket']['price']['value'] = $ticket->price;
+            //     $insuranceBodyInsured['ticket']['issue_date'] = $ticket->created_at;
+            //     $insuranceBodyInsured['ticket']['number'] = $ticket->ticketNum;
+
+            //     $insuranceBody['insureds'][] = $insuranceBodyInsured;
+
+            //     //send request into alfaStrah
+            //     Log::info('insuranceBody: '.json_encode($insuranceBody));
+            //     $alfaStrahResponse = Http::withHeaders([
+            //         'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+            //     ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies');
+            //     Log::info('alfaStrahResponse: '.$alfaStrahResponse);
+            //     $alfaStrahResponse = json_decode($alfaStrahResponse);
+                
+            //     $policies = $alfaStrahResponse->policies;
+            //     Log::info('policies: '.json_encode($policies));
+            //     $policiesTotalRate += $policies[0]->rate[0]->value;
+
+            //     //save into DB of each ticket and get total rate of whole insurances
+            //     $ticketFromDB = Ticket::find($ticket->id);
+            //     $ticketFromDB->insurance = json_encode($policies[0]);
+            //     $ticketFromDB->save();
+            // }
+            
+            $orderBundle['cartItems']['items'][] = [
+                "positionId"=> $lastKey+1,
+                "name" => 'Страховка',
+                "quantity" => [ "value"=> 1, "measure" => 0 ],
+                "itemCode" => "NM-".($lastKey+1),
+                "tax"=> ["taxType"=> 0, "taxSum"=> 0],
+                "itemPrice"=> $request->insurancePrice * 100
+            ];
+
+        }
         $orderBundle['cartItems']['items'][] = [
-            "positionId"=> $lastKey+1,
+            "positionId"=> $lastKey+2,
             "name" => 'Сервисный сбор',
             "quantity" => [ "value"=> 1, "measure" => 0 ],
-            "itemCode" => "NM-".($lastKey+1),
+            "itemCode" => "NM-".($lastKey+2),
             "tax"=> ["taxType"=> 0, "taxSum"=> 0],
             "itemPrice"=> $duePrice * 100
         ];
@@ -118,6 +176,10 @@ class OrderController extends Controller
             'returnUrl' => env('FRONTEND_URL').'/account',
             'dynamicCallbackUrl' => env('BACKEND_URL').'/order/confirm/'
         ];
+
+        if($request->insured){
+            $data['amount'] = ($order->total + $duePrice + $request->insurancePrice) * 100;
+        }
         $curl = curl_init(); // Инициализируем запрос
         curl_setopt_array($curl, array(
             // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
@@ -146,7 +208,7 @@ class OrderController extends Controller
         return response([
             'order' => $order,
             'payment' => $payment
-        ]);  
+        ]);
     }
 
     public function confirm(Request $request){
@@ -190,14 +252,66 @@ class OrderController extends Controller
         $order = Order::find($request->orderNumber);
         $order->order_info = $order_json;
 
-        $percent['Price'] = $percent['Amount'] = $order->duePrice;
 
-        $body['Request']['CustomerReceipt']['Items'][] = $percent;
+
+
+
+
+
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice;
         $user = $order->user;
         if($user->email){
             $body['Request']['CustomerReceipt']['Email'] = $user->email;
         }
+
+
+        //insurance check
+        if($order->insured){
+            $policiesTotalRate = 0;
+            foreach($order_obj->tickets as $ticket){
+                $ticketFromDB = Ticket::find($ticket->id);
+                $insuranceBody = InsuranceEnum::$body;
+                $insuranceBody['segments'][0]['departure']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->dispatchDate));
+                $insuranceBody['segments'][0]['departure']['point'] = $ticketFromDB->dispatchStation;
+                $insuranceBody['segments'][0]['arrival']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->arrivalDate));
+                $insuranceBody['segments'][0]['arrival']['point'] = $ticketFromDB->arrivalStation;
+                // Log::info('arrivalStation: '.$ticketFromDB->arrivalStation);
+
+                $insuranceBodyInsured = InsuranceEnum::$insured;
+                $insuranceBodyInsured['first_name'] = $ticketFromDB->firstName;
+                $insuranceBodyInsured['last_name'] = $ticketFromDB->lastName;
+                $insuranceBodyInsured['patronymic'] = $ticketFromDB->middleName;
+                $insuranceBodyInsured['birth_date'] = date('Y-m-d', strtotime($ticketFromDB->birthday));
+                $insuranceBodyInsured['gender'] = $ticketFromDB->gender == 'M' ? 'MALE' : 'FEMALE';
+                $insuranceBodyInsured['phone']['number'] = $user->phone;
+                $insuranceBodyInsured['ticket']['price']['value'] = $ticketFromDB->price;
+                $insuranceBodyInsured['ticket']['issue_date'] = $ticketFromDB->created_at;
+                $insuranceBodyInsured['ticket']['number'] = $ticketFromDB->ticketNum;
+
+                $insuranceBody['insureds'][] = $insuranceBodyInsured;
+
+                $alfaStrahResponse = Http::withHeaders([
+                    'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+                ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies?confirm=true');
+                $alfaStrahResponse = json_decode($alfaStrahResponse);
+                $policies = $alfaStrahResponse->policies;
+                $policy = $policies[0];
+
+                
+                $policiesTotalRate += $policy->rate[0]->value;
+                $ticketFromDB->insurance = json_encode($policy);
+                $ticketFromDB->save();
+            }
+            $insuranceReceivePosition = FermaEnum::$insurance;
+            $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
+            $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice + $policiesTotalRate;
+        }
+        
+
+        $percent['Price'] = $percent['Amount'] = $order->duePrice;
+        $body['Request']['CustomerReceipt']['Items'][] = $percent;        
+
         Log::info('Body: '.json_encode($body));
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);
@@ -301,6 +415,48 @@ class OrderController extends Controller
             $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $ticketFromDB->repayment;
         }
 
+        //проверка на страховку
+        if($orderFromDB->insured){
+            $policyTotalRate = 0;
+            foreach($tickets as $ticket){
+                $policy = json_decode($ticket->insurance);
+                $policyTotalRate += $policy->rate[0]->value;
+
+                $policy_id = $policy->policy_id;
+
+                $alfastrahBody = [
+                    'number' => $ticket->ticketNum,
+                    'date' => date('Y-m-d')
+                ];
+                $alfaStrahResponse = Http::withHeaders([
+                    'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+                ])->withBody(json_encode($alfastrahBody), 'application/json')->delete(env('ALFASTRAH_SERVICE_URL').'/policies/'.$policy_id.'/refund');
+                Log::info('alfaStrahResponse '.$alfaStrahResponse);
+            }
+
+            $data = [
+                'userName' => config('services.payment.userName'),
+                'password' => config('services.payment.password'),
+                'orderId' => $orderFromDB->bankOrderId,
+                'amount' => $policyTotalRate * 100,
+                'positionId' => $orderFromDB->tickets->count()+1
+            ];
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
+                CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+                CURLOPT_POST => true, // Метод POST
+                CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+            ));
+            $repayment = curl_exec($curl); // Выполняем запрос            
+
+            $insuranceReceivePosition = FermaEnum::$insurance;
+            $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policyTotalRate;
+            $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policyTotalRate;            
+        }
+
+
         //проверить рейс на отмену и если что добавить комиссию
         $race_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
@@ -317,7 +473,7 @@ class OrderController extends Controller
                 'password' => config('services.payment.password'),
                 'orderId' => $orderFromDB->bankOrderId,
                 'amount' => $duePrice * 100,
-                'positionId' => $orderFromDB->tickets->count()+1
+                'positionId' => $orderFromDB->tickets->count()+2
             ];
             $curl = curl_init();
             curl_setopt_array($curl, array(

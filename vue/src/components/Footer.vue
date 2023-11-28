@@ -32,7 +32,7 @@
                     <div class="footer__info-about__pass">
                         <a href="">О нас</a>
                         <br>
-                        <a href="">Вопросы и ответы</a>
+                        <a href="/faq" target="_blank">Вопросы и ответы</a>
                         <br>
                         <a href="">Вернуть билет</a>
                         <br>

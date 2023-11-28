@@ -29,25 +29,25 @@
     <nav>
       <ul class="mobail-menu__links">
         <li class="mobail-menu__link mobail-menu__search">
-          <router-link to="">Поиск билетов</router-link>
+          <a href="/">Поиск билетов</a>
         </li>
 
-        <div class="accordion">
+        <!-- <div class="accordion">
           <input
             class="input-accord"
             type="checkbox"
             name="radio-a"
             id="phoneLink"
           />
-          <label class="accordion-label mobail-menu__support" for="phoneLink"
+          <label class="mobail-menu__support" for="phoneLink"
             >Служба поддержки</label
           >
           <div class="accordion-content mobail-accordion-content">
             <p class="mobil_phone_link">
-              <!-- <a href="tel:8 (800) 700-42-12">8 (800) 700-42-12</a> -->
+              <a href="tel:8 (800) 700-42-12">8 (800) 700-42-12</a>
             </p>
           </div>
-        </div>
+        </div> -->
 
         <li v-if="auth" class="mobail-menu__link mobail-menu__ticket">
           <router-link to="/account">Мои поездки</router-link>
@@ -57,7 +57,7 @@
     <hr />
     <nav>
       <ul class="mobail-menu__links2">
-        <li><router-link to="/Faq">Вопросы и ответы</router-link></li>
+        <li><a href="/faq" target="_blank">Вопросы и ответы</a></li>
         <!-- <li><router-link to="">Сотрудничество</router-link></li> -->
         <li><router-link to="">О нас</router-link></li>
         <!-- <li><router-link to="">Блог</router-link></li> -->

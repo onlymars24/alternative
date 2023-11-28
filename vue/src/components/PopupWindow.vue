@@ -56,6 +56,22 @@
 
       </div>
     </div>
+    <div v-if="this.content==6" style="min-height: 200px;">
+      <div v-if="insurancesInfo.loading" class="loader__outside">
+        <img src="../assets/bus_loading.png" style="max-width: 90%;">
+        <p style="color: grey;">Загрузка.....</p>  
+        <div class="loader"></div>
+      </div>
+      <div v-else>
+        <h6>Страховки</h6>
+        <ul>
+          <template v-for="ticket in insurancesInfo.response">
+            <p v-if="ticket.status == 'S'"><a :href="ticket.insurance.resources[0]" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></p>
+            <p v-if="ticket.status == 'R'">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - билет возвращён</p>
+          </template>
+        </ul>
+      </div> 
+    </div>
 </div>
 </template>
 <script scoped>
@@ -75,7 +91,7 @@ export default
       option: 'login',
     }
   },
-  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo'],
+  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo'],
   emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder'],
   components: { Seat, Login, Registration, ResetPassword },
   computed: {

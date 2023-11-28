@@ -27,6 +27,7 @@
       <!-- <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div> -->
       <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{totalCost}},00₽  </p></div>
       <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
+      <p v-if="insured" style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
       <hr>
       <a href="/return/conditions" class="blue__link" target="_blank">Условия возврата</a>
     </div>
@@ -230,9 +231,21 @@
             <option v-if="(formData.filter(elem => {return seat.name == elem.seat.name}).length == 0) || (formData.filter(elem => {return seat.name == elem.seat.name}).length != 0  && el.seat.name == seat.name)" :selected="seat.name == el.seat.name" :value="seat.name">{{ seat.name }}</option>
           </template>
           
-        </select> 
+        </select>
       </div>      
-      </div>
+      <div class="block__check">
+        
+        <label class="check" style="padding: 0px; display: flex; align-items: center; margin-bottom: 0px; ">
+          <input style="opacity: 1; background-color: initial; margin-right: 3px;" :value="true" v-model="insured" type="radio">Страхование на время поездки
+        </label>
+
+        <p style="font-size: 12px; color: grey; margin-left: 26px;">АО "АльфаСтрахование" , тел.: 8 800 333 0 999, <a href="#">alfastrah.ru</a> предлагает страховую защиту от несчастных случаев на время поездки. Стоимость страхового полиса для полного билета составляет 25, 50 или 100 рублей в зависимости от стоимости билета. Размер страховой выплаты до 500 000 рублей. Подробнее в условиях <a href="#">Публичной оферты</a>, <a href="#">Правилах страхования</a></p> 
+        <label class="check" style="padding: 0px; display: flex; align-items: center;">
+          <input style="opacity: 1; background-color: initial; margin-right: 3px;" :value="false" v-model="insured" type="radio">Без страховки
+        </label>
+
+      </div> 
+    </div>
       </div>
       <div class="form-reg">
         <div class="passenger__addition-outside">
@@ -253,6 +266,7 @@
       <div class="pay">
         <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >{{ totalCost }},00₽</p></div>
         <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
+        <p style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
         <hr class="line-pay">
         <div class="pay-discription">
           <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
@@ -272,7 +286,6 @@
           <div class="spinner-border" role="status"></div>
       </div>      
       <button @click="confirmBook" :disabled="confirmBookLoading" class="pay-but">Перейти к оплате</button>
-
     </div>
     </div>
   </div>
@@ -322,7 +335,8 @@ export default
       payment: [],
       duePercent: 0,
       duePrice: 0,
-      date1: ''
+      date1: '',
+      insured: false
     };
   },
   methods: {
@@ -361,7 +375,7 @@ export default
           )
         })
         const promise2 = axiosClient
-        .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale})
+        .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice})
         .then(response => {
           console.log(response)
           this.order = response.data.order
@@ -604,6 +618,7 @@ export default
   computed: {
     totalCost(){
       let totalCost = 0;
+      this.duePrice = 0
       this.formData.forEach(el => {
         let ticket_type_code = el.ticket_type_code
         let ticket_price = this.race.ticketTypes.filter(el => {
@@ -613,7 +628,36 @@ export default
         totalCost += ticket_price
         this.duePrice += Math.ceil(ticket_price * this.duePercent / 100)
       })
-      return totalCost+this.duePrice;
+      console.log(totalCost, this.duePrice, this.insurancePrice)
+      console.log(totalCost+this.duePrice+this.insurancePrice)
+      return totalCost+this.duePrice+this.insurancePrice;
+    },
+    insurancePrice(){
+      if(this.insured){
+        let insurancePrice = 0
+        this.formData.forEach(el => {
+          let ticket_type_code = el.ticket_type_code
+          let ticket_price = this.race.ticketTypes.filter(el => {
+            return el.code == ticket_type_code;
+          })
+          ticket_price = ticket_price[0].price
+          if(ticket_price <= 500){
+            insurancePrice += 140
+          }
+          else if(ticket_price > 500 && ticket_price <= 1000){
+            insurancePrice += 140
+          }
+          else{
+            insurancePrice += 140
+          }
+        })
+        console.log(insurancePrice)
+        return insurancePrice
+      }
+      else{
+        console.log(0)
+        return 0;
+      }
     }
   },
   async mounted(){

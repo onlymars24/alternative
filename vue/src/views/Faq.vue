@@ -91,14 +91,17 @@
     </div>
     </div>
   </div>
+  <hr class="bef__footer">
+    <Footer/>
 </template>
 <script>
   import AccordionItem from '../components/AccordionItem.vue';
   import Header from '../components/Header.vue';
+  import Footer from '../components/Footer.vue'
 
   export default
   {
-    components:{AccordionItem, Header},
+    components:{AccordionItem, Header, Footer},
     data(){
       return{
         activeMenu:1,

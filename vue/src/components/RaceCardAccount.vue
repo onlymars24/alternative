@@ -86,7 +86,8 @@
 			<transition name="anim-window">
 				<nav style="z-index: 5; display: flex; flex-direction: column;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
 					<a v-if="!wentOut" href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
-					<a href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class="header__links__window__myRace-link">Транзакции</a>
+					<a v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class="header__links__window__myRace-link">Транзакции</a>
+					<a v-if="order.insured && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" href="" @click.prevent="popupInsurancesOpen = true, getInsurances()" class="header__links__window__myRace-link">Страховки</a>
 				</nav>
 			</transition>
 		   </div>
@@ -102,6 +103,9 @@
 	</template>
 	<template v-if="popupTransactionsOpen">
         <PopupWindow @CloseWindow="popupTransactionsOpen = false;" :content="5" :order="race.order" :returnTransactionsInfo="returnTransactionsInfo"/>
+	</template>
+	<template v-if="popupInsurancesOpen">
+        <PopupWindow @CloseWindow="popupInsurancesOpen = false;" :content="6" :order="race.order" :insurancesInfo="insurancesInfo"/>
 	</template>
  </template>
 <script>
@@ -164,6 +168,7 @@ import axiosClient from '../axios';
 				windowOpen: 0,
 				popupOpen: false,
 				popupTransactionsOpen: false,
+				popupInsurancesOpen: false,
 				months: [
 					'', 'янв.', 'февр.', 'мар.', 'апр.', 'май.', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'ноябр.', 'дек.', 
 				],
@@ -175,6 +180,10 @@ import axiosClient from '../axios';
 					response: [  ]
 				},
 				returnTransactionsInfo: {
+					loading: false,
+					response: [  ]
+				},
+				insurancesInfo: {
 					loading: false,
 					response: [  ]
 				},
@@ -239,6 +248,24 @@ import axiosClient from '../axios';
 			})
 			await promise
 			this.returnTransactionsInfo.loading = false
+		},
+		async getInsurances(){
+			this.insurancesInfo.loading = true
+			const promise = axiosClient
+			.get('/order/tickets?orderId='+this.race.order.id)
+			.then(response => {
+				console.log(response.data.tickets)
+				this.insurancesInfo.response = response.data.tickets
+				this.insurancesInfo.response.forEach(ticket => {
+					ticket.insurance = JSON.parse(ticket.insurance)
+				})
+				console.log(this.insurancesInfo.response)
+			})
+			.catch(error =>{
+				console.log(error)
+			})
+			await promise
+			this.insurancesInfo.loading = false
 		}
     },
     mounted(){

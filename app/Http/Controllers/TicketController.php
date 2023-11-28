@@ -20,6 +20,7 @@ class TicketController extends Controller
             'tickets' => $tickets
         ]);
     }
+    
     public function getBack(Request $request){
         //возврат на е-трафике
         $ticket_json = Http::withHeaders([
@@ -31,6 +32,7 @@ class TicketController extends Controller
                 'error' => $ticket
             ], 422);
         }
+
         //обновление в БД
         $ticketFromDB = Ticket::find($ticket->id);
         $ticketFromDB->update((array)$ticket);
@@ -48,7 +50,7 @@ class TicketController extends Controller
         $refundItems = ['items' => [$orderBundle]];
 
 
-        //возврат в экваринге        
+        //возврат в экваринге
         $data = [
             'userName' => config('services.payment.userName'),
             'password' => config('services.payment.password'),
@@ -85,6 +87,43 @@ class TicketController extends Controller
         $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment;
 
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
+
+
+        if($ticketFromDB->insurance){
+            $policy = json_decode($ticketFromDB->insurance);
+
+            $data = [
+                'userName' => config('services.payment.userName'),
+                'password' => config('services.payment.password'),
+                'orderId' => $orderFromDb->bankOrderId,
+                'amount' => $policy->rate[0]->value * 100,
+                'positionId' => $orderFromDb->tickets->count()+1
+            ];
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
+                CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+                CURLOPT_POST => true, // Метод POST
+                CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+            ));
+            $repayment = curl_exec($curl); // Выполняем запрос
+            $policy_id = $policy->policy_id;
+
+            $alfastrahBody = [
+                'number' => $ticketFromDB->ticketNum,
+                'date' => date('Y-m-d')
+            ];
+            $alfaStrahResponse = Http::withHeaders([
+                'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+            ])->withBody(json_encode($alfastrahBody), 'application/json')->delete(env('ALFASTRAH_SERVICE_URL').'/policies/'.$policy_id.'/refund');
+            Log::info('alfaStrahResponse '.$alfaStrahResponse);
+            $alfaStrahResponse = json_decode($alfaStrahResponse);
+            $insuranceReceivePosition = FermaEnum::$insurance;
+            $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policy->rate[0]->value;
+            $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policy->rate[0]->value;
+        }
+
         //проверка на отмену рейса
         $race_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
@@ -97,7 +136,7 @@ class TicketController extends Controller
                 'password' => config('services.payment.password'),
                 'orderId' => $orderFromDb->bankOrderId,
                 'amount' => $ticketFromDB->duePrice * 100,
-                'positionId' => $orderFromDb->tickets->count()+1
+                'positionId' => $orderFromDb->tickets->count()+2
             ];
             $curl = curl_init();
             curl_setopt_array($curl, array(
@@ -115,6 +154,7 @@ class TicketController extends Controller
             $ticketFromDB->raceCanceled = true;
             $ticketFromDB->save();
         }
+
         $user = $orderFromDb->user;
         if($user->email){
             $body['Request']['CustomerReceipt']['Email'] = $user->email;
@@ -137,6 +177,18 @@ class TicketController extends Controller
         return response([
             'ticket' => $ticket,
             'repayment' => $repayment
+        ]);
+    }
+
+    public function orderTickets(Request $request){
+        // return response([
+        //     'tickets' => $request->orderId
+        // ]);
+        $tickets = Order::find($request->orderId)->tickets;
+        
+
+        return response([
+            'tickets' => $tickets
         ]);
     }
 }

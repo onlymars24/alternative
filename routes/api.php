@@ -43,22 +43,21 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/passenger/save', [PassengersController::class, 'save']);
     Route::post('/ticket/return', [TicketController::class, 'getBack']);
     Route::post('/order/return', [OrderController::class, 'getBack']);
-    
+    Route::get('/order/tickets', [TicketController::class, 'orderTickets']);
 });
-    Route::post('/order/transactions', [TransactionController::class, 'all']);
-    Route::get('/tickets', [TicketController::class, 'all']);
-    Route::get('/order', [OrderController::class, 'one']);
-    Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 
 
-
-
-
+Route::post('/order/transactions', [TransactionController::class, 'all']);
+Route::get('/tickets', [TicketController::class, 'all']);
+Route::get('/order', [OrderController::class, 'one']);
+Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 Route::post('/admin/login', [AdminController::class, 'login']);
+
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
