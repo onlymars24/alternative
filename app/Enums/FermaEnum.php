@@ -51,17 +51,17 @@ class FermaEnum
         "PaymentType" => 4, 
         "PaymentAgentInfo" => [
            "AgentType" => "AGENT", 
-           "SupplierInn" => "2221122730", 
-           "SupplierName" => "\"Артмарк\" ООО", 
-           "SupplierPhone" => "73852359311" 
-        ] 
+           "SupplierInn" => "7713056834", 
+           "SupplierName" => "АО «АльфаСтрахование»",
+           "SupplierPhone" => "88003330999"
+        ]
     ];
 
     public static $percent = [
-        "Label" => "Сервисный сбор", 
-        "Price" => null, 
-        "Quantity" => 1, 
-        "Amount" => null, 
+        "Label" => "Сервисный сбор",
+        "Price" => null,
+        "Quantity" => 1,
+        "Amount" => null,
         "Vat" => "VatNo", 
         "PaymentMethod" => 4, 
         "PaymentType" => 4 

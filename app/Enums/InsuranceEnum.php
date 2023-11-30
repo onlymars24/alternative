@@ -22,8 +22,8 @@ class InsuranceEnum
                         "point" => "Санкт-Петербург" 
                     ] 
             ] 
-        ] 
-     ]; 
+        ]
+     ];
 
      public static $insured = [
         "first_name" => "", 

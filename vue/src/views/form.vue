@@ -233,7 +233,7 @@
           
         </select>
       </div>      
-      <div class="block__check">
+<!-- <div class="block__check">
         
         <label class="check" style="padding: 0px; display: flex; align-items: center; margin-bottom: 0px; ">
           <input style="opacity: 1; background-color: initial; margin-right: 3px;" :value="true" v-model="insured" type="radio">Страхование на время поездки
@@ -244,7 +244,7 @@
           <input style="opacity: 1; background-color: initial; margin-right: 3px;" :value="false" v-model="insured" type="radio">Без страховки
         </label>
 
-      </div> 
+      </div> -->
     </div>
       </div>
       <div class="form-reg">

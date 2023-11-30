@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Setting;
 use App\Models\Ticket;
 use App\Enums\FermaEnum;
 use Nette\Utils\DateTime;
@@ -30,16 +31,20 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
-  $regions = Http::withHeaders([
-      'Authorization' => env('AVTO_SERVICE_KEY'),
-  ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
-  $points = [];
-  foreach($regions as $region){
-      $pointsTemp = Http::withHeaders([
-          'Authorization' => env('AVTO_SERVICE_KEY'),
-      ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
-      if($pointsTemp){
-          foreach($pointsTemp as $point){
+              Setting::create([
+                  'name' => 'dues',
+                  'data' => json_encode(['clusterDue' => 5])
+              ]);
+    //   $regions = Http::withHeaders([
+//       'Authorization' => env('AVTO_SERVICE_KEY'),
+//   ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
+//   $points = [];
+//   foreach($regions as $region){
+//       $pointsTemp = Http::withHeaders([
+//           'Authorization' => env('AVTO_SERVICE_KEY'),
+//       ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
+//       if($pointsTemp){
+//           foreach($pointsTemp as $point){
               // DispatchPoint::create([
               //     'id' => $point->id,
               //     'name' => $point->name,
@@ -51,11 +56,11 @@ Route::get('/', function (Request $request) {
               //     'okato' => $point->okato,
               //     'place' => $point->place
               // ]);
-              $points[] = $point;
-          }   
-      }
-  }
-  dd($points);
+//               $points[] = $point;
+//           }   
+//       }
+//   }
+//   dd($points);
   // dd($points); 
   // dd(date('Y-m-d\TH:i', strtotime('1992-07-23 00:00:00')));
     // $body = '{

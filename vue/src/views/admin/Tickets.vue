@@ -24,18 +24,18 @@
                             <FilterSelect :title="'Статус билета'" :ind="'status'" :selectData="ticketStatuses" :filterEl="filterArr['status']" @setSelectFilter="setSelectFilter" @deleteSelectFilter="deleteSelectFilter"/>
                             <div class="text item" style="margin-bottom: 10px;">
                                 <div>Номер телефона:</div>   
-                                <template v-if="!filterArr['phone'].set">
+                                <div v-show="!filterArr['phone'].set">
                                     <el-input
                                         v-model="filterArr['phone'].value"
                                         style="width: 120px; margin-right: 6px;"
                                         size="small"
                                         class="phone__input-filter"
                                     />
-                                    <el-button type="primary" @click="setFilter('phone', filterArr['phone'].value)" :disabled="!filterArr['phone'].value" circle><i class="el-icon-check"></i></el-button>                                    
-                                </template>   
-                                <template v-else>
-                                    <el-tag style="max-width: 100%;" size="large" closable @close="this.filterArr['phone'].set = false">{{ filterArr['phone'].value }}</el-tag>
-                                </template>
+                                    <el-button type="primary" @click="setFilter('phone', filterArr['phone'].value)" :disabled="!filterArr['phone'].value || filterArr['phone'].value == '+7' || filterArr['phone'].value == '+7 ('" circle><i class="el-icon-check"></i></el-button>                                    
+                                </div>   
+                                <div v-show="filterArr['phone'].set">
+                                    <el-tag style="max-width: 100%;" size="large" closable @close="deleteFilter('phone')">{{ filterArr['phone'].value }}</el-tag>
+                                </div>
                             </div>
                             <div class="text item" style="margin-bottom: 10px;">
                                 <div>Дата рождения:</div> 
@@ -224,6 +224,9 @@ export default
             this.filterArr[filterName].value = ''
             this.page = 1
             this.paginationOffset = (this.ticketsPerPage * this.page) - this.ticketsPerPage
+            console.log(this.filterArr[filterName].value)
+            //console.log(this.resetPhoneFilter())
+            console.log(this.filterArr[filterName].value)
         },
         setSelectFilter(filterName, value, selectData){
             this.filterArr[filterName].set = true
@@ -292,6 +295,7 @@ export default
             input.addEventListener("blur", mask, false);
             input.addEventListener("keydown", mask, false);
         });
+        return 'ok';
         }
     },
     computed: {
@@ -343,7 +347,7 @@ export default
             elem.birthday = dayjs(elem.birthday).format('YYYY-MM-DD')
         })
         this.ticketsLoading = false
-        console.log(this.tikitki)
+        console.log(this.filterArr['phone'].set)
     }
 }
 </script>
