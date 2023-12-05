@@ -391,7 +391,7 @@ export default
             return returnsDues.toFixed(2)
         },
         eTrafficTotal(){
-            let eTrafficTotal = this.salesTotal - this.repayments
+            let eTrafficTotal = this.salesTotal - this.repayments + Number(this.holdsTotal)
             return eTrafficTotal.toFixed(2);
         }
     }

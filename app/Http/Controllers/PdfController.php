@@ -22,7 +22,6 @@ class PdfController extends Controller
         $resultStr[0] = $str[0];
         $resultStr[1] = $str[1];
 
-        $period = '';
         $period = 'c '.date('d.m.Y', strtotime($request->comparingDate1)).'г. по '.date('d.m.Y', strtotime($request->comparingDate2)).'г.';
         // dd($period);
         $months = array( 1 => 'января' , 'февраля' , 'марта' , 'апреля' , 'мая' , 'июня' , 'июля' , 'августа' , 'сентября' , 'октября' , 'ноября' , 'декабря' );
@@ -43,6 +42,6 @@ class PdfController extends Controller
         ];
         // dd($data);
         $pdf = Pdf::loadView('pdf_file', $data);
-        return $pdf->download('report.pdf');
+        return $pdf->download('Отчёт ООО Альтернатива - '.$period.'.pdf');
     }
 }
