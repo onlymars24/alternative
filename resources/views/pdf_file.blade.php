@@ -216,7 +216,8 @@
         <p style="padding-top: 6pt;;text-indent: 0pt;text-align: left;">Общество с ограниченной ответственностью<br> “Альтернатива”</p>
         <p style="padding-top: 3pt;text-indent: 0pt;text-align: left;">ИНН: 7017479680</p>
         <p style="padding-top: 1pt;text-indent: 0pt;text-align: left;">Адрес: 634049, Томская обл, Томск г, Иркутский<br> тракт, дом 27, корпус 2, оф. 17</p>
-        <p style="padding-top: 1pt;text-indent: 0pt;text-align: left;">Расчетный счет: <br> B</p>
+        <p style="padding-top: 1pt;text-indent: 0pt;text-align: left;">Расчетный счет: 40702810523500000809</p>
+        <p style="padding-top: 1pt;text-indent: 0pt;text-align: left;">Банк ФИЛИАЛ "НОВОСИБИРСКИЙ" <br> АО "АЛЬФА-БАНК"</p>
       </td>
       <td style="width:47%;">
         <h1 style="padding-top: 6pt;text-indent: 0pt;text-align: left;">АГЕНТ</h1>
@@ -234,7 +235,7 @@
   <table style="margin-left:7.75pt; width: 95%;">
     <tr style="height:10pt">
       <td style="width:47%;">
-        <p style="text-indent: 0pt;text-align: left;">БИК:</p>
+        <p style="text-indent: 0pt;text-align: left;">БИК: 045004774</p>
         <p style="padding-top: 1pt;text-indent: 0pt;text-align: left;">Телефон: +79528911724</p>
       </td>
       <td style="width:47%;">

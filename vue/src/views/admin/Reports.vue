@@ -263,7 +263,7 @@ export default
             })
         },
         returnedTickets(){
-            return this.tickets.filter(ticket => {
+            return this.ticketsArray.filter(ticket => {
                 //console.log(ticket.created_at)
                  return ticket.status == 'R' &&
                         ticket.updated_at > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
