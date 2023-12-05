@@ -245,7 +245,7 @@ export default {
                     race.arrivalDay = dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')]
                     race.dispatchTime = dayjs(race.dispatchDate).format('HH:mm')
                     race.arrivalTime = dayjs(race.arrivalDate).format('HH:mm')
-                });                
+                });
             }
 
             this.loadingRaces = false

@@ -78,7 +78,8 @@
 
                         </el-card>
                     </div>
-                    <el-button @click="exportDataToCsv" type="primary">Скачать</el-button>
+                    <el-button @click="exportDataToCsv" type="primary">Скачать Excel</el-button>
+                    <el-button @click="exportDataToPdf" type="primary">Скачать PDF</el-button>
                     <div style="margin-top: 20px;">
                         <el-card class="box-card">
                             <template #header>
@@ -89,7 +90,7 @@
                             <el-table :data="tickets" style="width: 100%">
                                 <el-table-column prop="dispatchDate" label="Дата и время отправления (местное)" width="200" />
                                 <el-table-column prop="created_at" label="Дата и время брони (GMT +3)" width="160" />
-                                <el-table-column prop="returned" label="Дата и время возврата (местное)" width="180" />
+                                <el-table-column prop="dateReturned" label="Дата и время возврата (GMT +3)" width="180" />
                                 <el-table-column prop="timezone" label="Часовой пояс" width="135" />
                                 <el-table-column prop="ticketNum" label="Номер билета" width="120" />
                                 <el-table-column prop="order_id" label="ID заказа" width="120" />
@@ -121,6 +122,8 @@ import axiosClient from '../../axios'
 import router from '../../router'
 import Header from '../../components/admin/Header.vue'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import axios from 'axios'
 import ticketStatuses from '../../data/TicketStatuses'
 import ru from 'element-plus/dist/locale/ru.mjs'
@@ -142,7 +145,7 @@ export default
         }
     },
     async mounted(){
-        console.log(this.ticketStatuses)
+        console.log(this.downloadPDF)
         this.loading = true
         let date = new Date();
         this.date1 = new Date()
@@ -169,11 +172,14 @@ export default
         })
         await promise
         this.ticketsArray.forEach(ticket => {
+            ticket.updated_at = dayjs(ticket.updated_at).format('YYYY-MM-DD HH:mm:ss')
             if(ticket.status == 'R'){
                 ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
+                ticket.dateReturned = ticket.updated_at
             }
             else{
                 ticket.diffPrice = (0).toFixed(2)
+                ticket.dateReturned = null
             }
             if(ticket.raceCancelled){
                 ticket.raceCancelledLabel = 'Отменён'
@@ -191,6 +197,9 @@ export default
     methods: {
         exportDataToCsv(){
             window.open(this.downloadExcel, '_blank');
+        },
+        exportDataToPdf(){
+            window.open(this.downloadPDF, '_blank');
         },
     },
     watch: {
@@ -223,6 +232,14 @@ export default
             +'&holdsSiteCommission='+this.holdsSiteCommission
             +'&eTrafficTotal='+this.eTrafficTotal
         },
+        downloadPDF(){
+            return import.meta.env.VITE_API_BASE_URL+'/export/pdf/?comparingDate1='+dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss')
+            +'&comparingDate2='+dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
+            +'&salesTotal='+this.salesTotal
+            +'&repayments='+this.repayments
+            +'&holdsTotal='+this.holdsTotal
+            +'&eTrafficTotal='+this.eTrafficTotal
+        },
         comparingDates(){
             let date = new Date()
             if(this.value2){
@@ -247,7 +264,10 @@ export default
         },
         returnedTickets(){
             return this.tickets.filter(ticket => {
-                return ticket.status == 'R'
+                //console.log(ticket.created_at)
+                 return ticket.status == 'R' &&
+                        ticket.updated_at > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
+                        ticket.updated_at < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
             })
         },
         salesAmount(){
@@ -297,7 +317,6 @@ export default
                 if(ticket.raceCanceled){
                     returnsSupplierDues += Number(ticket.supplierDues)
                 }
-                
             })
             return returnsSupplierDues.toFixed(2)
         },
@@ -313,8 +332,11 @@ export default
         },
         repayments(){
             let repayments = 0
+            //this.returnedTickets.forEach(ticket => {
+            //    repayments += Number(ticket.repayment)
+            //})
             this.returnedTickets.forEach(ticket => {
-                repayments += Number(ticket.repayment)
+                repayments += Number(ticket.price)
             })
             return repayments.toFixed(2);
         },

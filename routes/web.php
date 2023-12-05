@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PdfController;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +34,10 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
-              Setting::create([
-                  'name' => 'dues',
-                  'data' => json_encode(['clusterDue' => 5])
-              ]);
+            //   Setting::create([
+            //       'name' => 'dues',
+            //       'data' => json_encode(['clusterDue' => 5])
+            //   ]);
     //   $regions = Http::withHeaders([
 //       'Authorization' => env('AVTO_SERVICE_KEY'),
 //   ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
@@ -121,6 +124,13 @@ Route::get('/', function (Request $request) {
     // dd($response);
 
     // dd(InsuranceEnum::$body, InsuranceEnum::$insured);
+    // dd();
+    $data = ['qw' => 123];
+    // share data to view
+    // view()->share('employee',$data);
+    $pdf = PDF::loadView('pdf_file', $data);
+    // download PDF file with download method
+    return $pdf->download('pdf_file.pdf');
 });
 
 
@@ -129,6 +139,8 @@ Route::get('/kassa/callback', function (Request $request) {
 });
 
 Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');
+
+Route::get('/export/pdf/', [PdfController::class, 'export'])->name('export.pdf');
 
 
 Route::get('/order/confirm/', [OrderController::class, 'confirm'])->name('order.confirm');
