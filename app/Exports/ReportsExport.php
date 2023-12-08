@@ -58,21 +58,19 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
 'Дата и время отправления
 (местное)', 'Дата и время брони
 (GMT +3)', 'Дата и время возврата
-(местное)', 'Часовой 
+(GMT +3)', 'Часовой 
 пояс', 'Номер 
 билета', 'ID заказа', 'Пункт 
 отправления', 'Пункт прибытия', 'Фамилия', 'Имя', 'Отчество', 'Статус рейса', 'Статус 
-билета', 'Стоимость', 'Сбор 
+билета', 'Стоимость', 'Сумма возврата', 'Сбор 
 поставщика', 'Сбор 
 агента', 'Удержание', 'Комиссия 
 сайта'];
         foreach($this->tickets as $ticket){
-            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->returned, $ticket->timezone, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], $ticket->price, $ticket->supplierDues, $ticket->dues, $ticket->status == 'R' ? (string)($ticket->price - $ticket->repayment) : '0', $ticket->duePrice ];
+            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->status == 'R' ? $ticket->updated_at : null, $ticket->timezone, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], ($ticket->created_at > $this->request->comparingDate1 && $ticket->created_at < $this->request->comparingDate2) ? $ticket->price : '0', ($ticket->status == 'R' && $ticket->updated_at > $this->request->comparingDate1 && $ticket->updated_at < $this->request->comparingDate2) ? $ticket->repayment : '0', $ticket->supplierDues, $ticket->dues, ($ticket->status == 'R' && $ticket->updated_at > $this->request->comparingDate1 && $ticket->updated_at < $this->request->comparingDate2) ? (string)($ticket->price - $ticket->repayment) : '0', $ticket->duePrice ];
         }
 
-        return 
-            $tickets
-        ;
+        return $tickets;
     }
 
     public function columnWidths(): array
@@ -151,5 +149,4 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
                 ],
         ];
     }
-
 }

@@ -87,7 +87,7 @@
                                     <span>Список билетов</span>
                                 </div>
                             </template>
-                            <el-table :data="tickets" style="width: 100%">
+                            <el-table :data="ticketsTable" style="width: 100%">
                                 <el-table-column prop="dispatchDate" label="Дата и время отправления (местное)" width="200" />
                                 <el-table-column prop="created_at" label="Дата и время брони (GMT +3)" width="160" />
                                 <el-table-column prop="dateReturned" label="Дата и время возврата (GMT +3)" width="180" />
@@ -101,10 +101,11 @@
                                 <el-table-column prop="middleName" label="Отчество" width="150" />
                                 <el-table-column prop="raceCancelledLabel" label="Статус рейса" width="120" />
                                 <el-table-column prop="fullStatus" label="Статус билета" width="120" />
-                                <el-table-column prop="price" label="Стоимость" width="120" />
+                                <el-table-column prop="tablePrice" label="Стоимость" width="120" />
+                                <el-table-column prop="tableRepayment" label="Сумма возврата" width="150" />
                                 <el-table-column prop="supplierDues" label="Сбор поставщика" width="150" />
                                 <el-table-column prop="dues" label="Сбор агента" width="150" />
-                                <el-table-column prop="diffPrice" label="Удержание" width="150" />
+                                <el-table-column prop="tableDiffPrice" label="Удержание" width="150" />
                                 <el-table-column prop="duePrice" label="Комиссия сайта" width="150" />
                             </el-table>
                         </el-card>
@@ -141,7 +142,8 @@ export default
             value2: null,
             date1: null,
             ticketStatuses: ticketStatuses,
-            locale: ru
+            locale: ru,
+            ticketsTableVar: []
         }
     },
     async mounted(){
@@ -254,6 +256,65 @@ export default
                     this.defaultTime2[1]
                 ]
             }
+        },
+        ticketsTable(){
+            let comparingDates = [
+                dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss'),
+                dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
+            ];
+            let ticketsTable = this.ticketsArray.filter(ticket => {
+                return  (
+                            ticket.status != 'B' &&
+                            ticket.created_at > comparingDates[0] &&
+                            ticket.created_at < comparingDates[1]
+                        )
+                        ||
+                        (
+                            ticket.status == 'R' &&
+                            ticket.updated_at > comparingDates[0] &&
+                            ticket.updated_at < comparingDates[1]
+                        )
+            })
+            ticketsTable.forEach(ticket => {
+                ticket.tablePrice = (0).toFixed(2)
+                ticket.tableRepayment = (0).toFixed(2)
+                ticket.tableDiffPrice = (0).toFixed(2)
+            if(ticket.status != 'B' && 
+                    ticket.status != 'R' && 
+                    ticket.created_at > comparingDates[0] &&
+                    ticket.created_at < comparingDates[1]
+                ){
+                    ticket.tablePrice = ticket.price
+                    ticket.tableRepayment = (0).toFixed(2)
+                    ticket.tableDiffPrice = (0).toFixed(2)
+                }
+            else if(ticket.status == 'R' && 
+                    ticket.created_at > comparingDates[0] &&
+                    ticket.created_at < comparingDates[1] &&
+                    ticket.updated_at > comparingDates[0] &&
+                    ticket.updated_at < comparingDates[1]
+                ){
+                    ticket.tablePrice = ticket.price
+                    ticket.tableRepayment = ticket.repayment
+                    ticket.tableDiffPrice = ticket.diffPrice
+                }
+            else if(ticket.status == 'R' &&
+                    ticket.updated_at > comparingDates[0] &&
+                    ticket.updated_at < comparingDates[1]
+                ){
+                    ticket.tablePrice = (0).toFixed(2)
+                    ticket.tableRepayment = ticket.repayment
+                    ticket.tableDiffPrice = ticket.diffPrice
+                }
+            else if(ticket.status == 'R' &&
+                    ticket.updated_at > comparingDates[1]
+                ){
+                    ticket.tablePrice = ticket.price
+                    ticket.tableRepayment = (0).toFixed(2)
+                    ticket.tableDiffPrice = (0).toFixed(2)
+                }
+            })
+            return ticketsTable
         },
         tickets(){
             return this.ticketsArray.filter(ticket => {
