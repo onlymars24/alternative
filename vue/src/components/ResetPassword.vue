@@ -17,8 +17,8 @@
                     <div v-if="successfulResetMessage" class="alert alert-success" role="alert">
                         {{successfulResetMessage}}
                       </div>
-                    <div v-if="notExistingUserMessage" class="alert alert-danger" role="alert">
-                        {{notExistingUserMessage}}
+                    <div v-if="errorMessage" class="alert alert-danger" role="alert">
+                        {{errorMessage}}
                     </div>
                       <label for="tel1" class="form-label label-gray">Телефон</label>
                       <input @focus="$emit('putRedFromLoginAway')" type="tel" v-model="user.phone" class="form-control phone__input" id="tel1" maxlength="17">
@@ -78,7 +78,7 @@ export default {
                 password: '',
                 password_confirmation: ''
             },
-            notExistingUserMessage: '',
+            errorMessage: '',
             userErrors: {},
             wrongCodeMessage: '',
             code: '',
@@ -146,7 +146,7 @@ export default {
             this.successfulResetMessage = ''
             this.resetLoading = true;
             this.userErrors = {};
-            this.notExistingUserMessage = ''
+            this.errorMessage = ''
             const promise = axiosClient
             .post('/sms/reset', {  phone: this.user.phone, url: window.location.host })
             .then(response => {
@@ -154,17 +154,17 @@ export default {
                 console.log(response)
             })
             .catch(error => {
+                console.log(error)
                 if(error.response.status == 422){
-                    console.log(error)
-                    this.notExistingUserMessage =  error.response.data.error
+                    this.errorMessage =  error.response.data.error
                 }
             });
             await promise
             this.resetLoading = false;
-            if(!this.notExistingUserMessage){
+            if(!this.errorMessage){
                 this.stepLog=2
                 this.sendingCodeDisable = true
-                this.countDown = 60
+                this.countDown = 120
                 this.countDownTimer()
             }
         },

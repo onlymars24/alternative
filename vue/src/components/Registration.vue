@@ -20,6 +20,9 @@
                         <div v-if="successfulRegisterMessage" class="alert alert-success" role="alert">
                             {{successfulRegisterMessage}}
                         </div>
+                        <div v-if="errorMessage" class="alert alert-danger" role="alert">
+                            {{ errorMessage }}
+                        </div>
                       <label for="tel1" class="form-label label-gray">Телефон</label>
                       <input @focus="$emit('putRedFromLoginAway')" type="tel" v-model="user.phone" class="form-control phone__input" :class="{'is-invalid': userErrors['phone']}" id="tel1" maxlength="17">
                       <div v-if="userErrors['phone']" id="validationServer03Feedback" class="invalid-feedback" style="margin-bottom: 10px;">
@@ -90,6 +93,7 @@ export default {
             },
             userErrors: [],
             wrongCodeMessage: '',
+            errorMessage: '',
             successfulRegisterMessage: '',
             code: '',
             sendingCodeDisable: false,
@@ -147,27 +151,33 @@ export default {
             this.registerLoading = true;
             this.successfulRegisterMessage = ''
             this.wrongCodeMessage = ''
+            this.errorMessage = ''
             this.userErrors = {};
             const promise = axiosClient
             .post('/sms/register', { user: this.user })
-            .then(response => (
+            .then(response => {
+                console.log(response.data)
                 this.sms = response.data
-            ))
+            })
             .catch(error => {
                 if(error.response.status == 422){
                     console.log('No Valid')
                     console.log(error)
-                    console.log(error.response.data.errors)
-                    this.userErrors = error.response.data.errors
+                    if(error.response.data.errorMessage){
+                        this.errorMessage = error.response.data.errorMessage
+                    }
+                    else{
+                        this.userErrors = error.response.data.errors
+                    }
                 }
             });
             await promise
             console.log(this.sms)
             
-            if(!Object.keys(this.userErrors).length){
+            if(!Object.keys(this.userErrors).length && this.errorMessage === ''){
                 this.stepLog=2
                 this.sendingCodeDisable = true
-                this.countDown = 60
+                this.countDown = 120
                 this.countDownTimer()
                 // this.register() //register without sms
             }

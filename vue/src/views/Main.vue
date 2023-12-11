@@ -1,6 +1,7 @@
 <script>
 import Footer from '../components/Footer.vue'
 import HeaderMain from '../components/HeaderMain.vue'
+// import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
 export default{
     name: "Main",
@@ -58,6 +59,11 @@ export default{
 </script>
 
 <template>
+    <!-- <div
+    id="captcha-container"
+    class="smart-captcha"
+    data-sitekey="ysc1_RpgYw52BqBtzs8l44h84Uw8HjdhDBEeaPzDoQ772da43ab9e"
+></div> -->
     <!-- <button style="margin-left: 16px" @click="drawer = true">
         open
     </button>

@@ -13,6 +13,7 @@ class Sms extends Model
         'phone',
         'code',
         'user',
-        'type'
+        'type',
+        'used'
     ];
 }

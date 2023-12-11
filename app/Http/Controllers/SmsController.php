@@ -12,6 +12,18 @@ use Illuminate\Support\Facades\Validator;
 class SmsController extends Controller
 {
     public function sendReset(Request $request){
+        $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
+        $currentTime = date('Y-m-d\TH:i:s', $currentTime);
+
+        $smsCount = Sms::where([
+            ['created_at', '>', $currentTime],
+        ])->get()->count();
+        if($smsCount >= 2){
+            return response([
+                'error' => 'Можно высылать не более 2 смс за 2 часа!'
+            ], 422);
+        }
+
         $user = User::where('phone', $request->phone)->first();
         if(!$user){
             return response([
@@ -21,6 +33,7 @@ class SmsController extends Controller
         $sms = Sms::create([
             'phone' => $request->phone,
             'code' => random_int(100000, 999999),
+            'used' => false,
             'type' => 'reset'
         ]);
         $smsService = Http::withHeaders([
@@ -35,23 +48,37 @@ class SmsController extends Controller
     public function getReset(Request $request){
         $sms = Sms::where([
             ['phone', '=', '+'.$request->phone],
-            // ['code', '=', $request->code],
+            ['code', '=', $request->code],
+            ['used', '=', false],
             ['type', '=', 'reset']
-        ])->latest()->first();
+        ])->first();
 
-        if($sms->code != $request->code){
+        if(!$sms){
             return response([
                 'error' => 'Код подтверждения неверный!'
             ], 422);
         }
+        $sms->used = true;
+        $sms->save();
 
         return response([
             'sms' => $sms
         ]);
     }
 
-    public function sendRegister(Request $request)
-    {
+    public function sendRegister(Request $request){
+        $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
+        $currentTime = date('Y-m-d\TH:i:s', $currentTime);
+        
+        $smsCount = Sms::where([
+            ['created_at', '>', $currentTime],
+        ])->get()->count();
+        if($smsCount >= 2){
+            return response([
+                'errorMessage' => 'Можно высылать не более 2 смс за 2 часа!'
+            ], 422);
+        }
+
         $user = $request->user;
         $validator = Validator::make($user, [
             'phone' => 'required|size:17|unique:users',
@@ -69,6 +96,7 @@ class SmsController extends Controller
             'phone' => $user['phone'],
             'code' => random_int(100000, 999999),
             'user' => json_encode($user),
+            'used' => false,
             'type' => 'register'
         ]);
         $smsService = Http::withHeaders([
@@ -79,21 +107,20 @@ class SmsController extends Controller
         ]);
     }
 
-    public function getRegister(Request $request)
-    {
-        // return response([
-        //     'sms' => $request->phone
-        // ]);
+    public function getRegister(Request $request){
         $sms = Sms::where([
             ['phone', '=', '+'.$request->phone],
-            // ['code', '=', $request->code],
-            ['type', '=', 'register']
-        ])->latest()->first();
-        if($sms->code != $request->code){
+            ['code', '=', $request->code],
+            ['type', '=', 'register'],
+            ['used', '=', false],
+        ])->first();
+        if(!$sms){
             return response([
                 'error' => 'Код подтверждения неверный!'
             ], 422);
         }
+        $sms->used = true;
+        $sms->save();
         return response([
             'sms' => $sms
         ]);

@@ -40,7 +40,7 @@ class AuthController extends Controller
         return response([
             'token' => $token
         ]);
-        // return response()->json(['success' => true, 'message' => 'Registration is succeeded'], 200);;
+        // return response()->json(['success' => true, 'message' => 'Registration is succeeded'], 200);
     }
 
     public function login(Request $request){
