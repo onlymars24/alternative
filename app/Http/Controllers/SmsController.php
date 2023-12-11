@@ -16,6 +16,7 @@ class SmsController extends Controller
         $currentTime = date('Y-m-d\TH:i:s', $currentTime);
 
         $smsCount = Sms::where([
+            ['phone', '=', $request->phone],
             ['created_at', '>', $currentTime],
         ])->get()->count();
         if($smsCount >= 2){
@@ -67,11 +68,13 @@ class SmsController extends Controller
     }
 
     public function sendRegister(Request $request){
+        $user = $request->user;
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
         $currentTime = date('Y-m-d\TH:i:s', $currentTime);
-        
+
         $smsCount = Sms::where([
             ['created_at', '>', $currentTime],
+            ['phone', '=', $user['phone']],
         ])->get()->count();
         if($smsCount >= 2){
             return response([
@@ -79,7 +82,7 @@ class SmsController extends Controller
             ], 422);
         }
 
-        $user = $request->user;
+        
         $validator = Validator::make($user, [
             'phone' => 'required|size:17|unique:users',
             'password' => 'required|between:7,30|confirmed',
