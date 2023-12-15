@@ -141,8 +141,8 @@ Route::get('/wrong/orders', function (Request $request) {
           'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/order/'.$order->id);
         $order_remoted = json_decode($order_remoted);
-        dd($order_remoted, $order_info);
-        if($order_remoted->status != $order_info->status){
+        // dd($order_remoted, $order_info);
+        if(isset($order_remoted->status) && $order_remoted->status != $order_info->status){
           $data[] = $order_remoted;
         }
       }
