@@ -125,12 +125,14 @@ Route::get('/', function (Request $request) {
 
     // dd(InsuranceEnum::$body, InsuranceEnum::$insured);
     // dd();
-    $data = ['qw' => 123];
-    // share data to view
-    // view()->share('employee',$data);
-    $pdf = PDF::loadView('pdf_file', $data);
-    // download PDF file with download method
-    return $pdf->download('pdf_file.pdf');
+    // $data = ['qw' => 123];
+    // // share data to view
+    // // view()->share('employee',$data);
+    // $pdf = PDF::loadView('pdf_file', $data);
+    // // download PDF file with download method
+    // return $pdf->download('pdf_file.pdf');
+
+    
 });
 
 

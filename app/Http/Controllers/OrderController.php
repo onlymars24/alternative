@@ -345,8 +345,8 @@ class OrderController extends Controller
 
         $orderFromBank = json_decode($orderFromBank);
 
-        $order->ip = $orderFromBank->Ip;
-        $order->pan = $orderFromBank->Pan;
+        $order->ip = isset($orderFromBank->Ip) ? $orderFromBank->Ip : null;
+        $order->pan = isset($orderFromBank->Pan) ? $orderFromBank->Pan : null;
         $order->save();
 
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
