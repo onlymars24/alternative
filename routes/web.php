@@ -2,24 +2,25 @@
 
 use App\Models\User;
 use App\Models\Order;
-use App\Models\Setting;
 use App\Models\Ticket;
+use App\Models\Setting;
 use App\Enums\FermaEnum;
 use Nette\Utils\DateTime;
 use App\Enums\InsuranceEnum;
 use Illuminate\Http\Request;
+use App\Exports\WrongsExport;
 use App\Exports\ReportsExport;
 use App\Services\FermaService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PdfController;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 
 /*
@@ -133,7 +134,7 @@ Route::get('/wrong/orders', function (Request $request) {
     // return $pdf->download('pdf_file.pdf');
 
     $orders = Order::all();
-    $data = [];
+    $tickets = [];
     foreach($orders as $order){
       $order_info = json_decode($order->order_info);
       if($order_info->status == 'B'){
@@ -143,11 +144,13 @@ Route::get('/wrong/orders', function (Request $request) {
         $order_remoted = json_decode($order_remoted);
         // dd($order_remoted, $order_info);
         if(isset($order_remoted->status) && $order_remoted->status != $order_info->status){
-          $data[] = $order_remoted;
+          foreach($order_info->tickets as $ticket){
+            $tickets[] = Ticket::find($ticket->id);
+          }
         }
       }
     }
-    dd($data);
+    return Excel::download(new WrongsExport($tickets), 'reports.xlsx');
 });
 
 
