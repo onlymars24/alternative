@@ -33,7 +33,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 |
 */
 
-Route::get('/', function (Request $request) {
+Route::get('/wrong/orders', function (Request $request) {
             //   Setting::create([
             //       'name' => 'dues',
             //       'data' => json_encode(['clusterDue' => 5])
@@ -132,7 +132,21 @@ Route::get('/', function (Request $request) {
     // // download PDF file with download method
     // return $pdf->download('pdf_file.pdf');
 
-    
+    $orders = Order::all();
+    $data = [];
+    foreach($orders as $order){
+      $order_info = json_decode($order->order_info);
+      if($order_info->status == 'B'){
+        $order_remoted = Http::withHeaders([
+          'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/order/'.$order->id);
+        $order_remoted = json_decode($order_remoted);
+        if($order_remoted->status != $order_info->status){
+          $data[] = $order_remoted;
+        }
+      }
+    }
+    dd($data);
 });
 
 

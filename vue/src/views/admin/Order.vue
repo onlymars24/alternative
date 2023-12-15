@@ -1,6 +1,6 @@
 <template>
     <div class="common-layout">
-        <div class="container" v-loading.fullscreen.lock="orderLoading">  
+        <div class="container" v-loading.fullscreen.lock="orderLoading">
             <Header/>
             <el-container v-if="!orderLoading">
                 <el-main>
