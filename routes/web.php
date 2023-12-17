@@ -35,6 +35,7 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/wrong/orders', function (Request $request) {
+  dd('qwerty');
             //   Setting::create([
             //       'name' => 'dues',
             //       'data' => json_encode(['clusterDue' => 5])
@@ -133,32 +134,30 @@ Route::get('/wrong/orders', function (Request $request) {
     // // download PDF file with download method
     // return $pdf->download('pdf_file.pdf');
 
-    $orders = Order::all();
-    $data = [];
-    foreach($orders as $order){
-      $order_info = json_decode($order->order_info);
-      if($order_info->status == 'B'){
-        $order_remoted = Http::withHeaders([
-          'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->get(env('AVTO_SERVICE_URL').'/order/'.$order->id);
-        $order_remoted = json_decode($order_remoted);
-        // dd($order_remoted, $order_info);
-        if(isset($order_remoted->status) && $order_remoted->status != $order_info->status){
-          // foreach($order_info->tickets as $ticket){
-          //   $tickets[] = Ticket::find($ticket->id);
-          // }
-          $orderFromDB = Order::find($order->id);
+    // $orders = Order::all();
+    // $data = [];
+    // foreach($orders as $order){
+    //   $order_info = json_decode($order->order_info);
+    //   if($order_info->status == 'B'){
+    //     $order_remoted = Http::withHeaders([
+    //       'Authorization' => env('AVTO_SERVICE_KEY'),
+    //     ])->get(env('AVTO_SERVICE_URL').'/order/'.$order->id);
+    //     $order_remoted = json_decode($order_remoted);
+    //     // dd($order_remoted, $order_info);
+    //     if(isset($order_remoted->status) && $order_remoted->status != $order_info->status){
+    //       // foreach($order_info->tickets as $ticket){
+    //       //   $tickets[] = Ticket::find($ticket->id);
+    //       // }
+    //       $orderFromDB = Order::find($order->id);
           
-          //
-          $orderFromDB->order_info = json_encode($order_remoted);
-          $orderFromDB->save();
-          //
+    //       //
+    //       //
           
-          // $data[] = $orderFromDB;
-        }
-      }
-    }
-    dd('Ok');
+    //       // $data[] = $orderFromDB;
+    //     }
+    //   }
+    // }
+    // dd('Ok');
     // return Excel::download(new WrongsExport($tickets), 'reports.xlsx');
 });
 
