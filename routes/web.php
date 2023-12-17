@@ -134,7 +134,7 @@ Route::get('/wrong/orders', function (Request $request) {
     // return $pdf->download('pdf_file.pdf');
 
     $orders = Order::all();
-    $tickets = [];
+    $data = [];
     foreach($orders as $order){
       $order_info = json_decode($order->order_info);
       if($order_info->status == 'B'){
@@ -144,13 +144,16 @@ Route::get('/wrong/orders', function (Request $request) {
         $order_remoted = json_decode($order_remoted);
         // dd($order_remoted, $order_info);
         if(isset($order_remoted->status) && $order_remoted->status != $order_info->status){
-          foreach($order_info->tickets as $ticket){
-            $tickets[] = Ticket::find($ticket->id);
-          }
+          // foreach($order_info->tickets as $ticket){
+          //   $tickets[] = Ticket::find($ticket->id);
+          // }
+          $orderFromDB = Order::find($order->id);
+          $data[] = $orderFromDB;
         }
       }
     }
-    return Excel::download(new WrongsExport($tickets), 'reports.xlsx');
+    dd($data);
+    // return Excel::download(new WrongsExport($tickets), 'reports.xlsx');
 });
 
 

@@ -25,6 +25,9 @@
                         <a href="/faq" class="header__links__window__faq-link">
                             Вопросы и ответы
                         </a>
+                        <a @click.prevent="openFeedbackWindow = true" href="" class="header__links__window__faq-link">
+                            Задать вопрос
+                        </a>
                     </nav>
                 </transition>
             </li>
@@ -59,6 +62,7 @@
         </transition>
     </div>
         <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" @authenticateForForm="$emit('authenticateForForm')" @authSelf="authSelf" :content="3"/>
+        <PopupWindow v-if="openFeedbackWindow" @CloseFeedbackWindow="openFeedbackWindow = false" :content="7"/>
 </template>
 
 <script>
@@ -79,7 +83,7 @@ export default
     authForForm: {
         type: Boolean,
         default: false
-    },
+    }
   },
   emits: ['authenticateForForm'],
   data()
@@ -89,6 +93,7 @@ export default
         user: [],
         openWindow: false,
         mobileMenuOpen: false, 
+        openFeedbackWindow: true
     }
   },
   methods: {
@@ -224,9 +229,6 @@ export default
       }
       .header__links__place li a span{
         line-height: 15px;
-      }
-      .header__links__window{
-        
       }
       .logo__and__hamburger
       {

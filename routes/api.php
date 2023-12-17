@@ -11,6 +11,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\Api\RaceController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Api\RacesController;
 use App\Http\Controllers\PassengersController;
@@ -52,6 +53,7 @@ Route::get('/tickets', [TicketController::class, 'all']);
 Route::get('/order', [OrderController::class, 'one']);
 Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 Route::post('/admin/login', [AdminController::class, 'login']);
+Route::post('/send/feedback', [FeedbackController::class, 'send']);
 
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
