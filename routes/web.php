@@ -148,11 +148,17 @@ Route::get('/wrong/orders', function (Request $request) {
           //   $tickets[] = Ticket::find($ticket->id);
           // }
           $orderFromDB = Order::find($order->id);
-          $data[] = $orderFromDB;
+          
+          //
+          $orderFromDB->order_info = json_encode($order_remoted);
+          $orderFromDB->save();
+          //
+          
+          // $data[] = $orderFromDB;
         }
       }
     }
-    dd($data);
+    dd('Ok');
     // return Excel::download(new WrongsExport($tickets), 'reports.xlsx');
 });
 
