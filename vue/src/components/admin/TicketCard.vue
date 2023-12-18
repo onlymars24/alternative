@@ -47,19 +47,22 @@
         <div class="text item"><strong>Тип билета:</strong> {{ ticket.ticketType }}</div>
         <div class="text item"><strong>ФИО:</strong> {{ ticket.lastName }} {{ ticket.firstName }} {{ ticket.middleName }}</div>
         <div class="text item"><strong>Телефон:</strong> {{ ticket.phone }}</div>
+        <div v-if="!ticket.order_id && ticket.status == 'S'" class="text item" style="margin-top: 5px;"><el-button type="danger" :loading="returnLoading" @click="forceTicketReturn(ticket.id)">Вернуть принудительно</el-button> </div>
     </el-card>
 </template>
 <script>
 import { ref } from "vue";
 import router from '../../router'
 import dayjs from 'dayjs'
+import axiosClient from "../../axios";
 
 export default
 {
     props: ['ticket', 'ticketStatuses'],
     data() {
         return {
-            baseUrl: ''
+            baseUrl: '',
+            returnLoading: false
         }
     },
     methods: {
@@ -68,6 +71,21 @@ export default
         },
         otherPage(link){
             var win=window.open(link, '_blank');
+        },
+        async forceTicketReturn(ticketId){
+            this.returnLoading = true
+            const promise = axiosClient
+            .post('/force/ticket/return', {ticketId: ticketId, orderId: this.$route.params['order_id']})
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            await promise
+            location.reload(); 
+            this.returnLoading = false
+            return false;
         }
     },
     mounted(){

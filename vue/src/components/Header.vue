@@ -62,7 +62,7 @@
         </transition>
     </div>
         <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" @authenticateForForm="$emit('authenticateForForm')" @authSelf="authSelf" :content="3"/>
-        <PopupWindow v-if="openFeedbackWindow" @CloseFeedbackWindow="openFeedbackWindow = false" :content="7"/>
+        <!-- <PopupWindow v-if="openFeedbackWindow" @CloseFeedbackWindow="openFeedbackWindow = false" :content="7"/> -->
 </template>
 
 <script>
@@ -93,7 +93,7 @@ export default
         user: [],
         openWindow: false,
         mobileMenuOpen: false, 
-        openFeedbackWindow: true
+        openFeedbackWindow: false
     }
   },
   methods: {

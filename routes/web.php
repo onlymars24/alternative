@@ -15,6 +15,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
@@ -34,7 +35,41 @@ use App\Http\Controllers\PaymentController;
 |
 */
 
-Route::get('/wrong/orders', function (Request $request) {
+Route::get('/', function (Request $request) {
+  // Mail::raw('Текст письма', function($message) {
+  //     $message->to('marsel.galimov.24@mail.ru', 'Имя Получателя');
+  //     $message->subject('Тема письма');
+  // });
+
+
+  // $to = "marsel.galimov.24@mail.ru";
+  // $subject = "Тема письма";
+  // $message = "Текст письма";
+  
+  // // Дополнительные заголовки
+  // $headers = 'From: example@example.com' . "\r\n" .
+  //     'Reply-To: example@example.com' . "\r\n" .
+  //     'X-Mailer: PHP/' . phpversion();
+  
+  // mail($to, $subject, $message, $headers);
+
+
+  // $to = 'marsel.galimov.24@mail.ru';
+  // $subject = 'Тема письма';
+  // $data = ['message' => 'Текст сообщения'];
+
+  // Mail::send([], [], function ($message) use ($to, $subject, $data) {
+  //     $message->to($to)
+  //             ->subject($subject)
+  //             ->setBody($data['message']);
+  // });
+
+
+// Mail::raw('Текст сообщения', function($message) {
+//   $message->to('marsel.galimov.24@mail.ru', 'Имя получателя')->subject('Тема сообщения');
+// });
+
+
   dd('qwerty');
             //   Setting::create([
             //       'name' => 'dues',

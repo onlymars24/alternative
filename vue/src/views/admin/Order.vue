@@ -26,7 +26,7 @@
                             <template v-for="transaction in transactions">
 
                                 <p v-if="transaction.StatusCode != 2">Чек {{transaction.type == 'Income' ? ' платежа' : ' возврата'}} ещё не готов</p>
-            <p v-if="transaction.StatusCode == 2"><a :href="transaction.OfdReceiptUrl" target="_blank">Чек</a>{{transaction.type == 'Income' ? ' платежа' : ' возврата'}}</p>
+                                <p v-if="transaction.StatusCode == 2"><a :href="transaction.OfdReceiptUrl" target="_blank">Чек</a>{{transaction.type == 'Income' ? ' платежа' : ' возврата'}}</p>
                             </template>
                         </el-card>
                     </div>
@@ -41,6 +41,7 @@
     </div>
 </template>
 <script>
+import axios from 'axios';
 import axiosClient from '../../axios';
 import Header from '../../components/admin/Header.vue'
 import TicketCard from '../../components/admin/TicketCard.vue'
@@ -100,6 +101,8 @@ export default
         this.orderLoading = false
         this.orderStatus = this.orderStatuses[this.order.status].label
 
+    },
+    methods: {
     }
 }
 </script>

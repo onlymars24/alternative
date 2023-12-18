@@ -43,9 +43,11 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/passenger/edit', [PassengersController::class, 'edit']);
     Route::post('/passenger/save', [PassengersController::class, 'save']);
     Route::post('/ticket/return', [TicketController::class, 'getBack']);
+
     Route::post('/order/return', [OrderController::class, 'getBack']);
     Route::get('/order/tickets', [TicketController::class, 'orderTickets']);
 });
+    Route::post('/force/ticket/return', [TicketController::class, 'getBackForce']);
 
 
 Route::post('/order/transactions', [TransactionController::class, 'all']);
