@@ -74,7 +74,7 @@
     </div>
     <div v-if="this.content==7" style="min-height: 200px;">
       <div v-if="this.feedbackInfo.step==1">
-        <form action="#">
+        <form @submit.prevent="sendMail">
         <h4>Задайте нам вопрос</h4>
         <!-- {{ feedbackCredentials }} -->
         <ul style="margin-top: 15px;">
@@ -109,7 +109,7 @@
               </label>
             </div>
           </li>          
-          <li><button @click="sendMail" style="margin-top: 10px;" class="btn btn-primary btn-code">Отправить</button></li>
+          <li><button type="submit" style="margin-top: 10px;" class="btn btn-primary btn-code">Отправить</button></li>
         </ul>
         </form>
       </div> 
@@ -174,7 +174,7 @@ export default
       this.feedbackInfo.loading = true
       this.feedbackInfo.step = 2
       const promise = axiosClient.post('/send/feedback', this.feedbackCredentials).then(response => {
-
+        console.log(response)
       })
       .catch(error => {
         

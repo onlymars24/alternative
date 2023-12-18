@@ -47,7 +47,7 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/order/return', [OrderController::class, 'getBack']);
     Route::get('/order/tickets', [TicketController::class, 'orderTickets']);
 });
-    Route::post('/force/ticket/return', [TicketController::class, 'getBackForce']);
+    // Route::post('/force/ticket/return', [TicketController::class, 'getBackForce']);
 
 
 Route::post('/order/transactions', [TransactionController::class, 'all']);
@@ -56,6 +56,7 @@ Route::get('/order', [OrderController::class, 'one']);
 Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 Route::post('/admin/login', [AdminController::class, 'login']);
 Route::post('/send/feedback', [FeedbackController::class, 'send']);
+Route::get('/get/feedback', [FeedbackController::class, 'get']);
 
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

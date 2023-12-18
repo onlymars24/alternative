@@ -16,6 +16,7 @@ import Order from '../views/admin/Order.vue'
 import Admin from '../components/admin/Admin.vue'
 import Transactions from '../views/admin/Transactions.vue'
 import Reports from '../views/admin/Reports.vue'
+import Feedback from '../views/admin/Feedback.vue'
 import ReturnConditions from '../views/ReturnConditions.vue'
 
 
@@ -105,6 +106,11 @@ const routes = [
         component: Reports,
         name: 'Reports'
       },
+      {
+        path: 'feedback',
+        component: Feedback,
+        name: 'Feedback'
+      },
     ]
   },
   {
@@ -136,7 +142,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   else{
-    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports'){
+    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback'){
       return next({name: 'ALogin'})
     }
   }

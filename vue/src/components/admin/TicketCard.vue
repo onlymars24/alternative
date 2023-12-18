@@ -47,7 +47,7 @@
         <div class="text item"><strong>Тип билета:</strong> {{ ticket.ticketType }}</div>
         <div class="text item"><strong>ФИО:</strong> {{ ticket.lastName }} {{ ticket.firstName }} {{ ticket.middleName }}</div>
         <div class="text item"><strong>Телефон:</strong> {{ ticket.phone }}</div>
-        <div v-if="!ticket.order_id && ticket.status == 'S'" class="text item" style="margin-top: 5px;"><el-button type="danger" :loading="returnLoading" @click="forceTicketReturn(ticket.id)">Вернуть принудительно</el-button> </div>
+        <div v-if="!ticket.order_id && ticket.status == 'S' && false" class="text item" style="margin-top: 5px;"><el-button type="danger" :loading="returnLoading" @click="forceTicketReturn(ticket.id)">Вернуть принудительно</el-button> </div>
     </el-card>
 </template>
 <script>
@@ -83,9 +83,9 @@ export default
                 console.log(error)
             })
             await promise
-            location.reload(); 
+            // location.reload(); 
             this.returnLoading = false
-            return false;
+            // return false;
         }
     },
     mounted(){
