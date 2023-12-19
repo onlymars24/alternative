@@ -2,7 +2,7 @@
 <!-- eslint-disable max-len -->
 <template>
 <div class="background-close" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')"></div>
-<div class="popup-container">
+<div class="popup-container" :class="{'feedback-popup': this.content==7}">
     <div class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
@@ -78,6 +78,7 @@
         <h4>Задайте нам вопрос</h4>
         <!-- {{ feedbackCredentials }} -->
         <ul style="margin-top: 15px;">
+          <li><label for="tel" class="form-label label-gray">Ваше имя</label><input v-model="feedbackCredentials.name" class="form-control inp-gray phone__input" required></li>
           <li><label for="tel" class="form-label label-gray">Ваш телефон</label><input v-model="feedbackCredentials.phone" class="form-control inp-gray phone__input" required></li>
           <li><label for="tel" class="form-label label-gray">Ваш email</label><input v-model="feedbackCredentials.email" class="form-control inp-gray" required></li>
           <li>
@@ -148,6 +149,7 @@ export default
       },
       baseUrl: '',
       feedbackCredentials: {
+        name: '',
         phone: '',
         email: '',
         descr: '',
@@ -251,4 +253,11 @@ export default
 .content-popap a{
   color: white;
 }
+@media (max-width: 425px){
+  .feedback-popup{
+    padding: 20px;
+  }  
+}
+
+
 </style>

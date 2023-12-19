@@ -59,6 +59,7 @@
       <ul class="mobail-menu__links2">
         <li><a href="/faq" target="_blank">Вопросы и ответы</a></li>
         <!-- <li><router-link to="">Сотрудничество</router-link></li> -->
+        <li><a @click.prevent="this.$emit('OpenWindowFeedback')" target="_blank">Задать вопрос</a></li>
         <li><router-link to="">О нас</router-link></li>
         <!-- <li><router-link to="">Блог</router-link></li> -->
       </ul>

@@ -7,15 +7,16 @@
                     <el-card class="box-card">
                         <template #header>
                             <div class="card-header" style="display: flex; justify-content: space-between;">
-                                <span>Список билетов</span>
+                                <span>Список обращений</span>
                             </div>
                         </template>
                         <el-table :data="feedback" style="width: 100%">
                             <el-table-column prop="created_at" label="Дата вопроса" width="160" />
+                            <el-table-column prop="name" label="Имя" width="160" />
                             <el-table-column prop="phone" label="Номер телефона" width="150" />
-                            <el-table-column prop="email" label="Email" width="170" />
-                            <el-table-column prop="topic" label="Тема" width="190" />
-                            <el-table-column prop="descr" label="Описание" width="1100" />
+                            <el-table-column prop="email" label="Email" width="190" />
+                            <el-table-column prop="topic" label="Тема" width="210" />
+                            <el-table-column prop="descr" label="Описание" width="1100"><div class="table-cell-word-wrap">{{ scope }}</div></el-table-column>
                         </el-table>
                     </el-card>
                 </div>
@@ -73,3 +74,9 @@ export default
     }
 }
 </script>
+<style>
+.table-cell-word-wrap {
+    white-space: normal;
+    word-wrap: break-word;
+}
+</style>

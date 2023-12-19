@@ -58,7 +58,7 @@
             </li> -->
         </ul>
         <transition name="mob-menu">
-            <MobailMenu @logout="logout" @OpenWindowLogin="openWindow = true, mobileMenuOpen = false" :auth="auth || authForForm" v-if="mobileMenuOpen" @closeMobMenu="Scroll(), mobileMenuOpen = false"/>
+            <MobailMenu @logout="logout" @OpenWindowLogin="openWindow = true, mobileMenuOpen = false" @OpenWindowFeedback="openFeedbackWindow = true, mobileMenuOpen = false" :auth="auth || authForForm" v-if="mobileMenuOpen" @closeMobMenu="Scroll(), mobileMenuOpen = false"/>
         </transition>
     </div>
         <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false" @authenticateForForm="$emit('authenticateForForm')" @authSelf="authSelf" :content="3"/>

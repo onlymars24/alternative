@@ -13,6 +13,7 @@ class Feedback extends Model
         'phone',
         'email',
         'descr',
-        'topic'
+        'topic',
+        'name'
     ];
 }

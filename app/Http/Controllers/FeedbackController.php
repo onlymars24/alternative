@@ -10,6 +10,7 @@ class FeedbackController extends Controller
     public function send(Request $request){
         $feedback = Feedback::create([
             'phone' => $request->phone,
+            'name' => $request->name,
             'email' => $request->email,
             'topic' => $request->topic,
             'descr' => $request->descr,
