@@ -78,11 +78,17 @@
         <h4>Задайте нам вопрос</h4>
         <!-- {{ feedbackCredentials }} -->
         <ul style="margin-top: 15px;">
-          <li><label for="tel" class="form-label label-gray">Ваше имя</label><input v-model="feedbackCredentials.name" class="form-control inp-gray phone__input" required></li>
-          <li><label for="tel" class="form-label label-gray">Ваш телефон</label><input v-model="feedbackCredentials.phone" class="form-control inp-gray phone__input" required></li>
-          <li><label for="tel" class="form-label label-gray">Ваш email</label><input v-model="feedbackCredentials.email" class="form-control inp-gray" required></li>
           <li>
-            <label for="tel" class="form-label label-gray">Тема вопроса</label>
+            <!-- <label for="tel" class="form-label label-gray">Ваше имя</label> -->
+            <input v-model="feedbackCredentials.name" class="form-control inp-gray phone__input" placeholder="Ваше имя" required></li>
+          <li>
+            <!-- <label for="tel" class="form-label label-gray">Ваш телефон</label> -->
+            <input v-model="feedbackCredentials.phone" class="form-control inp-gray phone__input" placeholder="Ваш телефон" required></li>
+          <li>
+            <!-- <label for="tel" class="form-label label-gray">Ваш email</label> -->
+            <input v-model="feedbackCredentials.email" class="form-control inp-gray" placeholder="Ваш email" required></li>
+          <li>
+            <!-- <label for="tel" class="form-label label-gray">Тема вопроса</label> -->
             <select 
               class="form-select form-control "
               maxlength="60"
@@ -99,8 +105,8 @@
           </li>
 
           <li>
-            <label for="tel" class="form-label label-gray">Описание</label>
-            <textarea v-model="feedbackCredentials.descr" style="height: 200px;" cols="30" rows="40" resize="none" class="textarea__feedback form-control inp-gray"></textarea>
+            <!-- <label for="tel" class="form-label label-gray">Описание</label> -->
+            <textarea v-model="feedbackCredentials.descr" style="height: 90px;" cols="30" rows="40" resize="none" class="textarea__feedback form-control inp-gray" placeholder="Описание"></textarea>
           </li>
           <li>
             <div class="block__check" style="padding-top: 4px;">
@@ -253,11 +259,10 @@ export default
 .content-popap a{
   color: white;
 }
-@media (max-width: 425px){
   .feedback-popup{
     padding: 20px;
   }  
-}
+
 
 
 </style>

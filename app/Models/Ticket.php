@@ -72,4 +72,8 @@ class Ticket extends Model
     {
         return $this->hasMany(Passenger::class);
     }
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

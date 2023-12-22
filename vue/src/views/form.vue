@@ -266,7 +266,7 @@
       <div class="pay">
         <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >{{ totalCost }},00₽</p></div>
         <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
-        <p style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
+        <!-- <p style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p> -->
         <hr class="line-pay">
         <div class="pay-discription">
           <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>

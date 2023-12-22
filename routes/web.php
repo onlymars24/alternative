@@ -6,6 +6,7 @@ use App\Models\Ticket;
 use App\Models\Setting;
 use App\Enums\FermaEnum;
 use Nette\Utils\DateTime;
+use App\Models\Transaction;
 use App\Enums\InsuranceEnum;
 use Illuminate\Http\Request;
 use App\Exports\WrongsExport;
@@ -36,6 +37,24 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
+  // $data = [
+  //     'userName' => config('services.payment.userName'),
+  //     'password' => config('services.payment.password'),
+  //     'orderId' => '0272ecbe-d053-7496-b05c-dadc0223c29b'
+  // ];
+  // $curl = curl_init(); // Инициализируем запрос
+  // curl_setopt_array($curl, array(
+  //     // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
+  //     CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/getOrderStatus.do', 
+  //     CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+  //     CURLOPT_POST => true, // Метод POST
+  //     CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+  // ));
+  // $orderFromBank = curl_exec($curl); // Выполняем запрос
+  // curl_close($curl); // Закрываем соединение
+
+  // $orderFromBank = json_decode($orderFromBank);
+  // dd($orderFromBank);
   // Mail::raw('Текст письма', function($message) {
   //     $message->to('marsel.galimov.24@mail.ru', 'Имя Получателя');
   //     $message->subject('Тема письма');
@@ -207,6 +226,88 @@ Route::get('/export/pdf/', [PdfController::class, 'export'])->name('export.pdf')
 
 
 Route::get('/order/confirm/', [OrderController::class, 'confirm'])->name('order.confirm');
+
+Route::get('/add/return/hold/{ticketId}', function (Request $request) {
+  $ticketId = $request->ticketId;
+  // $holdTicket = 3150;
+  $ticket = Ticket::find($ticketId);
+  $order = $ticket->order;
+  
+  $transaction = Transaction::create([
+    'StatusCode' => 0,
+    'type' => 'IncomeReturn',
+    'order_id' => $order->id
+  ]);
+  $body = FermaEnum::$body;
+  $item = FermaEnum::$item;
+  $percent = FermaEnum::$percent;
+  $body['Request']['Type'] = 'IncomeReturn';
+  $body['Request']['InvoiceId'] = $transaction->id;
+
+
+  $hold = $ticket->price - $ticket->repayment;
+
+  //возврат удержания
+  $orderBundle = (array)json_decode($ticket->orderBundle);
+  $data = [
+    'userName' => config('services.payment.userName'),
+    'password' => config('services.payment.password'),
+    'orderId' => $order->bankOrderId,
+    'amount' => $hold * 100,
+    'positionId' => $orderBundle['positionId']
+];
+$curl = curl_init(); // Инициализируем запрос
+curl_setopt_array($curl, array(
+    // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
+    CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do', 
+    CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+    CURLOPT_POST => true, // Метод POST
+    CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+));
+$repayment = curl_exec($curl);
+
+$data = [
+  'userName' => config('services.payment.userName'),
+  'password' => config('services.payment.password'),
+  'orderId' => $order->bankOrderId,
+  'amount' => $ticket->duePrice * 100,
+  'positionId' => $order->tickets->count()+2
+];
+$curl = curl_init();
+curl_setopt_array($curl, array(
+  CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
+  CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+  CURLOPT_POST => true, // Метод POST
+  CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+));
+$repayment = curl_exec($curl); // Выполняем запрос
+//возврат комиссии сайта
+
+
+  $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticket->customerItem);
+  $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $hold;
+  $percent = FermaEnum::$percent;
+  $percent['Price'] = $percent['Amount'] = $ticket->duePrice;
+  $body['Request']['CustomerReceipt']['Items'][] = $percent;
+  $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum']  = $hold + $ticket->duePrice;
+
+  $ReceiptId = FermaService::receipt($body);
+  Log::info('Receipt: '.$ReceiptId);
+  $ReceiptId = json_decode($ReceiptId);
+  $ReceiptId = $ReceiptId->Data->ReceiptId;
+  $receipt = FermaService::getStatus($ReceiptId);
+  Log::info('Receipt: '.$receipt);
+  $receipt = json_decode($receipt);
+
+  $transaction->StatusCode = $receipt->Data->StatusCode;
+  $transaction->ReceiptId = $receipt->Data->ReceiptId;
+  if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+      $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+  }
+  $transaction->save();
+
+  dd('ok');
+});
 
 // Route::get('/payment/callback/', [PaymentController::class, 'callback'])->name('payment.callback');
 

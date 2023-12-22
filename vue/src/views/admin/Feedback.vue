@@ -16,7 +16,7 @@
                             <el-table-column prop="phone" label="Номер телефона" width="150" />
                             <el-table-column prop="email" label="Email" width="190" />
                             <el-table-column prop="topic" label="Тема" width="210" />
-                            <el-table-column prop="descr" label="Описание" width="1100"><div class="table-cell-word-wrap">{{ scope }}</div></el-table-column>
+                            <el-table-column prop="descr" label="Описание" width="1100"></el-table-column>
                         </el-table>
                     </el-card>
                 </div>

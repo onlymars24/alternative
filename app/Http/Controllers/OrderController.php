@@ -252,12 +252,7 @@ class OrderController extends Controller
         $order = Order::find($request->orderNumber);
         $order->order_info = $order_json;
 
-
-
-
-
-
-
+        
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice;
         $user = $order->user;
         if($user->email){

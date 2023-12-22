@@ -32,10 +32,10 @@ export default
         }
     },
     mounted(){
-        this.dispatchDay = dayjs(this.race.race.dispatchDate).format('D')+' '+this.months[dayjs(this.race.race.dispatchDate).format('M')]
-        this.arrivalDay = dayjs(this.race.race.arrivalDate).format('D')+' '+this.months[dayjs(this.race.race.arrivalDate).format('M')]        
-        this.dispatchTime = dayjs(this.race.race.dispatchDate).format('HH:mm')
-        this.arrivalTime = dayjs(this.race.race.arrivalDate).format('HH:mm')
+        this.dispatchDay = this.race.race.dispatchDate ? dayjs(this.race.race.dispatchDate).format('D')+' '+this.months[dayjs(this.race.race.dispatchDate).format('M')] : ''
+        this.arrivalDay = this.race.race.arrivalDate ? dayjs(this.race.race.arrivalDate).format('D')+' '+this.months[dayjs(this.race.race.arrivalDate).format('M')] : ''
+        this.dispatchTime = this.race.race.dispatchDate ? dayjs(this.race.race.dispatchDate).format('HH:mm') : ''
+        this.arrivalTime = this.race.race.arrivalDate ? dayjs(this.race.race.arrivalDate).format('HH:mm') : ''
     }
 };
 </script>

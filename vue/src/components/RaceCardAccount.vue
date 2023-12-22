@@ -271,10 +271,10 @@ import axiosClient from '../axios';
     mounted(){
 		this.baseUrl = import.meta.env.VITE_API_BASE_URL
 		// console.log(this.race.order.tickets[0].dispatchDate)
-		this.race.dispatchDay = dayjs(this.race.order.tickets[0].dispatchDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].dispatchDate).format('M')]
-		this.race.arrivalDay = dayjs(this.race.order.tickets[0].arrivalDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].arrivalDate).format('M')]
-		this.race.dispatchTime = dayjs(this.race.order.tickets[0].dispatchDate).format('HH:mm')
-		this.race.arrivalTime = dayjs(this.race.order.tickets[0].arrivalDate).format('HH:mm')
+		this.race.dispatchDay = this.race.order.tickets[0].dispatchDate ? dayjs(this.race.order.tickets[0].dispatchDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].dispatchDate).format('M')] : ''
+		this.race.arrivalDay = this.race.order.tickets[0].arrivalDate ? dayjs(this.race.order.tickets[0].arrivalDate).format('D')+' '+this.months[dayjs(this.race.order.tickets[0].arrivalDate).format('M')] : ''
+		this.race.dispatchTime = this.race.order.tickets[0].dispatchDate ? dayjs(this.race.order.tickets[0].dispatchDate).format('HH:mm') : ''
+		this.race.arrivalTime = this.race.order.tickets[0].arrivalDate ? dayjs(this.race.order.tickets[0].arrivalDate).format('HH:mm') : ''
 		let bookTime = dayjs(dayjs(this.order.created_at).format('YYYY-MM-DDTHH:mm:ss'))
 		let nowTime = dayjs(dayjs().format('YYYY-MM-DDTHH:mm:ss'))
 		let nowTimeForDispatch = dayjs().format('YYYY-MM-DD HH:mm:ss')

@@ -891,9 +891,9 @@
  .ticket-up__left {
    flex: 1 1 auto;
  }
- .race__address {
+ /* .race__address {
    overflow-wrap: anywhere;
- }
+ } */
  .buy__but {
    min-width: 40px;
  }
@@ -901,13 +901,13 @@
  }
  @media (min-width: 768px) {
    .ticket-up__right-ins {
-	 display: flex;
+	  display: flex;
    }
    .pc__but {
-	 display: block;
+	  display: block;
    }
    .mobil__but {
-	 display: none;
+	  display: none;
    }
  }
  @media (max-width: 768px) {

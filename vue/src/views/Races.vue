@@ -241,10 +241,10 @@ export default {
                 this.races.forEach(race => {
                     race.section = 'route'
                     race.details_menu = false
-                    race.dispatchDay = dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')]
-                    race.arrivalDay = dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')]
-                    race.dispatchTime = dayjs(race.dispatchDate).format('HH:mm')
-                    race.arrivalTime = dayjs(race.arrivalDate).format('HH:mm')
+                    race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
+                    race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
+                    race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
+                    race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
                 });
             }
 
