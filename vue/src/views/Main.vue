@@ -38,8 +38,8 @@ export default{
             ],
             disabledDate: (Date) => {
             return time.getTime() > Date.now()
-            }
-
+            },
+            groupID: 223652237
             // innerDrawer: false
         }
     },
@@ -52,6 +52,29 @@ export default{
     computed: {
 
     },
+    mounted() {
+
+        // Подключение виджета сообщений
+
+        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+            tooltipButtonText: "Есть вопрос?",
+            expanded: "0",
+            widgetPosition: "left"
+        });
+
+        // Подключение виджета сообщества
+
+        VK.init({
+            apiId: this.groupID,
+            onlyWidgets: true
+        });
+        VK.Widgets.Group("vk_groups", 
+            {
+                mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
+            }, 
+            this.groupID
+        );
+    }
     // created() {
     //   document.title = 'Главная';
     // }
@@ -226,10 +249,17 @@ export default{
                         <br>
                         <a target="_blank" href="/avtobus/Томск/Казачий/">Томск → Казачий</a>
                         <br>
+                        <a target="_blank" href="/avtobus/Красноярск/Антропово/">Красноярск → Антропово</a>
+                        <br>
+                        <a target="_blank" href="/avtobus/Красноярск/Абан/">Красноярск → Абан</a>
+                        <br>
+                        <a target="_blank" href="/avtobus/Красноярск/Абаза/">Красноярск → Абаза</a>
+                        <br>
                     </div>
                 </div>
                 <div class="about__info">
                     <div class="about__info-main">
+                        <div id='vk_community_messages'></div>
                         <!-- <a href="">Международные</a> -->
                     </div>
                     <div class="about__info-text">
@@ -245,6 +275,12 @@ export default{
                         <br>
                         <a target="_blank" href="/avtobus/Кемерово/Барановский/">Кемерово → Барановский</a>
                         <br>
+                        <a target="_blank" href="/avtobus/Красноярск/Бакчет/">Красноярск → Бакчет</a>
+                        <br>
+                        <a target="_blank" href="/avtobus/Красноярск/Агинское/">Красноярск → Агинское</a>
+                        <br>
+                        <a target="_blank" href="/avtobus/Красноярск/Томск/">Красноярск → Томск</a>
+                        <br>
                     </div>
                 </div>
                 <div class="about__info">
@@ -252,18 +288,7 @@ export default{
                         <!-- <a href="">Внутренние</a> -->
                     </div>
                     <div class="about__info-text">
-                        <a target="_blank" href="/avtobus/Красноярск/Бакчет/">Красноярск → Бакчет</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Агинское/">Красноярск → Агинское</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Томск/">Красноярск → Томск</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Антропово/">Красноярск → Антропово</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Абан/">Красноярск → Абан</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Абаза/">Красноярск → Абаза</a>
-                        <br>
+                        <div id="vk_groups"></div> 
                     </div>
                 </div>
             </div>
