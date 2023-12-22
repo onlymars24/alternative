@@ -317,25 +317,7 @@ $repayment = curl_exec($curl); // Выполняем запрос
 
 
 Route::get('/return/receive', function (Request $request) {
-  $ticketId = $request->ticketId;
-  // $holdTicket = 3150;
-  $ticket = Ticket::find($ticketId);
-  $order = $ticket->order;
-  
-  $transaction = Transaction::create([
-    'StatusCode' => 0,
-    'type' => 'IncomeReturn',
-    'order_id' => $order->id
-  ]);
-  $body = FermaEnum::$body;
-  $item = FermaEnum::$item;
-  $percent = FermaEnum::$percent;
-  $body['Request']['Type'] = 'IncomeReturn';
-  $body['Request']['InvoiceId'] = $transaction->id;
 
-
-  $hold = $ticket->price - $ticket->repayment;
-  dd('sdafsd');
 });
 
 // Route::get('/payment/callback/', [PaymentController::class, 'callback'])->name('payment.callback');
