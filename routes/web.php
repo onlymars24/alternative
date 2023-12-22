@@ -228,9 +228,13 @@ Route::get('/export/pdf/', [PdfController::class, 'export'])->name('export.pdf')
 Route::get('/order/confirm/', [OrderController::class, 'confirm'])->name('order.confirm');
 
 Route::get('/add/return/hold/{ticketId}', function (Request $request) {
+
   $ticketId = $request->ticketId;
   // $holdTicket = 3150;
   $ticket = Ticket::find($ticketId);
+  if($ticket->price == $ticket->repayment){
+    dd('Уже было');
+  }
   $order = $ticket->order;
   
   $transaction = Transaction::create([
@@ -305,8 +309,32 @@ $repayment = curl_exec($curl); // Выполняем запрос
       $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
   }
   $transaction->save();
-
+  $ticket->repayment = $ticket->price;
+  $ticket->save();
   dd('ok');
+});
+
+
+Route::get('/return/receive', function (Request $request) {
+  $ticketId = $request->ticketId;
+  // $holdTicket = 3150;
+  $ticket = Ticket::find($ticketId);
+  $order = $ticket->order;
+  
+  $transaction = Transaction::create([
+    'StatusCode' => 0,
+    'type' => 'IncomeReturn',
+    'order_id' => $order->id
+  ]);
+  $body = FermaEnum::$body;
+  $item = FermaEnum::$item;
+  $percent = FermaEnum::$percent;
+  $body['Request']['Type'] = 'IncomeReturn';
+  $body['Request']['InvoiceId'] = $transaction->id;
+
+
+  $hold = $ticket->price - $ticket->repayment;
+  dd('sdafsd');
 });
 
 // Route::get('/payment/callback/', [PaymentController::class, 'callback'])->name('payment.callback');
