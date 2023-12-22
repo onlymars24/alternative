@@ -14,7 +14,6 @@ export default{
             drawer: false,
             size: 'default',
             value1: '',
-            groupID: -223652237,
             shortcuts: [
                 {
                     text: 'Today',
