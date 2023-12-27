@@ -33,6 +33,11 @@
             Билет успешно возвращён! По ссылке на билет находится квитанция о возврате!
           </div>
       </div> 
+      <div v-if="returnInfo.step==3">
+        <div class="alert alert-danger" role="alert">
+            Ошибка возврата! Попробуйте ещё раз или обратитесь в тех. поддержку!
+        </div>
+      </div> 
       <div>
 
       </div>
@@ -185,7 +190,7 @@ export default
         console.log(response)
       })
       .catch(error => {
-        
+        console.log(error)
       })
       await promise
       this.feedbackInfo.loading = false

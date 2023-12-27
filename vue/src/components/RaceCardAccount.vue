@@ -113,8 +113,10 @@
 	import TicketLow from './TicketLow.vue';
 	import router from '../router'
 	import PopupWindow from '../components/PopupWindow.vue';
-	import dayjs from 'dayjs'
-import axiosClient from '../axios';
+	import dayjs from 'dayjs';
+	import utc from 'dayjs/plugin/utc';
+	import timezone from 'dayjs/plugin/timezone';
+	import axiosClient from '../axios';
 	export default{
 		components: { DepartureArrival, TicketLow, PopupWindow },
 		props: ['button_status', 'order'],
@@ -163,7 +165,8 @@ import axiosClient from '../axios';
 					"arrivalDay": "11 апр.",
 					"dispatchTime": "11:40",
 					"arrivalTime": "17:15",
-					order: JSON.parse(this.order.order_info)
+					order: JSON.parse(this.order.order_info),
+					timezone: this.order.timezone
 				}, 
 				windowOpen: 0,
 				popupOpen: false,
@@ -213,6 +216,7 @@ import axiosClient from '../axios';
 				console.log(response)
 			})
 			.catch(error => {
+				this.returnInfo.step = 3
 				console.log(error)
 			})
 			await promise
@@ -230,6 +234,7 @@ import axiosClient from '../axios';
 				console.log(response)
 			})
 			.catch(error => {
+				this.returnInfo.step = 3
 				console.log(error)
 			})
 			await promise
@@ -278,13 +283,20 @@ import axiosClient from '../axios';
 		let bookTime = dayjs(dayjs(this.order.created_at).format('YYYY-MM-DDTHH:mm:ss'))
 		let nowTime = dayjs(dayjs().format('YYYY-MM-DDTHH:mm:ss'))
 		let nowTimeForDispatch = dayjs().format('YYYY-MM-DD HH:mm:ss')
-		let difference = nowTime.diff(bookTime) / 60000
-		if(difference > 20 && this.race.order.status == 'B'){
+		let differenceForBook = nowTime.diff(bookTime) / 60000
+
+        dayjs.extend(utc);
+        dayjs.extend(timezone);
+        let timeZone = this.race.timezone
+        let currentTimeForRaceTimezone = dayjs(dayjs().tz(timeZone).format('YYYY-MM-DD HH:mm:ss'));
+		let dispatchTime = dayjs(this.race.order.tickets[0].dispatchDate)
+		let differenceForDispatch = currentTimeForRaceTimezone.diff(dispatchTime) / 60000
+
+
+		if(differenceForBook > 20 && this.race.order.status == 'B'){
 			this.expired = true
 		}
-		console.log(this.race.order.tickets[0].dispatchDate)
-		console.log(nowTimeForDispatch)
-		if(this.race.order.tickets[0].dispatchDate < nowTimeForDispatch){
+		if(differenceForDispatch > 3 * 60 || (differenceForDispatch < 30 && differenceForDispatch > -15)){
 			this.wentOut = true
 		}
 		console.log(this.wentOut)

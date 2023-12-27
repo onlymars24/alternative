@@ -21,7 +21,8 @@ class Order extends Model
         'pan',
         'ip',
         'duePercent',
-        'duePrice'
+        'duePrice',
+        'timezone'
     ];
 
     public function transactions()

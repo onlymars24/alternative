@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Feedback;
+use App\Mail\FeedbackMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class FeedbackController extends Controller
 {
@@ -15,6 +17,8 @@ class FeedbackController extends Controller
             'topic' => $request->topic,
             'descr' => $request->descr,
         ]);
+
+        Mail::to(env('MAIL_FEEDBACK'))->send(new FeedbackMail($request->phone, $request->email, $request->topic, $request->descr));
         return response([
             'feedback' => $feedback
         ]);

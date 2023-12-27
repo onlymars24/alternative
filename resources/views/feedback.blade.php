@@ -1,6 +1,6 @@
 <ul>
-    <li><strong> Номер телефона: </strong>{{ $ }}</li>
-    <li><strong> Почта: </strong>{{ $ }}</li>
-    <li><strong> Тема вопроса: </strong>{{ $ }}</li>
-    <li><strong> Описание: </strong>{{ $ }}</li>
+    <li><strong> Номер телефона: </strong>{{ $phone }}</li>
+    <li><strong> Почта: </strong>{{ $email }}</li>
+    <li><strong> Тема вопроса: </strong>{{ $topic }}</li>
+    <li><strong> Описание: </strong>{{ $descr }}</li>
 </ul>

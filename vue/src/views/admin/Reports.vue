@@ -122,9 +122,9 @@
 import axiosClient from '../../axios'
 import router from '../../router'
 import Header from '../../components/admin/Header.vue'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import axios from 'axios'
 import ticketStatuses from '../../data/TicketStatuses'
 import ru from 'element-plus/dist/locale/ru.mjs'
@@ -147,6 +147,12 @@ export default
         }
     },
     async mounted(){
+        // dayjs.extend(utc);
+        // dayjs.extend(timezone);
+        // let timeZone = 'Asia/Krasnoyarsk'
+        // let currentTime = dayjs().tz(timeZone).format('YYYY-MM-DD HH:mm:ss');
+
+
         console.log(this.downloadPDF)
         this.loading = true
         let date = new Date();

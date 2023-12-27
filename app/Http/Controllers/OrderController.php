@@ -85,52 +85,11 @@ class OrderController extends Controller
 
         $orderFromDB->duePercent = $duePercent;
         $orderFromDB->duePrice = $duePrice;
+        $orderFromDB->timezone = $timezone;
 
         //insurance info
         if($request->insured){
-
             $orderFromDB->insured = $request->insured;
-            // $policiesTotalRate = 0;
-            
-            // foreach($orderFromDB->tickets as $ticket){
-                
-            //     $insuranceBody = InsuranceEnum::$body;
-            //     $insuranceBody['segments'][0]['departure']['date'] = date('Y-m-d\TH:i', strtotime($ticket->dispatchDate));
-            //     $insuranceBody['segments'][0]['departure']['point'] = $ticket->dispatchStation;
-            //     $insuranceBody['segments'][0]['arrival']['date'] = date('Y-m-d\TH:i', strtotime($ticket->arrivalDate));
-            //     $insuranceBody['segments'][0]['arrival']['point'] = $ticket->arrivalStation;
-
-            //     $insuranceBodyInsured = InsuranceEnum::$insured;
-            //     $insuranceBodyInsured['first_name'] = $ticket->firstName;
-            //     $insuranceBodyInsured['last_name'] = $ticket->lastName;
-            //     $insuranceBodyInsured['patronymic'] = $ticket->middleName;
-            //     $insuranceBodyInsured['birth_date'] = date('Y-m-d', strtotime($ticket->birthday));
-            //     $insuranceBodyInsured['gender'] = $ticket->gender == 'M' ? 'MALE' : 'FEMALE';
-            //     $insuranceBodyInsured['phone']['number'] = $orderFromDB->user->phone;
-            //     $insuranceBodyInsured['ticket']['price']['value'] = $ticket->price;
-            //     $insuranceBodyInsured['ticket']['issue_date'] = $ticket->created_at;
-            //     $insuranceBodyInsured['ticket']['number'] = $ticket->ticketNum;
-
-            //     $insuranceBody['insureds'][] = $insuranceBodyInsured;
-
-            //     //send request into alfaStrah
-            //     Log::info('insuranceBody: '.json_encode($insuranceBody));
-            //     $alfaStrahResponse = Http::withHeaders([
-            //         'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
-            //     ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies');
-            //     Log::info('alfaStrahResponse: '.$alfaStrahResponse);
-            //     $alfaStrahResponse = json_decode($alfaStrahResponse);
-                
-            //     $policies = $alfaStrahResponse->policies;
-            //     Log::info('policies: '.json_encode($policies));
-            //     $policiesTotalRate += $policies[0]->rate[0]->value;
-
-            //     //save into DB of each ticket and get total rate of whole insurances
-            //     $ticketFromDB = Ticket::find($ticket->id);
-            //     $ticketFromDB->insurance = json_encode($policies[0]);
-            //     $ticketFromDB->save();
-            // }
-            
             $orderBundle['cartItems']['items'][] = [
                 "positionId"=> $lastKey+1,
                 "name" => 'Страховка',
@@ -139,7 +98,6 @@ class OrderController extends Controller
                 "tax"=> ["taxType"=> 0, "taxSum"=> 0],
                 "itemPrice"=> $request->insurancePrice * 100
             ];
-
         }
         $orderBundle['cartItems']['items'][] = [
             "positionId"=> $lastKey+2,
@@ -363,6 +321,7 @@ class OrderController extends Controller
         $body = FermaEnum::$body;
         $body['Request']['Type'] = 'IncomeReturn';
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = 0;
+        $returnCount = 0;
         foreach($tickets as $ticket){
             //возврат на е-трафике
             $ticket_json = Http::withHeaders([
@@ -372,7 +331,7 @@ class OrderController extends Controller
             if(!isset($ticket_obj->hash)){
                 continue;
             }
-
+            $returnCount ++;
 
             //возврат в бд
             $ticketFromDB = Ticket::find($ticket->id);
@@ -380,7 +339,7 @@ class OrderController extends Controller
             $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket_obj->hash.'.pdf';
             $file_name = basename($url);
             file_put_contents('tickets/'.$ticket_obj->hash.'_r.pdf', file_get_contents($url));
-            
+
 
             //возврат позиции на эквайринге
             $orderBundle = (array)json_decode($ticketFromDB->orderBundle);
@@ -408,6 +367,11 @@ class OrderController extends Controller
             $item['Price'] = $item['Amount'] = $ticketFromDB->repayment;
             $body['Request']['CustomerReceipt']['Items'][] = $item;
             $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $ticketFromDB->repayment;
+        }
+        if(!$returnCount){
+            return response([
+                'errorMessage' => 'Ни один билет не возвращён!'
+            ], 422);
         }
 
         //проверка на страховку

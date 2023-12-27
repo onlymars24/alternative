@@ -10,11 +10,18 @@ use Illuminate\Http\Request;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class TicketController extends Controller
 {
     public function all(){
+      
+        if(!Auth::user()->admin){
+            return response([
+                'errorMessage' => 'Ошибка доступа!'
+            ], 401);
+        }
         $tickets = Ticket::orderByDesc('id')->get();
         return response([
             'tickets' => $tickets
