@@ -362,9 +362,7 @@ export default
     margin-bottom: 0.5rem;
     justify-content: center;
 }
-.page-item {
 
-}
 .page-link {
     position: relative;
     display: block;

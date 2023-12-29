@@ -18,8 +18,7 @@ import Transactions from '../views/admin/Transactions.vue'
 import Reports from '../views/admin/Reports.vue'
 import Feedback from '../views/admin/Feedback.vue'
 import ReturnConditions from '../views/ReturnConditions.vue'
-
-
+import Debugging from '../views/admin/Debugging.vue'
 
 const routes = [
   // {
@@ -111,6 +110,11 @@ const routes = [
         component: Feedback,
         name: 'Feedback'
       },
+      {
+        path: 'debugging',
+        component: Debugging,
+        name: 'Debugging'
+      },
     ]
   },
   {
@@ -118,7 +122,6 @@ const routes = [
     name: 'Error',
     component: Error
   },
-
 ]
 
 const router = createRouter({
@@ -142,7 +145,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   else{
-    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback'){
+    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback' || to.name === 'Debugging'){
       return next({name: 'ALogin'})
     }
   }

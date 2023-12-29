@@ -37,6 +37,17 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
+  
+  // $arr = [];
+  // $arr[] = date('h:i:s');
+
+  // // ожидание в течениe 10 секунд
+  // sleep(300);
+
+  // // завершение ожидания
+  // $arr[] =  date('h:i:s');
+  // dd($arr);
+
   // $data = [
   //     'userName' => config('services.payment.userName'),
   //     'password' => config('services.payment.password'),
@@ -260,33 +271,33 @@ Route::get('/add/return/hold/{ticketId}', function (Request $request) {
     'orderId' => $order->bankOrderId,
     'amount' => $hold * 100,
     'positionId' => $orderBundle['positionId']
-];
-$curl = curl_init(); // Инициализируем запрос
-curl_setopt_array($curl, array(
-    // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
-    CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do', 
+  ];
+  $curl = curl_init(); // Инициализируем запрос
+  curl_setopt_array($curl, array(
+      // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
+      CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do', 
+      CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+      CURLOPT_POST => true, // Метод POST
+      CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+  ));
+  $repayment = curl_exec($curl);
+
+  $data = [
+    'userName' => config('services.payment.userName'),
+    'password' => config('services.payment.password'),
+    'orderId' => $order->bankOrderId,
+    'amount' => $ticket->duePrice * 100,
+    'positionId' => $order->tickets->count()+2
+  ];
+  $curl = curl_init();
+  curl_setopt_array($curl, array(
+    CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
     CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
     CURLOPT_POST => true, // Метод POST
     CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
-));
-$repayment = curl_exec($curl);
-
-$data = [
-  'userName' => config('services.payment.userName'),
-  'password' => config('services.payment.password'),
-  'orderId' => $order->bankOrderId,
-  'amount' => $ticket->duePrice * 100,
-  'positionId' => $order->tickets->count()+2
-];
-$curl = curl_init();
-curl_setopt_array($curl, array(
-  CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
-  CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
-  CURLOPT_POST => true, // Метод POST
-  CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
-));
-$repayment = curl_exec($curl); // Выполняем запрос
-//возврат комиссии сайта
+  ));
+  $repayment = curl_exec($curl); // Выполняем запрос
+  //возврат комиссии сайта
 
 
   $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticket->customerItem);

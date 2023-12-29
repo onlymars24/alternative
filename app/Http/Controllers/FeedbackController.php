@@ -18,7 +18,7 @@ class FeedbackController extends Controller
             'descr' => $request->descr,
         ]);
 
-        Mail::to(env('MAIL_FEEDBACK'))->send(new FeedbackMail($request->phone, $request->email, $request->topic, $request->descr));
+        Mail::to(env('MAIL_FEEDBACK'))->send(new FeedbackMail($request->name, $request->phone, $request->email, $request->topic, $request->descr));
         return response([
             'feedback' => $feedback
         ]);

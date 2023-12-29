@@ -30,18 +30,14 @@
                         <p>Информация</p>
                     </div>
                     <div class="footer__info-about__pass">
-                        <a href="">О нас</a>
+                        <a href="/faq">Вопросы и ответы</a>
                         <br>
-                        <a href="/faq" target="_blank">Вопросы и ответы</a>
+                        <a href="/return/conditions">Условия возврата</a>
                         <br>
-                        <a href="">Вернуть билет</a>
-                        <br>
-                        <!-- <a href="">Блог</a>
-                        <br> -->
-                        <a href="">Контакты</a>
+                        <a href="" @click.prevent="openFeedbackWindow = true">Контакты</a>
                     </div>
                 </div>
-                <div class="footer__info-about">
+                <!-- <div class="footer__info-about">
                     <div class="footer__info-about__main">
                         <p>Партнёрам</p>
                     </div>
@@ -54,7 +50,7 @@
                         <br>
                         <a href="">Автобусные перевозчики</a>
                     </div>
-                </div>
+                </div> -->
                 <div class="footer__info-about">
                     <div class="footer__info-about__main">
                         <p>Документы</p>
@@ -74,12 +70,14 @@
                     КПП 701701001<br/>
                     ОГРН 1207000012526<br/>
                     634049, г. Томск, Иркутский тр-т, д. 27, к. 2, оф. 17<br/>
+                    <a href="mailto:info@rosvokzaly.ru">info@rosvokzaly.ru</a>
                 </p>                
             </div>           
             <div class="cookies__text">
                 <p>Мы используем информацию, зарегистрированную в <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank">файлах «cookies»</a>, в частности, в рекламных и статистических целях, а также для того, чтобы адаптировать наши сайты к индивидуальным потребностям Пользователей. Вы можете изменить настройки касающиеся «cookies» в вашем браузере. Изменение настроек может ограничить функциональность сайта.</p>
             </div>            
         </div>
+        <PopupWindow v-if="openFeedbackWindow" @CloseFeedbackWindow="openFeedbackWindow = false" :content="7"/>
     </footer>
 
     <!-- <div class="copyright">
@@ -91,10 +89,13 @@
 
 <script>
 import axiosClient from '../axios';
+import PopupWindow from '../components/PopupWindow.vue';
 	export default{
+        components: { PopupWindow, },
 		data(){
 			return{
-				baseUrl: ''
+				baseUrl: '',
+                openFeedbackWindow: false
 			}
 		},
     computed:{

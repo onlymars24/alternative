@@ -23,13 +23,15 @@ class FeedbackMail extends Mailable
     protected $email;
     protected $topic;
     protected $descr;
+    protected $name;
 
-    public function __construct($phone, $email, $topic, $descr)
+    public function __construct($name, $phone, $email, $topic, $descr)
     {
         $this->phone = $phone;
         $this->email = $email;
         $this->topic = $topic;
         $this->descr = $descr;
+        $this->name = $name;
     }
 
     /**
@@ -57,6 +59,7 @@ class FeedbackMail extends Mailable
                 'phone' => $this->phone,
                 'email' => $this->email,
                 'topic' => $this->topic,
+                'name' => $this->name,
                 'descr' => $this->descr
             ]
         );

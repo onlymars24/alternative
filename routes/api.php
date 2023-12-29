@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Api\RacesController;
+use App\Http\Controllers\DebuggingController;
 use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\Api\SendSmsController;
 use App\Http\Controllers\TransactionController;
@@ -47,6 +48,7 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/order/return', [OrderController::class, 'getBack']);
     Route::get('/order/tickets', [TicketController::class, 'orderTickets']);
     Route::get('/tickets', [TicketController::class, 'all']);
+    // Route::get('/debugging', [DebuggingController::class, 'get']);
 });
     // Route::post('/force/ticket/return', [TicketController::class, 'getBackForce']);
 
