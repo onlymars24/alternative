@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Services\DeletePassportService;
 
 class TicketController extends Controller
 {
@@ -33,6 +34,7 @@ class TicketController extends Controller
         $ticket_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->post(env('AVTO_SERVICE_URL').'/ticket/return/'.$request->ticketId);
+        $ticket_json = DeletePassportService::ticket($ticket_json);
         $ticket = json_decode($ticket_json);
         if(!isset($ticket->hash)){
             return response([
@@ -49,6 +51,7 @@ class TicketController extends Controller
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
+        $order_json = DeletePassportService::order($order_json);
         $orderFromDb = Order::find($request->orderId);
         $orderFromDb->order_info = $order_json;
         $orderFromDb->save();

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
+use App\Services\DeletePassportService;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -37,7 +38,13 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/', function (Request $request) {
-  
+  // $order_json = Http::withHeaders([
+  //   'Authorization' => env('AVTO_SERVICE_KEY'),
+  // ])->get(env('AVTO_SERVICE_URL').'/order/2084364');
+  // $order_json = DeletePassportService::order($order_json);
+  // $order = json_decode($order_json);
+  // dd($order);
+
   // $arr = [];
   // $arr[] = date('h:i:s');
 

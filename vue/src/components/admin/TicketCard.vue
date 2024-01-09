@@ -26,9 +26,6 @@
         <div class="text item"><strong>Дата рождения:</strong> {{ ticket.birthday }}</div>
         <div class="text item"><strong>Серия билета:</strong> {{ ticket.ticketSeries }}</div>
         <div class="text item"><strong>Номер билета:</strong> {{ ticket.ticketNum }}</div>
-        <div class="text item"><strong>Серия документа:</strong> {{ ticket.docSeries }}</div>
-        <div class="text item"><strong>Номер документа:</strong> {{ ticket.docNum }}</div>
-        
 
         <div class="text item"><strong>Код валюты поставщика(автовокзала):</strong> {{ ticket.supplierCurrencyCode }}</div>
         <div class="text item"><strong>Тариф поставщика(автовокзала):</strong> {{ ticket.supplierFare }}₽</div>

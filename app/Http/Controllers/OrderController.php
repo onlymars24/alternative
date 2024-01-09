@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Services\DeletePassportService;
 
 class OrderController extends Controller
 {
@@ -29,7 +30,8 @@ class OrderController extends Controller
                 'error' => $order
             ], 422);
         }
-
+        $order_json = DeletePassportService::order($order_json);
+        $order = json_decode($order_json);
         $race_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid);
@@ -181,6 +183,8 @@ class OrderController extends Controller
         if(!isset($order_obj->id)){
             return;
         }
+        $order_json = DeletePassportService::order($order_json);
+        $order_obj = json_decode($order_json);
 
         $transaction = Transaction::create([
             'StatusCode' => 0,
@@ -327,10 +331,13 @@ class OrderController extends Controller
             $ticket_json = Http::withHeaders([
                 'Authorization' => env('AVTO_SERVICE_KEY'),
             ])->post(env('AVTO_SERVICE_URL').'/ticket/return/'.$ticket->id);
+            
             $ticket_obj = json_decode($ticket_json);
             if(!isset($ticket_obj->hash)){
                 continue;
             }
+            $ticket_json = DeletePassportService::ticket($ticket_json);
+            $ticket_obj = json_decode($ticket_json);
             $returnCount ++;
 
             //возврат в бд
@@ -453,6 +460,7 @@ class OrderController extends Controller
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
+        $order_json = DeletePassportService::order($order_json);
         $orderFromDB->order_info = $order_json;
         $orderFromDB->save();
 
