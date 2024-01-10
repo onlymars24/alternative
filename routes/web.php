@@ -37,7 +37,15 @@ use App\Http\Controllers\PaymentController;
 |
 */
 
-Route::get('/', function (Request $request) {
+Route::get('/delete/passport', function (Request $request) {
+  $orders = Order::all();
+  // $orders = [Order::find(2084362)];
+  foreach($orders as $order){
+    $order = Order::find($order->id);
+    $order->order_info = DeletePassportService::order($order->order_info);
+    $order->save();
+  }
+  dd('qwerty');
   // $order_json = Http::withHeaders([
   //   'Authorization' => env('AVTO_SERVICE_KEY'),
   // ])->get(env('AVTO_SERVICE_URL').'/order/2084364');
@@ -106,8 +114,6 @@ Route::get('/', function (Request $request) {
 //   $message->to('marsel.galimov.24@mail.ru', 'Имя получателя')->subject('Тема сообщения');
 // });
 
-
-  dd('qwerty');
             //   Setting::create([
             //       'name' => 'dues',
             //       'data' => json_encode(['clusterDue' => 5])
