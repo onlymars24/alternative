@@ -38,13 +38,13 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/delete/passport', function (Request $request) {
-  $orders = Order::all();
-  // $orders = [Order::find(2084362)];
-  foreach($orders as $order){
-    $order = Order::find($order->id);
-    $order->order_info = DeletePassportService::order($order->order_info);
-    $order->save();
-  }
+  // $orders = Order::all();
+  // // $orders = [Order::find(2084362)];
+  // foreach($orders as $order){
+  //   $order = Order::find($order->id);
+  //   $order->order_info = DeletePassportService::order($order->order_info);
+  //   $order->save();
+  // }
   dd('qwerty');
   // $order_json = Http::withHeaders([
   //   'Authorization' => env('AVTO_SERVICE_KEY'),
