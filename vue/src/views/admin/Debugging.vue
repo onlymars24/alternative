@@ -8,7 +8,7 @@
                             <template #header>
                                 <div class="card-header" style="display: flex; justify-content: space-between;">
                                     <!-- <span>Выберите период для отладки</span> -->
-                                    <span>Введите ID заказа для отладки</span>
+                                    <span>Введите ID заказа для проверки</span>
                                 </div>
                                 <div class="block" style="margin-top: 10px; align-items: center;" v-if="!loading">
                                     <el-config-provider :locale="locale">
@@ -20,12 +20,10 @@
                                         :default-time="defaultTime2"
                                         :clearable="true"
                                     /> -->
-                                    {{ this.orderId }}
                                     <el-input placeholder="ID" v-model="this.orderId"/>
-                                    <el-button type="primary" @click="debugging" :loading="loading">Запустить</el-button>
+                                    <el-button type="primary" @click="debugging" :loading="loading" :disable="orderId">Запустить</el-button>
                                     </el-config-provider>
                                     <div>
-                                        
                                     </div>
                                     
 
@@ -33,8 +31,32 @@
                             </template>
                             <BusLoading v-if="loading"/>
                             <div v-if="!loading">
-                                <p>{{ bugs }}</p>
-                                <p>{{ order }}</p>
+                                <template v-if="done">
+                                    <div v-if="bugs.length != 0">
+                                        <el-alert
+                                            title="Обнаружены неточности в заказе"
+                                            type="error"
+                                            center
+                                            show-icon
+                                            :closable="false">
+                                        </el-alert>
+
+                                        <pre>{{ bugs }}</pre>
+                                    </div>
+                                    <div v-else>
+                                        <el-alert
+                                            title="Ошибок в заказе не обнаружено"
+                                            type="success"
+                                            show-icon
+                                            :closable="false">
+                                        </el-alert>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    
+                                </template>
+                                
+                                <!-- <pre>{{ order }}</pre> -->
                             </div> 
                             
                         </el-card>
@@ -63,7 +85,8 @@ export default
             orderId: '',
             bugs: [],
             order: [],
-            loading: false
+            loading: false,
+            done: false
         }
     },
     mounted(){
@@ -80,20 +103,18 @@ export default
     },
     methods: {
         async debugging(){
-            console.log(this.orderId)
             this.loading = true
             const promise = axiosClient
-            .get('/debugging?orderId='+this.orderId)
+            .post('/debugging', {orderId: this.orderId})
             .then(response => {
                 console.log(response)
-                // this.bugs = response.data.bugs
-                // this.order = response.data.order
-                
+                this.bugs = response.data.bugs
             })
             .catch(error => {
                 console.log(error)
             })
             await promise
+            this.done = true
             this.loading = false
         }
     }

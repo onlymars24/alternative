@@ -48,7 +48,7 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/order/return', [OrderController::class, 'getBack']);
     Route::get('/order/tickets', [TicketController::class, 'orderTickets']);
     Route::get('/tickets', [TicketController::class, 'all']);
-    // Route::get('/debugging', [DebuggingController::class, 'get']);
+    Route::post('/debugging', [DebuggingController::class, 'get']);
 });
     // Route::post('/force/ticket/return', [TicketController::class, 'getBackForce']);
 

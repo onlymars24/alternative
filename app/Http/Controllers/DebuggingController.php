@@ -10,13 +10,18 @@ use Illuminate\Support\Facades\Http;
 class DebuggingController extends Controller
 {
     public function get(Request $request){
-        dd('');
+        // dd('');
         // return $request->orderId;
         // $orders = Order::where([
         //     ['created_at', '>', $request->comparingDate1],
         //     ['created_at', '<', $request->comparingDate2]
         // ])->get();
         $orderDB = Order::find($request->orderId);
+        if(!$orderDB){
+            return response([
+                'bugs' => []
+            ]);
+        }
         // return response([
         //     'id' => $request->orderId,
         //     'orderDB' => $orderDB
@@ -31,34 +36,34 @@ class DebuggingController extends Controller
                 'Authorization' => env('AVTO_SERVICE_KEY'),
             ])->get(env('AVTO_SERVICE_URL').'/order/'.$orderDB->id);
             $orderRemoted = json_decode($orderRemoted);
-            return response([
-                'orderRemoted' => $orderRemoted
-            ]);
+            // return response([
+            //     'orderRemoted' => $orderRemoted
+            // ]);
             if(($order_info->status == 'B' && !isset($orderRemoted->status)) || $order_info->status != $orderRemoted->status){
                 $bugs[$orderDB->id][] = 'Status заказа в е-траффик не совпадает со статусом в БД!';
             }
             foreach($orderRemoted->tickets as $ticket){
                 $ticketDB = Ticket::find($ticket->id);
                 if($ticketDB->status != $ticket->status){
-                    $bugs[$orderDB->id][] = 'Status билета ID'.$ticket->id.' в е-трафик не совпадает со статусом в БД tickets!';
+                    $bugs[$orderDB->id][] = 'Status билета ID'.$ticket->id.' в е-трафик не совпадает со Status в БД tickets!';
                 }
                 if($ticketDB->price != $ticket->price){
-                    $bugs[$orderDB->id][] = 'Price билета ID'.$ticket->id.' в е-трафик не совпадает со статусом в БД tickets!';
+                    $bugs[$orderDB->id][] = 'Price билета ID'.$ticket->id.' в е-трафик не совпадает с Price в БД tickets!';
                 }
                 if($ticketDB->repayment != $ticket->repayment){
-                    $bugs[$orderDB->id][] = 'Repayment билета ID'.$ticket->id.' в е-трафик не совпадает со статусом в БД tickets!';
+                    $bugs[$orderDB->id][] = 'Repayment билета ID'.$ticket->id.' в е-трафик не совпадает с Repayment в БД tickets!';
                 }
             }
             foreach($order_info->tickets as $ticket){
                 $ticketDB = Ticket::find($ticket->id);
                 if($ticketDB->status != $ticket->status){
-                    $bugs[$orderDB->id][] = 'Статус билета ID'.$ticket->id.' в БД orders не совпадает со статусом в БД tickets!';
+                    $bugs[$orderDB->id][] = 'Status билета ID'.$ticket->id.' в БД orders не совпадает со Status в БД tickets!';
                 }
                 if($ticketDB->price != $ticket->price){
-                    $bugs[$orderDB->id][] = 'Price билета ID'.$ticket->id.' в БД orders не совпадает со статусом в БД tickets!';
+                    $bugs[$orderDB->id][] = 'Price билета ID'.$ticket->id.' в БД orders не совпадает с Price в БД tickets!';
                 }
                 if($ticketDB->repayment != $ticket->repayment){
-                    $bugs[$orderDB->id][] = 'Repayment билета ID'.$ticket->id.' в БД orders не совпадает со статусом в БД tickets!';
+                    $bugs[$orderDB->id][] = 'Repayment билета ID'.$ticket->id.' в БД orders не совпадает с Repayment в БД tickets!';
                 }
             }
             
@@ -83,20 +88,27 @@ class DebuggingController extends Controller
             $payment = curl_exec($curl); // Выполняем запрос
             curl_close($curl); // Закрываем соединение
             $payment = json_decode($payment);
+            // return response([
+            //     'order_info' => $order_info,
+            //     'payment' => $payment
+            // ]);
 //CHECK STATUSES AGAIN!!!!!!!!!!!
             if(
-                ($order_info->status == 'S' && $payment->status != 2)
-                || ($order_info->status == 'R' && $payment->status != 4)
-                || ($order_info->status == 'R' && $payment->status != 4)
-                || ($order_info->status == 'B' && ($payment->status != 0 || $payment->status != 3 || $payment->status != 6))
+                ($order_info->status == 'S' && $payment->OrderStatus != 2)
+                || ($order_info->status == 'P' && $payment->OrderStatus != 4)
+                || ($order_info->status == 'R' && $payment->OrderStatus != 4)
+                || ($order_info->status == 'B' && ($payment->OrderStatus != 0 || $payment->OrderStatus != 3 || $payment->OrderStatus != 6))
             ){
                 $bugs[$orderDB->id][] = 'Статус заказа билетов не сходится со статусом заказа платежа!';
             }
-            if($order_info->price + $orderDB->duePrice != $payment->Amount / 100){
-                $bugs[$orderDB->id][] = 'Стоимость заказа отличаетсяс от платежа!';
+            // return response([
+            //     'order_info' => $order_info,
+            //     'payment' => $payment
+            // ]);
+            if($order_info->total + $orderDB->duePrice != $payment->Amount / 100){
+                $bugs[$orderDB->id][] = 'Стоимость заказа отличается от платежа!';
             }
             return response([
-                'order' => $order_info,
                 'bugs' => $bugs
             ]);
         // }

@@ -160,6 +160,7 @@ export default {
                 this.sms = response.data
             })
             .catch(error => {
+                console.log(error)
                 if(error.response.status == 422){
                     console.log('No Valid')
                     console.log(error)

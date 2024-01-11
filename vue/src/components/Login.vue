@@ -1,34 +1,34 @@
 <template>
-            <div class="row row-mobil">
-                <div class="col-sm-6 possible-block">
-                    <div class="login-head"><h2>Войти</h2></div>
-                    <span class="head-link" @click="$emit('registrationSection')">Регистрация</span>
-                    <p class="possible">В личном кабинете вы можете:</p>
-                    <ul class="all-possible">
-                        <li class="possible-item">Выкупить забронированный билет</li>
-                        <li class="possible-item">Посмотреть информацию о рейсе</li>
-                        <li class="possible-item">Скачать купленный билет</li>
-                        <li class="possible-item">Вернуть билет</li>
-                        <li class="possible-item">Оставить отзыв о поездке</li>
-                    </ul>
+    <div class="row row-mobil">
+        <div class="col-sm-6 possible-block">
+            <div class="login-head"><h2>Войти</h2></div>
+            <span class="head-link" @click="$emit('registrationSection')">Регистрация</span>
+            <p class="possible">В личном кабинете вы можете:</p>
+            <ul class="all-possible">
+                <li class="possible-item">Выкупить забронированный билет</li>
+                <li class="possible-item">Посмотреть информацию о рейсе</li>
+                <li class="possible-item">Скачать купленный билет</li>
+                <li class="possible-item">Вернуть билет</li>
+                <li class="possible-item">Оставить отзыв о поездке</li>
+            </ul>
+        </div>
+        <div class="col-sm-6 block-form" >
+            <div class="tel" >
+                <div v-if="wrongCredentialsMessage" class="alert alert-danger" role="alert">
+                    {{ wrongCredentialsMessage }}
                 </div>
-                <div class="col-sm-6 block-form" >
-                    <div class="tel" >
-                        <div v-if="wrongCredentialsMessage" class="alert alert-danger" role="alert">
-                            {{ wrongCredentialsMessage }}
-                        </div>
-                        <label for="tel" class="form-label label-gray">Телефон</label>
-                        <input @focus="$emit('putRedFromLoginAway')" type="text" class="form-control inp-gray phone__input" v-model="user.phone" maxlength="17" id="tel">
-                        <label for="tel" class="form-label label-gray">Пароль</label>
-                        <input @focus="$emit('putRedFromLoginAway')" type="password" class="form-control inp-gray" v-model="user.password" id="pas">
-                        <button @click="login" :disabled="loginLoading" class="btn btn-primary btn-code" >Войти</button>
-                        <p style="margin-top: 10px;" class="possible">Забыли пароль? Можете его <span class="head-link" @click="$emit('resetSection')">&nbsp;сбросить</span></p>
-                        <div v-if="loginLoading" class="text-center" style="margin-top: 10px;">
-                            <div class="spinner-border" role="status"></div>
-                        </div>
-                    </div>
-                 </div>
+                <label for="tel" class="form-label label-gray">Телефон</label>
+                <input @focus="$emit('putRedFromLoginAway')" type="text" class="form-control inp-gray phone__input" v-model="user.phone" maxlength="17" id="tel">
+                <label for="tel" class="form-label label-gray">Пароль</label>
+                <input @focus="$emit('putRedFromLoginAway')" type="password" class="form-control inp-gray" v-model="user.password" id="pas">
+                <button @click="login" :disabled="loginLoading" class="btn btn-primary btn-code" >Войти</button>
+                <p style="margin-top: 10px;" class="possible">Забыли пароль? Можете его <span class="head-link" @click="$emit('resetSection')">&nbsp;сбросить</span></p>
+                <div v-if="loginLoading" class="text-center" style="margin-top: 10px;">
+                    <div class="spinner-border" role="status"></div>
+                </div>
             </div>
+        </div>
+    </div>
 </template>
 <script>
 import axios from 'axios';
