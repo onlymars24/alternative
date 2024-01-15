@@ -13,6 +13,7 @@ import Avtobus from '../views/Avtobus.vue'
 import ALogin from '../views/admin/ALogin.vue'
 import Tickets from '../views/admin/Tickets.vue'
 import Order from '../views/admin/Order.vue'
+import sms from '../views/admin/sms.vue'
 import Admin from '../components/admin/Admin.vue'
 import Transactions from '../views/admin/Transactions.vue'
 import Reports from '../views/admin/Reports.vue'
@@ -99,6 +100,11 @@ const routes = [
         path: 'transactions',
         component: Transactions,
         name: 'Transactions'
+      },
+      {
+        path: 'sms',
+        component: sms,
+        name: 'sms'
       },
       {
         path: 'reports',
