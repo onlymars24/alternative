@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class SmsController extends Controller
 {
     public function sendReset(Request $request){
+        //2 часа замер
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
         $currentTime = date('Y-m-d\TH:i:s', $currentTime);
 
@@ -31,18 +32,32 @@ class SmsController extends Controller
                 'error' => 'Пользователя с таким номером не существует!'
             ], 422);
         }
-        $sms = Sms::create([
-            'phone' => $request->phone,
-            'code' => random_int(100000, 999999),
-            'used' => false,
-            'type' => 'reset'
-        ]);
+        $code = random_int(100000, 999999);
+
         $smsService = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
-        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$sms->code);
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$code);
+        $smsService = json_decode($smsService);
+        $sms = Sms::create([
+            'id' => $smsService->data->id,
+            'phone' => $request->phone,
+            'code' => $code,
+            'used' => false,
+            'type' => 'reset'
+        ]);        
+        
+        $sms->cost = isset($smsService->data->cost) ? $smsService->data->cost : null;
+        $sms->status = isset($smsService->data->status) ? $smsService->data->status : null;
+        $balanceData = Http::withHeaders([
+            'Authorization' => env('SMS_SERVICE_KEY'),
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/balance');
+        $balanceData = json_decode($balanceData);
+        $sms->balance = isset($balanceData->data->balance) ? $balanceData->data->balance : null;
+        $sms->save();
         return response([
             'sms' => $sms,
-            'service' => json_decode($smsService)
+            'service' => $smsService,
+            'balanceData' => $balanceData
         ]);
     }
 
@@ -95,18 +110,32 @@ class SmsController extends Controller
                 ], 422
             );
         }
+        $smsService = Http::withHeaders([
+            'Authorization' => env('SMS_SERVICE_KEY'),
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$request->url.': '.$sms->code);
+        $smsService = json_decode($smsService);        
         $sms = Sms::create([
+            'id' => $smsService->data->id,
             'phone' => $user['phone'],
             'code' => random_int(100000, 999999),
             'user' => json_encode($user),
             'used' => false,
             'type' => 'register'
         ]);
-        $smsService = Http::withHeaders([
+
+        $sms->cost = isset($smsService->data->cost) ? $smsService->data->cost : null;
+        $sms->status = isset($smsService->data->status) ? $smsService->data->status : null;
+        $balanceData = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
-        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$request->url.': '.$sms->code);
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/balance');
+        $balanceData = json_decode($balanceData);
+        $sms->balance = isset($balanceData->data->balance) ? $balanceData->data->balance : null;
+        $sms->save();
+
         return response([
-            'sms' => $sms
+            'sms' => $sms,
+            'service' => $smsService,
+            'balanceData' => $balanceData
         ]);
     }
 
@@ -126,6 +155,23 @@ class SmsController extends Controller
         $sms->save();
         return response([
             'sms' => $sms
+        ]);
+    }
+
+    public function getAll(Request $request){
+        $smsAll = Sms::orderByDesc('id')->get();
+        foreach($smsAll as $sms){
+            if(($sms->status != 1 || $sms->status != 6) && $sms->status > 1000){
+                $smsService = Http::withHeaders([
+                    'Authorization' => env('SMS_SERVICE_KEY'),
+                ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/status?id='.$sms->id);
+                $smsService = json_decode($smsService);
+                $sms->status = isset($smsService->data->status) ? $smsService->data->status : $sms->status;
+                $sms->save();
+            }
+        }
+        return response([
+            'sms' => $smsAll
         ]);
     }
 }

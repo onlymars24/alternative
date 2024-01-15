@@ -74,6 +74,7 @@ Route::get('/sms/reset', [SmsController::class, 'getReset']);
 Route::post('/sms/register', [SmsController::class, 'sendRegister']);
 Route::get('/sms/register', [SmsController::class, 'getRegister']);
 Route::post('/reset', [AuthController::class, 'reset']);
+Route::get('/sms/all', [SmsController::class, 'getAll']);
 
 
 

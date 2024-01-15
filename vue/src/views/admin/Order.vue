@@ -1,6 +1,6 @@
 <template>
-    <div class="common-layout">
-        <div class="container" v-loading.fullscreen.lock="orderLoading">
+    <div class="common-layout" v-loading.fullscreen.lock="orderLoading">
+        <!-- <div class="container"> -->
             <Header/>
             <el-container v-if="!orderLoading">
                 <el-main>
@@ -37,7 +37,7 @@
                     </div>
                 </el-main>
             </el-container>
-        </div>
+        <!-- </div> -->
     </div>
 </template>
 <script>

@@ -13,12 +13,11 @@
                             </template>
                             <el-table :data="smsArray" style="width: 100%">
                                 <el-table-column prop="date" label="Дата и время отправления" width="200" />
-                                <el-table-column prop="firstName" label="Имя получателя" width="160" />
-                                <el-table-column prop="lastName" label="Фамилия получателя" width="160" />
-                                <el-table-column prop="middleName" label="Отчество получателя" width="180" />
-                                <el-table-column prop="text" label="Текст" width="250" />
-                                <el-table-column prop="status" label="Статус" width="135" />
-                                <el-table-column prop="price" label="Стоимость" width="120" />
+                                <el-table-column prop="phone" label="Телефон" width="140" />
+                                <el-table-column prop="type" label="Тип" width="120" />
+                                <el-table-column prop="cost" label="Стоимость" width="120" />
+                                <el-table-column prop="balance" label="Баланс после отправки" width="200" />
+                                <el-table-column prop="textStatus" label="Статус" width="135" />
                             </el-table>
                         </el-card>
                     </div>
@@ -32,6 +31,8 @@
 </template>
 <script>
 import Header from '../../components/admin/Header.vue'
+import axiosClient from "../../axios";
+import dayjs from 'dayjs';
 
 export default {
     components: {
@@ -41,71 +42,33 @@ export default {
         return {
             smsLoading: false,
             smsArray: [],
-            currency: 'RUB'
+            currency: 'RUB',
+            statuses: {
+                0: 'В очереди', 1: 'Доставлено', 2: 'Не доставлено', 3: 'Передано', 8: 'На модерации', 6: 'Сообщение отклонено', 4: 'Ожидание статуса сообщения'
+            }
         }
     },
     async mounted() {
         this.smsLoading = true
 
         // Запрос на получение смсок
-        // const promise = axiosClient
-        // .get('/sms')
-        // .then(response => {
-        //     console.log(response.data)
-        //     this.smsArray = response.data.sms
-        // })
-        // .catch( error => {
+        const promise = axiosClient
+        .get('/sms/all')
+        .then(response => {
+            console.log(response.data)
+            this.smsArray = response.data.sms
+            console.log(this.smsArray)
+        })
+        .catch( error => {
 
-        // })
-        // await promise
-        this.smsArray = [
-            {
-                date: '19.12.2023 12:12:12',
-                firstName: 'Иван',
-                lastName: 'Иванов',
-                middleName: 'Иванович',
-                text: 'Бла бла бла бла бла бла',
-                status: 'Отправлено',
-                price: '2 ' + this.currency
-            },
-            {
-                date: '21.04.2023 12:12:12',
-                firstName: 'Иван',
-                lastName: 'Иванов',
-                middleName: 'Иванович',
-                text: 'Бла бла бла бла бла бла',
-                status: 'Отправлено',
-                price: '2 ' + this.currency
-            },
-            {
-                date: '19.12.2023 12:12:12',
-                firstName: 'Иван',
-                lastName: 'Иванов',
-                middleName: 'Иванович',
-                text: 'Бла бла бла бла бла бла',
-                status: 'Отправлено',
-                price: '2 ' + this.currency
-            },
-            {
-                date: '19.12.2023 12:12:12',
-                firstName: 'Иван',
-                lastName: 'Иванов',
-                middleName: 'Иванович',
-                text: 'Бла бла бла бла бла бла',
-                status: 'Отправлено',
-                price: '2 ' + this.currency
-            },
-            {
-                date: '19.12.2023 12:12:12',
-                firstName: 'Иван',
-                lastName: 'Иванов',
-                middleName: 'Иванович',
-                text: 'Бла бла бла бла бла бла',
-                status: 'Отправлено',
-                price: '2 ' + this.currency
-            },
-        ]
-
+        })
+        await promise
+        this.smsArray.forEach(sms => {
+            sms.date = dayjs(sms.created_at).format('YYYY-MM-DD HH:mm:ss')
+            if(sms.status != null){
+                sms.textStatus = this.statuses[sms.status]
+            }
+        })
         this.smsLoading = false
     }
 }

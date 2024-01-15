@@ -10,10 +10,13 @@ class Sms extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'phone',
         'code',
         'user',
         'type',
-        'used'
+        'used',
+        'cost',
+        'balance'
     ];
 }
