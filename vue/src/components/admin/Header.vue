@@ -12,7 +12,7 @@
         <el-menu-item index="3" @click="logout">Выход</el-menu-item>
         <el-menu-item index="1" @click="$router.push({name: 'Tickets'})">Список билетов</el-menu-item>
         <el-menu-item index="2-1" @click="$router.push({name: 'Reports'})">Отчёты</el-menu-item>
-        <el-menu-item index="2-1" @click="$router.push({name: 'sms'})">Учет СМС</el-menu-item>
+        <el-menu-item index="2-1" @click="$router.push({name: 'Sms'})">Учет СМС</el-menu-item>
     </el-menu>
 </el-header>
 
