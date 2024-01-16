@@ -7,11 +7,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+// use Illuminate\Support\Facades\Mail;
+// use App\Mail\RegisterReset\SendDataMail;
 use Illuminate\Support\Facades\Validator;
 
 class SmsController extends Controller
 {
     public function sendReset(Request $request){
+        // Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($request->phone, 'сброса пароля'));
         //2 часа замер
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
         $currentTime = date('Y-m-d\TH:i:s', $currentTime);
@@ -82,8 +85,9 @@ class SmsController extends Controller
         ]);
     }
 
-    public function sendRegister(Request $request){
+    public function sendRegister(Request $request){ 
         $user = $request->user;
+        // Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($user['phone'], 'регистрации'));
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
         $currentTime = date('Y-m-d\TH:i:s', $currentTime);
 
@@ -110,14 +114,16 @@ class SmsController extends Controller
                 ], 422
             );
         }
+
+        $code = random_int(100000, 999999);
         $smsService = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
-        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$request->url.': '.$sms->code);
-        $smsService = json_decode($smsService);        
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$request->url.': '.$code);
+        $smsService = json_decode($smsService);
         $sms = Sms::create([
             'id' => $smsService->data->id,
             'phone' => $user['phone'],
-            'code' => random_int(100000, 999999),
+            'code' => $code,
             'user' => json_encode($user),
             'used' => false,
             'type' => 'register'
