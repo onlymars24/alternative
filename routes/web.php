@@ -3,8 +3,10 @@
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Ticket;
+use App\Mail\OrderMail;
 use App\Models\Setting;
 use App\Enums\FermaEnum;
+use App\Mail\ReturnMail;
 use Nette\Utils\DateTime;
 use App\Models\Transaction;
 use App\Enums\InsuranceEnum;
@@ -237,6 +239,10 @@ Route::get('/delete/passport', function (Request $request) {
     // }
     // dd('Ok');
     // return Excel::download(new WrongsExport($tickets), 'reports.xlsx');
+});
+
+Route::get('/mail/test/', function (Request $request) {
+
 });
 
 

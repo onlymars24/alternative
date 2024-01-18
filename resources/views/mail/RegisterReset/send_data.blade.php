@@ -1,0 +1,1 @@
+<p> Попытка {{$action}} на номер: <strong>{{ $phone }}</strong></p>

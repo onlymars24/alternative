@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Ticket;
+use App\Mail\OrderMail;
 use App\Models\Setting;
 use App\Enums\FermaEnum;
+use App\Mail\ReturnMail;
 use App\Models\Passenger;
 use App\Models\Transaction;
 use App\Enums\InsuranceEnum;
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use App\Services\DeletePassportService;
 
 class OrderController extends Controller
@@ -306,6 +309,10 @@ class OrderController extends Controller
         $order->pan = isset($orderFromBank->Pan) ? $orderFromBank->Pan : null;
         $order->save();
 
+        if($order->user->email){
+            Mail::to($order->user->email)->send(new OrderMail($order->tickets));
+        }
+        
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
     }
 
@@ -326,6 +333,7 @@ class OrderController extends Controller
         $body['Request']['Type'] = 'IncomeReturn';
         $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = 0;
         $returnCount = 0;
+        $mailTickets = [];
         foreach($tickets as $ticket){
             //возврат на е-трафике
             $ticket_json = Http::withHeaders([
@@ -343,6 +351,7 @@ class OrderController extends Controller
             //возврат в бд
             $ticketFromDB = Ticket::find($ticket->id);
             $ticketFromDB->update((array) $ticket_obj);
+            $mailTickets[] = $ticketFromDB;
             $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket_obj->hash.'.pdf';
             $file_name = basename($url);
             file_put_contents('tickets/'.$ticket_obj->hash.'_r.pdf', file_get_contents($url));
@@ -487,6 +496,10 @@ class OrderController extends Controller
             $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
         }
         $transaction->save();
+
+        if($orderFromDB->user->email){
+            Mail::to($orderFromDB->user->email)->send(new ReturnMail($mailTickets));
+        }
         return response([
             'tickets' => $tickets->count()
         ]);

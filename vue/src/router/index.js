@@ -54,7 +54,7 @@ const routes = [
   },
   {
     path: '/form/:race_id',
-    name: 'form',
+    name: 'Form',
     component: form
   },
   {

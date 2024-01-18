@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\RegisterReset\CodeStatusMail;
 
 class AuthController extends Controller
 {
@@ -36,7 +38,7 @@ class AuthController extends Controller
 
         Auth::loginUsingId($user->id);
         $token = Auth::user()->createToken('authToken')->accessToken;
-
+        Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail($request->phone, 'Регистрация', true));
         return response([
             'token' => $token
         ]);
@@ -85,14 +87,14 @@ class AuthController extends Controller
         }
         $user = User::where('phone', $request->phone)->first();
         foreach($user->tokens as $token) {
-            $token->revoke();   
+            $token->revoke();
         }
         $user->password = Hash::make($request->password);
         $user->save();
         
         Auth::loginUsingId($user->id);
         $token = Auth::user()->createToken('authToken')->accessToken;
-
+        Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail($request->phone, 'Смена пароля', true));
         return response([
             'token' => $token
         ]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Enums\FermaEnum;
+use App\Mail\ReturnMail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Services\FermaService;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use App\Services\DeletePassportService;
 
 class TicketController extends Controller
@@ -183,7 +185,9 @@ class TicketController extends Controller
             $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
         }
         $transaction->save();
-
+        if($orderFromDb->user->email){
+            Mail::to($orderFromDb->user->email)->send(new ReturnMail([$ticketFromDB]));
+        }
         return response([
             'ticket' => $ticket,
             'repayment' => $repayment

@@ -7,14 +7,17 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-// use Illuminate\Support\Facades\Mail;
-// use App\Mail\RegisterReset\SendDataMail;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegisterReset\SendDataMail;
+use App\Mail\RegisterReset\DataErrorMail;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\RegisterReset\CodeStatusMail;
+use App\Mail\RegisterReset\DataSuccessMail;
 
 class SmsController extends Controller
 {
     public function sendReset(Request $request){
-        // Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($request->phone, 'сброса пароля'));
+        Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($request->phone, 'сброса пароля'));
         //2 часа замер
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
         $currentTime = date('Y-m-d\TH:i:s', $currentTime);
@@ -24,6 +27,8 @@ class SmsController extends Controller
             ['created_at', '>', $currentTime],
         ])->get()->count();
         if($smsCount >= 2){
+            Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
+                $request->phone, 'сброса пароля', ['frequency' => ['Можно высылать не более 2 смс за 2 часа!']]));
             return response([
                 'error' => 'Можно высылать не более 2 смс за 2 часа!'
             ], 422);
@@ -31,6 +36,8 @@ class SmsController extends Controller
 
         $user = User::where('phone', $request->phone)->first();
         if(!$user){
+            Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
+                $request->phone, 'сброса пароля', ['phone' => ['Пользователя с таким номером не существует!']]));
             return response([
                 'error' => 'Пользователя с таким номером не существует!'
             ], 422);
@@ -57,6 +64,7 @@ class SmsController extends Controller
         $balanceData = json_decode($balanceData);
         $sms->balance = isset($balanceData->data->balance) ? $balanceData->data->balance : null;
         $sms->save();
+        Mail::to(env('MAIL_FEEDBACK'))->send(new DataSuccessMail($request->phone, 'сброса пароля'));
         return response([
             'sms' => $sms,
             'service' => $smsService,
@@ -73,6 +81,7 @@ class SmsController extends Controller
         ])->first();
 
         if(!$sms){
+            Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail('+'.$request->phone, 'Сменя пароля', false));
             return response([
                 'error' => 'Код подтверждения неверный!'
             ], 422);
@@ -87,7 +96,7 @@ class SmsController extends Controller
 
     public function sendRegister(Request $request){ 
         $user = $request->user;
-        // Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($user['phone'], 'регистрации'));
+        Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($user['phone'], 'регистрации'));
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
         $currentTime = date('Y-m-d\TH:i:s', $currentTime);
 
@@ -96,6 +105,8 @@ class SmsController extends Controller
             ['phone', '=', $user['phone']],
         ])->get()->count();
         if($smsCount >= 2){
+            Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
+                $user['phone'], 'регистрации', ['Частота' => ['Можно высылать не более 2 смс за 2 часа!']]));
             return response([
                 'errorMessage' => 'Можно высылать не более 2 смс за 2 часа!'
             ], 422);
@@ -108,6 +119,11 @@ class SmsController extends Controller
             'formConditionTop' => 'accepted'
         ]);
         if($validator->fails()){
+            $tempErrors = $validator->errors();
+            $tempErrors = json_encode($tempErrors);
+            $tempErrors = (array)json_decode($tempErrors);
+            Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
+                $user['phone'], 'регистрации', $tempErrors));
             return response(
                 [
                     'errors' => $validator->errors()
@@ -137,7 +153,7 @@ class SmsController extends Controller
         $balanceData = json_decode($balanceData);
         $sms->balance = isset($balanceData->data->balance) ? $balanceData->data->balance : null;
         $sms->save();
-
+        Mail::to(env('MAIL_FEEDBACK'))->send(new DataSuccessMail($user['phone'], 'регистрации'));
         return response([
             'sms' => $sms,
             'service' => $smsService,
@@ -153,6 +169,7 @@ class SmsController extends Controller
             ['used', '=', false],
         ])->first();
         if(!$sms){
+            Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail($request->phone, 'Регистрация', false));
             return response([
                 'error' => 'Код подтверждения неверный!'
             ], 422);
