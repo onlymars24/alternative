@@ -43,13 +43,14 @@ class ArrivalPointsController extends Controller
             $arrival_points = $arrival_points->arrival_points;
         }
         else{
-            $arrival_points = Http::withHeaders([
+            $arrival_points_remoted = Http::withHeaders([
                 'Authorization' => env('AVTO_SERVICE_KEY'),
             ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$id)->object();
-            CacheArrivalPoint::create([
+            $arrival_points = CacheArrivalPoint::create([
                 'dispatch_point_id' => $id,
-                'arrival_points' => json_encode($arrival_points)
+                'arrival_points' => json_encode($arrival_points_remoted)
             ]);
+            $arrival_points = $arrival_points->arrival_points;
         }
         return json_encode($arrival_points);
     }
