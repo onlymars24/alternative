@@ -311,8 +311,8 @@ class OrderController extends Controller
 
         if($order->user->email){
             Mail::to($order->user->email)->send(new OrderMail($order->tickets));
+            Mail::to(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
         }
-        
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
     }
 
@@ -499,6 +499,7 @@ class OrderController extends Controller
 
         if($orderFromDB->user->email){
             Mail::to($orderFromDB->user->email)->send(new ReturnMail($mailTickets));
+            Mail::to(env('TICKETS_MAIL'))->send(new ReturnMail($mailTickets));
         }
         return response([
             'tickets' => $tickets->count()
