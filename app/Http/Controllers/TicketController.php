@@ -186,8 +186,7 @@ class TicketController extends Controller
         }
         $transaction->save();
         if($orderFromDb->user->email){
-            Mail::to($orderFromDb->user->email)->send(new ReturnMail([$ticketFromDB]));
-            Mail::to(env('TICKETS_MAIL'))->send(new ReturnMail([$ticketFromDB]));
+            Mail::to($orderFromDb->user->email)->bcc(env('TICKETS_MAIL'))->send(new ReturnMail([$ticketFromDB]));
         }
         return response([
             'ticket' => $ticket,
