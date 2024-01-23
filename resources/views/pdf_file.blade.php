@@ -125,22 +125,74 @@
         <p class="s1" style="padding-left: 23pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Сумма, руб.</p>
       </td>
     </tr>
+
+    @if($salesPassengerSupplierFares > 0)
     <tr style="height:10pt">
       <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
         <p class="s2" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Выручка от продажи пассажирских билетов</p>
       </td>
       <td style="width:95pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:1pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:2pt;border-right-color:#333333">
-        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">{{$salesTotal}}</p>
+        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">{{$salesPassengerSupplierFares}}</p>
       </td>
     </tr>
+    @endif
+
+    @if($repaymentsPassenger > 0)
     <tr style="height:10pt">
       <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
         <p class="s2" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Выручка от продажи пассажирских билетов</p>
       </td>
       <td style="width:95pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:1pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:2pt;border-right-color:#333333">
-        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">-{{$repayments}}</p>
+        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">-{{$repaymentsPassenger}}</p>
       </td>
     </tr>
+    @endif
+
+    @if($salesLuggageSupplierFares > 0)
+    <tr style="height:10pt">
+      <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
+        <p class="s2" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Выручка от продажи багажных билетов</p>
+      </td>
+      <td style="width:95pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:1pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:2pt;border-right-color:#333333">
+        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">{{$salesLuggageSupplierFares}}</p>
+      </td>
+    </tr>
+    @endif
+
+    @if($repaymentsLuggage > 0)
+    <tr style="height:10pt">
+      <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
+        <p class="s2" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Выручка от продажи багажных билетов</p>
+      </td>
+      <td style="width:95pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:1pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:2pt;border-right-color:#333333">
+        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">-{{$repaymentsLuggage}}</p>
+      </td>
+    </tr>
+    @endif
+
+    @if($salesSupplierDues > 0)
+    <tr style="height:10pt">
+      <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
+        <p class="s2" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Выручка от комиссионного сбора автовокзала при продаже билетов (продажа)</p>
+      </td>
+      <td style="width:95pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:1pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:2pt;border-right-color:#333333">
+        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">{{$salesSupplierDues}}</p>
+      </td>
+    </tr>
+    @endif
+
+    @if($salesDues > 0)
+    <tr style="height:10pt">
+      <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
+        <p class="s2" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Выручка от комиссионного сбора агента при продаже билетов (продажа)</p>
+      </td>
+      <td style="width:95pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:1pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:2pt;border-right-color:#333333">
+        <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">{{$salesDues}}</p>
+      </td>
+    </tr>
+    @endif
+
+    @if($holdsTotal > 0)
     <tr style="height:10pt">
       <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
         <p class="s2" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Удержания при оформлении возвратов перевозочных документов</p>
@@ -149,6 +201,8 @@
         <p class="s2" style="text-indent: 0pt;line-height: 8pt;text-align: right;">{{$holdsTotal}}</p>
       </td>
     </tr>
+    @endif
+
     <tr style="height:10pt">
       <td style="width:389pt;border-top-style:solid;border-top-width:2pt;border-top-color:#333333;border-left-style:solid;border-left-width:2pt;border-left-color:#333333;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#333333;border-right-style:solid;border-right-width:1pt;border-right-color:#333333">
         <p class="s1" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">ИТОГО выручка</p>

@@ -49,8 +49,17 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
         $tickets[] = [''];
         $tickets[] = ['', 'Количество', 'Тариф', 'Сбор 
 автовокзала', 'Сбор агента', 'Итого', 'Комиссия сайта'];
+        
         $tickets[] = ['Продажа билетов', $this->request->salesAmount, $this->request->salesSupplierFares, $this->request->salesSupplierDues, $this->request->salesDues, $this->request->salesTotal, $this->request->salesSiteCommission, ];
         $tickets[] = ['Возврат', $this->request->returnsAmount, '', $this->request->returnsSupplierDues, $this->request->returnsDues, $this->request->repayments, $this->request->returnsSiteCommission ];
+
+        $tickets[] = ['Продажа пассажирских билетов', $this->request->salesPassengerAmount, $this->request->salesPassengerSupplierFares, $this->request->salesPassengerSupplierDues, $this->request->salesPassengerDues, $this->request->salesPassengerTotal, $this->request->salesPassengerSiteCommission, ];
+        $tickets[] = ['Возврат пассажирских билетов', $this->request->returnsPassengerAmount, '', $this->request->returnsPassengerSupplierDues, $this->request->returnsPassengerDues, $this->request->repaymentsPassenger, $this->request->returnsPassengerSiteCommission ];
+
+        $tickets[] = ['Продажа багажных билетов', $this->request->salesLuggageAmount, $this->request->salesLuggageSupplierFares, $this->request->salesLuggageSupplierDues, $this->request->salesLuggageDues, $this->request->salesLuggageTotal, $this->request->salesLuggageSiteCommission, ];
+        $tickets[] = ['Возврат багажных билетов', $this->request->returnsLuggageAmount, '', $this->request->returnsLuggageSupplierDues, $this->request->returnsLuggageDues, $this->request->repaymentsLuggage, $this->request->returnsLuggageSiteCommission ];
+
+
         $tickets[] = ['Удержание', '', $this->request->holds, $this->request->holdsSupplierDues, $this->request->holdsDues, $this->request->holdsTotal, $this->request->holdsSiteCommission ];
         $tickets[] = ['Сумма для E-traffic', '', '', '', '', $this->request->eTrafficTotal, ''];    
         $tickets[] = [''];        
@@ -121,7 +130,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
                         ]    
                     ],                  
                 ],
-                'A6:G9' => [    'borders' => [
+                'A6:G13' => [    'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
                     ],
@@ -136,7 +145,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
                     'bold' => true,
                 ],
                 ],
-                'A11:R11' => [ 
+                'A15:S15' => [ 
                         'font' => [
                             'bold' => true,
                         ],

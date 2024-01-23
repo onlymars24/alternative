@@ -32,10 +32,19 @@ class PdfController extends Controller
         $data = [
             'period' => $period,
             'lastDay' => $lastDay,
-            'salesTotal' => $request->salesTotal,
-            'repayments' => $request->repayments,
+
+            'salesPassengerSupplierFares' => $request->salesPassengerSupplierFares,
+            'repaymentsPassenger' => $request->repaymentsPassenger,
+            
+            'salesLuggageSupplierFares' => $request->salesLuggageSupplierFares,
+            'repaymentsLuggage' => $request->repaymentsLuggage,
+
+            'salesSupplierDues' => $request->salesSupplierDues,
+            'salesDues' => $request->salesDues,
+
             'holdsTotal' => $request->holdsTotal,
             'eTrafficTotal' => $request->eTrafficTotal,
+
             'reward' => $reward,
             'result' => $result,
             'resultStr' => $resultStr,

@@ -56,6 +56,42 @@
                                         <td>{{ returnsSiteCommission }}₽</td>
                                     </tr>
                                     <tr>
+                                        <td>Продажа пассажирских билетов</td>
+                                        <td>{{ salesPassengerAmount }}</td>
+                                        <td>{{ salesPassengerSupplierFares }}₽</td>
+                                        <td>{{ salesPassengerSupplierDues }}₽</td>
+                                        <td>{{ salesPassengerDues }}₽</td>
+                                        <td>{{ salesPassengerTotal }}₽</td>
+                                        <td>{{ salesPassengerSiteCommission }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Возврат пассажирских билетов</td>
+                                        <td>{{ returnsPassengerAmount }}</td>
+                                        <td></td>
+                                        <td>{{ returnsPassengerSupplierDues }}₽</td>
+                                        <td>{{ returnsPassengerDues }}₽</td>
+                                        <td>{{ repaymentsPassenger }}₽</td>
+                                        <td>{{ returnsPassengerSiteCommission }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Продажа багажных билетов</td>
+                                        <td>{{ salesLuggageAmount }}</td>
+                                        <td>{{ salesLuggageSupplierFares }}₽</td>
+                                        <td>{{ salesLuggageSupplierDues }}₽</td>
+                                        <td>{{ salesLuggageDues }}₽</td>
+                                        <td>{{ salesLuggageTotal }}₽</td>
+                                        <td>{{ salesLuggageSiteCommission }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Возврат багажных билетов</td>
+                                        <td>{{ returnsLuggageAmount }}</td>
+                                        <td></td>
+                                        <td>{{ returnsLuggageSupplierDues }}₽</td>
+                                        <td>{{ returnsLuggageDues }}₽</td>
+                                        <td>{{ repaymentsLuggage }}₽</td>
+                                        <td>{{ returnsLuggageSiteCommission }}₽</td>
+                                    </tr>
+                                    <tr>
                                         <td>Удержание</td>
                                         <td>{{  }}</td>
                                         <td>{{ holds }}₽</td>
@@ -234,6 +270,31 @@ export default
             +'&returnsDues='+this.returnsDues
             +'&repayments='+this.repayments
             +'&returnsSiteCommission='+this.returnsSiteCommission
+
+            +'&salesPassengerAmount='+this.salesPassengerAmount
+            +'&salesPassengerSupplierFares='+this.salesPassengerSupplierFares
+            +'&salesPassengerSupplierDues='+this.salesPassengerSupplierDues
+            +'&salesPassengerDues='+this.salesPassengerDues
+            +'&salesPassengerTotal='+this.salesPassengerTotal
+            +'&salesPassengerSiteCommission='+this.salesPassengerSiteCommission
+            +'&returnsPassengerAmount='+this.returnsPassengerAmount
+            +'&returnsPassengerSupplierDues='+this.returnsPassengerSupplierDues
+            +'&returnsPassengerDues='+this.returnsPassengerDues
+            +'&repaymentsPassenger='+this.repaymentsPassenger
+            +'&returnsPassengerSiteCommission='+this.returnsPassengerSiteCommission
+
+            +'&salesLuggageAmount='+this.salesLuggageAmount
+            +'&salesLuggageSupplierFares='+this.salesLuggageSupplierFares
+            +'&salesLuggageSupplierDues='+this.salesLuggageSupplierDues
+            +'&salesLuggageDues='+this.salesLuggageDues
+            +'&salesLuggageTotal='+this.salesLuggageTotal
+            +'&salesLuggageSiteCommission='+this.salesLuggageSiteCommission
+            +'&returnsLuggageAmount='+this.returnsLuggageAmount
+            +'&returnsLuggageSupplierDues='+this.returnsLuggageSupplierDues
+            +'&returnsLuggageDues='+this.returnsLuggageDues
+            +'&repaymentsLuggage='+this.repaymentsLuggage
+            +'&returnsLuggageSiteCommission='+this.returnsLuggageSiteCommission
+
             +'&holds='+this.holds
             +'&holdsSupplierDues='+this.holdsSupplierDues
             +'&holdsDues='+this.holdsDues
@@ -244,8 +305,16 @@ export default
         downloadPDF(){
             return import.meta.env.VITE_API_BASE_URL+'/export/pdf/?comparingDate1='+dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss')
             +'&comparingDate2='+dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
-            +'&salesTotal='+this.salesTotal
-            +'&repayments='+this.repayments
+            
+            +'&salesPassengerSupplierFares='+this.salesPassengerSupplierFares
+            +'&repaymentsPassenger='+this.repaymentsPassenger
+
+            +'&salesLuggageSupplierFares='+this.salesLuggageSupplierFares
+            +'&repaymentsLuggage='+this.repaymentsLuggage
+
+            +'&salesSupplierDues='+this.salesSupplierDues
+            +'&salesDues='+this.salesDues
+
             +'&holdsTotal='+this.holdsTotal
             +'&eTrafficTotal='+this.eTrafficTotal
         },
@@ -417,6 +486,193 @@ export default
             })
             return returnsSiteCommission.toFixed(2);
         },
+
+
+        salesPassenger(){
+            return this.tickets.filter(ticket => {
+                return ticket.ticketType != 'Багажный'
+            });
+        },
+        salesPassengerAmount(){
+            return this.salesPassenger.length
+        },
+        salesPassengerSupplierFares(){
+            let supplierFare = 0
+            this.salesPassenger.forEach(ticket => {
+                supplierFare += Number(ticket.supplierFare)
+            })
+            return supplierFare.toFixed(2);
+        },
+        salesPassengerSupplierDues(){
+            let supplierDues = 0
+            this.salesPassenger.forEach(ticket => {
+                supplierDues += Number(ticket.supplierDues)
+            })
+            return supplierDues.toFixed(2)
+        },
+        salesPassengerDues(){
+            let dues = 0
+            this.salesPassenger.forEach(ticket => {
+                dues += Number(ticket.dues)
+            })
+            return dues.toFixed(2)
+        },
+        salesPassengerTotal(){
+            let prices = 0
+            this.salesPassenger.forEach(ticket => {
+                prices += Number(ticket.price)
+            })
+            return prices.toFixed(2)
+        },
+        salesPassengerSiteCommission(){
+            let siteCommission = 0
+            this.salesPassenger.forEach(ticket => {
+                siteCommission += Number(ticket.duePrice)
+            })
+            return siteCommission.toFixed(2);
+        },
+        ////
+
+        returnsPassenger(){
+            return this.returnedTickets.filter(ticket => {
+                return ticket.ticketType != 'Багажный'
+            });
+        },
+        returnsPassengerAmount(){
+            return this.returnsPassenger.length
+        },
+        returnsPassengerSupplierDues(){
+            let returnsSupplierDues = 0
+            this.returnsPassenger.forEach(ticket => {
+                if(ticket.raceCanceled){
+                    returnsSupplierDues += Number(ticket.supplierDues)
+                }
+            })
+            return returnsSupplierDues.toFixed(2)
+        },
+        returnsPassengerDues(){
+            let returnsDues = 0
+            this.returnsPassenger.forEach(ticket => {
+                if(ticket.raceCanceled){
+                    returnsDues += Number(ticket.dues)
+                }
+            })
+            return returnsDues.toFixed(2)
+        },
+        repaymentsPassenger(){
+            let repayments = 0
+            //this.returnedTickets.forEach(ticket => {
+            //    repayments += Number(ticket.repayment)
+            //})
+            this.returnsPassenger.forEach(ticket => {
+                repayments += Number(ticket.price)
+            })
+            return repayments.toFixed(2);
+        },
+        returnsPassengerSiteCommission(){
+            let returnsSiteCommission = 0
+            this.returnsPassenger.forEach(ticket => {
+                if(ticket.raceCanceled){
+                    returnsSiteCommission += Number(ticket.duePrice)
+                }
+            })
+            return returnsSiteCommission.toFixed(2);
+        },
+        ////
+
+
+        salesLuggage(){
+            return this.tickets.filter(ticket => {
+                return ticket.ticketType == 'Багажный'
+            });
+        },
+        salesLuggageAmount(){
+            return this.salesLuggage.length
+        },
+        salesLuggageSupplierFares(){
+            let supplierFare = 0
+            this.salesLuggage.forEach(ticket => {
+                supplierFare += Number(ticket.supplierFare)
+            })
+            return supplierFare.toFixed(2);
+        },
+        salesLuggageSupplierDues(){
+            let supplierDues = 0
+            this.salesLuggage.forEach(ticket => {
+                supplierDues += Number(ticket.supplierDues)
+            })
+            return supplierDues.toFixed(2)
+        },
+        salesLuggageDues(){
+            let dues = 0
+            this.salesLuggage.forEach(ticket => {
+                dues += Number(ticket.dues)
+            })
+            return dues.toFixed(2)
+        },
+        salesLuggageTotal(){
+            let prices = 0
+            this.salesLuggage.forEach(ticket => {
+                prices += Number(ticket.price)
+            })
+            return prices.toFixed(2)
+        },
+        salesLuggageSiteCommission(){
+            let siteCommission = 0
+            this.salesLuggage.forEach(ticket => {
+                siteCommission += Number(ticket.duePrice)
+            })
+            return siteCommission.toFixed(2);
+        },
+
+
+        returnsLuggage(){
+            return this.returnedTickets.filter(ticket => {
+                return ticket.ticketType == 'Багажный'
+            });
+        },
+        returnsLuggageAmount(){
+            return this.returnsLuggage.length
+        },
+        returnsLuggageSupplierDues(){
+            let returnsSupplierDues = 0
+            this.returnsLuggage.forEach(ticket => {
+                if(ticket.raceCanceled){
+                    returnsSupplierDues += Number(ticket.supplierDues)
+                }
+            })
+            return returnsSupplierDues.toFixed(2)
+        },
+        returnsLuggageDues(){
+            let returnsDues = 0
+            this.returnsLuggage.forEach(ticket => {
+                if(ticket.raceCanceled){
+                    returnsDues += Number(ticket.dues)
+                }
+            })
+            return returnsDues.toFixed(2)
+        },
+        repaymentsLuggage(){
+            let repayments = 0
+            //this.returnedTickets.forEach(ticket => {
+            //    repayments += Number(ticket.repayment)
+            //})
+            this.returnsLuggage.forEach(ticket => {
+                repayments += Number(ticket.price)
+            })
+            return repayments.toFixed(2);
+        },
+        returnsLuggageSiteCommission(){
+            let returnsSiteCommission = 0
+            this.returnsLuggage.forEach(ticket => {
+                if(ticket.raceCanceled){
+                    returnsSiteCommission += Number(ticket.duePrice)
+                }
+            })
+            return returnsSiteCommission.toFixed(2);
+        },
+
+
         holds(){
             let holds = 0;
             this.returnedTickets.forEach(ticket => {
