@@ -18,7 +18,7 @@
                         {{successfulResetMessage}}
                       </div>
                     <div v-if="userErrors['phone']" class="alert alert-danger" role="alert">
-                        {{userErrors['phone'][0]}} {{ notExistingUser ?  user['phone'] : ''}}
+                        {{userErrors['phone'][0]}} <strong style="font-size: 18px;">{{ notExistingUser ?  user['phone'] : ''}}</strong>
                     </div>
                       <div v-show="!notExistingUser">
                         <!-- <input type="tel" v-mask="'+7 (###) ###-####'" class="form-control" id="tel2" maxlength="17"> -->
@@ -128,7 +128,7 @@ export default {
                 console.log(error)
                 if(error.response.status == 422){
                     this.userErrors =  error.response.data.errors
-                    if(this.userErrors['phone'][0] && this.userErrors['phone'][0] == 'Проверьте правильность ввода номера телефона!'){
+                    if(this.userErrors['phone'][0] && this.userErrors['phone'][0] == 'Проверьте правильность ввода номера телефона:'){
                         this.notExistingUser = true
                     }
                 }

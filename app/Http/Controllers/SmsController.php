@@ -52,7 +52,7 @@ class SmsController extends Controller
 
         $user = User::where('phone', $request->phone)->first();
         if(!$user){
-            $notExistingNumberMessage = 'Проверьте правильность ввода номера телефона!';
+            $notExistingNumberMessage = 'Проверьте правильность ввода номера телефона:';
             Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
                 $request->phone, 'сброса пароля', ['phone' => [$notExistingNumberMessage]]));
             return response([
