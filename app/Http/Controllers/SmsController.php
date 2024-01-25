@@ -30,16 +30,33 @@ class SmsController extends Controller
             Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
                 $request->phone, 'сброса пароля', ['frequency' => ['Можно высылать не более 2 смс за 2 часа!']]));
             return response([
-                'error' => 'Можно высылать не более 2 смс за 2 часа!'
+                'errors' => ['phone' => ['Можно высылать не более 2 смс за 2 часа!']]
             ], 422);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|size:17'
+        ]);
+        if($validator->fails()){
+            $tempErrors = $validator->errors();
+            $tempErrors = json_encode($tempErrors);
+            $tempErrors = (array)json_decode($tempErrors);
+            Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
+                $request->phone, 'сброса пароля', $tempErrors));
+            return response(
+                [
+                    'errors' => $validator->errors()
+                ], 422
+            );
         }
 
         $user = User::where('phone', $request->phone)->first();
         if(!$user){
+            $notExistingNumberMessage = 'Проверьте правильность ввода номера телефона!';
             Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
-                $request->phone, 'сброса пароля', ['phone' => ['Пользователя с таким номером не существует!']]));
+                $request->phone, 'сброса пароля', ['phone' => [$notExistingNumberMessage]]));
             return response([
-                'error' => 'Пользователя с таким номером не существует!'
+                'errors' => ['phone' => [$notExistingNumberMessage]]
             ], 422);
         }
         $code = random_int(100000, 999999);
@@ -48,6 +65,11 @@ class SmsController extends Controller
             'Authorization' => env('SMS_SERVICE_KEY'),
         ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$code);
         $smsService = json_decode($smsService);
+        if(!isset($smsService->data->id)){
+            return response([
+                'errors' => ['phone' => ['Прошло слишком мало времени после предыдущего смс!']]
+            ], 422);
+        }
         $sms = Sms::create([
             'id' => $smsService->data->id,
             'phone' => $request->phone,

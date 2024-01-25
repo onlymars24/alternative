@@ -226,24 +226,7 @@ export default {
                     this.userErrors = error.response.data.errors
                 }
             })
-
         },
-        // async login(){
-        //     const promise = axiosClient
-        //     .post('/login', this.user)
-        //     .then(response => {
-        //         localStorage.setItem('authToken', response.data.token)
-        //         this.$emit('authSelf');
-        //         this.$emit('authenticateForForm');
-        //     })
-        //     .catch(error => {
-        //         if(error.response.status || error.response.status == 422){
-        //             this.wrongCredentialsMessage = error.response.data.message
-        //         }
-        //     })
-        //     await promise
-        //     this.loginLoading = false
-        // }
     }
 };
 </script>

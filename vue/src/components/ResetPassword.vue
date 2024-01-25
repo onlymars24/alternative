@@ -17,15 +17,24 @@
                     <div v-if="successfulResetMessage" class="alert alert-success" role="alert">
                         {{successfulResetMessage}}
                       </div>
-                    <div v-if="errorMessage" class="alert alert-danger" role="alert">
-                        {{errorMessage}}
+                    <div v-if="userErrors['phone']" class="alert alert-danger" role="alert">
+                        {{userErrors['phone'][0]}} {{ notExistingUser ?  user['phone'] : ''}}
                     </div>
-                      <label for="tel1" class="form-label label-gray">Телефон</label>
-                      <input @focus="$emit('putRedFromLoginAway')" type="tel" v-model="user.phone" class="form-control phone__input" id="tel1" maxlength="17">
-                      <div v-if="userErrors['phone']" id="validationServer03Feedback" class="invalid-feedback" style="margin-bottom: 10px;">
-                        {{userErrors['phone'][0]}}
+                      <div v-show="!notExistingUser">
+                        <!-- <input type="tel" v-mask="'+7 (###) ###-####'" class="form-control" id="tel2" maxlength="17"> -->
+
+
+                        <label for="tel1" class="form-label label-gray">Телефон</label>
+                        <input ref="refPhoneInput" v-mask="'+7 (###) ### ####'" @focus="$emit('putRedFromLoginAway')" type="tel" v-model="user.phone" class="form-control phone__input" id="tel1" maxlength="17">
+                        <div v-if="userErrors['phone']" id="validationServer03Feedback" class="invalid-feedback" style="margin-bottom: 10px;">
+                            {{userErrors['phone'][0]}}
+                        </div>
                       </div>
-                    <button @click="sendCode" class="btn btn-primary btn-code" ><div>Сбросить пароль</div></button>
+                      
+                    <button v-if="!notExistingUser" @click="sendCode" class="btn btn-primary btn-code" ><div>Сбросить пароль</div></button>
+                    <button v-if="notExistingUser" @click="hiddenRegister" class="btn btn-primary btn-code" ><div>Всё верно</div></button>
+                    <button v-if="notExistingUser" @click="changeNumber" class="btn btn-outline-secondary btn-code" style="margin-top: 5px;"><div>Исправить</div></button>
+                    
                     <div v-if="resetLoading" class="text-center" style="margin-top: 10px;">
                         <div class="spinner-border" role="status"></div>
                     </div>
@@ -67,9 +76,10 @@
 <script>
 import axios from 'axios'
 import axiosClient from '../axios'
+import TheMask from 'vue-the-mask'
 
 export default {
-    emits: ["log", 'putRedFromLoginAway', 'loginSection', 'authSelf', 'authenticateForForm'], 
+    emits: ["log", 'putRedFromLoginAway', 'loginSection', 'authSelf', 'authenticateForForm'],
     data() {
         return {
             stepLog: 1,
@@ -79,7 +89,7 @@ export default {
                 password_confirmation: ''
             },
             errorMessage: '',
-            userErrors: {},
+            userErrors: [],
             wrongCodeMessage: '',
             code: '',
             sendingCodeDisable: false,
@@ -88,64 +98,25 @@ export default {
             resetResponseStatus: null,
             successfulResetMessage: '',
             resetLoading: false,
+            notExistingUser: false
         };
     },
     mounted(){
-    //Маска
-    [].forEach.call(document.querySelectorAll(".phone__input"), function (input) {
-        var keyCode;
-        function mask(event) {
-        event.keyCode && (keyCode = event.keyCode);
-        var pos = this.selectionStart;
-        if (pos < 3) event.preventDefault();
-        var matrix = "+7 (___) ___ ____",
-            i = 0,
-            def = matrix.replace(/\D/g, ""),
-            val = this.value.replace(/\D/g, ""),
-            new_value = matrix.replace(/[_\d]/g, function (a) {
-            return i < val.length ? val.charAt(i++) || def.charAt(i) : a;
-            });
-        i = new_value.indexOf("_");
-        if (i != -1) {
-            i < 5 && (i = 3);
-            new_value = new_value.slice(0, i);
-        }
-        var reg = matrix
-            .substr(0, this.value.length)
-            .replace(/_+/g, function (a) {
-            return "\\d{1," + a.length + "}";
-            })
-            .replace(/[+()]/g, "\\$&");
-        reg = new RegExp("^" + reg + "$");
-        if (
-            !reg.test(this.value) ||
-            this.value.length < 5 ||
-            (keyCode > 47 && keyCode < 58)
-        )
-            this.value = new_value;
-        if (event.type == "blur" && this.value.length < 5) this.value = "";
-        }
-        input.addEventListener("input", mask, false);
-        input.addEventListener("focus", mask, false);
-        input.addEventListener("blur", mask, false);
-        input.addEventListener("keydown", mask, false);
-    });
-
-    console.log(window.location.href)
-    console.log(window.location.protocol)
-    console.log(window.location.host)
-    console.log(window.location.hostname)
-    console.log(window.location.port )
-    console.log(window.location.pathname )
-    console.log(window.location.search )
-    console.log(window.location.hash )
-    
+        this.$refs.refPhoneInput.focus()
     },
     methods: {
+        randomString(length){
+            let result = '';
+            let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result
+        },
         async sendCode(){
             this.successfulResetMessage = ''
             this.resetLoading = true;
-            this.userErrors = {};
+            this.userErrors = [];
             this.errorMessage = ''
             const promise = axiosClient
             .post('/sms/reset', {  phone: this.user.phone, url: window.location.host })
@@ -156,19 +127,22 @@ export default {
             .catch(error => {
                 console.log(error)
                 if(error.response.status == 422){
-                    this.errorMessage =  error.response.data.error
+                    this.userErrors =  error.response.data.errors
+                    if(this.userErrors['phone'][0] && this.userErrors['phone'][0] == 'Проверьте правильность ввода номера телефона!'){
+                        this.notExistingUser = true
+                    }
                 }
             });
             await promise
             this.resetLoading = false;
-            if(!this.errorMessage){
+            if(this.userErrors.length == 0){
                 this.stepLog=2
                 this.sendingCodeDisable = true
                 this.countDown = 120
                 this.countDownTimer()
             }
         },
-        countDownTimer () {
+        countDownTimer(){
             if (this.countDown > 0) {
                 setTimeout(() => {
                     this.countDown -= 1
@@ -200,6 +174,35 @@ export default {
                 this.stepLog=3
             }
         },
+        changeNumber(){
+            this.notExistingUser = false
+            // this.$refs.refPhoneInput.focus()
+            this.user.phone = ''
+            this.userErrors = []
+            
+        },
+        async hiddenRegister(){
+            let tempPassword = this.randomString(15)
+            this.userErrors = []
+            this.resetLoading = true
+            const promise = axiosClient
+            .post('/register', {  phone: this.user.phone, password: tempPassword, password_confirmation: tempPassword })
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+                if(error.response.status == 422){
+                    this.userErrors = error.response.data.errors
+                }
+            })
+            await promise
+            this.resetLoading = false
+            if(this.userErrors.length == 0){
+                // console.log('Нет ошибок')
+                this.sendCode()
+            }
+        },
         async reset(){
             this.resetLoading = true;
             this.userErrors = []
@@ -212,7 +215,6 @@ export default {
                 password_confirmation: this.user.password_confirmation, 
             })
             .then(response => {
-                // this.resetResponseStatus = response.status
                 localStorage.setItem('authToken', response.data.token)
                 this.$emit('authSelf');
                 this.$emit('authenticateForForm');
@@ -224,10 +226,6 @@ export default {
             })
             await promise
             this.resetLoading = false;
-            // if(this.resetResponseStatus == 200){
-            //     this.successfulResetMessage = 'Пароль успешно изменён!'
-            //     this.stepLog=1
-            // }            
         },
     }
 };

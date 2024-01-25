@@ -11,6 +11,7 @@ import 'element-plus/dist/index.css'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import ticketStatuses from './data/TicketStatuses';
+import VueTheMask from 'vue-the-mask'
 
 const vuetify = createVuetify({
     components,
@@ -18,6 +19,7 @@ const vuetify = createVuetify({
   })
 
 createApp(App)
+.use(VueTheMask)
 .use(store)
 .use(router)
 .use(ElementPlus)
