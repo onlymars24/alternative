@@ -5,7 +5,6 @@
             <el-container v-if="true">
                 <el-main>
                     <div class="">
-                        {{ content }}
                         <QuillEditor style="height: 300px; margin-bottom: 10px;" theme="snow" toolbar="full" v-model:content="content" contentType="html"/>
                         <el-button @click="editMain" type="primary" :loading="loading">{{loading ? 'Загрузка' : 'Сохранить' }}</el-button>
                     </div>
