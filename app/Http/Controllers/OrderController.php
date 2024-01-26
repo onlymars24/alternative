@@ -175,7 +175,7 @@ class OrderController extends Controller
     }
 
     public function confirm(Request $request){
-        if(empty($request->orderNumber) || $request->operation != 'deposited'){
+        if(empty($request->orderNumber) || $request->operation != 'deposited' || $request->status == 0){
             return;
         }
         $order_json = Http::withHeaders([

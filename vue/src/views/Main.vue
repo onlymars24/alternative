@@ -225,6 +225,7 @@ export default{
 
     <div class="about">
         <div class="container">
+            <div v-html="content"></div>
             <div class="about__inner">
                 <!-- <div class="about__info">
                     <div class="about__info-main">
@@ -243,8 +244,7 @@ export default{
                         <a href="">Армения</a>
                     </div>
                 </div> -->
-                <div v-html="content"></div>
-                <!-- <div class="about__info">
+                <div class="about__info">
                     <div class="about__info-main">
                     </div>
                     <div class="about__info-text">
@@ -292,7 +292,8 @@ export default{
                         <a target="_blank" href="/avtobus/Красноярск/Томск/">Красноярск → Томск</a>
                         <br>
                     </div>
-                </div> -->
+                </div>
+
                 <div class="about__info">
                     <div class="about__info-main">
                         <!-- <a href="">Внутренние</a> -->
