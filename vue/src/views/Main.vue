@@ -1,6 +1,7 @@
 <script>
 import Footer from '../components/Footer.vue'
 import HeaderMain from '../components/HeaderMain.vue'
+import axiosClient from '../axios';
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
 export default{
@@ -39,7 +40,8 @@ export default{
             disabledDate: (Date) => {
             return time.getTime() > Date.now()
             },
-            groupID: 223652237
+            groupID: 223652237,
+            content: ''
             // innerDrawer: false
         }
     },
@@ -52,8 +54,17 @@ export default{
     computed: {
 
     },
-    mounted() {
-
+    async mounted() {
+        const promise = axiosClient
+        .get('/page/main')
+        .then(response => {
+            console.log(response)
+            this.content = response.data.pageMain
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        await promise
         // Подключение виджета сообщений
 
         VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
@@ -232,9 +243,9 @@ export default{
                         <a href="">Армения</a>
                     </div>
                 </div> -->
-                <div class="about__info">
+                <div v-html="content"></div>
+                <!-- <div class="about__info">
                     <div class="about__info-main">
-                        <!-- <a href="">Расписание</a> -->
                     </div>
                     <div class="about__info-text">
                         <a target="_blank" href="/avtobus/Томск/Новосибирск/">Томск → Новосибирск</a>
@@ -260,7 +271,6 @@ export default{
                 <div class="about__info">
                     <div class="about__info-main">
                         <div id='vk_community_messages'></div>
-                        <!-- <a href="">Международные</a> -->
                     </div>
                     <div class="about__info-text">
                         <a target="_blank" href="/avtobus/Кемерово/Новосибирск/">Кемерово → Новосибирск</a>
@@ -282,7 +292,7 @@ export default{
                         <a target="_blank" href="/avtobus/Красноярск/Томск/">Красноярск → Томск</a>
                         <br>
                     </div>
-                </div>
+                </div> -->
                 <div class="about__info">
                     <div class="about__info-main">
                         <!-- <a href="">Внутренние</a> -->
@@ -298,6 +308,36 @@ export default{
     <hr class="bef__footer">
     <Footer/>
 </template>
+
+<!-- <script>
+import axiosClient from '../axios';
+
+export default {
+  data(){
+    return {
+      race: [],
+      content: '',
+      loading: true,
+      content: ''
+    }
+  },
+  async mounted(){
+    const promise = axiosClient
+    .get('/page/main')
+    .then(response => {
+        console.log(response)
+    })
+    .catch(error => {
+        console.log(error)
+    })
+    await promise
+  },
+  methods: {
+
+  }
+
+}
+</script> -->
 
 <style>
     /* @import url('https://fonts.gstatic.com'); */

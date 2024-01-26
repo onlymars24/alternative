@@ -20,6 +20,7 @@ import Reports from '../views/admin/Reports.vue'
 import Feedback from '../views/admin/Feedback.vue'
 import ReturnConditions from '../views/ReturnConditions.vue'
 import Debugging from '../views/admin/Debugging.vue'
+import EditMain from '../views/admin/EditMain.vue'
 
 const routes = [
   // {
@@ -120,6 +121,11 @@ const routes = [
         path: 'debugging',
         component: Debugging,
         name: 'Debugging'
+      },
+      {
+        path: 'edit/main',
+        component: EditMain,
+        name: 'EditMain'
       },
     ]
   },

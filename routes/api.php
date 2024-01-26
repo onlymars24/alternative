@@ -12,6 +12,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\PageMainController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Api\RacesController;
 use App\Http\Controllers\DebuggingController;
@@ -60,6 +61,9 @@ Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue'
 Route::post('/admin/login', [AdminController::class, 'login']);
 Route::post('/send/feedback', [FeedbackController::class, 'send']);
 Route::get('/get/feedback', [FeedbackController::class, 'get']);
+
+Route::get('/page/main', [PageMainController::class, 'get']);
+Route::post('/page/main', [PageMainController::class, 'edit']);
 
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
