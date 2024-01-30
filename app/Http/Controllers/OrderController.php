@@ -253,6 +253,7 @@ class OrderController extends Controller
                 $alfaStrahResponse = Http::withHeaders([
                     'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
                 ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies?confirm=true');
+                Log::info($alfaStrahResponse);
                 $alfaStrahResponse = json_decode($alfaStrahResponse);
                 $policies = $alfaStrahResponse->policies;
                 $policy = $policies[0];

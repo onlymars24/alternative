@@ -19,6 +19,7 @@
   <div class="container" v-if="!loadingRace">
   <!-- <pre>{{ date1 }}</pre> -->
   <!-- <pre>{{ formData }}</pre>     -->
+  <!-- <pre>{{ race }}</pre>     -->
     <div class="form__content">
     <div class="information-race">
       <h5>О рейсе</h5>
@@ -233,18 +234,18 @@
           
         </select>
       </div>      
-<!-- <div class="block__check">
+      <div v-if="el.ticket_type_code != luggageTypeCode" class="block__check">
         
         <label class="check" style="padding: 0px; display: flex; align-items: center; margin-bottom: 0px; ">
           <input style="opacity: 1; background-color: initial; margin-right: 3px;" :value="true" v-model="insured" type="radio">Страхование на время поездки
         </label>
 
-        <p style="font-size: 12px; color: grey; margin-left: 26px;">АО "АльфаСтрахование" , тел.: 8 800 333 0 999, <a href="#">alfastrah.ru</a> предлагает страховую защиту от несчастных случаев на время поездки. Стоимость страхового полиса для полного билета составляет 25, 50 или 100 рублей в зависимости от стоимости билета. Размер страховой выплаты до 500 000 рублей. Подробнее в условиях <a href="#">Публичной оферты</a>, <a href="#">Правилах страхования</a></p> 
+        <p style="font-size: 12px; color: grey; margin-left: 26px;">АО "АльфаСтрахование" , тел.: 8 800 333 0 999, <a href="https://www.alfastrah.ru" target="_blank">alfastrah.ru</a> предлагает страховую защиту от несчастных случаев на время поездки. Стоимость страхового полиса для полного билета составляет 25, 50 или 100 рублей в зависимости от стоимости билета. Размер страховой выплаты до 500 000 рублей. Подробнее в условиях <a href="https://www.alfastrah.ru/docs/Offer_naavtobus.pdf" target="_blank">Публичной оферты</a>, <a href="https://www.alfastrah.ru/docs/rules_SP_230617.pdf" target="_blank">Правилах страхования</a></p> 
         <label class="check" style="padding: 0px; display: flex; align-items: center;">
           <input style="opacity: 1; background-color: initial; margin-right: 3px;" :value="false" v-model="insured" type="radio">Без страховки
         </label>
-
-      </div> -->
+      
+      </div>
     </div>
       </div>
       <div class="form-reg">
@@ -266,7 +267,7 @@
       <div class="pay">
         <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >{{ totalCost }},00₽</p></div>
         <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
-        <!-- <p style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p> -->
+        <p v-if="insured" style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
         <hr class="line-pay">
         <div class="pay-discription">
           <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
@@ -292,6 +293,7 @@
   <transition name="fade" >
     <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false, Scroll()" :content="content"/>
   </transition>
+  <PopupWindow v-if="openRejectionWindow" @confirmRejection="openRejectionWindow = false, insured = false" @changeMind="openRejectionWindow = false, insured = true" :insurancePrice="tempInsurancePrice" :content="8"/>
 </template>
 <script>
 import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
@@ -336,7 +338,11 @@ export default
       duePercent: 0,
       duePrice: 0,
       date1: '',
-      insured: false
+      insured: false,
+      ticketTypes: [],
+      luggageTypeCode: null,
+      openRejectionWindow: false,
+      tempInsurancePrice: 0
     };
   },
   methods: {
@@ -636,22 +642,26 @@ export default
       if(this.insured){
         let insurancePrice = 0
         this.formData.forEach(el => {
-          let ticket_type_code = el.ticket_type_code
-          let ticket_price = this.race.ticketTypes.filter(el => {
-            return el.code == ticket_type_code;
-          })
-          ticket_price = ticket_price[0].price
-          if(ticket_price <= 500){
-            insurancePrice += 140
-          }
-          else if(ticket_price > 500 && ticket_price <= 1000){
-            insurancePrice += 140
-          }
-          else{
-            insurancePrice += 140
+          if(el.ticket_type_code != this.luggageTypeCode){
+            let ticket_type_code = el.ticket_type_code
+            let ticket_price = this.race.ticketTypes.filter(el => {
+              return el.code == ticket_type_code;
+            })
+            ticket_price = ticket_price[0].price
+            if(el.ticket_type_code)
+            if(ticket_price <= 500){
+              insurancePrice += 25
+            }
+            else if(ticket_price > 500 && ticket_price <= 1000){
+              insurancePrice += 50
+            }
+            else{
+              insurancePrice += 100
+            }
           }
         })
         console.log(insurancePrice)
+        this.tempInsurancePrice = insurancePrice
         return insurancePrice
       }
       else{
@@ -742,7 +752,18 @@ export default
       console.log(error)
     })
     await promise3
+    this.ticketTypes = this.race.ticketTypes
+    this.luggageTypeCode = this.ticketTypes.filter(ticketType => {
+      return ticketType.name == 'Багажный';
+    })[0].code
     this.loadingRace = false
+  },
+  watch: {
+    insured(insured){
+      if(insured == false){
+        this.openRejectionWindow = true
+      }
+    }
   }
 };
 </script>

@@ -2,8 +2,8 @@
 <!-- eslint-disable max-len -->
 <template>
 <div class="background-close" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')"></div>
-<div class="popup-container" :class="{'feedback-popup': this.content==7}">
-    <div class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
+<div class="popup-container" :class="{'feedback-popup': this.content==7, 'rejection__popup': this.content==8}">
+    <div v-if="this.content != 8" class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
     <div v-if="this.content==3" class="content-popap">
@@ -136,6 +136,16 @@
           </h5>
       </div> 
     </div>
+    <div v-if="this.content==8">
+      <div>
+          <p style="font-size: 24px;">Страховка стоит всего {{insurancePrice}} руб и может оказаться полезной в непредвиденной ситуации</p>
+          <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 10px;">
+            <button class="btn btn-outline-secondary btn-code" @click="$emit('confirmRejection')"><div style="font-size: 20px;">Беру все риски на себя</div></button>
+            <button class="btn btn-primary btn-code" @click="$emit('changeMind')"><div style="font-size: 20px;">Оставить страховку</div></button>            
+          </div> 
+
+      </div> 
+    </div>
 </div>
 </template>
 <script scoped>
@@ -169,8 +179,8 @@ export default
       }
     }
   },
-  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo'],
-  emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow'],
+  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice'],
+  emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind'],
   components: { Seat, Login, Registration, ResetPassword },
   computed: {
     UserAgreement() {
@@ -267,6 +277,23 @@ export default
   .feedback-popup{
     padding: 20px;
   }  
+  .rejection__popup{
+    max-width: 720px;
+  }
+  .rejection__buttons{
+  }  
+  .rejection__buttons button{
+    width: 49%;
+  }
+@media(max-width: 768px){
+  .rejection__buttons{
+    flex-direction: column;
+  }  
+  .rejection__buttons button{
+    width: 100%;
+    margin-top: 5px;
+  }
+}
 
 
 

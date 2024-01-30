@@ -6,7 +6,7 @@ class InsuranceEnum
 {    
     public static $body = [
         "product" => [
-              "code" => "ON_ANTICOVID_BUS_2" 
+              "code" => "ON_BUS_Naavtobus" 
            ], 
         "customer_email" => "customer@email.com", 
         "customer_phone" => "79201111222", 
