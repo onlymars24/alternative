@@ -39,206 +39,147 @@ use App\Http\Controllers\PaymentController;
 |
 */
 
-Route::get('/delete/passport', function (Request $request) {
-  // $orders = Order::all();
-  // // $orders = [Order::find(2084362)];
-  // foreach($orders as $order){
-  //   $order = Order::find($order->id);
-  //   $order->order_info = DeletePassportService::order($order->order_info);
-  //   $order->save();
-  // }
-  dd('qwerty');
-  // $order_json = Http::withHeaders([
-  //   'Authorization' => env('AVTO_SERVICE_KEY'),
-  // ])->get(env('AVTO_SERVICE_URL').'/order/2084364');
-  // $order_json = DeletePassportService::order($order_json);
-  // $order = json_decode($order_json);
-  // dd($order);
+Route::get('/fix/confirm', function (Request $request) {
+  // поудаляй все $request!!!
+  // dd('fix');
+  $orderId = 137744482;
+$order_json = Http::withHeaders([
+  'Authorization' => env('AVTO_SERVICE_KEY'),
+])->get(env('AVTO_SERVICE_URL').'/order/'.$orderId);
 
-  // $arr = [];
-  // $arr[] = date('h:i:s');
+Log::info('obj_json: '.$order_json);
+$order_obj = json_decode($order_json);
+if(!isset($order_obj->id)){
+    return;
+}
+$order_json = DeletePassportService::order($order_json);
+$order_obj = json_decode($order_json);
 
-  // // ожидание в течениe 10 секунд
-  // sleep(300);
+$transaction = Transaction::create([
+    'StatusCode' => 0,
+    'type' => 'Income',
+    'order_id' => $orderId
+]);
+$body = FermaEnum::$body;
+$item = FermaEnum::$item;
+$percent = FermaEnum::$percent;
+$body['Request']['Type'] = 'Income';
+$body['Request']['InvoiceId'] = $transaction->id;
+foreach($order_obj->tickets as $ticket){
+    $ticketFromDB = Ticket::find($ticket->id);
+    $ticketFromDB->update((array)$ticket);
+    $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket->hash.'.pdf';
+    $file_name = basename($url);
+    file_put_contents('tickets/'.$file_name, file_get_contents($url));
 
-  // // завершение ожидания
-  // $arr[] =  date('h:i:s');
-  // dd($arr);
+    $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
+    $item['Price'] = $ticket->price;
+    $item['Amount'] = $ticket->price;
+    $body['Request']['CustomerReceipt']['Items'][] = $item;
+    $ticketFromDB->customerItem = json_encode($item);
+    $ticketFromDB->save();
+}
 
-  // $data = [
-  //     'userName' => config('services.payment.userName'),
-  //     'password' => config('services.payment.password'),
-  //     'orderId' => '0272ecbe-d053-7496-b05c-dadc0223c29b'
-  // ];
-  // $curl = curl_init(); // Инициализируем запрос
-  // curl_setopt_array($curl, array(
-  //     // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
-  //     CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/getOrderStatus.do', 
-  //     CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
-  //     CURLOPT_POST => true, // Метод POST
-  //     CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
-  // ));
-  // $orderFromBank = curl_exec($curl); // Выполняем запрос
-  // curl_close($curl); // Закрываем соединение
-
-  // $orderFromBank = json_decode($orderFromBank);
-  // dd($orderFromBank);
-  // Mail::raw('Текст письма', function($message) {
-  //     $message->to('marsel.galimov.24@mail.ru', 'Имя Получателя');
-  //     $message->subject('Тема письма');
-  // });
+$order = Order::find($orderId);
+$order->order_info = $order_json;
 
 
-  // $to = "marsel.galimov.24@mail.ru";
-  // $subject = "Тема письма";
-  // $message = "Текст письма";
-  
-  // // Дополнительные заголовки
-  // $headers = 'From: example@example.com' . "\r\n" .
-  //     'Reply-To: example@example.com' . "\r\n" .
-  //     'X-Mailer: PHP/' . phpversion();
-  
-  // mail($to, $subject, $message, $headers);
+$body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice;
+$user = $order->user;
+if($user->email){
+    $body['Request']['CustomerReceipt']['Email'] = $user->email;
+}
 
 
-  // $to = 'marsel.galimov.24@mail.ru';
-  // $subject = 'Тема письма';
-  // $data = ['message' => 'Текст сообщения'];
+//insurance check
+if($order->insured){
+    $policiesTotalRate = 0;
+    foreach($order_obj->tickets as $ticket){
+        $ticketFromDB = Ticket::find($ticket->id);
+        $insuranceBody = InsuranceEnum::$body;
+        $insuranceBody['segments'][0]['departure']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->dispatchDate));
+        $insuranceBody['segments'][0]['departure']['point'] = $ticketFromDB->dispatchStation;
+        $insuranceBody['segments'][0]['arrival']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->arrivalDate));
+        $insuranceBody['segments'][0]['arrival']['point'] = $ticketFromDB->arrivalStation;
+        // Log::info('arrivalStation: '.$ticketFromDB->arrivalStation);
 
-  // Mail::send([], [], function ($message) use ($to, $subject, $data) {
-  //     $message->to($to)
-  //             ->subject($subject)
-  //             ->setBody($data['message']);
-  // });
+        $insuranceBodyInsured = InsuranceEnum::$insured;
+        $insuranceBodyInsured['first_name'] = $ticketFromDB->firstName;
+        $insuranceBodyInsured['last_name'] = $ticketFromDB->lastName;
+        $insuranceBodyInsured['patronymic'] = $ticketFromDB->middleName;
+        $insuranceBodyInsured['birth_date'] = date('Y-m-d', strtotime($ticketFromDB->birthday));
+        $insuranceBodyInsured['gender'] = $ticketFromDB->gender == 'M' ? 'MALE' : 'FEMALE';
+        $insuranceBodyInsured['phone']['number'] = $user->phone;
+        $insuranceBodyInsured['ticket']['price']['value'] = $ticketFromDB->price;
+        $insuranceBodyInsured['ticket']['issue_date'] = $ticketFromDB->created_at;
+        $insuranceBodyInsured['ticket']['number'] = $ticketFromDB->ticketNum;
+
+        $insuranceBody['insureds'][] = $insuranceBodyInsured;
+
+        $alfaStrahResponse = Http::withHeaders([
+            'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+        ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies?confirm=true');
+        Log::info($alfaStrahResponse);
+        $alfaStrahResponse = json_decode($alfaStrahResponse);
+        $policies = $alfaStrahResponse->policies;
+        $policy = $policies[0];
+
+        
+        $policiesTotalRate += $policy->rate[0]->value;
+        $ticketFromDB->insurance = json_encode($policy);
+        $ticketFromDB->save();
+    }
+    $insuranceReceivePosition = FermaEnum::$insurance;
+    $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
+    $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+    $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice + $policiesTotalRate;
+}
 
 
-// Mail::raw('Текст сообщения', function($message) {
-//   $message->to('marsel.galimov.24@mail.ru', 'Имя получателя')->subject('Тема сообщения');
-// });
+$percent['Price'] = $percent['Amount'] = $order->duePrice;
+$body['Request']['CustomerReceipt']['Items'][] = $percent;        
 
-            //   Setting::create([
-            //       'name' => 'dues',
-            //       'data' => json_encode(['clusterDue' => 5])
-            //   ]);
-    //   $regions = Http::withHeaders([
-//       'Authorization' => env('AVTO_SERVICE_KEY'),
-//   ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
-//   $points = [];
-//   foreach($regions as $region){
-//       $pointsTemp = Http::withHeaders([
-//           'Authorization' => env('AVTO_SERVICE_KEY'),
-//       ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
-//       if($pointsTemp){
-//           foreach($pointsTemp as $point){
-              // DispatchPoint::create([
-              //     'id' => $point->id,
-              //     'name' => $point->name,
-              //     'region' => $point->region,
-              //     'details' => $point->details,
-              //     'address' => $point->address,
-              //     'latitude' => $point->latitude,
-              //     'longitude' => $point->longitude,
-              //     'okato' => $point->okato,
-              //     'place' => $point->place
-              // ]);
-//               $points[] = $point;
-//           }   
-//       }
-//   }
-//   dd($points);
-  // dd($points); 
-  // dd(date('Y-m-d\TH:i', strtotime('1992-07-23 00:00:00')));
-    // $body = '{
-    //     "product": {
-    //       "code": "ON_ANTICOVID_BUS_2"
-    //     },
-    //     "customer_email": "customer@email.com",
-    //     "customer_phone": "79201111222",
-    //     "insureds": [
-    //       {
-    //         "first_name": "Владимир4",
-    //         "last_name": "Мельников4",
-    //         "patronymic": "Александрович2",
-    //         "birth_date": "2000-06-10",
-    //         "gender": "MALE",
-    //         "phone": {
-    //           "number": "79201111333"
-    //         },
-    //         "ticket": {
-    //           "price": {
-    //             "value": 900.00,
-    //             "currency": "RUB"
-    //           },
-    //           "issue_date": "2023-06-10",
-    //           "number": "5723574320584"
-    //         }
-    //       }
-    //     ],
-    //     "segments": [
-    //       {
-    //         "departure": {
-    //           "date": "2023-12-22T08:00:01",
-    //           "point": "Казань"
-    //         },
-    //         "arrival": {
-    //           "date": "2024-01-12T12:00:00",
-    //           "point": "Тольятти"
-    //         }
-    //       }
-    //     ]
-    //   }';
-    
-    // $response = Http::withHeaders([
-    //     'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
-    // ])->withBody($body, 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies');
+Log::info('Body: '.json_encode($body));
+$ReceiptId = FermaService::receipt($body);
+Log::info('Receipt: '.$ReceiptId);
+$ReceiptId = json_decode($ReceiptId);
+$ReceiptId = $ReceiptId->Data->ReceiptId;
+$receipt = FermaService::getStatus($ReceiptId);
+Log::info('Receipt: '.$receipt);
+$receipt = json_decode($receipt);
 
-    // $response = json_decode($response);
-    // // $response = $response->policies;
-    // dd($response);
-    // dd($response[0]->rate[0]->value);
-    // return response(['response' => json_decode($response)]);
+$transaction->StatusCode = $receipt->Data->StatusCode;
+$transaction->ReceiptId = $receipt->Data->ReceiptId;
+if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+    $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+}
+$transaction->save();
+$data = [
+    'userName' => config('services.payment.userName'),
+    'password' => config('services.payment.password'),
+    'orderId' => $order->bankOrderId
+];
+$curl = curl_init(); // Инициализируем запрос
+curl_setopt_array($curl, array(
+    // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
+    CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/getOrderStatus.do', 
+    CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+    CURLOPT_POST => true, // Метод POST
+    CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+));
+$orderFromBank = curl_exec($curl); // Выполняем запрос
+curl_close($curl); // Закрываем соединение
 
-    // $response = Http::withHeaders([
-    //     'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
-    // ])->withBody($body, 'application/json')->put(env('ALFASTRAH_SERVICE_URL').'/policies/'.(28939787).'/confirm');
-    // $response = json_decode($response);
-    // $response = $response->policies;
-    // dd($response);
+$orderFromBank = json_decode($orderFromBank);
 
-    // dd(InsuranceEnum::$body, InsuranceEnum::$insured);
-    // dd();
-    // $data = ['qw' => 123];
-    // // share data to view
-    // // view()->share('employee',$data);
-    // $pdf = PDF::loadView('pdf_file', $data);
-    // // download PDF file with download method
-    // return $pdf->download('pdf_file.pdf');
+$order->ip = isset($orderFromBank->Ip) ? $orderFromBank->Ip : null;
+$order->pan = isset($orderFromBank->Pan) ? $orderFromBank->Pan : null;
+$order->save();
 
-    // $orders = Order::all();
-    // $data = [];
-    // foreach($orders as $order){
-    //   $order_info = json_decode($order->order_info);
-    //   if($order_info->status == 'B'){
-    //     $order_remoted = Http::withHeaders([
-    //       'Authorization' => env('AVTO_SERVICE_KEY'),
-    //     ])->get(env('AVTO_SERVICE_URL').'/order/'.$order->id);
-    //     $order_remoted = json_decode($order_remoted);
-    //     // dd($order_remoted, $order_info);
-    //     if(isset($order_remoted->status) && $order_remoted->status != $order_info->status){
-    //       // foreach($order_info->tickets as $ticket){
-    //       //   $tickets[] = Ticket::find($ticket->id);
-    //       // }
-    //       $orderFromDB = Order::find($order->id);
-          
-    //       //
-    //       //
-          
-    //       // $data[] = $orderFromDB;
-    //     }
-    //   }
-    // }
-    // dd('Ok');
-    // return Excel::download(new WrongsExport($tickets), 'reports.xlsx');
+if($order->user->email){
+    Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
+}
+Log::info('Order\'s confirmed'.$orderId.' '.$order->bankOrderId);
 });
 
 Route::get('/mail/test/', function (Request $request) {
