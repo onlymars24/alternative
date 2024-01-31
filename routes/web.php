@@ -41,8 +41,8 @@ use App\Http\Controllers\PaymentController;
 
 Route::get('/fix/confirm', function (Request $request) {
   // поудаляй все $request!!!
-  // dd('fix');
-  $orderId = 137744482;
+  dd('fix');
+  $orderId = null;
 $order_json = Http::withHeaders([
   'Authorization' => env('AVTO_SERVICE_KEY'),
 ])->get(env('AVTO_SERVICE_URL').'/order/'.$orderId);
