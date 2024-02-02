@@ -46,7 +46,7 @@ export default{
         }
     },
     methods: {
-        
+
     },
     watch: {
         
@@ -225,26 +225,10 @@ export default{
 
     <div class="about">
         <div class="container">
-            <div v-html="content"></div>
+            
             <div class="about__inner">
+                <div v-html="content"></div>
                 <!-- <div class="about__info">
-                    <div class="about__info-main">
-                    </div>
-                    <div class="about__info-text">
-                        <a href="">Беларусь</a>
-                        <br>
-                        <a href="">Польша</a>
-                        <br>
-                        <a href="">Литва</a>
-                        <br>
-                        <a href="">Казахстан</a>
-                        <br>
-                        <a href="">Германия</a>
-                        <br>
-                        <a href="">Армения</a>
-                    </div>
-                </div> -->
-                <div class="about__info">
                     <div class="about__info-main">
                     </div>
                     <div class="about__info-text">
@@ -270,7 +254,7 @@ export default{
                 </div>
                 <div class="about__info">
                     <div class="about__info-main">
-                        <div id='vk_community_messages'></div>
+                        
                     </div>
                     <div class="about__info-text">
                         <a target="_blank" href="/avtobus/Кемерово/Новосибирск/">Кемерово → Новосибирск</a>
@@ -292,17 +276,19 @@ export default{
                         <a target="_blank" href="/avtobus/Красноярск/Томск/">Красноярск → Томск</a>
                         <br>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="about__info">
-                    <div class="about__info-main">
-                        <!-- <a href="">Внутренние</a> -->
-                    </div>
-                    <div class="about__info-text">
-                        <div id="vk_groups"></div> 
-                    </div>
+            <div class="about__info">
+                <div class="about__info-main">
+                    <!-- <a href="">Внутренние</a> -->
+                </div>
+                <div id='vk_community_messages'></div>
+                <div class="about__info-text">
+                    <div id="vk_groups"></div> 
                 </div>
             </div>
+            </div>
+
         </div>
     </div>
     

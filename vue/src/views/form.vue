@@ -338,7 +338,7 @@ export default
       duePercent: 0,
       duePrice: 0,
       date1: '',
-      insured: false,
+      insured: true,
       ticketTypes: [],
       luggageTypeCode: null,
       openRejectionWindow: false,
