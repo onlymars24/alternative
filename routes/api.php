@@ -20,6 +20,7 @@ use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\Api\SendSmsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
+use App\Http\Controllers\PopularPointsController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\Api\DispatchPointsController;
 
@@ -65,6 +66,7 @@ Route::get('/get/feedback', [FeedbackController::class, 'get']);
 Route::get('/page/main', [PageMainController::class, 'get']);
 Route::post('/page/main', [PageMainController::class, 'edit']);
 
+Route::post('/popular/points/edit', [PopularPointsController::class, 'edit']);
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();

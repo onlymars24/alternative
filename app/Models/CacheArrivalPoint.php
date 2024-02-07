@@ -11,6 +11,7 @@ class CacheArrivalPoint extends Model
 
     protected $fillable = [
         'dispatch_point_id',
-        'arrival_points'
+        'arrival_points',
+        'popular_arrival_points'
     ];
 }

@@ -21,6 +21,7 @@ import Feedback from '../views/admin/Feedback.vue'
 import ReturnConditions from '../views/ReturnConditions.vue'
 import Debugging from '../views/admin/Debugging.vue'
 import EditMain from '../views/admin/EditMain.vue'
+import EditPoints from '../views/admin/EditPoints.vue'
 
 const routes = [
   // {
@@ -126,6 +127,11 @@ const routes = [
         path: 'edit/main',
         component: EditMain,
         name: 'EditMain'
+      },
+      {
+        path: 'edit/points',
+        component: EditPoints,
+        name: 'EditPoints'
       },
     ]
   },

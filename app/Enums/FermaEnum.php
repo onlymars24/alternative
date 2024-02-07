@@ -11,7 +11,7 @@ class FermaEnum
             "InvoiceId" => null, 
             "CustomerReceipt" => [
                 "TaxationSystem" => 2, 
-                "Email" => "alternative.docs@gmail.com",
+                "Email" => "info@rosvokzaly.ru",
                 "PaymentType" => 1, 
                 "BillAddress" => "https://росвокзалы.рф/", 
                 "Items" => [], 

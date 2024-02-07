@@ -5,10 +5,13 @@
             <Header :blackText="false"/>
 
             <div class="main">
-                <h1 class="main__main">
+                <h1 v-if="isRaces" class="main__main">
+                    Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}} 
+                </h1>
+                <h1 v-else class="main__main">
                     Автовокзалы России
                 </h1>
-                <p class="main__main-p">
+                <p v-if="!isRaces" class="main__main-p">
                     Билеты на автобус онлайн
                 </p>
             </div>
@@ -36,7 +39,7 @@
                     <input :data-id="dispatchEl.id" :data-name="dispatchEl.name" @focus="dispatchFocus" @blur="dispatchBlur" v-model="dispatchText" class="main__table-input-1" type="text" placeholder="Заполните откуда">
                 </div>
                 <div class="main__table-table">
-                    <ul v-if="arrivalPointEmpty" class="hint">
+                    <ul v-if="arrivalPointEmpty && popularPoints.length > 0" class="hint">
                         <li class="hint__title">
                             <span>Популярные направления:</span>
                         </li>
@@ -114,6 +117,9 @@ export default{
                 type: String,
                 default: ''
             },
+            isRaces: {
+
+            }
         },
         emits: ['changeRaces'],
         data() {
@@ -210,26 +216,7 @@ export default{
             arrivalEl: this.arrivalEl0,
             dateNew: '',
             toMount: '',
-            popularPoints: [
-                {
-                    "id": 34388,
-                    "name": "Томск",
-                    "region": "Томская обл",
-                    "details": null,
-                },
-                {
-                    "id": 66690,
-                    "name": "Барнаул",
-                    "region": "Алтайский край",
-                    "details": null,
-                },
-                {
-                    "id": 19803,
-                    "name": "Кемерово",
-                    "region": "Кемеровская обл",
-                    "details": null,
-                },
-            ]
+            popularPoints: []
         }
     },
     methods: {
@@ -268,8 +255,10 @@ export default{
              const promise = axiosClient
                 .get('/arrival_points/'+this.dispatchEl.id)
                 .then(response => {
-                    console.log(response)    
-                    this.arrivalData = JSON.parse(response.data)
+                    console.log(response)
+                    this.arrivalData = JSON.parse(response.data.arrival_points)
+                    this.popularPoints = this.arrivalData.filter(obj => JSON.parse(response.data.popular_arrival_points).includes(obj.id));
+                    
                 });
             await promise
         },

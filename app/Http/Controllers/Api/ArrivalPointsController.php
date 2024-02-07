@@ -40,7 +40,7 @@ class ArrivalPointsController extends Controller
     {
         $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $id)->first();
         if($arrival_points){
-            $arrival_points = $arrival_points->arrival_points;
+            return $arrival_points;
         }
         else{
             $arrival_points_remoted = Http::withHeaders([
@@ -50,9 +50,8 @@ class ArrivalPointsController extends Controller
                 'dispatch_point_id' => $id,
                 'arrival_points' => json_encode($arrival_points_remoted)
             ]);
-            $arrival_points = $arrival_points->arrival_points;
+            return $arrival_points;
         }
-        return json_encode($arrival_points);
     }
 
     /**

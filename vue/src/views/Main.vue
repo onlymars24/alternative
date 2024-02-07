@@ -113,7 +113,7 @@ export default{
         :size="size"
       />
     </div> -->
-    <HeaderMain/>
+    <HeaderMain :isRaces="false"/>
     <!-- <div class="choice">
         <div class="container">
             <div class="choice__inner">
