@@ -261,7 +261,8 @@ export default
             ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
             ticket.fullStatus = ticketStatuses[ticket.status].label
             ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
-            ticket.insurancePrice = ticket.insurance ? ticket.insurance.ticket.price.value.toFixed(2) : (0).toFixed(2)
+            // console.log(ticket.insurance)
+            ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
             ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
         })
         
