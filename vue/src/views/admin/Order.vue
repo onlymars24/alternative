@@ -32,7 +32,7 @@
                     </div>
                     <div style="margin-top: 20px;">
                         <el-space :fill="false" wrap :size="17">
-                            <TicketCard v-for=" ticket in order.tickets" :ticket="ticket" :ticketStatuses="ticketStatuses"/>
+                            <TicketCard v-for=" ticket in tickets" :ticket="ticket" :ticketStatuses="ticketStatuses" :isOrderPage="true"/>
                         </el-space>
                     </div>
                 </el-main>
@@ -76,7 +76,8 @@ export default
                     value: 'S'
                 }
             },
-            orderStatus: ''
+            orderStatus: '',
+            tickets: []
         }
     },
     async mounted(){
@@ -86,9 +87,13 @@ export default
         .then(response => {
             this.order_outside = response.data.order
             this.order = JSON.parse(response.data.order.order_info)
+            this.tickets = response.data.tickets
             console.log(this.order)
         })
         await promise1
+        this.tickets.forEach(ticket => {
+            ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
+        })
         const promise2 = axiosClient
         .post('/order/transactions', {orderId: this.order_id})
         .then(response => {

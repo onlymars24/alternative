@@ -66,7 +66,7 @@
                     <div>
                         <el-space :fill="false" wrap :size="17">
                             <template v-if="!ticketsLoading">
-                                <TicketCard v-for=" ticket in filteredTicketsForCycle" :ticket="ticket" :ticketStatuses="ticketStatuses"/>
+                                <TicketCard v-for=" ticket in filteredTicketsForCycle" :ticket="ticket" :ticketStatuses="ticketStatuses" :isOrderPage="false"/>
                             </template>
                         </el-space>
                         <paginate
@@ -346,6 +346,7 @@ export default
         await promise
         this.tickets.forEach(elem => {
             elem.birthday = dayjs(elem.birthday).format('YYYY-MM-DD')
+            elem.insurance = elem.insurance ? JSON.parse(elem.insurance) : null
         })
         this.ticketsLoading = false
         console.log(this.filterArr['phone'].set)

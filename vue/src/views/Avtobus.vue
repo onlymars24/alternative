@@ -40,7 +40,7 @@ export default{
         this.dispatchEl.id = tempDispatchEl[0].id
         const promise2 = axiosClient
             .get('/arrival_points/'+this.dispatchEl.id)
-            .then(response => (this.arrivalData = JSON.parse(response.data)));
+            .then(response => (this.arrivalData = JSON.parse(response.data.arrival_points)));
         await promise2
         let tempArrivalEl =  this.arrivalData.filter(el => {
             return el.name && el.name.toUpperCase().indexOf(this.arrivalEl.name.toUpperCase()) !== -1

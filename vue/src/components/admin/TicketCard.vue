@@ -44,6 +44,8 @@
         <div class="text item"><strong>Тип билета:</strong> {{ ticket.ticketType }}</div>
         <div class="text item"><strong>ФИО:</strong> {{ ticket.lastName }} {{ ticket.firstName }} {{ ticket.middleName }}</div>
         <div class="text item"><strong>Телефон:</strong> {{ ticket.phone }}</div>
+        <div class="text item"><strong>Страхование:</strong> {{ ticket.insurance ? 'Застрахован' : 'Не застрахован' }}</div>
+        <div class="text item"><strong>Стоимость страховки:</strong> {{ this.ticket.insurance !== null ? this.ticket.insurance.ticket.price.value : 0 }}.00₽</div>
         <div v-if="!ticket.order_id && ticket.status == 'S' && false" class="text item" style="margin-top: 5px;"><el-button type="danger" :loading="returnLoading" @click="forceTicketReturn(ticket.id)">Вернуть принудительно</el-button> </div>
     </el-card>
 </template>
@@ -86,6 +88,7 @@ export default
         }
     },
     mounted(){
+        // console.log(this.ticket.insurance ? this.ticket.insurance.ticket.price.value : null)
         this.baseUrl = import.meta.env.VITE_API_BASE_URL
         this.ticket.dispatchDate = dayjs(this.ticket.dispatchDate).format('YYYY-MM-DD hh:mm')
         this.ticket.birthday = dayjs(this.ticket.birthday).format('YYYY-MM-DD')

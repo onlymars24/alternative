@@ -516,7 +516,8 @@ class OrderController extends Controller
     public function one(Request $request){
         $order = Order::find($request->order_id);
         return response([
-            'order' => $order
+            'order' => $order,
+            'tickets' => $order->tickets
         ]);
     }
 }

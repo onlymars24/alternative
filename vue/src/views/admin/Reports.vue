@@ -112,6 +112,29 @@
                                 </tbody>
                             </table>
 
+                            <table class="table" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Количество страховок</th>
+                                        <th>Стоимость страховок</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Продажа страховок</td>
+                                        <td>{{salesInsurances[0]}}</td>
+                                        <td>{{salesInsurances[1]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Возврат</td>
+                                        <td>{{returnsInsurances[0]}}</td>
+                                        <td>{{returnsInsurances[1]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
                         </el-card>
                     </div>
                     <el-button @click="exportDataToCsv" type="primary">Скачать Excel</el-button>
@@ -143,6 +166,8 @@
                                 <el-table-column prop="dues" label="Сбор агента" width="150" />
                                 <el-table-column prop="tableDiffPrice" label="Удержание" width="150" />
                                 <el-table-column prop="duePrice" label="Комиссия сайта" width="150" />
+                                <el-table-column prop="insured" label="Страхование" width="150" />
+                                <el-table-column prop="insurancePrice" label="Цена страховки" width="150" />
                             </el-table>
                         </el-card>
                     </div>
@@ -235,6 +260,9 @@ export default
             ticket.duePrice = Number(ticket.duePrice).toFixed(2)
             ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
             ticket.fullStatus = ticketStatuses[ticket.status].label
+            ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
+            ticket.insurancePrice = ticket.insurance ? ticket.insurance.ticket.price.value.toFixed(2) : (0).toFixed(2)
+            ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
         })
         
         this.loading = false
@@ -301,6 +329,12 @@ export default
             +'&holdsTotal='+this.holdsTotal
             +'&holdsSiteCommission='+this.holdsSiteCommission
             +'&eTrafficTotal='+this.eTrafficTotal
+
+            +'&salesInsurancesAmount='+this.salesInsurances[0]
+            +'&salesInsurancesPrice='+this.salesInsurances[1]
+
+            +'&returnsInsurancesAmount='+this.returnsInsurances[0]
+            +'&returnsInsurancesPrice='+this.returnsInsurances[1]
         },
         downloadPDF(){
             return import.meta.env.VITE_API_BASE_URL+'/export/pdf/?comparingDate1='+dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss')
@@ -671,8 +705,6 @@ export default
             })
             return returnsSiteCommission.toFixed(2);
         },
-
-
         holds(){
             let holds = 0;
             this.returnedTickets.forEach(ticket => {
@@ -717,6 +749,29 @@ export default
         eTrafficTotal(){
             let eTrafficTotal = this.salesTotal - this.repayments + Number(this.holdsTotal)
             return eTrafficTotal.toFixed(2);
+        },
+
+        salesInsurances(){
+            let amount = 0
+            let price = 0
+            this.tickets.forEach(ticket => {
+                if(ticket.insured == 'Застрахован'){
+                    amount++
+                    price += Number(ticket.insurancePrice)
+                }
+            })
+            return [amount, price.toFixed(2)]
+        },
+        returnsInsurances(){
+            let amount = 0
+            let price = 0
+            this.returnedTickets.forEach(ticket => {
+                if(ticket.insured == 'Застрахован'){
+                    amount++
+                    price += Number(ticket.insurancePrice)
+                }
+            })
+            return [amount, price.toFixed(2)]
         }
     }
 }
