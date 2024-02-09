@@ -229,39 +229,41 @@ class OrderController extends Controller
         if($order->insured){
             $policiesTotalRate = 0;
             foreach($order_obj->tickets as $ticket){
-                $ticketFromDB = Ticket::find($ticket->id);
-                $insuranceBody = InsuranceEnum::$body;
-                $insuranceBody['segments'][0]['departure']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->dispatchDate));
-                $insuranceBody['segments'][0]['departure']['point'] = $ticketFromDB->dispatchStation;
-                $insuranceBody['segments'][0]['arrival']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->arrivalDate));
-                $insuranceBody['segments'][0]['arrival']['point'] = $ticketFromDB->arrivalStation;
-                // Log::info('arrivalStation: '.$ticketFromDB->arrivalStation);
+                if($ticket->ticketType != 'Багажный'){
+                    $ticketFromDB = Ticket::find($ticket->id);
+                    $insuranceBody = InsuranceEnum::$body;
+                    $insuranceBody['segments'][0]['departure']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->dispatchDate));
+                    $insuranceBody['segments'][0]['departure']['point'] = $ticketFromDB->dispatchStation;
+                    $insuranceBody['segments'][0]['arrival']['date'] = date('Y-m-d\TH:i', strtotime($ticketFromDB->arrivalDate));
+                    $insuranceBody['segments'][0]['arrival']['point'] = $ticketFromDB->arrivalStation;
+                    // Log::info('arrivalStation: '.$ticketFromDB->arrivalStation);
 
-                $insuranceBodyInsured = InsuranceEnum::$insured;
-                $insuranceBodyInsured['first_name'] = $ticketFromDB->firstName;
-                $insuranceBodyInsured['last_name'] = $ticketFromDB->lastName;
-                $insuranceBodyInsured['patronymic'] = $ticketFromDB->middleName;
-                $insuranceBodyInsured['birth_date'] = date('Y-m-d', strtotime($ticketFromDB->birthday));
-                $insuranceBodyInsured['gender'] = $ticketFromDB->gender == 'M' ? 'MALE' : 'FEMALE';
-                $insuranceBodyInsured['phone']['number'] = $user->phone;
-                $insuranceBodyInsured['ticket']['price']['value'] = $ticketFromDB->price;
-                $insuranceBodyInsured['ticket']['issue_date'] = $ticketFromDB->created_at;
-                $insuranceBodyInsured['ticket']['number'] = $ticketFromDB->ticketNum;
+                    $insuranceBodyInsured = InsuranceEnum::$insured;
+                    $insuranceBodyInsured['first_name'] = $ticketFromDB->firstName;
+                    $insuranceBodyInsured['last_name'] = $ticketFromDB->lastName;
+                    $insuranceBodyInsured['patronymic'] = $ticketFromDB->middleName;
+                    $insuranceBodyInsured['birth_date'] = date('Y-m-d', strtotime($ticketFromDB->birthday));
+                    $insuranceBodyInsured['gender'] = $ticketFromDB->gender == 'M' ? 'MALE' : 'FEMALE';
+                    $insuranceBodyInsured['phone']['number'] = $user->phone;
+                    $insuranceBodyInsured['ticket']['price']['value'] = $ticketFromDB->price;
+                    $insuranceBodyInsured['ticket']['issue_date'] = $ticketFromDB->created_at;
+                    $insuranceBodyInsured['ticket']['number'] = $ticketFromDB->ticketNum;
 
-                $insuranceBody['insureds'][] = $insuranceBodyInsured;
+                    $insuranceBody['insureds'][] = $insuranceBodyInsured;
 
-                $alfaStrahResponse = Http::withHeaders([
-                    'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
-                ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies?confirm=true');
-                Log::info($alfaStrahResponse);
-                $alfaStrahResponse = json_decode($alfaStrahResponse);
-                $policies = $alfaStrahResponse->policies;
-                $policy = $policies[0];
+                    $alfaStrahResponse = Http::withHeaders([
+                        'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+                    ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies?confirm=true');
+                    Log::info($alfaStrahResponse);
+                    $alfaStrahResponse = json_decode($alfaStrahResponse);
+                    $policies = $alfaStrahResponse->policies;
+                    $policy = $policies[0];
 
-                
-                $policiesTotalRate += $policy->rate[0]->value;
-                $ticketFromDB->insurance = json_encode($policy);
-                $ticketFromDB->save();
+                    
+                    $policiesTotalRate += $policy->rate[0]->value;
+                    $ticketFromDB->insurance = json_encode($policy);
+                    $ticketFromDB->save();
+                }
             }
             $insuranceReceivePosition = FermaEnum::$insurance;
             $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
@@ -271,7 +273,7 @@ class OrderController extends Controller
         
 
         $percent['Price'] = $percent['Amount'] = $order->duePrice;
-        $body['Request']['CustomerReceipt']['Items'][] = $percent;        
+        $body['Request']['CustomerReceipt']['Items'][] = $percent;
 
         Log::info('Body: '.json_encode($body));
         $ReceiptId = FermaService::receipt($body);
@@ -394,19 +396,21 @@ class OrderController extends Controller
         if($orderFromDB->insured){
             $policyTotalRate = 0;
             foreach($tickets as $ticket){
-                $policy = json_decode($ticket->insurance);
-                $policyTotalRate += $policy->rate[0]->value;
+                if($ticket->ticketType != 'Багажный'){
+                    $policy = json_decode($ticket->insurance);
+                    $policyTotalRate += $policy->rate[0]->value;
 
-                $policy_id = $policy->policy_id;
+                    $policy_id = $policy->policy_id;
 
-                $alfastrahBody = [
-                    'number' => $ticket->ticketNum,
-                    'date' => date('Y-m-d')
-                ];
-                $alfaStrahResponse = Http::withHeaders([
-                    'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
-                ])->withBody(json_encode($alfastrahBody), 'application/json')->delete(env('ALFASTRAH_SERVICE_URL').'/policies/'.$policy_id.'/refund');
-                Log::info('alfaStrahResponse '.$alfaStrahResponse);
+                    $alfastrahBody = [
+                        'number' => $ticket->ticketNum,
+                        'date' => date('Y-m-d')
+                    ];
+                    $alfaStrahResponse = Http::withHeaders([
+                        'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
+                    ])->withBody(json_encode($alfastrahBody), 'application/json')->delete(env('ALFASTRAH_SERVICE_URL').'/policies/'.$policy_id.'/refund');
+                    Log::info('alfaStrahResponse '.$alfaStrahResponse);
+                }
             }
 
             $data = [
