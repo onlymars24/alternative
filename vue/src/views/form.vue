@@ -220,7 +220,7 @@
                   </div>
         
         </div>      
-      <div class="seat-bus"><h5>Место в автобусе</h5>
+      <div v-if="el.ticket_type_code != luggageTypeCode" class="seat-bus"><h5>Место в автобусе</h5>
         <select
           class="form-select form-control"
           :class="{'is-invalid': el.errors.doc_type}"
@@ -371,7 +371,7 @@ export default
             birthday: el.birth_date,
             phone: this.user.phone,
             email: this.user.email,
-            seatCode: el.seat.code,
+            seatCode: el.ticket_type_code == this.luggageTypeCode ? null : el.seat.code,
             ticketTypeCode: el.ticket_type_code,
             ticketTypeName: this.race.ticketTypes.filter(elem => {
                 return elem.code == el.ticket_type_code
@@ -380,6 +380,8 @@ export default
           }
           )
         })
+        console.log(this.sale)
+        // return this.sale
         const promise2 = axiosClient
         .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice})
         .then(response => {
