@@ -45,7 +45,7 @@
         <div class="text item"><strong>ФИО:</strong> {{ ticket.lastName }} {{ ticket.firstName }} {{ ticket.middleName }}</div>
         <div class="text item"><strong>Телефон:</strong> {{ ticket.phone }}</div>
         <div class="text item"><strong>Страхование:</strong> {{ ticket.insurance ? 'Застрахован' : 'Не застрахован' }}</div>
-        <div class="text item"><strong>Стоимость страховки:</strong> {{ this.ticket.insurance !== null ? this.ticket.insurance.ticket.price.value : 0 }}.00₽</div>
+        <div class="text item"><strong>Стоимость страховки:</strong> {{ this.ticket.insurance !== null ? this.ticket.insurance.rate[0].value : 0 }}.00₽</div>
         <div v-if="!ticket.order_id && ticket.status == 'S' && false" class="text item" style="margin-top: 5px;"><el-button type="danger" :loading="returnLoading" @click="forceTicketReturn(ticket.id)">Вернуть принудительно</el-button> </div>
     </el-card>
 </template>

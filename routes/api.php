@@ -16,6 +16,7 @@ use App\Http\Controllers\PageMainController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Api\RacesController;
 use App\Http\Controllers\DebuggingController;
+use App\Http\Controllers\BusStationController;
 use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\Api\SendSmsController;
 use App\Http\Controllers\TransactionController;
@@ -65,6 +66,14 @@ Route::get('/get/feedback', [FeedbackController::class, 'get']);
 
 Route::get('/page/main', [PageMainController::class, 'get']);
 Route::post('/page/main', [PageMainController::class, 'edit']);
+
+
+Route::get('/bus/stations', [BusStationController::class, 'all']);
+Route::get('/bus/station', [BusStationController::class, 'one']);
+Route::post('/bus/station/create', [BusStationController::class, 'create']);
+Route::post('/bus/station/edit', [BusStationController::class, 'edit']);
+Route::post('/bus/station/delete', [BusStationController::class, 'delete']);
+
 
 Route::post('/popular/points/edit', [PopularPointsController::class, 'edit']);
 

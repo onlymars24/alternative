@@ -22,6 +22,8 @@ import ReturnConditions from '../views/ReturnConditions.vue'
 import Debugging from '../views/admin/Debugging.vue'
 import EditMain from '../views/admin/EditMain.vue'
 import EditPoints from '../views/admin/EditPoints.vue'
+import BusStations from '../views/admin/BusStations.vue'
+import BusStation from '../views/BusStation.vue'
 
 const routes = [
   // {
@@ -33,6 +35,11 @@ const routes = [
     path: '/',
     name: 'Main',
     component: Main
+  },
+  {
+    path: '/bus/station/:title',
+    name: 'BusStation',
+    component: BusStation
   },
   {
     path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/:date',
@@ -133,6 +140,11 @@ const routes = [
         component: EditPoints,
         name: 'EditPoints'
       },
+      {
+        path: 'bus/stations',
+        component: BusStations,
+        name: 'BusStations'
+      },
     ]
   },
   {
@@ -163,7 +175,8 @@ router.beforeEach((to, from, next) => {
     }
   }
   else{
-    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback' || to.name === 'Debugging'){
+    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback' || to.name === 'Debugging' || to.name === 'BusStations' || to.name === 'EditPoints'
+     || to.name === 'EditMain'){
       return next({name: 'ALogin'})
     }
   }
