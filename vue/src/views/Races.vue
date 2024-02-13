@@ -11,8 +11,8 @@
                 </div>
                 <div class="not__found-text">
                     <p class="not__found-title">
-                        {{dispatchEl.name}} — {{arrivalEl.name}}<br>
-                        на {{ dateForError }}<br>
+                        {{dispatchEl.name}} — {{arrivalEl.name}}
+                        на {{ dateForError }}
                         Билеты не найдены
                     </p>
                     <p class="not__found-descr">
@@ -113,11 +113,11 @@
     margin-left: 60px;
 }
 .not__found-title{
-    font-size: 38px;
+    font-size: 24px;
     margin-bottom: 20px;
 }
 .not__found-descr{
-    font-size: 18px;
+    font-size: 30px;
 }
 
 .inro-sort__button img{
@@ -201,7 +201,7 @@ export default {
     },
     mounted(){
         this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id);
-        this.dateForError = dayjs(this.date).format('D.M.YY')
+        this.dateForError = dayjs(this.date).format('DD.MM.YYYY')
     },
     computed: {
         sortedRaces(){
@@ -247,7 +247,10 @@ export default {
                     race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
                 });
             }
-
+            else{
+                var calendarInput = document.querySelector('#calendar');
+                calendarInput.focus();
+            }
             this.loadingRaces = false
         },
         sort(event, param){

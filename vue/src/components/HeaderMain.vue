@@ -65,7 +65,7 @@
                 </div>
                 <div class="main__table-table">
                     <p class="">Дата поездки</p>
-                    <input class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
+                    <input id="calendar" class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
                 </div>  
                 <div class="main__table-button">
                     <button type="submit" class="main__button" :disabled="disabledButton">
@@ -74,9 +74,9 @@
                 </div>
             </form>
             <div v-if="dispatchEl.id && arrivalEl.id" class="main__another__date">
-                <a href="" class="main__another__date-fix" @click="otherDay(dates.today)">Сегодня</a>
-                <a href="" class="main__another__date-fix" @click="otherDay(dates.tomorrow)">Завтра</a>
-                <a href="" class="main__another__date-fix" @click="otherDay(dates.afterTomorrow)">Послезавтра</a>
+                <a href="" :class="{'main__another__date-fix__active': dates.today ==  $route.params['date']}" class="main__another__date-fix" @click="otherDay(dates.today)">Сегодня</a>
+                <a href="" :class="{'main__another__date-fix__active': dates.tomorrow ==  $route.params['date']}" class="main__another__date-fix" @click="otherDay(dates.tomorrow)">Завтра</a>
+                <a href="" :class="{'main__another__date-fix__active': dates.afterTomorrow ==  $route.params['date']}" class="main__another__date-fix" @click="otherDay(dates.afterTomorrow)">Послезавтра</a>
             </div>
         </div>
     </div>
@@ -434,6 +434,8 @@ export default{
 .main__another__date-fix{
     text-decoration: dotted;
     color: white;
+}
+.main__another__date-fix__active{
     border-bottom: 1px white dashed;
 }
 @media (max-width: 992px)

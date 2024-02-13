@@ -556,4 +556,8 @@ outline: none;
   .header__links li{
       margin-bottom: 20px;
   }
+  .main{
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 }
