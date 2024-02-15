@@ -1,6 +1,9 @@
 <template>
   <ckeditor :editor="editor" v-model="newContent" :config="editorConfig"></ckeditor>
-  <el-button style="margin-top: 10px;"  type="primary" :loading="loading" @click="$emit('editStation', this.id, this.title, this.newContent)">{{loading ? 'Загрузка' : 'Сохранить' }}</el-button>
+  <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+    <el-button type="primary" :loading="loading" @click="$emit('editStation', this.id, this.title, this.newContent, this.dispatch_point_id, this.hidden)">{{loading ? 'Загрузка' : 'Сохранить' }}</el-button>
+    <el-button type="danger" style="margin-left: 15px;" @click="$emit('deleteStation', this.id)">Удалить автовокзал</el-button>
+  </div>
 </template>
 
 <script>
@@ -26,8 +29,8 @@ import { HorizontalLine } from '@ckeditor/ckeditor5-horizontal-line';
 import { RemoveFormat } from '@ckeditor/ckeditor5-remove-format';
 
 export default {
-  emits: ['editStation'],
-  props: ['id', 'title', 'data'],
+  emits: ['editStation', 'deleteStation'],
+  props: ['id', 'title', 'data', 'dispatch_point_id', 'hidden'],
   data() {
     return {
       editor: ClassicEditor,
@@ -174,12 +177,10 @@ export default {
 
   },
   mounted(){
+    console.log(this.data)
     this.newContent = JSON.parse(this.data).content
     console.log(this.id)
-    console.log(this.title)
-    console.log(this.title)
-    console.log(this.content)
-    console.log(this.newContent)
+    console.log(this.hidden)
   }
 };
 </script>

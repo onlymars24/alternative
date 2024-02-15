@@ -42,7 +42,8 @@ export default{
             return time.getTime() > Date.now()
             },
             groupID: 223652237,
-            content: ''
+            content: '',
+            station: null
             // innerDrawer: false
         }
     },
@@ -58,10 +59,11 @@ export default{
     async mounted() {
         console.log(this.$route.params['title'])
         const promise = axiosClient
-        .get('/bus/station?title='+this.$route.params['title'])
+        .get('/bus/station?title='+this.$route.params['title'].replace(/\s/g, '_'))
         .then(response => {
             console.log(response)
-            this.content = response.data.content
+            this.station = response.data.station
+            this.content = JSON.parse(this.station.data).content
         })
         .catch(error => {
             console.log(error)
@@ -96,7 +98,8 @@ export default{
 </script>
 
 <template>
-    <HeaderMain :isRaces="false"/>
+    <HeaderMain v-if="station" :isRaces="false" :busStationDispatchPointId="station.dispatch_point_id"/>
+    <HeaderMain v-else :isRaces="false"/>
 
     <div class="about">
         <div class="container">

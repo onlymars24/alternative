@@ -12,5 +12,7 @@ class BusStation extends Model
     protected $fillable = [
         'title',
         'data',
+        'dispatch_point_id',
+        'hidden',
     ];
 }

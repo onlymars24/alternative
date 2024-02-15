@@ -119,6 +119,10 @@ export default{
             },
             isRaces: {
 
+            },
+            busStationDispatchPointId: {
+                type: Number,
+                default: null
             }
         },
         emits: ['changeRaces'],
@@ -397,7 +401,7 @@ export default{
             return !this.dispatchEl.name && !this.dispatchEl.id;
         },
     },
-    mounted(){
+    async mounted(){
         this.dates.today = dayjs().format('YYYY-MM-DD')
         if(this.date == ''){
             this.date = this.dates.today
@@ -407,10 +411,24 @@ export default{
         if(localStorage.getItem('authToken')){
             this.auth = true
         }
-        axiosClient
+        const promise = axiosClient
         .get('/dispatch_points')
         .then(response => (this.dispatchData = response.data));
-
+        await promise
+        console.log('this.busStationDispatchPointId '+this.busStationDispatchPointId)
+        if(this.busStationDispatchPointId){
+            this.dispatchEl.id = this.busStationDispatchPointId
+            this.dispatchEl.name = this.dispatchData.filter(point => {
+                return point.id ==this.busStationDispatchPointId
+            })[0].name
+            this.dispatchText = this.dispatchEl.name
+            this.arrivalEl.id = null
+            this.arrivalEl.name = null
+            this.arrivalText = ''
+            this.arrivalBlur()
+            this.getArrivalData()
+            console.log('Вокзал да')
+        }
         if(this.dispatchEl.name && this.dispatchEl.id){
             this.getArrivalData()
         }

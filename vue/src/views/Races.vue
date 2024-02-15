@@ -236,7 +236,6 @@ export default {
                     this.races = response.data
                 ));
             await promise
-            console.log(this.races)
             if(this.races.length > 0){
                 this.races.forEach(race => {
                     race.section = 'route'
