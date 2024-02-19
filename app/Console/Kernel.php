@@ -16,9 +16,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            Log::info('Shedule log1 test');
-        })->everyMinute();
+        // $schedule->call(function () {
+        //     Log::info('Shedule log1 test');
+        // })->everyMinute();
     }
 
     /**
