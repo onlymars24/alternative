@@ -69,7 +69,7 @@ export default{
             console.log(error)
         })
         await promise
-        if(!this.content){
+        if(!this.station){
             router.push({ name: 'Main'})
         }
         VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
@@ -98,7 +98,7 @@ export default{
 </script>
 
 <template>
-    <HeaderMain v-if="station" :isRaces="false" :busStationDispatchPointId="station.dispatch_point_id"/>
+    <HeaderMain v-if="station" :isRaces="false" :busStationDispatchPointId="station.dispatch_point_id" :station="station"/>
     <HeaderMain v-else :isRaces="false"/>
 
     <div class="about">

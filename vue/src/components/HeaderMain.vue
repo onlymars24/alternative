@@ -8,6 +8,9 @@
                 <h1 v-if="isRaces" class="main__main">
                     Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}} 
                 </h1>
+                <h1 v-else-if="station" class="main__main">
+                    {{ station.name }}
+                </h1>
                 <h1 v-else class="main__main">
                     Автовокзалы России
                 </h1>
@@ -74,9 +77,9 @@
                 </div>
             </form>
             <div v-if="dispatchEl.id && arrivalEl.id" class="main__another__date">
-                <a href="" :class="{'main__another__date-fix__active': dates.today ==  $route.params['date']}" class="main__another__date-fix" @click="otherDay(dates.today)">Сегодня</a>
-                <a href="" :class="{'main__another__date-fix__active': dates.tomorrow ==  $route.params['date']}" class="main__another__date-fix" @click="otherDay(dates.tomorrow)">Завтра</a>
-                <a href="" :class="{'main__another__date-fix__active': dates.afterTomorrow ==  $route.params['date']}" class="main__another__date-fix" @click="otherDay(dates.afterTomorrow)">Послезавтра</a>
+                <a href="" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.today)">Сегодня</a>
+                <a href="" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.tomorrow)">Завтра</a>
+                <a href="" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.afterTomorrow)">Послезавтра</a>
             </div>
         </div>
     </div>
@@ -120,6 +123,7 @@ export default{
             isRaces: {
 
             },
+            station: {},
             busStationDispatchPointId: {
                 type: Number,
                 default: null
@@ -292,12 +296,13 @@ export default{
 
         findRaces(){
             this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id)
-            router.push({ name: 'Races', params: { dispatch_id: this.dispatchEl.id, dispatch_name: this.dispatchEl.name, arrival_id: this.arrivalEl.id, arrival_name: this.arrivalEl.name, date: this.date } })
+            console.log(this.dispatchEl, this.arrivalEl, this.data)
+            router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
         },
         otherDay(date){
             this.date = date
             this.$emit('changeRaces', date, this.dispatchEl.id, this.arrivalEl.id)
-            router.push({ name: 'Races', params: { dispatch_id: this.dispatchEl.id, dispatch_name: this.dispatchEl.name, arrival_id: this.arrivalEl.id, arrival_name: this.arrivalEl.name, date: date } })
+            router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
         }
     },
     watch: {
@@ -434,7 +439,7 @@ export default{
         }
         var dateNewGet = new Date();
         this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();
-        this.toMonth = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 2 == 12? 1 : (dateNewGet.getMonth() + 2 > 9 ? dateNewGet.getMonth() + 2 : "0"+(dateNewGet.getMonth() + 2))) + "-" + dateNewGet.getDate()  ;
+        this.toMonth = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 2 == 12? 1 : (dateNewGet.getMonth() + 2 > 9 ? dateNewGet.getMonth() + 2 : "0"+(dateNewGet.getMonth() + 2))) + "-" + dateNewGet.getDate();
     }
 }
 </script>
@@ -444,6 +449,9 @@ export default{
   text-align: center;
   margin-top: 15px;
   margin-left: 325px;
+}
+.main__another__date .strong{
+  font-weight: 500;
 }
 .main__another__date a{
   margin-right: 4px;

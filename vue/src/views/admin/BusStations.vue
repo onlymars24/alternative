@@ -4,12 +4,17 @@
     <el-container v-loading.fullscreen.lock="loading">
         <el-main style="min-height: 500px;" v-if="!loading">
             <div>
-                <div style="width: 25%;">
-                    <label for="">Новый автовокзал</label><br>
+                <div style="width: 25%; margin-bottom: 10px;">
+                    <label for=""><strong>Новый автовокзал</strong></label><br>
+                    <label for="">Название автовокзала</label><br>
+                    <el-input v-model="newBusStation.name"></el-input>
+                </div> 
+                <div style="width: 25%; margin-bottom: 10px;">
+                    <label for="">URL</label><br>
                     <el-input v-model="newBusStation.title"></el-input>
                 </div> 
                 <div>
-                    <label for="">Привязанная точка</label><br>
+                    <label for="">Точка отправления</label><br>
                     <el-select v-model="newBusStation.dispatchPointId">
                         <el-option
                         v-for="point in dispatchPoints"
@@ -30,12 +35,12 @@
                     <!-- <el-tab-pane :label="station.fixTitle"> -->
             <div>
                 <div class="" style="margin-bottom: 20px;">
-                    <label for="">Выберите существующий автовокзал:</label><br>
+                    <label for=""><strong>Выберите существующий автовокзал для редактирования:</strong></label><br>
                     <el-select v-model="selectedStationId">
                         <el-option
                         v-for="station in busStations"
                         :key="station.id"
-                        :label="station.fixTitle"
+                        :label="station.fixName"
                         :value="station.id">
                         </el-option>
                     </el-select>
@@ -43,12 +48,16 @@
                 <hr>
                 <template v-for="station in busStations">
                     <template v-if="selectedStationId == station.id">
-                        <div class="" style="width: 25%; margin-bottom: 20px;">
+                        <div class="" style="width: 25%; margin-bottom: 10px;">
                             <label for="">Название автовокзала</label>
+                            <el-input v-model="station.name" />
+                        </div>                        
+                        <div class="" style="width: 25%; margin-bottom: 10px;">
+                            <label for="">URL</label>
                             <el-input v-model="station.title" />
                         </div>
                         <div class="">
-                            <label for="">Привязанная точка</label><br>
+                            <label for="">Точка отправления</label><br>
                             <el-select v-model="station.dispatch_point_id">
                                 <el-option
                                 v-for="point in dispatchPoints"
@@ -66,6 +75,7 @@
                                 <label for="">Контент страницы</label>
                                 <HtmlEditor 
                                 :id="station.id" 
+                                :name="station.name" 
                                 :title="station.title" 
                                 :data="station.data" 
                                 :hidden="station.booleanHidden" 
@@ -103,6 +113,7 @@ export default
             busStations: [],
             newBusStation: {
                 title: '',
+                name: '',
                 dispatchPointId: '',
                 hidden: true
             },
@@ -138,7 +149,7 @@ export default
             })
             await promise
             this.busStations.forEach(station => {
-                station.fixTitle = station.title
+                station.fixName = station.name
                 station.booleanHidden = station.hidden == 1 ? true : false
             })
             console.log(this.busStations)
@@ -149,6 +160,7 @@ export default
             this.loading = true
             const promise = axiosAdmin
             .post('/bus/station/create', {title: this.newBusStation.title.replace(/\s/g, '_'), 
+                                            name: this.newBusStation.name, 
                                             dispatch_point_id: this.newBusStation.dispatchPointId, 
                                             hidden: this.newBusStation.hidden})
             .then(response => {
@@ -159,17 +171,19 @@ export default
             })
             await promise
             this.newBusStation.title = ''
-            this.newBusStation.dispatch_point_id = ''
+            this.newBusStation.name = ''
+            this.newBusStation.dispatchPointId = ''
             this.newBusStation.hidden = false
             this.getAll()
             this.loading = false
         },
-        async editStation(id, title, content, dispatch_point_id, hidden){
+        async editStation(id, title, name, content, dispatch_point_id, hidden){
             this.loading = true
             console.log(id, title, content, dispatch_point_id, hidden)
             const promise = axiosAdmin
-            .post('/bus/station/edit', {id: id, 
+            .post('/bus/station/edit', {id: id,
                 title: title.replace(/\s/g, '_'), 
+                name: name, 
                 content: content, 
                 dispatch_point_id: dispatch_point_id, 
                 hidden: hidden})

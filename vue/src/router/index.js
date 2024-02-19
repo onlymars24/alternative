@@ -37,25 +37,26 @@ const routes = [
     component: Main
   },
   {
-    path: '/bus/station/:title',
+    path: '/'+encodeURI('автовокзал')+'/:title',
     name: 'BusStation',
     component: BusStation
   },
   {
-    path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/:date',
+    path: '/avtobus/:dispatch_name/:arrival_name',
     name: 'Races',
     component: Races
   },
-  {
-    path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/',
-    name: 'RacesWithoutDate',
-    component: RacesWithoutDate
-  },
-  {
-    path: '/avtobus/:dispatch_name/:arrival_name/',
-    name: 'Avtobus',
-    component: Avtobus
-  },
+  // {
+  //   path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/',
+  //   // path: '/avtobus/:dispatch_name/:arrival_name?from_id=:dispatch_id&to_id=:arrival_id',
+  //   name: 'RacesWithoutDate',
+  //   component: RacesWithoutDate
+  // },
+  // {
+  //   path: '/avtobus/:dispatch_name/:arrival_name/',
+  //   name: 'Avtobus',
+  //   component: Avtobus
+  // },
   {
     path: '/seats/:race_id',
     name: 'SeatPage',

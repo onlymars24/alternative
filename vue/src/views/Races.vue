@@ -1,5 +1,5 @@
 <template>
-<HeaderMain @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date" :isRaces="true"/>
+<HeaderMain :key="paramKey" @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date" :isRaces="true"/>
 <div>
     <!-- RACES <pre>{{ races }}</pre> -->
     <div class="menu" style="margin-top: 50px;">
@@ -179,14 +179,14 @@ export default {
     data(){
         return{
             arrivalEl: {
-                id: this.$route.params['arrival_id'],
+                id: this.$route.query.to_id,
                 name: this.$route.params['arrival_name']
             },
             dispatchEl: {
-                id: this.$route.params['dispatch_id'],
+                id: this.$route.query.from_id,
                 name: this.$route.params['dispatch_name']
             },
-            date: this.$route.params['date'],
+            date: this.$route.query.on,
             dateForError: '',
             races: [],
             loadingRaces: true,
@@ -196,10 +196,50 @@ export default {
             sortingParams: {
                 arrowUp: false,
                 param: 'dispatchDate'
-            }
+            },
+            paramKey: false
         }
     },
-    mounted(){
+    async mounted(){
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        if(!regex.test(this.date)){
+            console.log('нет')
+            this.date = dayjs().format('YYYY-MM-DD') 
+        }
+        let dispatchPoints =[]
+        const promise1 = axiosClient
+        .get('/dispatch_points')
+        .then(response => {
+            dispatchPoints = response.data
+        });
+        await promise1
+        let dispatchPoint = dispatchPoints.filter(point => {
+            return point.name == this.dispatchEl.name
+        })[0]
+        if(!dispatchPoint){
+            this.$router.push({ name: 'Main' })
+        }
+
+        let arrivalPoints = [];
+        const promise2 = axiosClient
+        .get('/arrival_points/'+dispatchPoint.id)
+        .then(response => {
+            arrivalPoints = JSON.parse(response.data.arrival_points)
+        });
+        await promise2
+        let arrivalPoint = arrivalPoints.filter(point => {
+            return point.name == this.arrivalEl.name
+        })[0]
+        if(!arrivalPoint){
+            this.$router.push({ name: 'Main' })
+        }
+        if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
+            this.dispatchEl.id = dispatchPoint.id
+            this.arrivalEl.id = arrivalPoint.id
+            console.log('нету да')
+            this.$router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date } })
+            this.paramKey = true
+        }
         this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id);
         this.dateForError = dayjs(this.date).format('DD.MM.YYYY')
     },

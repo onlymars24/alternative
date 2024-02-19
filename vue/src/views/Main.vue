@@ -65,6 +65,10 @@ export default{
             console.log(error)
         })
         await promise
+        console.log('this.$route.query')
+
+        // this.$router.push({ name: 'Main', query: { id: 456, name: 'Jane' }})
+        // console.log(this.$route.query.name)
         // Подключение виджета сообщений
 
         VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {

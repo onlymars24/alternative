@@ -23,6 +23,7 @@ class BusStationController extends Controller
     public function create(Request $request){
         $busStation = BusStation::create([
             'title' => $request->title,
+            'name' => $request->name,
             'dispatch_point_id' => $request->dispatch_point_id,
             'hidden' => $request->hidden,
         ]);
@@ -36,6 +37,7 @@ class BusStationController extends Controller
     public function edit(Request $request){
         $busStation = BusStation::find($request->id);
         $busStation->title = $request->title;
+        $busStation->name = $request->name;
         $busStation->hidden = $request->hidden;
         $busStation->dispatch_point_id = $request->dispatch_point_id;
         $busStation->data = json_encode(['content' => $request->content ? $request->content : '']);
