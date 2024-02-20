@@ -9,7 +9,7 @@
 
             </div>  
             <div class="hamburger" @click="NoScroll(), mobileMenuOpen = true">
-                <svg  height="16" viewBox="0 0 25 16" width="25" fill="#0275fe" xmlns="http://www.w3.org/2000/svg" ><path d="M0 1a1 1 0 0 1 1-1h23a1 1 0 0 1 0 2H1a1 1 0 0 1-1-1zm0 7a1 1 0 0 0 1 1h23a1 1 0 0 0 0-2H1a1 1 0 0 0-1 1zm0 7a1 1 0 0 0 1 1h23a1 1 0 0 0 0-2H1a1 1 0 0 0-1 1z" fill-rule="evenodd"></path></svg>
+                <svg  height="16" viewBox="0 0 25 16" width="25" fill="white" xmlns="http://www.w3.org/2000/svg" ><path d="M0 1a1 1 0 0 1 1-1h23a1 1 0 0 1 0 2H1a1 1 0 0 1-1-1zm0 7a1 1 0 0 0 1 1h23a1 1 0 0 0 0-2H1a1 1 0 0 0-1 1zm0 7a1 1 0 0 0 1 1h23a1 1 0 0 0 0-2H1a1 1 0 0 0-1 1z" fill-rule="evenodd"></path></svg>
             </div>                      
         </div>
 

@@ -114,7 +114,7 @@ outline: none;
 }
 .main__header{
   margin: 0 auto;
-  background-image: url(img/juan-encalada-6mcVaoGNz1w-unsplash.jpg);
+  background-image: url(img/image.jpg);
   background-position: center center;
   background-size: cover;
   position: relative;
@@ -511,18 +511,24 @@ outline: none;
   }
   .main__table{
       display: block;
+
   }
   .main__table-table{
-      display: block;
-      min-width: 100%;
-      max-width: none;
+    display: block;
+    min-width: 80%;
+    max-width: 80%;
+    margin: 0 auto;
   }
   .main__table-button button{
-      display: block;
-      width: 100%;
-      margin-left: 0;
-      padding: 25px 0;
-      border-radius: 0;
+    display: block;
+    width: 80%;
+    margin-left: 0;
+    padding: 25px 0;
+    border-radius: 0;
+    margin: 0 auto;
+  }
+  .main__table-button{
+    
   }
   .choice__inner{
       flex-direction: column;

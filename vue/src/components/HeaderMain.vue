@@ -5,16 +5,16 @@
             <Header :blackText="false"/>
 
             <div class="main">
-                <h1 v-if="isRaces" class="main__main">
+                <h1 style="text-shadow: 1px 1px 5px black" v-if="isRaces" class="main__main">
                     Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}} 
                 </h1>
-                <h1 v-else-if="station" class="main__main">
+                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="station" class="main__main">
                     {{ station.name }}
                 </h1>
-                <h1 v-else class="main__main">
+                <h1 style="text-shadow: 1px 1px 5px black" v-else class="main__main">
                     Автовокзалы России
                 </h1>
-                <p v-if="!isRaces" class="main__main-p">
+                <p style="text-shadow: 1px 1px 5px black" v-if="!isRaces" class="main__main-p">
                     Билеты на автобус онлайн
                 </p>
             </div>
