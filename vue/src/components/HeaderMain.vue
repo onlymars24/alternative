@@ -472,4 +472,13 @@ export default{
         margin-left: 0px;
     }
 }
+
+@media (max-width: 768px)
+{
+    .main__header .main{
+        margin-top: 70px;
+    }
+}
+
+
 </style>

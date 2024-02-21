@@ -55,6 +55,7 @@
                         <div class="" style="width: 25%; margin-bottom: 10px;">
                             <label for="">URL</label>
                             <el-input v-model="station.title" />
+                            <el-link :href="url+'/автовокзал/'+station.fixTitle" target="_blank" type="primary">{{ url+'/автовокзал/'+station.fixTitle }}</el-link>
                         </div>
                         <div class="">
                             <label for="">Точка отправления</label><br>
@@ -118,11 +119,12 @@ export default
                 hidden: true
             },
             dispatchPoints: [],
-            selectedStationId: ''
+            selectedStationId: '',
+            url: window.location.origin
         }
     },
     async mounted(){
-        // this.loading = true
+        console.log(window.location)
         this.getAll()
         const promise = axiosClient
         .get('/dispatch_points/')
@@ -150,6 +152,7 @@ export default
             await promise
             this.busStations.forEach(station => {
                 station.fixName = station.name
+                station.fixTitle = station.title
                 station.booleanHidden = station.hidden == 1 ? true : false
             })
             console.log(this.busStations)
