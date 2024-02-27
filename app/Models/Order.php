@@ -22,7 +22,9 @@ class Order extends Model
         'ip',
         'duePercent',
         'duePrice',
-        'timezone'
+        'timezone',
+        'dispatchPointId',
+        'arrivalPointId',
     ];
 
     public function transactions()

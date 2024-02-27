@@ -55,6 +55,15 @@
                                     <el-tag size="large" closable @close="deleteFilter('dispatchDate')">{{filterArr.dispatchDate.value}}</el-tag>
                                 </template>
                             </div>
+                            <div class="text item" style="margin-bottom: 10px;">
+                                <div>Дата бронирования(мск):</div> 
+                                <template v-if="!filterArr.created_at.set">
+                                    <Calendar @setDateFilter="setDateFilter" :filterName="'created_at'"/>                                
+                                </template>
+                                <template v-else>
+                                    <el-tag size="large" closable @close="deleteFilter('created_at')">{{filterArr.created_at.value}}</el-tag>
+                                </template>
+                            </div>
                             <div class="text item">
                                 <div>Цена:</div> 
                                 <el-slider @change="paginateForPrice" v-model="filterArr.price.value" range :max="10000"></el-slider>
@@ -141,6 +150,10 @@ export default
                     value: ''
                 },
                 dispatchDate: {
+                    set: false,
+                    value: ''
+                },
+                created_at: {
                     set: false,
                     value: ''
                 },
@@ -317,7 +330,8 @@ export default
                         this.filterCondition('ticketType', elem) &&
                         this.filterCondition('status', elem) &&
                         this.filterCondition('order_id', elem) &&
-                        (!this.filterArr['dispatchDate'].set || (this.filterArr['dispatchDate'].set && dayjs(elem['dispatchDate']).format('YYYY-MM-DD') == this.filterArr['dispatchDate'].value))
+                        (!this.filterArr['dispatchDate'].set || (this.filterArr['dispatchDate'].set && dayjs(elem['dispatchDate']).format('YYYY-MM-DD') == this.filterArr['dispatchDate'].value)) &&
+                        (!this.filterArr['created_at'].set || (this.filterArr['created_at'].set && dayjs(elem['created_at']).format('YYYY-MM-DD') == this.filterArr['created_at'].value))
             })
         },
         pagesCount(){
@@ -346,6 +360,7 @@ export default
         await promise
         this.tickets.forEach(elem => {
             elem.birthday = dayjs(elem.birthday).format('YYYY-MM-DD')
+            elem.created_at = dayjs(elem.created_at).format('YYYY-MM-DD HH:mm')
             elem.insurance = elem.insurance ? JSON.parse(elem.insurance) : null
         })
         this.ticketsLoading = false

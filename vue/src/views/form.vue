@@ -383,7 +383,8 @@ export default
         console.log(this.sale)
         // return this.sale
         const promise2 = axiosClient
-        .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice})
+        .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice, 
+        dispatch_point_id: this.$route.params['dispatch_point_id'], arrival_point_id: this.$route.params['arrival_point_id'] })
         .then(response => {
           console.log(response)
           this.order = response.data.order
@@ -682,11 +683,15 @@ export default
       this.authenticateForForm()
     }
     const promise = axiosClient
-      .get('/race/'+this.$route.params['race_id'])
+    .get('/race?dispatchPointId='+this.$route.params['dispatch_point_id']+'&arrivalPointId='+this.$route.params['arrival_point_id']+'&date='+this.$route.params['date']+'&uid='+this.$route.params['race_id'])
       .then(response => (
           this.race = response.data
       ));
     await promise
+    if(!this.race){
+      router.push({name: 'Main'})
+      return
+    }
     const promise1 = axiosClient
       .get('/countries')
       .then(response => (

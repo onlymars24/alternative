@@ -10,11 +10,12 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
-use App\Http\Controllers\Api\RaceController;
+// use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PageMainController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Api\RacesController;
+use App\Http\Controllers\RaceController;
 use App\Http\Controllers\DebuggingController;
 use App\Http\Controllers\BusStationController;
 use App\Http\Controllers\PassengersController;
@@ -57,6 +58,8 @@ Route::middleware('auth:api')->group(function(){
 
 
 Route::post('/order/transactions', [TransactionController::class, 'all']);
+
+Route::get('/race', [RaceController::class, 'get']);
 
 Route::get('/order', [OrderController::class, 'one']);
 Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
@@ -104,7 +107,7 @@ Route::apiResources([
     'dispatch_points' => DispatchPointsController::class,
     'arrival_points' => ArrivalPointsController::class,
     'races' => RacesController::class,
-    'race' => RaceController::class,
+    // 'race' => RaceController::class,
     'date' => DateController::class,
     'countries' => CountriesController::class,
     'sms' => SendSmsController::class

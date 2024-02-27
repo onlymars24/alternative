@@ -3,15 +3,40 @@
 <div>
     <!-- RACES <pre>{{ races }}</pre> -->
     <div class="menu" style="margin-top: 50px;">
+        <div class="container">
+            <div class="menu__intro">
+                <p>Отправление и прибытие по местному времени</p>
+                <h4>Расписание автобусов {{errorNames.dispatch}} — {{errorNames.arrival}}</h4>
+                <div class="menu__inro-sort">
+                </div>              
+            </div>             
+        </div>
+    </div>
+   
+    <div class="menu">
 		<div class="container">
             <BusLoading v-if="loadingRaces"/>
-            <div v-else-if="!races.length" class="not__found">
+            <div v-else-if="!races.length && notExistingRace" class="not__found">
                 <div class="not__found-img">
                     <img src="../assets/free-icon-sad-3350122.png">
                 </div>
                 <div class="not__found-text">
                     <p class="not__found-title">
-                        {{dispatchEl.name}} — {{arrivalEl.name}}
+                        Маршрута {{errorNames.dispatch}} — {{errorNames.arrival}}
+                        не существует
+                    </p>
+                    <p class="not__found-descr">
+                        Выберите другие точки отправления и прибытия.
+                    </p>
+                </div>
+            </div>
+            <div v-else-if="!races.length && !notExistingRace" class="not__found">
+                <div class="not__found-img">
+                    <img src="../assets/free-icon-sad-3350122.png">
+                </div>
+                <div class="not__found-text">
+                    <p class="not__found-title">
+                        {{errorNames.dispatch}} — {{errorNames.arrival}}
                         на {{ dateForError }}
                         Билеты не найдены
                     </p>
@@ -21,8 +46,8 @@
                 </div>
             </div>
             <div v-else class="menu__intro">
-				<p>Отправление и прибытие по местному времени</p>
-				<h4>Расписание автобусов {{dispatchEl.name}} — {{arrivalEl.name}}</h4>
+				<!-- <p>Отправление и прибытие по местному времени</p>
+				<h4>Расписание автобусов {{dispatchEl.name}} — {{arrivalEl.name}}</h4> -->
 				<div class="menu__inro-sort">
 				<div class="inro-sort__button">
                 	<button @click="sort($event, 'dispatchDate')" :class="{active: sortingParams.param == 'dispatchDate'}">
@@ -187,9 +212,14 @@ export default {
                 name: this.$route.params['dispatch_name']
             },
             date: this.$route.query.on,
-            dateForError: '',
+            errorNames: {
+                dispatch: this.$route.params['dispatch_name'],
+                arrival: this.$route.params['arrival_name']
+            },
+            dateForError: this.$route.query.on,
             races: [],
             loadingRaces: true,
+            notExistingRace: false,
             months: [
                 '', 'янв.', 'февр.', 'мар.', 'апр.', 'май.', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'ноябр.', 'дек.', 
             ],
@@ -201,6 +231,10 @@ export default {
         }
     },
     async mounted(){
+        document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
+        const descEl = document.querySelector('head meta[name="description"]');
+        descEl.setAttribute('content', 'Отправление и прибытие по местному времени. Расписание автобусов '+this.dispatchEl.name+' — '+this.arrivalEl.name);
+
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if(!regex.test(this.date)){
             console.log('нет')
@@ -216,22 +250,41 @@ export default {
         let dispatchPoint = dispatchPoints.filter(point => {
             return point.name == this.dispatchEl.name
         })[0]
-        if(!dispatchPoint){
-            this.$router.push({ name: 'Main' })
+        // if(!dispatchPoint){
+        //     this.$router.push({ name: 'Main' })
+        // }
+        
+        let arrivalPoints = [];
+        let arrivalPoint = null
+        if(dispatchPoint){
+            const promise2 = axiosClient
+            .get('/arrival_points/'+dispatchPoint.id)
+            .then(response => {
+                arrivalPoints = JSON.parse(response.data.arrival_points)
+            });
+            await promise2
+            arrivalPoint = arrivalPoints.filter(point => {
+                return point.name == this.arrivalEl.name
+            })[0]
         }
 
-        let arrivalPoints = [];
-        const promise2 = axiosClient
-        .get('/arrival_points/'+dispatchPoint.id)
-        .then(response => {
-            arrivalPoints = JSON.parse(response.data.arrival_points)
-        });
-        await promise2
-        let arrivalPoint = arrivalPoints.filter(point => {
-            return point.name == this.arrivalEl.name
-        })[0]
-        if(!arrivalPoint){
-            this.$router.push({ name: 'Main' })
+
+        // let arrivalPoints = [];
+        // const promise2 = axiosClient
+        // .get('/arrival_points/'+dispatchPoint.id)
+        // .then(response => {
+        //     arrivalPoints = JSON.parse(response.data.arrival_points)
+        // });
+        // await promise2
+        // let arrivalPoint = arrivalPoints.filter(point => {
+        //     return point.name == this.arrivalEl.name
+        // })[0]
+        if(!arrivalPoint || !dispatchPoint){
+            // this.$router.push({ name: 'Main' })
+            this.races = []
+            this.loadingRaces = false
+            this.notExistingRace = true
+            return
         }
         if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
             this.dispatchEl.id = dispatchPoint.id
@@ -304,7 +357,8 @@ export default {
             }
         },
         toSeats(raceId){
-            router.push({name: 'SeatPage', params: {race_id: raceId}})
+            
+            router.push({name: 'SeatPage', params: {dispatch_point_id: this.dispatchEl.id, arrival_point_id: this.arrivalEl.id, date: this.$route.query.on, race_id: raceId}})
         }
     },
     // created() {

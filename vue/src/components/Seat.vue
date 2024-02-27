@@ -225,7 +225,7 @@ body {
     },
     passToForm(){
       localStorage.setItem('chosenSeats', JSON.stringify(this.chosenSeats));
-      router.push({ name: 'Form', params: { race_id: this.race.race.uid} })
+      router.push({ name: 'Form', params: { dispatch_point_id: this.$route.params['dispatch_point_id'], arrival_point_id: this.$route.params['arrival_point_id'], date: this.$route.params['date'], race_id: this.race.race.uid} })
     }
   },
   mounted(){

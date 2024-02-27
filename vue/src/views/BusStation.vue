@@ -57,6 +57,8 @@ export default{
 
     },
     async mounted() {
+        document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
+
         console.log(this.$route.params['title'])
         const promise = axiosClient
         .get('/bus/station?title='+this.$route.params['title'].replace(/\s/g, '_'))
@@ -72,6 +74,9 @@ export default{
         if(!this.station){
             router.push({ name: 'Main'})
         }
+        const descEl = document.querySelector('head meta[name="description"]');
+        descEl.setAttribute('content',this.station.description);
+
         VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
             tooltipButtonText: "Есть вопрос?",
             expanded: "0",

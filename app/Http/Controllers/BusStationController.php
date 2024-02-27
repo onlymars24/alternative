@@ -24,6 +24,7 @@ class BusStationController extends Controller
         $busStation = BusStation::create([
             'title' => $request->title,
             'name' => $request->name,
+            'description' => $request->description,
             'dispatch_point_id' => $request->dispatch_point_id,
             'hidden' => $request->hidden,
         ]);
@@ -38,6 +39,7 @@ class BusStationController extends Controller
         $busStation = BusStation::find($request->id);
         $busStation->title = $request->title;
         $busStation->name = $request->name;
+        $busStation->description = $request->description;
         $busStation->hidden = $request->hidden;
         $busStation->dispatch_point_id = $request->dispatch_point_id;
         $busStation->data = json_encode(['content' => $request->content ? $request->content : '']);

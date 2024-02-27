@@ -55,16 +55,16 @@
 		   </div>
 		   <div class="right-ins__right" v-if="!expired">
 			 <div class="right-ins__right-button">
-			   <button v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" @click="tickets = !tickets" class="buy__but" >
-				  Список билетов 
+			   <button v-if="(race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R') && order.dispatchPointId && order.arrivalPointId" @click="toReturnRace" class="buy__but" style="background-color: #7CAE5E;">
+				Обратный билет
 			   </button>
 			   <button v-if="race.order.status == 'B'" @click="toPayment" class="buy__but" style="background: #dc3545;">
 				  Оплатить 
 			   </button>
 			 </div>
-			<ul class="tickets-list" v-show="tickets">
+			<!-- <ul class="tickets-list" v-show="tickets">
 				<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></li>
-			</ul>
+			</ul> -->
 		   </div>
 		 </div>
 	   </div>
@@ -82,20 +82,28 @@
 		   <div>
 			<a v-if="!expired && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" @click.prevent="windowOpen = 2" href="">Ещё</a>
 			<!-- <span>Дата покупки</span>	 -->
-
+			
 			<transition name="anim-window">
-				<nav style="z-index: 5; display: flex; flex-direction: column;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
+				<nav style="z-index: 5; display: flex; flex-direction: column; left: 100px; right: auto;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
 					<a v-if="!wentOut" href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
 					<a v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class="header__links__window__myRace-link">Транзакции</a>
 					<a v-if="order.insured && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" href="" @click.prevent="popupInsurancesOpen = true, getInsurances()" class="header__links__window__myRace-link">Страховки</a>
 				</nav>
 			</transition>
 		   </div>
+
    
 		 </div>
+	 
 		<!-- <div><p>Заказ оформлен: {{ race.order.created }}</p></div>
 		<div><p>Заказ оплачен: {{ race.order.finished }}</p></div> -->
 	   </div>
+		<div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" class="" style="width: 30%;">
+			<a @click.prevent="tickets = !tickets" href="">Список билетов</a>
+		</div>		 
+		<ul class="tickets-list" v-show="tickets">
+			<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></li>
+		</ul>  
 	 </div>
    </div>
    	<template v-if="popupOpen">
@@ -203,6 +211,10 @@
 		toPayment(){
 			// router.push({name: 'Payment', params: {order_id: this.order.id}})
 			window.open(this.order.formUrl, '_self');
+		},
+		toReturnRace(){
+			router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order.dispatchPointId, arrival_point_id: this.order.arrivalPointId, 
+				dispatch_station_name: this.race.order.tickets[0].dispatchStation, arrival_station_name: this.race.order.tickets[0].arrivalStation }})
 		},
 		async returnOrder(orderId){
 			if(!confirm('Вы уверены, что хотите вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
@@ -312,7 +324,7 @@
   background-color: white;
   padding: 10px;
   border-radius: 10px;
-  top: 0px;
+  top: 35px;
   right: 190px;
   width: 250px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
@@ -327,7 +339,7 @@
 .tickets-list
 {
   right: 0px;
-  top: 60px;
+  top: 40px;
 }
 .ticket-up__left-ins{
 	padding: 12px 16px;

@@ -47,6 +47,8 @@ class OrderController extends Controller
         $orderFromDB = Order::create([
             'id' => $order->id,
             'order_info' => $order_json,
+            'dispatchPointId' => $request->dispatch_point_id,
+            'arrivalPointId' => $request->arrival_point_id,
             'user_id' => Auth::id(),
         ]);
         $orderBundle = [

@@ -24,6 +24,7 @@ import EditMain from '../views/admin/EditMain.vue'
 import EditPoints from '../views/admin/EditPoints.vue'
 import BusStations from '../views/admin/BusStations.vue'
 import BusStation from '../views/BusStation.vue'
+import ReturnRace from '../views/ReturnRace.vue'
 
 const routes = [
   // {
@@ -42,9 +43,14 @@ const routes = [
     component: BusStation
   },
   {
-    path: '/avtobus/:dispatch_name/:arrival_name',
+    path: '/'+encodeURI('автобус')+'/:dispatch_name/:arrival_name',
     name: 'Races',
     component: Races
+  },
+  {
+    path: '/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/:dispatch_point_id/:dispatch_station_name/:arrival_point_id/:arrival_station_name',
+    name: 'ReturnRace',
+    component: ReturnRace
   },
   // {
   //   path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/',
@@ -58,12 +64,12 @@ const routes = [
   //   component: Avtobus
   // },
   {
-    path: '/seats/:race_id',
+    path: '/seats/:dispatch_point_id/:arrival_point_id/:date/:race_id',
     name: 'SeatPage',
     component: SeatPage
   },
   {
-    path: '/form/:race_id',
+    path: '/form/:dispatch_point_id/:arrival_point_id/:date/:race_id',
     name: 'Form',
     component: form
   },

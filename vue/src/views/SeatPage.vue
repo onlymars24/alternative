@@ -22,6 +22,7 @@ import Header from '../components/Header.vue';
 import BusLoading from '../components/BusLoading.vue';
 import axios from 'axios';
 import axiosClient from '../axios'
+import router from '../router';
 
 export default {
   components: { Seat, HeaderСrumbsVue, Header, BusLoading },
@@ -35,14 +36,21 @@ export default {
   },
   async mounted(){
     const promise = axiosClient
-      .get('/race/'+this.$route.params['race_id'])
-      .then(response => (
+      .get('/race?dispatchPointId='+this.$route.params['dispatch_point_id']+'&arrivalPointId='+this.$route.params['arrival_point_id']+'&date='+this.$route.params['date']+'&uid='+this.$route.params['race_id'])
+      .then(response => {
           this.race = response.data
-      ));
+          console.log(this.race)
+      })
+      .catch(error => {
+        console.log(error)
+      });
     await promise
+    if(!this.race){
+      router.push({name: 'Main'})
+      return
+    }
     this.seats = this.race.seats
     this.updateSeats()
-
     this.loadingSeats = false
     
   },

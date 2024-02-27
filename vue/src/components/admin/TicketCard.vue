@@ -23,6 +23,7 @@
         <div class="text item"><strong>Пункт отправления:</strong> {{ ticket.dispatchStation }}</div>
         <div class="text item"><strong>Пункт прибытия:</strong> {{ ticket.arrivalStation }}</div>
         <div class="text item"><strong>Дата отправления:</strong> {{ ticket.dispatchDate }}</div>
+        <div class="text item"><strong>Дата бронирования(мск):</strong> {{ ticket.created_at }}</div>
         <div class="text item"><strong>Дата рождения:</strong> {{ ticket.birthday }}</div>
         <div class="text item"><strong>Серия билета:</strong> {{ ticket.ticketSeries }}</div>
         <div class="text item"><strong>Номер билета:</strong> {{ ticket.ticketNum }}</div>

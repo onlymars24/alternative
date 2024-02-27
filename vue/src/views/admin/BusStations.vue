@@ -10,9 +10,14 @@
                     <el-input v-model="newBusStation.name"></el-input>
                 </div> 
                 <div style="width: 25%; margin-bottom: 10px;">
+                    <label for="">Описание (description)</label><br>
+                    <el-input type="textarea" v-model="newBusStation.description"></el-input>
+                </div>                
+                <div style="width: 25%; margin-bottom: 10px;">
                     <label for="">URL</label><br>
                     <el-input v-model="newBusStation.title"></el-input>
                 </div> 
+ 
                 <div>
                     <label for="">Точка отправления</label><br>
                     <el-select v-model="newBusStation.dispatchPointId">
@@ -51,7 +56,11 @@
                         <div class="" style="width: 25%; margin-bottom: 10px;">
                             <label for="">Название автовокзала</label>
                             <el-input v-model="station.name" />
-                        </div>                        
+                        </div>
+                        <div style="width: 25%; margin-bottom: 10px;">
+                            <label for="">Описание (description)</label><br>
+                            <el-input type="textarea" v-model="station.description"></el-input>
+                        </div>                          
                         <div class="" style="width: 25%; margin-bottom: 10px;">
                             <label for="">URL</label>
                             <el-input v-model="station.title" />
@@ -77,6 +86,7 @@
                                 <HtmlEditor 
                                 :id="station.id" 
                                 :name="station.name" 
+                                :description="station.description"
                                 :title="station.title" 
                                 :data="station.data" 
                                 :hidden="station.booleanHidden" 
@@ -116,6 +126,7 @@ export default
                 title: '',
                 name: '',
                 dispatchPointId: '',
+                description: '',
                 hidden: true
             },
             dispatchPoints: [],
@@ -164,6 +175,7 @@ export default
             const promise = axiosAdmin
             .post('/bus/station/create', {title: this.newBusStation.title.replace(/\s/g, '_'), 
                                             name: this.newBusStation.name, 
+                                            description: this.newBusStation.description, 
                                             dispatch_point_id: this.newBusStation.dispatchPointId, 
                                             hidden: this.newBusStation.hidden})
             .then(response => {
@@ -180,13 +192,14 @@ export default
             this.getAll()
             this.loading = false
         },
-        async editStation(id, title, name, content, dispatch_point_id, hidden){
+        async editStation(id, title, name, description, content, dispatch_point_id, hidden){
             this.loading = true
             console.log(id, title, content, dispatch_point_id, hidden)
             const promise = axiosAdmin
             .post('/bus/station/edit', {id: id,
                 title: title.replace(/\s/g, '_'), 
                 name: name, 
+                description: description, 
                 content: content, 
                 dispatch_point_id: dispatch_point_id, 
                 hidden: hidden})

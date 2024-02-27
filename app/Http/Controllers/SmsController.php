@@ -63,7 +63,8 @@ class SmsController extends Controller
 
         $smsService = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
-        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$code);
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$request->phone.'&sign=BIZNES&text=Код на '.'росвокзалы.рф'.': '.$code.'
+Поддержка в ВК-группе: vk.com/rosvokzaly');
         $smsService = json_decode($smsService);
         if(!isset($smsService->data->id)){
             return response([
@@ -156,7 +157,8 @@ class SmsController extends Controller
         $code = random_int(100000, 999999);
         $smsService = Http::withHeaders([
             'Authorization' => env('SMS_SERVICE_KEY'),
-        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Ваш код на '.'росвокзалы.рф'.': '.$request->url.': '.$code);
+        ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Код на '.'росвокзалы.рф'.': '.$code.'
+Поддержка в ВК-группе: vk.com/rosvokzaly');
         $smsService = json_decode($smsService);
         $sms = Sms::create([
             'id' => $smsService->data->id,
