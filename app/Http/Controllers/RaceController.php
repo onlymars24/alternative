@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Http;
 class RaceController extends Controller
 {
     public function get(Request $request){
-        
         $races = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$request->date)->object();
@@ -23,7 +22,6 @@ class RaceController extends Controller
                 }
             }            
         }
-
         return null;
     }
 }

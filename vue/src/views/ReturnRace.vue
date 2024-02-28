@@ -24,7 +24,8 @@ export default
           id: null,
           name: null
       },
-      race: []
+      race: [],
+      status: ''
     }
   },
   computed: {
@@ -64,16 +65,29 @@ export default
     console.log(dispatchPoint, arrivalPoint)
     if(dispatchPoint && arrivalPoint){
       console.log('da')
-      this.dispatchEl.name = arrivalPoint.name
-      this.arrivalEl.name = dispatchPoint.name
+      this.dispatchEl.name = dispatchPoint.name
+      this.arrivalEl.name = arrivalPoint.name
       this.pointsExisting = true
+      this.status = 'Успешная'
     }
     else{
       console.log('net')
       this.dispatchEl.name = this.$route.params['arrival_station_name']
       this.arrivalEl.name = this.$route.params['dispatch_station_name']
+      this.status = 'Неудачная'
     }
-    
+    const promise3 = axiosClient
+    .post('/send/race/existing', {
+      status: this.status,
+      points: this.dispatchEl.name+' - '+this.arrivalEl.name
+    })
+    .then(response => {
+      console.log(response)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+    //send mail
     router.push({ name: 'Races', params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
   },
 };

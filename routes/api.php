@@ -4,18 +4,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RaceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\Api\DateController;
 // use App\Http\Controllers\Api\RaceController;
+use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PageMainController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Api\RacesController;
-use App\Http\Controllers\RaceController;
 use App\Http\Controllers\DebuggingController;
 use App\Http\Controllers\BusStationController;
 use App\Http\Controllers\PassengersController;
@@ -24,6 +24,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\PopularPointsController;
 use App\Http\Controllers\Api\ArrivalPointsController;
+use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
 
 /*
@@ -60,6 +61,8 @@ Route::middleware('auth:api')->group(function(){
 Route::post('/order/transactions', [TransactionController::class, 'all']);
 
 Route::get('/race', [RaceController::class, 'get']);
+
+Route::post('/send/race/existing', [RacesExistingMailController::class, 'send']);
 
 Route::get('/order', [OrderController::class, 'one']);
 Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);

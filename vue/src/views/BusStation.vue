@@ -57,7 +57,7 @@ export default{
 
     },
     async mounted() {
-        document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
+        
 
         console.log(this.$route.params['title'])
         const promise = axiosClient
@@ -71,9 +71,12 @@ export default{
             console.log(error)
         })
         await promise
+        
         if(!this.station){
             router.push({ name: 'Main'})
+            return
         }
+        document.title = this.station.name;
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content',this.station.description);
 
