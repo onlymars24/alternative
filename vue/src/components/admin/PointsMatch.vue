@@ -75,7 +75,7 @@
                 </el-select>
             </div>
         </div>
-        <el-button style="margin-top: 10px" type="primary" @click="create">Создать</el-button>
+        <el-button style="margin-top: 10px" type="primary" @click="create" :disabled="!(newMatch.orderPointId && newMatch.matchPointId && newMatch.pointType)">Создать</el-button>
   </el-card>
   </div>
 </template>

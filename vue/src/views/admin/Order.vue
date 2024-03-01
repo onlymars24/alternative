@@ -16,7 +16,7 @@
                         <el-descriptions-item label="Сервисный сбор">{{order_outside.duePercent}}%</el-descriptions-item>
                         <el-descriptions-item label="Сумма сервисного сбора">{{order_outside.duePrice}}₽</el-descriptions-item>
                     </el-descriptions>
-                    <el-button type="primary" style="margin-top: 20px;" @click="toReturnRace">Обратный рейс</el-button>
+                    <el-button v-if="order_outside.dispatchPointId && order_outside.arrivalPointId" type="primary" style="margin-top: 20px;" @click="toReturnRace">Обратный рейс</el-button>
                     <div style="margin-top: 20px;">
                         <el-card class="box-card">
                             <template #header>
