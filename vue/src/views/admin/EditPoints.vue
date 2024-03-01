@@ -26,6 +26,8 @@
                 />
             </div>
             <el-button type="primary" :loading-icon="Eleme" @click="savePopularPoints" :loading="loading">Сохранить</el-button>
+
+            <PointsMatch/>
         </el-main>
     </el-container>
 </template>
@@ -36,11 +38,12 @@ import axiosAdmin from '../../axiosAdmin'
 import axiosClient from "../../axios";
 import Header from '../../components/admin/Header.vue'
 import BusLoading from '../../components/BusLoading.vue'
+import PointsMatch from '../../components/admin/PointsMatch.vue'
 
 
 export default
 {
-    components: { Header, BusLoading },
+    components: { Header, BusLoading, PointsMatch },
     data() {
         return {
             data: this.generateData(),

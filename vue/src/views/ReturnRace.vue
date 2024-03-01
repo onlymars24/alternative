@@ -11,6 +11,7 @@
 import router from '../router';
 import axiosClient from '../axios'
 
+
 export default
 {
   data(){
@@ -25,7 +26,8 @@ export default
           name: null
       },
       race: [],
-      status: ''
+      status: '',
+      newPoints: []
     }
   },
   computed: {
@@ -35,10 +37,24 @@ export default
 
   },
   async mounted() {
-    this.dispatchEl.id = this.$route.params['arrival_point_id']
-    this.arrivalEl.id = this.$route.params['dispatch_point_id']
-    console.log(this.race, this.dispatchEl.id, this.arrivalEl.id)
+    const promise = axiosClient
+      .post('/match/replacement', {
+        dispatchPointId: this.$route.params['dispatch_point_id'],
+        arrivalPointId: this.$route.params['arrival_point_id'],
+      })
+      .then(response => {
+          this.newPoints = response.data
+          console.log(this.newPoints)
+      });
+    await promise
+      
 
+    this.dispatchEl.id = this.newPoints.newDispatchPointId ? this.newPoints.newDispatchPointId : this.$route.params['dispatch_point_id']
+    this.arrivalEl.id = this.newPoints.newArrivalPointId ? this.newPoints.newArrivalPointId : this.$route.params['arrival_point_id']
+
+
+    console.log(this.race, this.dispatchEl.id, this.arrivalEl.id)
+  // return
     let dispatchPoints =[]
     const promise1 = axiosClient
       .get('/dispatch_points')
@@ -72,8 +88,8 @@ export default
     }
     else{
       console.log('net')
-      this.dispatchEl.name = this.$route.params['arrival_station_name']
-      this.arrivalEl.name = this.$route.params['dispatch_station_name']
+      this.dispatchEl.name = this.$route.params['dispatch_station_name']
+      this.arrivalEl.name = this.$route.params['arrival_station_name']
       this.status = 'Неудачная'
     }
     const promise3 = axiosClient

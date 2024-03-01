@@ -16,6 +16,7 @@
                         <el-descriptions-item label="Сервисный сбор">{{order_outside.duePercent}}%</el-descriptions-item>
                         <el-descriptions-item label="Сумма сервисного сбора">{{order_outside.duePrice}}₽</el-descriptions-item>
                     </el-descriptions>
+                    <el-button type="primary" style="margin-top: 20px;" @click="toReturnRace">Обратный рейс</el-button>
                     <div style="margin-top: 20px;">
                         <el-card class="box-card">
                             <template #header>
@@ -46,6 +47,7 @@ import axiosClient from '../../axios';
 import Header from '../../components/admin/Header.vue'
 import TicketCard from '../../components/admin/TicketCard.vue'
 import ticketStatuses from '../../data/TicketStatuses';
+import router from '../../router'
 
 export default
 {
@@ -108,6 +110,10 @@ export default
 
     },
     methods: {
+        toReturnRace(){
+			router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order_outside.arrivalPointId, arrival_point_id: this.order_outside.dispatchPointId, 
+				dispatch_station_name: this.order.tickets[0].arrivalStation, arrival_station_name: this.order.tickets[0].dispatchStation }})
+		},
     }
 }
 </script>

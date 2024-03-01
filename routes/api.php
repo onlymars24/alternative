@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PageMainController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\AllPointsController;
 use App\Http\Controllers\Api\RacesController;
 use App\Http\Controllers\DebuggingController;
 use App\Http\Controllers\BusStationController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\PopularPointsController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\MatchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +66,8 @@ Route::get('/race', [RaceController::class, 'get']);
 
 Route::post('/send/race/existing', [RacesExistingMailController::class, 'send']);
 
+
+
 Route::get('/order', [OrderController::class, 'one']);
 Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 Route::post('/admin/login', [AdminController::class, 'login']);
@@ -100,6 +104,16 @@ Route::get('/sms/all', [SmsController::class, 'getAll']);
 
 
 Route::get('/settings/cluster/due', [SettingsController::class, 'getClusterDue']);
+
+Route::get('/points', [AllPointsController::class, 'all']);
+
+Route::get('/matches', [MatchController::class, 'all']);
+
+Route::post('/match/create', [MatchController::class, 'create']);
+
+Route::post('/match/delete', [MatchController::class, 'delete']);
+
+Route::post('/match/replacement', [MatchController::class, 'replacement']);
 
 
 
