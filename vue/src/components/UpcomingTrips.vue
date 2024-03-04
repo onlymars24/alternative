@@ -29,8 +29,8 @@ export default
   components: { RaceCardAccount, BusLoading },
   data(){
       return{
-        orders: {},
-        loading: false 
+        orders: [],
+        loading: false,
       }
   },
   async mounted(){
@@ -39,15 +39,14 @@ export default
   methods: {
     async updateOrders(){
       this.loading = true
-      const promise = axiosClient
+      const promise1 = axiosClient
       .get('/orders')
       .then(response => {
         this.orders = response.data.orders
       })
-      await promise
+      await promise1
       this.loading = false
-      console.log(this.orders.length)
-    }
+    },
   }
 
 };

@@ -2,7 +2,7 @@
 <!-- eslint-disable max-len -->
 <template>
 <div class="background-close" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')"></div>
-<div class="popup-container" :class="{'feedback-popup': this.content==7, 'rejection__popup': this.content==8}">
+<div class="popup-container" :class="{'feedback-popup': this.content==7, 'rejection__popup': this.content==8 || 9}">
     <div v-if="this.content != 8" class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
@@ -146,6 +146,27 @@
 
       </div> 
     </div>
+    <div v-if="this.content==9">
+      <div>
+        <form @submit.prevent="emailEdit">
+        <h4>Укажите email, на который будет отправляться билет</h4>
+        <!-- {{ feedbackCredentials }} -->
+        <ul style="margin-top: 15px;">
+          <li>
+            <!-- <label for="tel" class="form-label label-gray">Укажите свой email, на который будет приходить билет</label> -->
+            <input v-model="emailEditObj.value" class="form-control inp-gray phone__input" placeholder="Ваш email" type="email" required>
+          </li>
+          <li>
+            <button v-if="!emailEditObj.loading" type="submit" style="margin-top: 10px; color: #fff;" class="btn btn-primary btn-code">Отправить</button>
+            <button v-else class="btn btn-primary btn-code" type="submit" disabled>
+              <span style="margin-right: 10px;" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span class="sr-only">Загрузка...</span>
+            </button>
+          </li>
+        </ul>
+        </form>
+      </div> 
+    </div>
 </div>
 </template>
 <script scoped>
@@ -176,11 +197,15 @@ export default
         descr: '',
         topic: '',
         accepted: false
+      },
+      emailEditObj: {
+        value: '',
+        loading: false
       }
     }
   },
   props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice'],
-  emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind'],
+  emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail'],
   components: { Seat, Login, Registration, ResetPassword },
   computed: {
     UserAgreement() {
@@ -204,6 +229,12 @@ export default
       })
       await promise
       this.feedbackInfo.loading = false
+    },
+    async emailEdit(){
+      this.emailEditObj.loading = true
+      this.$emit('editEmail', this.emailEditObj.value)
+      this.$emit('CloseWindow')
+      this.emailEditObj.loading = false
     }
   },
   mounted(){

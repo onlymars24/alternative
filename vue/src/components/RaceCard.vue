@@ -50,7 +50,7 @@
 		   </div>
 		   <div class="right-ins__right">
 			 <div class="right-ins__right-button">
-			   <button @click="$emit('toSeats', race.uid)" class="buy__but">
+			   <button :disabled="race.freeSeatCount == 0" @click="$emit('toSeats', race.uid)" class="buy__but">
 				 Выбрать
 			   </button>
 			 </div>

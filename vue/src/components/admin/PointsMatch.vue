@@ -1,11 +1,11 @@
 <template>
-    <div class="" v-loading.fullscreen.lock="loading">
+    <div class="" style="margin-bottom: 250px;" v-loading.fullscreen.lock="loading">
         <p style=" margin-top: 30px;">Соответствия точек для обратных рейсов</p>
         <el-table :data="matches" style="width: 100%; margin-top: 10px;">
-        <el-table-column label="ID точки заказа" prop="orderPointId" />
-        <el-table-column label="Название точки заказа" prop="orderPointName" />
-        <el-table-column label="ID точки для замены" prop="matchPointId" />
-        <el-table-column label="Название точки для замены" prop="matchPointName" />
+        <el-table-column label="ID точки из заказа, которую меняем" prop="orderPointId" />
+        <el-table-column label="Название точки из заказа, которую меняем" prop="orderPointName" />
+        <el-table-column label="ID точки, на которую меняем" prop="matchPointId" />
+        <el-table-column label="Название точки, на которую меняем" prop="matchPointName" />
         <el-table-column label="Тип точки" prop="pointType" />
         <el-table-column align="right">
         <template #default="scope">
@@ -18,12 +18,12 @@
   <el-card class="box-card" style="width: 100%; margin-top: 30px;">
     <template #header>
       <div class="card-header">
-        <span>Новый match</span>
+        <span>Новое соответствие точек для обратных рейсов</span>
       </div>
     </template>
-        <div class="" style="display: flex;">
+        <div class="" style="display: flex; align-items: flex-end;">
             <div class="">
-                <p>Точка заказа</p>
+                <p>Точка из заказа,<br>которую меняем</p>
                 <el-select
                     v-model="newMatch.orderPointId"
                     filterable
@@ -38,9 +38,9 @@
                     />
                 </el-select>                
             </div>
-
+            <div class="" style="margin: 0 25px 0 10px;">Соответствует =></div>
             <div class="">
-                <p>Точка для замены</p>
+                <p>Точка, на которую меняем</p>
                 <el-select
                     v-model="newMatch.matchPointId"
                     filterable
@@ -65,11 +65,11 @@
                     style="width: 240px; margin-right: 20px;"
                 >
                     <el-option
-                        label="Отправление"
+                        label="Точка отправления"
                         value="Отправление"
                     />
                     <el-option
-                        label="Прибытие"
+                        label="Точка прибытия"
                         value="Прибытие"
                     />
                 </el-select>

@@ -6,16 +6,16 @@
   <h3>Контактная информация</h3>
   <div class="row g-5">
     <div class="col-sm-6 ">
-        <div class="contact-information__block ">
-            <p>На электронную почту вам может быть отправлен чек</p>
+        <form @submit.prevent="editEmail" class="contact-information__block">
+            <p>Укажите email, на который будет отправляться билет</p>
             <label for="" class="label-gray">E-mail</label>
-            <input type="text" class="form-control inp-gray" v-model="email" :disabled="!editEmailActive" placeholder="E-mail не указан">
+            <input type="email" class="form-control inp-gray" v-model="email" :disabled="!editEmailActive" placeholder="E-mail не указан">
             <div class="filled-email">
               <a href="#" v-if="!editEmailActive" @click="editEmailActive = true"> &#9998; Изменить</a> 
               <a href="#" v-if="editEmailActive" @click="editEmailActive = false">Отменить</a> 
-              <a href="#" v-if="editEmailActive" @click="editEmail">Сохранить</a>
+              <button type="submit" v-if="editEmailActive" style="color: var(--bs-link-color);">Сохранить</button>
             </div>
-        </div>
+        </form>
     </div>
     <div class="col-sm-6">
       <div class=" contact-information__block">

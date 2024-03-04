@@ -18,6 +18,9 @@
             <component :is="activeTab"></component>
         </Transition>
     </div>
+    <template v-if="popupEmail">
+        <PopupWindow @CloseWindow="popupEmail = false;" :content="9" @editEmail="editEmail"/>
+	  </template>
 </template>
 <script>
 import TravelHistory from '../components/TravelHistory.vue';
@@ -25,15 +28,41 @@ import UpcomingTrips from '../components/UpcomingTrips.vue';
 import ContactInformation from '../components/ContactInformation.vue';
 import Person from '../components/PersonSave.vue';
 import Header from '../components/Header.vue'
+import PopupWindow from '../components/PopupWindow.vue';
+import axiosClient from '../axios';
 
 export default
 {
-  components: { TravelHistory, UpcomingTrips, ContactInformation, Person, Header },
+  components: { TravelHistory, UpcomingTrips, ContactInformation, Person, Header, PopupWindow },
   data() {
     return {
       activeTab: 'UpcomingTrips',
+      popupEmail: false,
+      user: {}
     };
   },
+  methods: {
+    async editEmail(email){
+      const promise = axiosClient
+        .post('/edit/email', {email: email})
+        .then(response => {
+          console.log(response)
+        })
+      await promise
+    }
+  },
+  async mounted(){
+      const promise = axiosClient
+      .get('/user')
+      .then(response => {
+          this.user = response.data.user
+      })
+      await promise
+      console.log(this.user.email)
+      if(!this.user.email){
+        this.popupEmail = true
+      }
+  }
 
 };
 </script>
