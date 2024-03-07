@@ -56,7 +56,7 @@ class MatchController extends Controller
 
         $arrivalPointMatch = PointsMatch::where([['orderPointName', '=', $request->arrivalPointName], ['dispatchPointName', '=', $dispatchPointName], ['pointType', '=', 'Прибытие']])->first();
         if(!$arrivalPointMatch){
-            $arrivalPointMatch = PointsMatch::where([['orderPointName', '=', $request->arrivalPointName], ['pointType', '=', 'Прибытие']])->first();
+            $arrivalPointMatch = PointsMatch::where([['orderPointName', '=', $request->arrivalPointName], ['dispatchPointName', '=', null], ['pointType', '=', 'Прибытие']])->first();
         }
 
         return response([
