@@ -59,8 +59,8 @@ class MatchController extends Controller
         }
 
         return response([
-            'newDispatchPointId' => $dispatchPointMatch ? $dispatchPointMatch->matchPointName : null,
-            'newArrivalPointId' => $arrivalPointMatch ? $arrivalPointMatch->matchPointName : null,
+            'newDispatchPointName' => $dispatchPointMatch ? $dispatchPointMatch->matchPointName : null,
+            'newArrivalPointName' => $arrivalPointMatch ? $arrivalPointMatch->matchPointName : null,
         ]);
     }
 }

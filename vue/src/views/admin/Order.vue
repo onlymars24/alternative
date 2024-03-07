@@ -111,8 +111,8 @@ export default
     },
     methods: {
         toReturnRace(){
-			router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order_outside.arrivalPointId, arrival_point_id: this.order_outside.dispatchPointId, 
-				dispatch_station_name: this.order.tickets[0].arrivalStation, arrival_station_name: this.order.tickets[0].dispatchStation }})
+			router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order_outside.dispatchPointId, arrival_point_id: this.order_outside.arrivalPointId, 
+				dispatch_station_name: this.order.tickets[0].dispatchStation, arrival_station_name: this.order.tickets[0].arrivalStation }})
 		},
     }
 }
