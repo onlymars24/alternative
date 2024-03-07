@@ -43,6 +43,7 @@ class MatchController extends Controller
     // dispatchPointName
     // arrivalPointName
     public function replacement(Request $request){
+
         $dispatchPointMatch = PointsMatch::where([['orderPointName', '=', $request->dispatchPointName], ['pointType', '=', 'Отправление']])->first();
         $dispatchPointName = null;
 
@@ -53,9 +54,9 @@ class MatchController extends Controller
             $dispatchPointName =  $request->dispatchPointName;
         }
 
-        $arrivalPointMatch = PointsMatch::where([['orderPointId', '=', $request->arrivalPointName], ['dispatchPointName', '=', $dispatchPointName], ['pointType', '=', 'Прибытие']])->first();
+        $arrivalPointMatch = PointsMatch::where([['orderPointName', '=', $request->arrivalPointName], ['dispatchPointName', '=', $dispatchPointName], ['pointType', '=', 'Прибытие']])->first();
         if(!$arrivalPointMatch){
-            $arrivalPointMatch = PointsMatch::where([['orderPointId', '=', $request->arrivalPointName], ['pointType', '=', 'Прибытие']])->first();
+            $arrivalPointMatch = PointsMatch::where([['orderPointName', '=', $request->arrivalPointName], ['pointType', '=', 'Прибытие']])->first();
         }
 
         return response([

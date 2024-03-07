@@ -133,10 +133,11 @@ export default
         })[0]
     }
     console.log(dispatchPoint, arrivalPoint)
-    // this.dispatchEl.name = dispatchPoint.name
-    // this.arrivalEl.name = arrivalPoint.name    
+  
     if(dispatchPoint && arrivalPoint){
       console.log('da')
+      this.dispatchEl.name = dispatchPoint.name
+      this.arrivalEl.name = arrivalPoint.name        
       this.pointsExisting = true
       this.status = 'Успешная'
     }

@@ -126,6 +126,16 @@ export default
             loading: true
         }
     },
+    watch: {
+        newMatch: {
+            handler(newValue, oldValue) {
+                if(this.newMatch.pointType != 'Прибытие'){
+                    this.newMatch.dispatchPointId = ''
+                }            
+            },
+            deep: true // Позволяет отслеживать изменения вложенных свойств
+        }
+    },
     methods: {
         async getAll(){
             const promise = axiosAdmin
