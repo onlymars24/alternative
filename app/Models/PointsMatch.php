@@ -14,6 +14,8 @@ class PointsMatch extends Model
         'orderPointName',
         'matchPointId',
         'matchPointName',
-        'pointType'
+        'pointType',
+        'dispatchPointId',
+        'dispatchPointName',
     ];
 }

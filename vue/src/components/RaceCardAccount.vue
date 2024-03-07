@@ -213,8 +213,8 @@
 			window.open(this.order.formUrl, '_self');
 		},
 		toReturnRace(){
-			router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order.arrivalPointId, arrival_point_id: this.order.dispatchPointId, 
-				dispatch_station_name: this.race.order.tickets[0].arrivalStation, arrival_station_name: this.race.order.tickets[0].dispatchStation }})
+			router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order.dispatchPointId, arrival_point_id: this.order.arrivalPointId, 
+				dispatch_station_name: this.race.order.tickets[0].dispatchStation, arrival_station_name: this.race.order.tickets[0].arrivalStation, order_id: this.order.id }})
 		},
 		async returnOrder(orderId){
 			if(!confirm('Вы уверены, что хотите вернуть билет? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){

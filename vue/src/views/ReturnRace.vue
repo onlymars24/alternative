@@ -27,7 +27,9 @@ export default
       },
       race: [],
       status: '',
-      newPoints: []
+      newPoints: [],
+      dispatchPoints: [],
+      arrivalPoints: []
     }
   },
   computed: {
@@ -37,65 +39,116 @@ export default
 
   },
   async mounted() {
-    const promise = axiosClient
-      .post('/match/replacement', {
-        dispatchPointId: this.$route.params['dispatch_point_id'],
-        arrivalPointId: this.$route.params['arrival_point_id'],
-      })
-      .then(response => {
-          this.newPoints = response.data
-          console.log(this.newPoints)
-      });
-    await promise
-      
-
-    this.dispatchEl.id = this.newPoints.newDispatchPointId ? this.newPoints.newDispatchPointId : this.$route.params['dispatch_point_id']
-    this.arrivalEl.id = this.newPoints.newArrivalPointId ? this.newPoints.newArrivalPointId : this.$route.params['arrival_point_id']
 
 
-    console.log(this.race, this.dispatchEl.id, this.arrivalEl.id)
-  // return
-    let dispatchPoints =[]
     const promise1 = axiosClient
       .get('/dispatch_points')
       .then(response => {
-          dispatchPoints = response.data
-      });
+          this.dispatchPoints = response.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
     await promise1
-    let dispatchPoint = dispatchPoints.filter(point => {
-        return point.id == this.dispatchEl.id
+    let dispatchPoint = this.dispatchPoints.filter(point => {
+        return point.id == this.$route.params['dispatch_point_id']
     })[0]
-    let arrivalPoints
+    console.log(dispatchPoint)
+
     let arrivalPoint
     if(dispatchPoint){
         const promise2 = axiosClient
         .get('/arrival_points/'+dispatchPoint.id)
         .then(response => {
-            arrivalPoints = JSON.parse(response.data.arrival_points)
-        });
+            this.arrivalPoints = JSON.parse(response.data.arrival_points)
+        })
+        .catch(error => {
+          console.log(error)
+        })
         await promise2
-        arrivalPoint = arrivalPoints.filter(point => {
-            return point.id == this.arrivalEl.id
+        arrivalPoint = this.arrivalPoints.filter(point => {
+            return point.id == this.$route.params['arrival_point_id']
+        })[0]
+    }
+    console.log(arrivalPoint)
+
+    if(!dispatchPoint || !arrivalPoint){
+      console.log('неудачно')
+      const promise3 = axiosClient
+      .post('/send/race/existing', {
+        status: 'Неудачная',
+        points: this.$route.params['arrival_station_name']+' - '+this.$route.params['dispatch_station_name'],
+        orderId: this.$route.params['order_id']
+      })
+      .then(response => {
+        console.log(response)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      await promise3
+      //send mail
+      router.push({ name: 'Races', params: { dispatch_name: this.$route.params['arrival_station_name'], arrival_name: this.$route.params['dispatch_station_name'] } })
+      return
+    }
+    console.log('удачно')
+
+      const promise4 = axiosClient
+      .post('/match/replacement', {
+        dispatchPointName: arrivalPoint.name,
+        arrivalPointName: dispatchPoint.name,
+      })
+      .then(response => {
+          this.newPoints = response.data
+          console.log(this.newPoints)
+      })
+      .catch(error => {
+          console.log(error)
+        })
+        await promise4
+      
+
+    this.dispatchEl.name = this.newPoints.newDispatchPointName ? this.newPoints.newDispatchPointName : arrivalPoint.name
+    this.arrivalEl.name = this.newPoints.newArrivalPointName ? this.newPoints.newArrivalPointName : dispatchPoint.name
+
+
+    console.log(this.race, this.dispatchEl.name, this.arrivalEl.name)
+
+    dispatchPoint = this.dispatchPoints.filter(point => {
+        return point.name == this.dispatchEl.name
+    })[0]
+
+    if(dispatchPoint){
+        const promise5 = axiosClient
+        .get('/arrival_points/'+dispatchPoint.id)
+        .then(response => {
+          this.arrivalPoints = JSON.parse(response.data.arrival_points)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+        await promise5
+        arrivalPoint = this.arrivalPoints.filter(point => {
+            return point.name == this.arrivalEl.name
         })[0]
     }
     console.log(dispatchPoint, arrivalPoint)
+    // this.dispatchEl.name = dispatchPoint.name
+    // this.arrivalEl.name = arrivalPoint.name    
     if(dispatchPoint && arrivalPoint){
       console.log('da')
-      this.dispatchEl.name = dispatchPoint.name
-      this.arrivalEl.name = arrivalPoint.name
       this.pointsExisting = true
       this.status = 'Успешная'
     }
     else{
       console.log('net')
-      this.dispatchEl.name = this.$route.params['dispatch_station_name']
-      this.arrivalEl.name = this.$route.params['arrival_station_name']
       this.status = 'Неудачная'
     }
-    const promise3 = axiosClient
+    const promise6 = axiosClient
     .post('/send/race/existing', {
       status: this.status,
-      points: this.dispatchEl.name+' - '+this.arrivalEl.name
+      points: this.dispatchEl.name+' - '+this.arrivalEl.name,
+      orderId: this.$route.params['order_id']
     })
     .then(response => {
       console.log(response)
@@ -103,6 +156,7 @@ export default
     .catch(error => {
       console.log(error)
     })
+    await promise6
     //send mail
     router.push({ name: 'Races', params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
   },

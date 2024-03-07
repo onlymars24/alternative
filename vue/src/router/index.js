@@ -25,6 +25,7 @@ import EditPoints from '../views/admin/EditPoints.vue'
 import BusStations from '../views/admin/BusStations.vue'
 import BusStation from '../views/BusStation.vue'
 import ReturnRace from '../views/ReturnRace.vue'
+import News from '../views/admin/News.vue'
 
 const routes = [
   // {
@@ -48,7 +49,7 @@ const routes = [
     component: Races
   },
   {
-    path: '/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/:dispatch_point_id/:dispatch_station_name/:arrival_point_id/:arrival_station_name',
+    path: '/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/:dispatch_point_id/:dispatch_station_name/:arrival_point_id/:arrival_station_name/:order_id',
     name: 'ReturnRace',
     component: ReturnRace
   },
@@ -151,6 +152,11 @@ const routes = [
         path: 'bus/stations',
         component: BusStations,
         name: 'BusStations'
+      },
+      {
+        path: 'news',
+        component: News,
+        name: 'News'
       },
     ]
   },

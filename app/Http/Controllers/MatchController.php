@@ -23,6 +23,8 @@ class MatchController extends Controller
             'orderPointName' => $request->orderPointName,
             'matchPointId' => $request->matchPointId,
             'matchPointName' => $request->matchPointName,
+            'dispatchPointId' => $request->dispatchPointId,
+            'dispatchPointName' => $request->dispatchPointName,
             'pointType' => $request->pointType,
         ]);
         return response([
@@ -38,12 +40,27 @@ class MatchController extends Controller
         ]);
     }
 
+    // dispatchPointName
+    // arrivalPointName
     public function replacement(Request $request){
-        $dispatchPointMatch = PointsMatch::where([['orderPointId', '=', $request->dispatchPointId], ['pointType', '=', 'Отправление']])->first();
-        $arrivalPointMatch = PointsMatch::where([['orderPointId', '=', $request->arrivalPointId], ['pointType', '=', 'Прибытие']])->first();
+        $dispatchPointMatch = PointsMatch::where([['orderPointName', '=', $request->dispatchPointName], ['pointType', '=', 'Отправление']])->first();
+        $dispatchPointName = null;
+
+        if($dispatchPointMatch){
+            $dispatchPointName = $dispatchPointMatch->matchPointName;
+        }
+        else{
+            $dispatchPointName =  $request->dispatchPointName;
+        }
+
+        $arrivalPointMatch = PointsMatch::where([['orderPointId', '=', $request->arrivalPointName], ['dispatchPointName', '=', $dispatchPointName], ['pointType', '=', 'Прибытие']])->first();
+        if(!$arrivalPointMatch){
+            $arrivalPointMatch = PointsMatch::where([['orderPointId', '=', $request->arrivalPointName], ['pointType', '=', 'Прибытие']])->first();
+        }
+
         return response([
-            'newDispatchPointId' => $dispatchPointMatch ? $dispatchPointMatch->matchPointId : null,
-            'newArrivalPointId' => $arrivalPointMatch ? $arrivalPointMatch->matchPointId : null,
+            'newDispatchPointId' => $dispatchPointMatch ? $dispatchPointMatch->matchPointName : null,
+            'newArrivalPointId' => $arrivalPointMatch ? $arrivalPointMatch->matchPointName : null,
         ]);
     }
 }

@@ -2,11 +2,14 @@
     <div class="" style="margin-bottom: 250px;" v-loading.fullscreen.lock="loading">
         <p style=" margin-top: 30px;">Соответствия точек для обратных рейсов</p>
         <el-table :data="matches" style="width: 100%; margin-top: 10px;">
-        <el-table-column label="ID точки из заказа, которую меняем" prop="orderPointId" />
+        <el-table-column label="ID точки из заказа, 
+        которую меняем" prop="orderPointId" />
         <el-table-column label="Название точки из заказа, которую меняем" prop="orderPointName" />
         <el-table-column label="ID точки, на которую меняем" prop="matchPointId" />
         <el-table-column label="Название точки, на которую меняем" prop="matchPointName" />
         <el-table-column label="Тип точки" prop="pointType" />
+        <el-table-column label="ID точки отправления" prop="dispatchPointId" />
+        <el-table-column label="Название точки отправления" prop="dispatchPointName" />
         <el-table-column align="right">
         <template #default="scope">
             <el-button @click="deleteMatch(scope.row.id)" size="small"
@@ -55,6 +58,23 @@
                     />
                 </el-select>                
             </div>
+            <div class="">
+                <p>Точка отправления(необязательный<br> параметр для соответствия<br> с типом "Точка прибытия")</p>
+                <el-select
+                    v-model="newMatch.dispatchPointId"
+                    filterable
+                    placeholder=""
+                    style="width: 240px; margin-right: 20px;"
+                    :disabled="newMatch.pointType != 'Прибытие'"
+                >
+                    <el-option
+                    v-for="point in dispatchPoints"
+                    :key="point.name"
+                    :label="point.name"                   
+                    :value="point.id"
+                    />
+                </el-select>                
+            </div>
 
             <div class="">
                 <p>Тип точки</p>
@@ -93,11 +113,14 @@ export default
         return {
             matches: [],
             points: [],
+            dispatchPoints: [],
             newMatch: {
                 orderPointId: '',
                 orderPointName: '',
                 matchPointId: '',
                 matchPointName: '',
+                dispatchPointId: '',
+                dispatchPointName: '',
                 pointType: '',
             },
             loading: true
@@ -125,6 +148,13 @@ export default
             this.newMatch.matchPointName = this.points.filter( point => {
                 return point.id == this.newMatch.matchPointId
             })[0].name
+
+            if(this.newMatch.dispatchPointId){
+                this.newMatch.dispatchPointName = this.dispatchPoints.filter( point => {
+                    return point.id == this.newMatch.dispatchPointId
+                })[0].name
+            }
+            
             console.log(this.newMatch)
             const promise = axiosAdmin
             .post('/match/create', this.newMatch)
@@ -168,6 +198,17 @@ export default
             console.log(error)
         })
         await promise1
+
+        const promise2 = axiosAdmin
+        .get('/dispatch_points')
+        .then(response => {
+            this.dispatchPoints = response.data
+            console.log(this.dispatchPoints)
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        await promise2
 
         this.getAll()
         this.loading = false
