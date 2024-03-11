@@ -131,6 +131,7 @@ export default
             handler(newValue, oldValue) {
                 if(this.newMatch.pointType != 'Прибытие'){
                     this.newMatch.dispatchPointId = ''
+                    this.newMatch.dispatchPointName = ''
                 }            
             },
             deep: true // Позволяет отслеживать изменения вложенных свойств

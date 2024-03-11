@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sms;
 use App\Models\User;
+use App\Mail\OrderMail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -112,8 +113,18 @@ class AuthController extends Controller
 
     public function editEmail(Request $request){
         $user = Auth::user();
+
         $user->email = $request->email;
+
         $user->save();
+
+        $order = $user->orders->last();
+
+        if($user->email && json_decode($order->order_info)->status == 'S'){
+            Mail::to($user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
+        }
+
+        
         return response([
             'success' => true
         ]);

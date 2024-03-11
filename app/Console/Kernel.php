@@ -40,7 +40,7 @@ class Kernel extends ConsoleKernel
                     
                     $order->dispatched = true;
                     $order->save();
-                    Log::info('Отзыв предложен!');
+                    Log::info('Отзыв предложен! orderId: '+$order->id+'; ticketId: '+$ticket->id);
                 }
             }
         })->daily();

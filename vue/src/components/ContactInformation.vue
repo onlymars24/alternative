@@ -69,6 +69,10 @@ export default
         const promise = axiosClient
         .post('/edit/email', {email: this.email})
         .then(response => {
+          console.log(response)
+        })
+        .catch(error => {
+          console.log(error)
         })
         await promise
         this.editEmailActive = false
