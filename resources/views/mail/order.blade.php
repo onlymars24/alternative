@@ -15,7 +15,7 @@
             text-decoration: none;
             display: flex;
             align-items: flex-end;"> 
-            <img src="/img/741411.png" alt="" class="header-inner-image" style="margin-right: 5px; width: 25px;"> 
+            <img src="{{$message->embed('img/741411.png')}}" alt="" class="header-inner-image" style="margin-right: 5px; width: 25px;"> 
             <span style="font-size: 24px;" class="">Росвокзалы.рф</span>
         </a>
     </div>    
@@ -25,5 +25,19 @@
             <li>Билет №{{$ticket->ticketNum}} {{$ticket->lastName}} {{$ticket->firstName}} {{$ticket->middleName}} Место {{$ticket->seat}}</li>
         @endforeach
     </ul>
+    <p>
+        Будем рады, если <a href="https://vk.com/rosvokzaly">станете нашим подписчиком в ВК</a>:<br>
+        - так мы станем ближе и сможем оперативнее отвечать на ваши вопросы,<br>
+        - сможете участвовать в акциях и получать различные бонусы,<br>
+    </p>
+    <div style="border-radius: 15px;">
+        <a href="https://vk.com/rosvokzaly" target="_blank">
+            <img src="{{$message->embed('img/vk_bus_mail.png')}}" alt="">
+        </a>
+    </div>
+    <br><br>
+    <p>--</p>
+    <p>С уважением,
+поддержка <a href="https://росвокзалы.рф">Росвокзалы.РФ</a> </p>
 </body>
 </html>

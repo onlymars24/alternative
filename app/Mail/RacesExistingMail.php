@@ -40,7 +40,7 @@ class RacesExistingMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: $this->status.' попытка найти рейс для точек '.$this->points
+            subject: $this->status.' попытка найти рейс для точек '.$this->points.'; ID заказа: '.$this->orderId.'; телефон: '.$this->phone
         );
     }
 

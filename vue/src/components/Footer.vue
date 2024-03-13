@@ -37,20 +37,6 @@
                         <a href="" @click.prevent="openFeedbackWindow = true">Контакты</a>
                     </div>
                 </div>
-                <!-- <div class="footer__info-about">
-                    <div class="footer__info-about__main">
-                        <p>Партнёрам</p>
-                    </div>
-                    <div class="footer__info-about__pass">
-                        <a href="">Перевозчикам</a>
-                        <br>
-                        <a href="">Агентам</a>
-                        <br>
-                        <a href="">Партнерская программа</a>
-                        <br>
-                        <a href="">Автобусные перевозчики</a>
-                    </div>
-                </div> -->
                 <div class="footer__info-about">
                     <div class="footer__info-about__main">
                         <p>Документы</p>
@@ -61,7 +47,7 @@
                         <a :href="baseUrl+'/agreement/privacypolicy.pdf'">Политика конфиденциальности</a>
                     </div>
                 </div>
-                <div class="footer__info-about"></div>
+                <div style="margin: 20px 0;" class="footer__info-about"><div id="vk_groups"></div></div>
             </div>
             <div class="copyright__text">
                 <p>© 2023, OOO АЛЬТЕРНАТИВА. Все права защищены. АЛЬТЕРНАТИВА — Онлайн сервис продажи билетов</p>
@@ -75,8 +61,10 @@
             </div>           
             <div class="cookies__text">
                 <p>Мы используем информацию, зарегистрированную в <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank">файлах «cookies»</a>, в частности, в рекламных и статистических целях, а также для того, чтобы адаптировать наши сайты к индивидуальным потребностям Пользователей. Вы можете изменить настройки касающиеся «cookies» в вашем браузере. Изменение настроек может ограничить функциональность сайта.</p>
-            </div>            
+            </div>   
+                     
         </div>
+        
         <PopupWindow v-if="openFeedbackWindow" @CloseFeedbackWindow="openFeedbackWindow = false" :content="7"/>
     </footer>
 
@@ -95,7 +83,8 @@ import PopupWindow from '../components/PopupWindow.vue';
 		data(){
 			return{
 				baseUrl: '',
-                openFeedbackWindow: false
+                openFeedbackWindow: false,
+                groupID: 223652237,
 			}
 		},
     computed:{
@@ -106,6 +95,25 @@ import PopupWindow from '../components/PopupWindow.vue';
     },
     mounted(){
 		this.baseUrl = import.meta.env.VITE_API_BASE_URL
+
+        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+        //     tooltipButtonText: "Есть вопрос?",
+        //     expanded: "0",
+        //     widgetPosition: "left"
+        // });
+
+        // Подключение виджета сообщества
+
+        VK.init({
+            apiId: this.groupID,
+            onlyWidgets: true
+        });
+        VK.Widgets.Group("vk_groups", 
+            {
+                mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
+            }, 
+            this.groupID
+        );
     }
 	}
 </script>

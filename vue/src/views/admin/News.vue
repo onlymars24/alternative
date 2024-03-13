@@ -10,7 +10,7 @@
                     <el-input v-model="newBusStation.name"></el-input>
                 </div> 
                 <div style="width: 25%; margin-bottom: 10px;">
-                    <label for="">Описание (description)</label><br>
+                    <label for="">Описание</label><br>
                     <el-input type="textarea" v-model="newBusStation.description"></el-input>
                 </div>                
                 <div style="width: 25%; margin-bottom: 10px;">

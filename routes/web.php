@@ -12,6 +12,7 @@ use App\Models\Transaction;
 use App\Enums\InsuranceEnum;
 use Illuminate\Http\Request;
 use App\Exports\WrongsExport;
+use App\Mail\LeaveReviewMail;
 use App\Models\DispatchPoint;
 use App\Exports\ReportsExport;
 use App\Services\FermaService;
@@ -42,7 +43,10 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  dd('Help!');
+  // dd(public_path('\img\vk_bus_mail.png'));
+  // $order = Order::find(2084886);
+  // Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
+  // Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new ReturnMail([$order->tickets[0]]));
 });
 
 

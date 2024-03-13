@@ -15,7 +15,7 @@
         <el-menu-item index="5" @click="$router.push({name: 'EditMain'})">Редактировать контент</el-menu-item>
         <el-menu-item index="6" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
         <el-menu-item index="7" @click="$router.push({name: 'BusStations'})">Автовокзалы</el-menu-item>
-        <!-- <el-menu-item index="7" @click="$router.push({name: 'News'})">Новости</el-menu-item> -->
+        <el-menu-item index="8" @click="$router.push({name: 'News'})">Новости</el-menu-item>
         <el-menu-item index="2-3" @click="$router.push({name: 'Feedback'})">Обратная связь</el-menu-item>
         <el-menu-item index="2-2" @click="$router.push({name: 'Reports'})">Отчёты</el-menu-item>
         <el-menu-item index="2-1" @click="$router.push({name: 'Sms'})">Учет СМС</el-menu-item>

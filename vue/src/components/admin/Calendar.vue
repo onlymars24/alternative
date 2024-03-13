@@ -1,15 +1,18 @@
 <template>
   <div class="block">
-    <el-date-picker
-      v-model="value1"
-      type="date"
-      style="max-width: 100%;"
-      @change="$emit('setDateFilter', filterName, value1)"
-    >
-    </el-date-picker>
+    <el-config-provider :locale="locale">
+      <el-date-picker
+        v-model="value1"
+        type="date"
+        style="max-width: 100%;"
+        @change="$emit('setDateFilter', filterName, value1)"
+      >
+      </el-date-picker>
+    </el-config-provider>
   </div>
 </template>
 <script>
+import ru from 'element-plus/dist/locale/ru.mjs'
   export default {
     emits: ['setDateFilter'],
     props: ['filterName'],
@@ -40,7 +43,8 @@
             }
           }]
         },
-        value1: ''
+        value1: '',
+        locale: ru
       };
     },
     watch: {

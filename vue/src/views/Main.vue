@@ -83,16 +83,16 @@ export default{
 
         // Подключение виджета сообщества
 
-        VK.init({
-            apiId: this.groupID,
-            onlyWidgets: true
-        });
-        VK.Widgets.Group("vk_groups", 
-            {
-                mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
-            }, 
-            this.groupID
-        );
+        // VK.init({
+        //     apiId: this.groupID,
+        //     onlyWidgets: true
+        // });
+        // VK.Widgets.Group("vk_groups", 
+        //     {
+        //         mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
+        //     }, 
+        //     this.groupID
+        // );
     }
     // created() {
     //   document.title = 'Главная';
@@ -235,66 +235,18 @@ export default{
         <div class="container">
             
             <div class="about__inner">
+            
                 <div v-html="content"></div>
-                <!-- <div class="about__info">
-                    <div class="about__info-main">
-                    </div>
-                    <div class="about__info-text">
-                        <a target="_blank" href="/avtobus/Томск/Новосибирск/">Томск → Новосибирск</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Томск/Барнаул/">Томск → Барнаул</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Томск/Кемерово/">Томск → Кемерово</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Томск/Алейск/">Томск → Алейск</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Томск/Белово/">Томск → Белово</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Томск/Казачий/">Томск → Казачий</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Антропово/">Красноярск → Антропово</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Абан/">Красноярск → Абан</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Абаза/">Красноярск → Абаза</a>
-                        <br>
-                    </div>
-                </div>
+
                 <div class="about__info">
                     <div class="about__info-main">
-                        
+                        <!-- <a href="">Внутренние</a> -->
                     </div>
+                    <div id='vk_community_messages'></div>
                     <div class="about__info-text">
-                        <a target="_blank" href="/avtobus/Кемерово/Новосибирск/">Кемерово → Новосибирск</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Кемерово/Сокур/">Кемерово → Сокур</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Кемерово/Вороново/">Кемерово → Вороново</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Кемерово/Березовка/">Кемерово → Березовка</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Кемерово/Новая Балахонка/">Кемерово → Новая Балахонка</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Кемерово/Барановский/">Кемерово → Барановский</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Бакчет/">Красноярск → Бакчет</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Агинское/">Красноярск → Агинское</a>
-                        <br>
-                        <a target="_blank" href="/avtobus/Красноярск/Томск/">Красноярск → Томск</a>
-                        <br>
+                        <!-- <div id="vk_groups"></div>  -->
                     </div>
-                </div> -->
-
-            <div class="about__info">
-                <div class="about__info-main">
-                    <!-- <a href="">Внутренние</a> -->
                 </div>
-                <div id='vk_community_messages'></div>
-                <div class="about__info-text">
-                    <div id="vk_groups"></div> 
-                </div>
-            </div>
             </div>
 
         </div>

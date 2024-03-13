@@ -25,7 +25,9 @@ import EditPoints from '../views/admin/EditPoints.vue'
 import BusStations from '../views/admin/BusStations.vue'
 import BusStation from '../views/BusStation.vue'
 import ReturnRace from '../views/ReturnRace.vue'
-import News from '../views/admin/News.vue'
+import New from '../views/New.vue'
+import News from '../views/News.vue'
+import AdminNews from '../views/admin/News.vue'
 
 const routes = [
   // {
@@ -94,6 +96,17 @@ const routes = [
     name: 'Faq',
     component: Faq
   },
+  // {
+  //   path: '/news',
+  //   name: 'News',
+  //   component: News
+  // },  
+  // {
+  //   path: '/new/:id',
+  //   name: 'New',
+  //   component: New
+  // },
+
   {
     path: '/fj239f3j984jsdiaisja',
     component: Admin,
@@ -153,11 +166,11 @@ const routes = [
         component: BusStations,
         name: 'BusStations'
       },
-      {
-        path: 'news',
-        component: News,
-        name: 'News'
-      },
+      // {
+      //   path: '/news',
+      //   name: 'AdminNews',
+      //   component: AdminNews
+      // }, 
     ]
   },
   {

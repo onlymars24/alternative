@@ -200,9 +200,9 @@ export default{
 
     <div class="about" style="margin-top: 50px;">
         <div class="container">
-            <!-- <div class="station__slides">
+            <div class="station__slides">
             <h2 class="station__slides-title">Новости</h2>
-            <swiper
+            <!-- <swiper
             :modules="modules"
             :allowTouchMove="false"
             :slides-per-view="3"
@@ -225,12 +225,12 @@ export default{
                         </p>
                     </div>
                 </swiper-slide>
-            </swiper>
+            </swiper> -->
             <div class="station__slides-buttons">
                 <div class="station__slides-button station__slides-button-prev">&#9668;</div>
                 <div class="station__slides-button station__slides-button-next">&#9658;</div>
             </div>                
-            </div> -->
+            </div>
         
             <div class="about__inner">
                 <div v-html="content"></div>
