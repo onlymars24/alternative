@@ -233,7 +233,10 @@ export default {
     async mounted(){
         document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
         const descEl = document.querySelector('head meta[name="description"]');
-        descEl.setAttribute('content', 'Отправление и прибытие по местному времени. Расписание автобусов '+this.dispatchEl.name+' — '+this.arrivalEl.name);
+        descEl.setAttribute('content', 'Расписание автобусов '+this.dispatchEl.name+' — '+this.arrivalEl.name+'. Отправление и прибытие по местному времени.');
+
+        const linkCan = document.querySelector('head link[rel="canonical"]');
+        linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
 
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if(!regex.test(this.date)){
@@ -293,6 +296,19 @@ export default {
             this.$router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date } })
             this.paramKey = true
         }
+
+        const promise3 = axiosClient
+        .post('/races/xml/create', {dispatchName: dispatchPoint.name, arrivalName: arrivalPoint.name})
+        .then(response => {
+            console.log(response)
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        await promise3
+
+        
+
         this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id);
         this.dateForError = dayjs(this.date).format('DD.MM.YYYY')
     },

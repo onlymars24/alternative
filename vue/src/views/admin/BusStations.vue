@@ -187,6 +187,7 @@ export default
             await promise
             this.newBusStation.title = ''
             this.newBusStation.name = ''
+            this.newBusStation.description = ''
             this.newBusStation.dispatchPointId = ''
             this.newBusStation.hidden = false
             this.getAll()

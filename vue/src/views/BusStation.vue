@@ -168,24 +168,24 @@ export default{
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content',this.station.description);
 
-        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-            tooltipButtonText: "Есть вопрос?",
-            expanded: "0",
-            widgetPosition: "left"
-        });
+        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+        //     tooltipButtonText: "Есть вопрос?",
+        //     expanded: "0",
+        //     widgetPosition: "left"
+        // });
 
-        // Подключение виджета сообщества
+        // // Подключение виджета сообщества
 
-        VK.init({
-            apiId: this.groupID,
-            onlyWidgets: true
-        });
-        VK.Widgets.Group("vk_groups", 
-            {
-                mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
-            }, 
-            this.groupID
-        );
+        // VK.init({
+        //     apiId: this.groupID,
+        //     onlyWidgets: true
+        // });
+        // VK.Widgets.Group("vk_groups", 
+        //     {
+        //         mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
+        //     }, 
+        //     this.groupID
+        // );
     }
     // created() {
     //   document.title = 'Главная';
@@ -200,9 +200,9 @@ export default{
 
     <div class="about" style="margin-top: 50px;">
         <div class="container">
-            <div class="station__slides">
+            <!-- <div class="station__slides">
             <h2 class="station__slides-title">Новости</h2>
-            <!-- <swiper
+            <swiper
             :modules="modules"
             :allowTouchMove="false"
             :slides-per-view="3"
@@ -225,12 +225,12 @@ export default{
                         </p>
                     </div>
                 </swiper-slide>
-            </swiper> -->
+            </swiper>
             <div class="station__slides-buttons">
                 <div class="station__slides-button station__slides-button-prev">&#9668;</div>
                 <div class="station__slides-button station__slides-button-next">&#9658;</div>
             </div>                
-            </div>
+            </div> -->
         
             <div class="about__inner">
                 <div v-html="content"></div>
@@ -241,7 +241,7 @@ export default{
                 </div>
                 <div id='vk_community_messages'></div>
                 <div class="about__info-text">
-                    <div id="vk_groups"></div> 
+                    <!-- <div id="vk_groups"></div>  -->
                 </div>
             </div>
             </div>

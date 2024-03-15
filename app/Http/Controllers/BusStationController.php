@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BusStation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class BusStationController extends Controller
 {
@@ -28,11 +29,49 @@ class BusStationController extends Controller
             'dispatch_point_id' => $request->dispatch_point_id,
             'hidden' => $request->hidden,
         ]);
+
+        $newLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
+        $xml = simplexml_load_file(env('XML_FILE_NAME'));
+        for($i = 0; $i < count($xml->url); $i++){
+            // dd($xml->url[$i]['id']);
+            if($xml->url[$i]->loc == $newLoc){
+                return response([
+                    'existing' => true
+                ]);
+            }
+        }
+        $newNode = $xml->addChild('url');
+        $newNode->addChild('loc', $newLoc);
+        $newNode->addChild('lastmod', date('Y-m-d'));
+        $newNode->addChild('changefreq', 'weekly');
+        $newNode->addChild('priority', '1.0');
+
+        
+
+        $newNode->addAttribute('type', 'Автовокзал');
+        $newNode->addAttribute('id', $busStation->id);
+        
+        File::put(env('XML_FILE_NAME'), $xml->asXML());
+        return response([
+            'existing' => false
+        ]);
     }
 
     public function delete(Request $request){
         $busStation = BusStation::find($request->id);
         $busStation->delete();
+        $xml = simplexml_load_file(env('XML_FILE_NAME'));
+        for($i = 0; $i < count($xml->url); $i++){
+            // dd($xml->url[$i]['id']);
+            if((integer)$xml->url[$i]['id'] == $busStation->id){
+                unset($xml->url[$i]);
+                File::put(env('XML_FILE_NAME'), $xml->asXML());
+                return response([
+                    'existing' => true
+                ]);
+            }
+        }
+        
     }
 
     public function edit(Request $request){
@@ -44,5 +83,17 @@ class BusStationController extends Controller
         $busStation->dispatch_point_id = $request->dispatch_point_id;
         $busStation->data = json_encode(['content' => $request->content ? $request->content : '']);
         $busStation->save();
+
+        $xml = simplexml_load_file(env('XML_FILE_NAME'));
+        for($i = 0; $i < count($xml->url); $i++){
+            if((integer)$xml->url[$i]['id'] == $busStation->id){
+                $xml->url[$i]->loc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
+                $xml->url[$i]->lastmod = date('Y-m-d');
+                File::put(env('XML_FILE_NAME'), $xml->asXML());
+                return response([
+                    'existing' => true
+                ]);
+            }
+        }
     }
 }

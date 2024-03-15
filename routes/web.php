@@ -20,6 +20,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -43,16 +44,18 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  // dd(public_path('\img\vk_bus_mail.png'));
-  // $order = Order::find(2084886);
-  // Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
-  // Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new ReturnMail([$order->tickets[0]]));
+
 });
 
 
 
-Route::get('/kassa/callback', function (Request $request) {
-    dd('sdafsd');
+Route::get('/download/sitemap', function (Request $request) {
+  $path = env('XML_FILE_NAME');
+  if (file_exists($path)) {
+      return response()->download($path);
+  } else {
+      return response()->json(['error' => 'File not found'], 404);
+  }
 });
 
 Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');

@@ -75,11 +75,11 @@ export default{
         // console.log(this.$route.query.name)
         // Подключение виджета сообщений
 
-        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-            tooltipButtonText: "Есть вопрос?",
-            expanded: "0",
-            widgetPosition: "left"
-        });
+        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+        //     tooltipButtonText: "Есть вопрос?",
+        //     expanded: "0",
+        //     widgetPosition: "left"
+        // });
 
         // Подключение виджета сообщества
 

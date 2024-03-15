@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\RacesXmlController;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +115,7 @@ Route::post('/match/create', [MatchController::class, 'create']);
 Route::post('/match/delete', [MatchController::class, 'delete']);
 
 Route::post('/match/replacement', [MatchController::class, 'replacement']);
+Route::post('/races/xml/create', [RacesXmlController::class, 'create']);
 
 
 
