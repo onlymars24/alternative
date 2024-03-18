@@ -52,6 +52,13 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
+        'sftp' => [
+            'driver' => 'sftp',
+            'host' => env('SFTP_HOST'),
+            'username' => env('SFTP_USERNAME'),
+            'password' => env('SFTP_PASSWORD'),
+            'port' => (integer)env('SFTP_PORT'),
+        ],
 
     ],
 

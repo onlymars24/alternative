@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BusStation;
 use Illuminate\Http\Request;
+use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\File;
 
 class BusStationController extends Controller
@@ -33,7 +34,6 @@ class BusStationController extends Controller
         $newLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
         $xml = simplexml_load_file(env('XML_FILE_NAME'));
         for($i = 0; $i < count($xml->url); $i++){
-            // dd($xml->url[$i]['id']);
             if($xml->url[$i]->loc == $newLoc){
                 return response([
                     'existing' => true
@@ -45,13 +45,9 @@ class BusStationController extends Controller
         $newNode->addChild('lastmod', date('Y-m-d'));
         $newNode->addChild('changefreq', 'weekly');
         $newNode->addChild('priority', '1.0');
-
-        
-
-        $newNode->addAttribute('type', 'Автовокзал');
-        $newNode->addAttribute('id', $busStation->id);
         
         File::put(env('XML_FILE_NAME'), $xml->asXML());
+        FtpLoadingService::put();
         return response([
             'existing' => false
         ]);
@@ -63,9 +59,10 @@ class BusStationController extends Controller
         $xml = simplexml_load_file(env('XML_FILE_NAME'));
         for($i = 0; $i < count($xml->url); $i++){
             // dd($xml->url[$i]['id']);
-            if((integer)$xml->url[$i]['id'] == $busStation->id){
+            if((string)$xml->url[$i]->loc == env('FRONTEND_URL').'/автовокзал/'.$busStation->title){
                 unset($xml->url[$i]);
                 File::put(env('XML_FILE_NAME'), $xml->asXML());
+                FtpLoadingService::put();
                 return response([
                     'existing' => true
                 ]);
@@ -76,6 +73,8 @@ class BusStationController extends Controller
 
     public function edit(Request $request){
         $busStation = BusStation::find($request->id);
+        $oldLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
+
         $busStation->title = $request->title;
         $busStation->name = $request->name;
         $busStation->description = $request->description;
@@ -85,11 +84,13 @@ class BusStationController extends Controller
         $busStation->save();
 
         $xml = simplexml_load_file(env('XML_FILE_NAME'));
+        
         for($i = 0; $i < count($xml->url); $i++){
-            if((integer)$xml->url[$i]['id'] == $busStation->id){
+            if((string)$xml->url[$i]->loc == $oldLoc){
                 $xml->url[$i]->loc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
                 $xml->url[$i]->lastmod = date('Y-m-d');
                 File::put(env('XML_FILE_NAME'), $xml->asXML());
+                FtpLoadingService::put();
                 return response([
                     'existing' => true
                 ]);

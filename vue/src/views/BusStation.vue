@@ -168,6 +168,9 @@ export default{
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content',this.station.description);
 
+        const linkCan = document.querySelector('head link[rel="canonical"]');
+        linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.station.title);
+
         // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
         //     tooltipButtonText: "Есть вопрос?",
         //     expanded: "0",

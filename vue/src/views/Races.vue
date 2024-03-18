@@ -236,7 +236,7 @@ export default {
         descEl.setAttribute('content', 'Расписание автобусов '+this.dispatchEl.name+' — '+this.arrivalEl.name+'. Отправление и прибытие по местному времени.');
 
         const linkCan = document.querySelector('head link[rel="canonical"]');
-        linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
+        linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
 
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if(!regex.test(this.date)){
@@ -297,19 +297,19 @@ export default {
             this.paramKey = true
         }
 
-        const promise3 = axiosClient
-        .post('/races/xml/create', {dispatchName: dispatchPoint.name, arrivalName: arrivalPoint.name})
-        .then(response => {
-            console.log(response)
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        await promise3
+        // const promise3 = axiosClient
+        // .post('/races/xml/create', {dispatchName: dispatchPoint.name, arrivalName: arrivalPoint.name})
+        // .then(response => {
+        //     console.log(response)
+        // })
+        // .catch(error => {
+        //     console.log(error)
+        // })
+        // await promise3
 
         
 
-        this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id);
+        this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id, dispatchPoint.name, arrivalPoint.name);
         this.dateForError = dayjs(this.date).format('DD.MM.YYYY')
     },
     computed: {
@@ -336,15 +336,26 @@ export default {
         }
     },
     methods: {
-        async changeRaces0(date, dispatch_id, arrival_id){
+        async changeRaces0(date, dispatch_id, arrival_id, dispatch_name, arrival_name){
             this.loadingRaces = true
             this.races = []
-            const promise = axiosClient
+
+            const promise1 = axiosClient
+            .post('/races/xml/create', {dispatchName: dispatch_name, arrivalName: arrival_name})
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            await promise1
+
+            const promis2 = axiosClient
                 .get('/races/'+date+'/?dispatch_point_id='+dispatch_id+'&arrival_point_id='+arrival_id)
                 .then(response => (
                     this.races = response.data
                 ));
-            await promise
+            await promis2
             if(this.races.length > 0){
                 this.races.forEach(race => {
                     race.section = 'route'

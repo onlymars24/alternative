@@ -15,6 +15,8 @@
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
+        "league/flysystem-ftp": "3.0",
+        "league/flysystem-sftp-v3": "3.0",
         "maatwebsite/excel": "*"
     },
     "require-dev": {

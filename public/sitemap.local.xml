@@ -2,14 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url type="Автобус">
-<loc>http://localhost:5173/Псков/Новоселье</loc>
-<changefreq>dayly</changefreq>
-<priority>1.0</priority>
-</url>
-<url type="Автобус">
-<loc>http://localhost:5173/Новосибирск/Барнаул</loc>
+<loc>https://росвокзалы.рф/Новосибирск/Барнаул</loc>
 <changefreq>dayly</changefreq>
 <priority>1.0</priority>
 </url>
 
-</urlset>
+<url type="Автобус">
+<loc>https://росвокзалы.рф/Новосибирск/Томск</loc>
+<changefreq>dayly</changefreq>
+<priority>1.0</priority>
+</url>
+
+<url><loc>http://localhost:5173/Новосибирск/Хлебороб</loc><changefreq>dayly</changefreq><priority>1.0</priority></url></urlset>

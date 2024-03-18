@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Services\FtpLoadingService;
 
 class RacesXmlController extends Controller
 {
@@ -27,12 +28,12 @@ class RacesXmlController extends Controller
 
         $newNode = $xml->addChild('url');
         $newNode->addChild('loc', $newLoc);
-        // $newNode->addChild('lastmod', 'value2');
         $newNode->addChild('changefreq', 'dayly');
         $newNode->addChild('priority', '1.0');
-        $newNode->addAttribute('type', 'Автобус');
 
         File::put(env('XML_FILE_NAME'), $xml->asXML());
+        FtpLoadingService::put();
+        
         return response([
             'existing' => false,
             'newXml' => $xml->asXML()

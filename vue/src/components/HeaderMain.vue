@@ -295,13 +295,13 @@ export default{
         },
 
         findRaces(){
-            this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id)
+            this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id, this.dispatchEl.name, this.arrivalEl.name)
             console.log(this.dispatchEl, this.arrivalEl, this.data)
             router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
         },
         otherDay(date){
             this.date = date
-            this.$emit('changeRaces', date, this.dispatchEl.id, this.arrivalEl.id)
+            this.$emit('changeRaces', date, this.dispatchEl.id, this.arrivalEl.id, this.dispatchEl.name, this.arrivalEl.name)
             router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
         }
     },
