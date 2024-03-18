@@ -16,7 +16,7 @@ class RacesXmlController extends Controller
 
         // unset($xml->url[1]);
         // dd($xml);
-        $newLoc = env('FRONTEND_URL').'/'.$request->dispatchName.'/'.$request->arrivalName;
+        $newLoc = env('FRONTEND_URL').'/автобус/'.$request->dispatchName.'/'.$request->arrivalName;
         for($i = 0; $i < count($xml->url); $i++){
           // dd($xml->url[$i]['id']);
           if($xml->url[$i]->loc == $newLoc){
