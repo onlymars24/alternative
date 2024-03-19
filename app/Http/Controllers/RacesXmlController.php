@@ -20,6 +20,7 @@ class RacesXmlController extends Controller
         for($i = 0; $i < count($xml->url); $i++){
           // dd($xml->url[$i]['id']);
           if($xml->url[$i]->loc == $newLoc){
+            $xml->url[$i]->loc = date('Y-m-d');
             return response([
                 'existing' => true
             ]);
@@ -28,6 +29,7 @@ class RacesXmlController extends Controller
 
         $newNode = $xml->addChild('url');
         $newNode->addChild('loc', $newLoc);
+        $newNode->addChild('lastmod', date('Y-m-d'));
         $newNode->addChild('changefreq', 'dayly');
         $newNode->addChild('priority', '1.0');
 
