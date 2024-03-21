@@ -45,7 +45,8 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-
+  $newSitemap = File::get(env('XML_FILE_NAME'));
+  $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', $newSitemap);
 });
 
 

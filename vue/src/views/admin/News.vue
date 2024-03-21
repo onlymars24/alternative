@@ -81,17 +81,9 @@
                         </div>
                         <div style="display: flex; align-items: flex-start;">
                             <div>
+                                {{ testVal }}
                                 <label for="">Контент страницы</label>
-                                <HtmlEditor 
-                                :id="station.id" 
-                                :name="station.name" 
-                                :description="station.description"
-                                :title="station.title" 
-                                :data="station.data" 
-                                :hidden="station.booleanHidden" 
-                                :dispatch_point_id="station.dispatch_point_id"  
-                                @deleteStation="deleteStation"
-                                @editStation="editStation"/>
+                                <CkEditor v-model="testVal"/>
                             </div>
                             <!-- <el-button type="danger" style="margin-left: 15px;" @click="deleteStation(station.id)">Удалить автовокзал</el-button> -->
                         </div>
@@ -111,13 +103,13 @@ import axiosAdmin from '../../axiosAdmin'
 import axiosClient from "../../axios";
 import Header from '../../components/admin/Header.vue'
 import BusLoading from '../../components/BusLoading.vue'
-import HtmlEditor from '../../components/admin/HtmlEditor.vue'
+import CkEditor from '../../components/admin/CkEditor.vue'
 import Calendar from '../../components/admin/Calendar.vue'
 
 
 export default
 {
-    components: { Header, BusLoading, HtmlEditor, Calendar },
+    components: { Header, BusLoading, CkEditor, Calendar },
     data() {
         return {
             loading: true,
@@ -131,7 +123,8 @@ export default
             },
             dispatchPoints: [],
             selectedStationId: '',
-            url: window.location.origin
+            url: window.location.origin,
+            testVal: ''
         }
     },
     async mounted(){

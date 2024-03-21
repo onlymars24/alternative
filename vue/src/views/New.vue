@@ -6,7 +6,7 @@
     <h1 style="text-align: center; margin: 30px 0;">Новость</h1>
     <div class="new">
     <div class="new-wrapper">
-      <div v-show="activeMenu == 1">
+      <div>
         <h4 class="header">Перевозка багажа</h4>
         <p> <strong>Пассажир имеет право</strong> провозить с собой в автобусах междугородных маршрутов:</p>
         <ul>
@@ -48,47 +48,7 @@
     components:{AccordionItem, Header, Footer},
     data(){
       return{
-        activeMenu:1,
-        AccordItem:{
-          raceItem:[
-             {
-                id:1,
-                header:'Какие рейсы есть?',
-                text:'Любые есть' ,
-                open: false
-            },
-            {
-                id:2,
-                header:'Какие рейсы есть?',
-                text:'Любые есть' ,
-                open: false
-            },
-            {
-                id:3,
-                header:'Какие рейсы есть?',
-                text:'Любые есть' ,
-                open: false
-            },
-          ],
-          covid:[
-            {
-                id:4,
-                header:'какой ковид есть',
-                text:'Любой есть' ,
-                open: false
-            }
-          ],
-          td:[
-            {
-                id:5,
-                header:'какой тд есть',
-                text:'Любые есть' ,
-                open: false
-            }
-          ]
-         
-       
-        }
+
       }
     }
   }

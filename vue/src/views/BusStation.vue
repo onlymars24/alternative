@@ -170,29 +170,7 @@ export default{
 
         const linkCan = document.querySelector('head link[rel="canonical"]');
         linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.station.title);
-
-        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-        //     tooltipButtonText: "Есть вопрос?",
-        //     expanded: "0",
-        //     widgetPosition: "left"
-        // });
-
-        // // Подключение виджета сообщества
-
-        // VK.init({
-        //     apiId: this.groupID,
-        //     onlyWidgets: true
-        // });
-        // VK.Widgets.Group("vk_groups", 
-        //     {
-        //         mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
-        //     }, 
-        //     this.groupID
-        // );
-    }
-    // created() {
-    //   document.title = 'Главная';
-    // }
+    },
 }
 </script>
 
@@ -209,7 +187,7 @@ export default{
             :modules="modules"
             :allowTouchMove="false"
             :slides-per-view="3"
-            :space-between="50"
+            :space-between="20"
             :navigation="navigation"
             :oSwipingSelector="'station__slides-button-disabled'"
             navigation
@@ -217,16 +195,16 @@ export default{
             @slideChange="onSlideChange"
             >
                 <swiper-slide v-for="newThing in news">
-                    <div class="station__slide" @click="toNew()">
-                        <span>{{newThing.date}}</span>
-                        <div class="station__slide-img">
-                            <img :src="'../img/'+newThing.avatar" alt="">
+                    <div class="card station__slide" @click="toNew()">
+                        <img src="../img/media-img.webp" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{newThing.title}}</h5>
+                            <p class="card-text">{{newThing.descr}}</p>
                         </div>
-                        <h3 class="station__slide-title">{{newThing.title}}</h3>
-                        <p class="station__slide-subtitle">
-                            {{newThing.subtitle}}
-                        </p>
-                    </div>
+                        <div class="card-footer">
+                            2 days ago
+                        </div>
+                    </div>      
                 </swiper-slide>
             </swiper>
             <div class="station__slides-buttons">
@@ -238,15 +216,15 @@ export default{
             <div class="about__inner">
                 <div v-html="content"></div>
 
-            <div class="about__info">
+            <!-- <div class="about__info">
                 <div class="about__info-main">
-                    <!-- <a href="">Внутренние</a> -->
+                    <a href="">Внутренние</a>
                 </div>
                 <div id='vk_community_messages'></div>
                 <div class="about__info-text">
-                    <!-- <div id="vk_groups"></div>  -->
+                    <div id="vk_groups"></div> 
                 </div>
-            </div>
+            </div> -->
             </div>
 
         </div>

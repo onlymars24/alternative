@@ -167,7 +167,7 @@ const routes = [
         name: 'BusStations'
       },
       // {
-      //   path: '/news',
+      //   path: 'news',
       //   name: 'AdminNews',
       //   component: AdminNews
       // }, 

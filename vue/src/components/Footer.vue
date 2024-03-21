@@ -47,7 +47,7 @@
                         <a :href="baseUrl+'/agreement/privacypolicy.pdf'">Политика конфиденциальности</a>
                     </div>
                 </div>
-                <div style="margin: 20px 0;" class="footer__info-about"><div id="vk_groups"></div></div>
+                <div style="margin: 20px 0;" class="footer__info-about"><div id="vk_groups"></div><div id='vk_community_messages'></div></div>
             </div>
             <div class="copyright__text">
                 <p>© 2023, OOO АЛЬТЕРНАТИВА. Все права защищены. АЛЬТЕРНАТИВА — Онлайн сервис продажи билетов</p>
@@ -96,11 +96,11 @@ import PopupWindow from '../components/PopupWindow.vue';
     mounted(){
 		this.baseUrl = import.meta.env.VITE_API_BASE_URL
 
-        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-        //     tooltipButtonText: "Есть вопрос?",
-        //     expanded: "0",
-        //     widgetPosition: "left"
-        // });
+        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+            tooltipButtonText: "Есть вопрос?",
+            expanded: "0",
+            widgetPosition: "left"
+        });
 
         // Подключение виджета сообщества
 

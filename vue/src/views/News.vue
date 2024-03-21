@@ -23,21 +23,6 @@
             </div>
 
         </div>
-        <div class="container">
-            <div class="about__inner">
-
-                <div class="about__info">
-                    <div class="about__info-main">
-                        <!-- <a href="">Внутренние</a> -->
-                    </div>
-                    <div id='vk_community_messages'></div>
-                    <div class="about__info-text">
-                        <div id="vk_groups"></div> 
-                    </div>
-                </div>
-            </div>
-
-        </div>
     </div>
     
     <hr class="bef__footer">
@@ -168,24 +153,24 @@ export default{
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content',this.station.description);
 
-        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-            tooltipButtonText: "Есть вопрос?",
-            expanded: "0",
-            widgetPosition: "left"
-        });
+        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+        //     tooltipButtonText: "Есть вопрос?",
+        //     expanded: "0",
+        //     widgetPosition: "left"
+        // });
 
         // Подключение виджета сообщества
 
-        VK.init({
-            apiId: this.groupID,
-            onlyWidgets: true
-        });
-        VK.Widgets.Group("vk_groups", 
-            {
-                mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
-            }, 
-            this.groupID
-        );
+        // VK.init({
+        //     apiId: this.groupID,
+        //     onlyWidgets: true
+        // });
+        // VK.Widgets.Group("vk_groups", 
+        //     {
+        //         mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
+        //     }, 
+        //     this.groupID
+        // );
     }
     // created() {
     //   document.title = 'Главная';

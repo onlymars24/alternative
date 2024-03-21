@@ -75,11 +75,11 @@ export default{
         // console.log(this.$route.query.name)
         // Подключение виджета сообщений
 
-        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-        //     tooltipButtonText: "Есть вопрос?",
-        //     expanded: "0",
-        //     widgetPosition: "left"
-        // });
+        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+            tooltipButtonText: "Есть вопрос?",
+            expanded: "0",
+            widgetPosition: "left"
+        });
 
         // Подключение виджета сообщества
 
@@ -233,21 +233,21 @@ export default{
 
     <div class="about">
         <div class="container">
+            <div v-html="content"></div>
+            <!-- <div class="about__inner">
             
-            <div class="about__inner">
-            
-                <div v-html="content"></div>
+                
 
                 <div class="about__info">
                     <div class="about__info-main">
-                        <!-- <a href="">Внутренние</a> -->
+                        <a href="">Внутренние</a>
                     </div>
                     <div id='vk_community_messages'></div>
                     <div class="about__info-text">
-                        <!-- <div id="vk_groups"></div>  -->
+                        <div id="vk_groups"></div> 
                     </div>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>

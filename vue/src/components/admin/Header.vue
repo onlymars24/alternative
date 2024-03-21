@@ -15,7 +15,7 @@
         <el-menu-item index="4" @click="$router.push({name: 'EditMain'})">Редактировать контент</el-menu-item>
         <el-menu-item index="5" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
         <el-menu-item index="6" @click="$router.push({name: 'BusStations'})">Автовокзалы</el-menu-item>
-        <el-menu-item index="7" @click="$router.push({name: 'News'})">Новости</el-menu-item>
+        <el-menu-item index="7" @click="$router.push({name: 'AdminNews'})">Новости</el-menu-item>
         <el-sub-menu index="8">
             <template #title>Sitemap</template>
             <el-menu-item index="8-1" @click="sitemapView()">Предпросмотр</el-menu-item>

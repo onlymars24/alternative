@@ -14,13 +14,12 @@ class RacesXmlController extends Controller
     public function create(Request $request){
         $xml = simplexml_load_file(env('XML_FILE_NAME'));
 
-        // unset($xml->url[1]);
-        // dd($xml);
         $newLoc = env('FRONTEND_URL').'/автобус/'.$request->dispatchName.'/'.$request->arrivalName;
         for($i = 0; $i < count($xml->url); $i++){
-          // dd($xml->url[$i]['id']);
           if($xml->url[$i]->loc == $newLoc){
             $xml->url[$i]->loc = date('Y-m-d');
+            File::put(env('XML_FILE_NAME'), $xml->asXML());
+            FtpLoadingService::put();
             return response([
                 'existing' => true
             ]);
@@ -30,7 +29,7 @@ class RacesXmlController extends Controller
         $newNode = $xml->addChild('url');
         $newNode->addChild('loc', $newLoc);
         $newNode->addChild('lastmod', date('Y-m-d'));
-        $newNode->addChild('changefreq', 'dayly');
+        $newNode->addChild('changefreq', 'daily');
         $newNode->addChild('priority', '1.0');
 
         File::put(env('XML_FILE_NAME'), $xml->asXML());
