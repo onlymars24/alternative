@@ -17,7 +17,7 @@ class RacesXmlController extends Controller
         $newLoc = env('FRONTEND_URL').'/автобус/'.$request->dispatchName.'/'.$request->arrivalName;
         for($i = 0; $i < count($xml->url); $i++){
           if($xml->url[$i]->loc == $newLoc){
-            $xml->url[$i]->loc = date('Y-m-d');
+            $xml->url[$i]->lastmod = date('Y-m-d');
             File::put(env('XML_FILE_NAME'), $xml->asXML());
             FtpLoadingService::put();
             return response([
