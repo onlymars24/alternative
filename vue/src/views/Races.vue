@@ -6,7 +6,7 @@
         <div class="container">
             <div class="menu__intro">
                 <p>Отправление и прибытие по местному времени</p>
-                <h4>Расписание автобусов {{errorNames.dispatch}} — {{errorNames.arrival}}</h4>
+                <h2 style="font-size: 24px; margin: 10px 0;">Расписание автобусов {{errorNames.dispatch}} — {{errorNames.arrival}}</h2>
                 <div class="menu__inro-sort">
                 </div>              
             </div>             
@@ -233,7 +233,7 @@ export default {
     async mounted(){
         document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
         const descEl = document.querySelector('head meta[name="description"]');
-        descEl.setAttribute('content', 'Расписание автобусов '+this.dispatchEl.name+' — '+this.arrivalEl.name+'. Отправление и прибытие по местному времени.');
+        descEl.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
 
         const linkCan = document.querySelector('head link[rel="canonical"]');
         linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);

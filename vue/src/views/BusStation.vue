@@ -54,68 +54,7 @@ export default{
                     },
                 },
             ],
-            news: [
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-                {
-                    title: 'title1',
-                    subtitle: 'subtitle1',
-                    avatar: 'media-img.webp',
-                    date: '11 сен 2001'
-                },
-            ],
+            events: [],
             disabledDate: (Date) => {
             return time.getTime() > Date.now()
             },
@@ -125,8 +64,8 @@ export default{
             navigation: {
                 nextEl: '.station__slides-button-next',
                 prevEl: '.station__slides-button-prev',
-            }
-            // innerDrawer: false
+            },
+            loading: false
         }
     },
     methods: {
@@ -136,8 +75,8 @@ export default{
         onSwiper(){
 
         },
-        toNew(){
-            this.$router.push({ name: 'Main'})
+        toNew(id){
+            this.$router.push({ name: 'New', params: {id: id}})
         }
     },
     watch: {
@@ -148,7 +87,7 @@ export default{
     },
     async mounted() {
         console.log(this.$route.params['title'])
-        const promise = axiosClient
+        const promise1 = axiosClient
         .get('/bus/station?title='+this.$route.params['title'].replace(/\s/g, '_'))
         .then(response => {
             console.log(response)
@@ -158,18 +97,31 @@ export default{
         .catch(error => {
             console.log(error)
         })
-        await promise
+        await promise1
         
         if(!this.station){
             router.push({ name: 'Main'})
             return
         }
         document.title = this.station.name;
+        
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content',this.station.description);
 
         const linkCan = document.querySelector('head link[rel="canonical"]');
         linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.station.title);
+
+        const promise2 = axiosClient
+        .get('/station/events?id='+this.station.id)
+        .then(response => {
+            console.log(response)
+            this.events = response.data.events.reverse()
+            console.log()
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        await promise2
     },
 }
 </script>
@@ -181,7 +133,7 @@ export default{
 
     <div class="about" style="margin-top: 50px;">
         <div class="container">
-            <!-- <div class="station__slides">
+            <div v-if="events.length > 0" class="station__slides">
             <h2 class="station__slides-title">Новости</h2>
             <swiper
             :modules="modules"
@@ -194,15 +146,15 @@ export default{
             @swiper="onSwiper"
             @slideChange="onSlideChange"
             >
-                <swiper-slide v-for="newThing in news">
-                    <div class="card station__slide" @click="toNew()">
-                        <img src="../img/media-img.webp" class="card-img-top" alt="...">
+                <swiper-slide v-for="event in events">
+                    <div class="card station__slide" style="height: 250px;" @click="toNew(event.id)">
+                        <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
                         <div class="card-body">
-                            <h5 class="card-title">{{newThing.title}}</h5>
-                            <p class="card-text">{{newThing.descr}}</p>
+                            <h5 class="card-title">{{event.title}}</h5>
+                            <p class="card-text">{{event.descr}}</p>
                         </div>
                         <div class="card-footer">
-                            2 days ago
+                            {{event.date}}
                         </div>
                     </div>      
                 </swiper-slide>
@@ -211,7 +163,7 @@ export default{
                 <div class="station__slides-button station__slides-button-prev">&#9668;</div>
                 <div class="station__slides-button station__slides-button-next">&#9658;</div>
             </div>                
-            </div> -->
+            </div>
         
             <div class="about__inner">
                 <div v-html="content"></div>

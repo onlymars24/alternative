@@ -6,14 +6,17 @@ use App\Http\Controllers\SmsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RaceController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\MatchController;
 use App\Http\Controllers\OrderController;
+// use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PaymentController;
-// use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PageMainController;
+use App\Http\Controllers\RacesXmlController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AllPointsController;
 use App\Http\Controllers\Api\RacesController;
@@ -27,8 +30,6 @@ use App\Http\Controllers\PopularPointsController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
-use App\Http\Controllers\MatchController;
-use App\Http\Controllers\RacesXmlController;
 
 /*
 |--------------------------------------------------------------------------
@@ -116,6 +117,16 @@ Route::post('/match/delete', [MatchController::class, 'delete']);
 
 Route::post('/match/replacement', [MatchController::class, 'replacement']);
 Route::post('/races/xml/create', [RacesXmlController::class, 'create']);
+
+
+Route::get('/events', [EventController::class, 'all']);
+Route::get('/station/events', [EventController::class, 'stationOnes']);
+Route::get('/event', [EventController::class, 'one']);
+Route::post('/event/create', [EventController::class, 'create']);
+Route::post('/event/edit', [EventController::class, 'edit']);
+// Route::post('/event/delete/image', [EventController::class, 'deleteImage']);
+Route::post('/event/add/station', [EventController::class, 'addStation']);
+Route::post('/event/delete/station', [EventController::class, 'deleteStation']);
 
 
 

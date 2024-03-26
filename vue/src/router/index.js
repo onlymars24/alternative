@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHistory, createMemoryHistory} from 'vue-router'
 import Main from '../views/Main.vue'
 import Races from '../views/Races.vue'
 import SeatPage from '../views/SeatPage.vue'
@@ -27,7 +27,9 @@ import BusStation from '../views/BusStation.vue'
 import ReturnRace from '../views/ReturnRace.vue'
 import New from '../views/New.vue'
 import News from '../views/News.vue'
-import AdminNews from '../views/admin/News.vue'
+import EventCreate from '../views/admin/EventCreate.vue'
+import EventEdit from '../views/admin/EventEdit.vue'
+
 
 const routes = [
   // {
@@ -55,17 +57,6 @@ const routes = [
     name: 'ReturnRace',
     component: ReturnRace
   },
-  // {
-  //   path: '/races/:dispatch_id/:dispatch_name/:arrival_id/:arrival_name/',
-  //   // path: '/avtobus/:dispatch_name/:arrival_name?from_id=:dispatch_id&to_id=:arrival_id',
-  //   name: 'RacesWithoutDate',
-  //   component: RacesWithoutDate
-  // },
-  // {
-  //   path: '/avtobus/:dispatch_name/:arrival_name/',
-  //   name: 'Avtobus',
-  //   component: Avtobus
-  // },
   {
     path: '/seats/:dispatch_point_id/:arrival_point_id/:date/:race_id',
     name: 'SeatPage',
@@ -96,16 +87,16 @@ const routes = [
     name: 'Faq',
     component: Faq
   },
-  // {
-  //   path: '/news',
-  //   name: 'News',
-  //   component: News
-  // },  
-  // {
-  //   path: '/new/:id',
-  //   name: 'New',
-  //   component: New
-  // },
+  {
+    path: '/news',
+    name: 'News',
+    component: News
+  },  
+  {
+    path: '/new/:id',
+    name: 'New',
+    component: New
+  },
 
   {
     path: '/fj239f3j984jsdiaisja',
@@ -166,11 +157,16 @@ const routes = [
         component: BusStations,
         name: 'BusStations'
       },
-      // {
-      //   path: 'news',
-      //   name: 'AdminNews',
-      //   component: AdminNews
-      // }, 
+      {
+        path: 'event/create',
+        name: 'EventCreate',
+        component: EventCreate
+      }, 
+      {
+        path: 'event/edit',
+        name: 'EventEdit',
+        component: EventEdit
+      }, 
     ]
   },
   {

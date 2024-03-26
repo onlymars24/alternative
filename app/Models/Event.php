@@ -2,25 +2,25 @@
 
 namespace App\Models;
 
-use App\Models\Event;
+use App\Models\BusStation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class BusStation extends Model
+class Event extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'title',
-        'name',
-        'description',
-        'data',
-        'dispatch_point_id',
+        'descr',
+        'content',
         'hidden',
+        'image',
+        'date',
     ];
 
-    public function events()
+    public function bus_stations()
     {
-        return $this->belongsToMany(Event::class);
+        return $this->belongsToMany(BusStation::class);
     }
 }

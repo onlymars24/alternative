@@ -1,5 +1,5 @@
 <template>
-  <ckeditor :editor="editor" v-model="testValue" :config="editorConfig"></ckeditor>
+  <ckeditor :editor="editor" v-model="val" :config="editorConfig"></ckeditor>
 </template>
 
 <script>
@@ -26,12 +26,12 @@ import { RemoveFormat } from '@ckeditor/ckeditor5-remove-format';
 
 export default {
   emits: ['editStation', 'deleteStation'],
-//   props: {
-//     testValue: {
-//         type: String,
-//         default: ''
-//     }
-//   },
+  props: {
+    value: {
+        type: Object,
+        required: true
+    }
+  },
   data() {
     return {
       editor: ClassicEditor,

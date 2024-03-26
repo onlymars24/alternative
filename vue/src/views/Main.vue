@@ -55,7 +55,7 @@ export default{
 
     },
     async mounted() {
-        // document.title = "Автовокзалы России";
+        document.title = "Автовокзалы России";
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content', 'Билеты на автобус онлайн');
 
@@ -70,33 +70,13 @@ export default{
         })
         await promise
         console.log('this.$route.query')
-
-        // this.$router.push({ name: 'Main', query: { id: 456, name: 'Jane' }})
-        // console.log(this.$route.query.name)
-        // Подключение виджета сообщений
-
+        
         VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
             tooltipButtonText: "Есть вопрос?",
             expanded: "0",
             widgetPosition: "left"
         });
-
-        // Подключение виджета сообщества
-
-        // VK.init({
-        //     apiId: this.groupID,
-        //     onlyWidgets: true
-        // });
-        // VK.Widgets.Group("vk_groups", 
-        //     {
-        //         mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
-        //     }, 
-        //     this.groupID
-        // );
     }
-    // created() {
-    //   document.title = 'Главная';
-    // }
 }
 </script>
 

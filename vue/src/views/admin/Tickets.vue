@@ -40,7 +40,7 @@
                             <div class="text item" style="margin-bottom: 10px;">
                                 <div>Дата рождения:</div> 
                                 <template v-if="!filterArr.birthday.set">
-                                    <Calendar @setDateFilter="setDateFilter" :filterName="'birthday'"/>                                
+                                    <CalendarFilter @setDateFilter="setDateFilter" :filterName="'birthday'"/>                                
                                 </template>
                                 <template v-else>
                                     <el-tag size="large" closable @close="deleteFilter('birthday')">{{filterArr.birthday.value}}</el-tag>
@@ -49,7 +49,7 @@
                             <div class="text item" style="margin-bottom: 10px;">
                                 <div>Дата отправления:</div> 
                                 <template v-if="!filterArr.dispatchDate.set">
-                                    <Calendar @setDateFilter="setDateFilter" :filterName="'dispatchDate'"/>                                
+                                    <CalendarFilter @setDateFilter="setDateFilter" :filterName="'dispatchDate'"/>                                
                                 </template>
                                 <template v-else>
                                     <el-tag size="large" closable @close="deleteFilter('dispatchDate')">{{filterArr.dispatchDate.value}}</el-tag>
@@ -58,7 +58,7 @@
                             <div class="text item" style="margin-bottom: 10px;">
                                 <div>Дата бронирования(мск):</div> 
                                 <template v-if="!filterArr.created_at.set">
-                                    <Calendar @setDateFilter="setDateFilter" :filterName="'created_at'"/>                                
+                                    <CalendarFilter @setDateFilter="setDateFilter" :filterName="'created_at'"/>                                
                                 </template>
                                 <template v-else>
                                     <el-tag size="large" closable @close="deleteFilter('created_at')">{{filterArr.created_at.value}}</el-tag>
@@ -97,7 +97,7 @@
 
 <script>
 import { ref } from "vue";
-import Calendar from '../../components/admin/Calendar.vue'
+import CalendarFilter from '../../components/admin/CalendarFilter.vue'
 import dayjs from 'dayjs'
 import router from '../../router'
 import Header from '../../components/admin/Header.vue'
@@ -112,7 +112,7 @@ import ticketStatuses from '../../data/TicketStatuses';
 // import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 export default
 {
-    components: {Calendar, Header, TicketCard, FilterInput, paginate: Paginate, FilterSelect},
+    components: {CalendarFilter, Header, TicketCard, FilterInput, paginate: Paginate, FilterSelect},
     data() {
         return {
             drawer: false,
