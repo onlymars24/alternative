@@ -72,11 +72,18 @@ class EventController extends Controller
         ]);
     }
 
+    public function delete(Request $request){
+        $event = Event::find($request->id);
+        $event->delete();
+    }
+
     // public function deleteImage(Request $request){
     //     $event = Event::find($request->id);
     //     //УДАЛЕНИЕ КАРТИНКИ
     //     $event->save();
     // }
+
+
 
     //stationId
     //eventId

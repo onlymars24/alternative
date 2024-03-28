@@ -3,7 +3,7 @@
     <Header/>
     <el-container v-loading.fullscreen.lock="loading">
         <el-main style="min-height: 500px;" v-if="!loading">
-            {{ newEvent }}
+            <!-- {{ newEvent }} -->
             <div>
                 <div style="width: 25%; margin-bottom: 10px;">
                     <label for=""><strong>Новая новость</strong></label><br>
@@ -15,7 +15,7 @@
                     <el-input type="textarea" v-model="newEvent.descr" required></el-input>
                 </div>  
                 <div style="width: 70%; margin-bottom: 10px;">
-                    {{ newEvent.content }}
+                    <!-- {{ newEvent.content }} -->
                     <label for="">Контент страницы</label>
                     <CkEditor v-model="newEvent.content"/>
                 </div>

@@ -87,12 +87,13 @@ export default{
 .news__cards{
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    /* justify-content: space-between; */
 }
 .news__card{
     width: 32%;
     margin-bottom: 10px;
     cursor: pointer;
+    margin-right: 15px;
 }
 .news__cards-title{
     width: 100%;

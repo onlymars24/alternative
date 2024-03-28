@@ -19,11 +19,11 @@
                 <div style="width: 25%; margin-bottom: 10px;">
                     <!-- <label for=""><strong>Новая новость</strong></label><br> -->
                     <label for="">Название новости</label><br>
-                    <el-input v-model="currentEvent.title"></el-input>
+                    <el-input v-model="currentEvent.title" required></el-input>
                 </div> 
                 <div style="width: 25%; margin-bottom: 10px;">
                     <label for="">Описание</label><br>
-                    <el-input type="textarea" v-model="currentEvent.descr"></el-input>
+                    <el-input type="textarea" v-model="currentEvent.descr" required></el-input>
                 </div>  
                 <div style="width: 70%; margin-bottom: 10px;">
                     <!-- {{ testVal }} -->
@@ -95,7 +95,12 @@
                     </template>
                 </el-table-column>
                 </el-table>
-
+                <el-button
+                style="margin-top: 15px;"
+                type="danger"
+                @click="deleteEvent"
+                >Удалить новость</el-button
+                >
             </div>
         </el-main>
     </el-container>
@@ -202,6 +207,24 @@ export default
             // this.loading = false
             location.reload(); return false;
         },
+        async deleteEvent(){
+            if(!confirm('Вы уверены, что хотите удалить новость? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
+				return
+			}
+            this.loading = true
+            const promise = axiosAdmin
+            .post('/event/delete', {id: this.selectedEventId})
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            await promise
+            // this.getAll()
+            // this.loading = false
+            location.reload(); return false;
+        },
         async addStation(){
             console.log(this.selectedEventId, this.newStationId)
             this.loading = true
@@ -244,6 +267,10 @@ export default
             .get('/event?id='+this.selectedEventId)
             .then(response => {
                 this.currentEvent = response.data.event
+                if(this.currentEvent.content == null){
+                    this.currentEvent.content = ''
+                }
+                console.log(this.currentEvent)
             })
             .catch(error => {
                 console.log(error)

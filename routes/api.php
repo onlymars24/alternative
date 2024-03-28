@@ -124,7 +124,7 @@ Route::get('/station/events', [EventController::class, 'stationOnes']);
 Route::get('/event', [EventController::class, 'one']);
 Route::post('/event/create', [EventController::class, 'create']);
 Route::post('/event/edit', [EventController::class, 'edit']);
-// Route::post('/event/delete/image', [EventController::class, 'deleteImage']);
+Route::post('/event/delete', [EventController::class, 'delete']);
 Route::post('/event/add/station', [EventController::class, 'addStation']);
 Route::post('/event/delete/station', [EventController::class, 'deleteStation']);
 
