@@ -30,6 +30,7 @@ use App\Http\Controllers\PopularPointsController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\BonusesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -128,6 +129,11 @@ Route::post('/event/delete', [EventController::class, 'delete']);
 Route::post('/event/add/station', [EventController::class, 'addStation']);
 Route::post('/event/delete/station', [EventController::class, 'deleteStation']);
 
+Route::get('/bonuses/transactions', [BonusesController::class, 'transactions']);
+Route::post('/bonuses/plus', [BonusesController::class, 'plus']);
+Route::post('/bonuses/minus', [BonusesController::class, 'minus']);
+Route::get('/users', [AuthController::class, 'users']);
+Route::get('/settings/bonuses/percent', [SettingsController::class, 'getBonusesPercent']);
 
 
 

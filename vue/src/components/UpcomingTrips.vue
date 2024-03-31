@@ -1,6 +1,7 @@
 <template>
   <BusLoading v-if="loading"/>
   <div v-else-if="orders.length != 0" class="personal-account__content">
+    <div style="width: 40%; padding: 15px; margin-bottom: 15px;" class="menu__ticket">Мои бонусы: {{user.bonuses}} руб</div>
     <template v-for="order in orders">
           <RaceCardAccount :order="order" @updateOrders="updateOrders"/>
     </template>
@@ -31,9 +32,17 @@ export default
       return{
         orders: [],
         loading: false,
+        user: {}
       }
   },
   async mounted(){
+    this.loading = true
+    const promise = axiosClient
+    .get('/user')
+    .then(response => {
+        this.user = response.data.user
+    })
+    await promise
 	  this.updateOrders()
   },
   methods: {

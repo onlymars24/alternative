@@ -28,6 +28,7 @@
         <el-menu-item index="9" @click="$router.push({name: 'Feedback'})">Обратная связь</el-menu-item>
         <el-menu-item index="10" @click="$router.push({name: 'Reports'})">Отчёты</el-menu-item>
         <el-menu-item index="11" @click="$router.push({name: 'Sms'})">Учет СМС</el-menu-item>
+        <el-menu-item index="12" @click="$router.push({name: 'Bonuses'})">Бонусы</el-menu-item>
     </el-menu>
 </el-header>
 

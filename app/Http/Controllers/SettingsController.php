@@ -26,4 +26,12 @@ class SettingsController extends Controller
             'message' => 'Great!'
         ]);
     }
+
+    public function getBonusesPercent(){
+        $setting = Setting::where('name', 'bonusesPercent')->first()->data;
+        $setting = (array)json_decode($setting);
+        return response([
+            'bonusesPercent' => $setting['bonusesPercent']
+        ]);
+    }
 }

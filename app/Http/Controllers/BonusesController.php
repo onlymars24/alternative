@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Bonus;
+use Illuminate\Http\Request;
+
+class BonusesController extends Controller
+{
+    public function transactions(){
+        $bonuses = Bonus::all();
+        return response([
+            'bonuses' => $bonuses
+        ]);
+    }
+
+    public function plus(Request $request){
+        $user = User::find($request->id);
+        $user->bonuses = $user->bonuses + $request->bonuses;
+        $user->save();
+        $bonuse = Bonus::create([
+            'amount' => $request->bonuses,
+            'transaction' => 'plus',
+            'user_id' => $user->id,
+            'user_phone' => $user->phone
+        ]);
+        
+    }
+    public function minus(Request $request){
+        $user = User::find($request->id);
+        if($user->bonuses >= $request->bonuses){
+            $user->bonuses = $user->bonuses - $request->bonuses;
+            $user->save();
+            $bonuse = Bonus::create([
+                'amount' => $request->bonuses,
+                'transaction' => 'minus',
+                'user_id' => $user->id,
+                'user_phone' => $user->phone
+            ]);
+        }
+    }
+}

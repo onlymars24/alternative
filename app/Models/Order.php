@@ -25,6 +25,7 @@ class Order extends Model
         'timezone',
         'dispatchPointId',
         'arrivalPointId',
+        'bonusesPrice'
     ];
 
     public function transactions()

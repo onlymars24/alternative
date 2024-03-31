@@ -29,6 +29,7 @@ import New from '../views/New.vue'
 import News from '../views/News.vue'
 import EventCreate from '../views/admin/EventCreate.vue'
 import EventEdit from '../views/admin/EventEdit.vue'
+import Bonuses from '../views/admin/Bonuses.vue'
 
 
 const routes = [
@@ -166,6 +167,11 @@ const routes = [
         path: 'event/edit',
         name: 'EventEdit',
         component: EventEdit
+      }, 
+      {
+        path: 'bonuses',
+        name: 'Bonuses',
+        component: Bonuses
       }, 
     ]
   },

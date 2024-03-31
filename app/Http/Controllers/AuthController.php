@@ -129,4 +129,10 @@ class AuthController extends Controller
             'success' => true
         ]);
     }
+
+    public function users(){
+        return response([
+            'users' => User::all()
+        ]);
+    }
 }

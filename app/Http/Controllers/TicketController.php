@@ -58,18 +58,27 @@ class TicketController extends Controller
         $orderFromDb->order_info = $order_json;
         $orderFromDb->save();
         $orderBundle = (array)json_decode($ticketFromDB->orderBundle);
-        $orderBundle['itemPrice'] = $ticketFromDB->repayment * 100;
+        $orderBundle['itemPrice'] = ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice) * 100;
         $refundItems = ['items' => [$orderBundle]];
 
-
+        $race_json = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
+        Log::info('race_json: '.$race_json);
+        $race = json_decode($race_json);
         //возврат в экваринге
+                //проверка на отмену рейса
+                
         $data = [
             'userName' => config('services.payment.userName'),
             'password' => config('services.payment.password'),
             'orderId' => $orderFromDb->bankOrderId,
-            'amount' => $ticketFromDB->repayment * 100,
+            'amount' => ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice) * 100,
             'positionId' => $orderBundle['positionId']
         ];
+        // if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
+        //     $data['amount'] = $ticketFromDB->repayment * 100;
+        // }
 
 
         $curl = curl_init(); // Инициализируем запрос
@@ -96,9 +105,14 @@ class TicketController extends Controller
         $body['Request']['InvoiceId'] = $transaction->id;
 
         $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticketFromDB->customerItem);
-        $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment;
+        $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment - $ticketFromDB->bonusesPrice;
+        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice);
+        // if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
+        //     $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment;
+        //     $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
+        // }
 
-        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
+        
 
 
         if($ticketFromDB->insurance){
@@ -137,11 +151,6 @@ class TicketController extends Controller
         }
 
         //проверка на отмену рейса
-        $race_json = Http::withHeaders([
-            'Authorization' => env('AVTO_SERVICE_KEY'),
-        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
-        Log::info('race_json: '.$race_json);
-        $race = json_decode($race_json);
         if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
             $data = [
                 'userName' => config('services.payment.userName'),
@@ -165,12 +174,16 @@ class TicketController extends Controller
             $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum']  += $ticketFromDB->duePrice;
             $ticketFromDB->raceCanceled = true;
             $ticketFromDB->save();
+            $user = $ticketFromDB->order->user;
+            $user->bonuses = $user->bonuses + $ticketFromDB->bonusesPrice;
+            $user->save();
         }
 
         $user = $orderFromDb->user;
         if($user->email){
             $body['Request']['CustomerReceipt']['Email'] = $user->email;
         }
+        Log::info('Body: '.json_encode($body));
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);
         $ReceiptId = json_decode($ReceiptId);

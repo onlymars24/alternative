@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Mail\OrderMail;
@@ -49,6 +50,7 @@ class OrderController extends Controller
             'order_info' => $order_json,
             'dispatchPointId' => $request->dispatch_point_id,
             'arrivalPointId' => $request->arrival_point_id,
+            'bonusesPrice' => $request->bonuses,
             'user_id' => Auth::id(),
         ]);
         $orderBundle = [
@@ -64,15 +66,25 @@ class OrderController extends Controller
         $duePrice = 0;
 
         $lastKey = 0;
+        $firstIteration = true;
         foreach($order->tickets as $key => $ticket){
             $ticketNew = (array)$ticket;
+            if($firstIteration){
+                $firstIteration = false;
+                $ticketNew['bonusesPrice'] = floor($request->bonuses / count($order->tickets)) + ($request->bonuses % count($order->tickets));
+            }
+            else{
+                $ticketNew['bonusesPrice'] = floor($request->bonuses / count($order->tickets));
+            }
+            // $ticketNew['price'] = $ticketNew['price'] - $ticketNew['bonuses'];
+
             $ticketNew['order_id'] = $order->id;
             $orderBundleEl = [ "positionId"=> $key+1,
                 "name" => 'Бил'.(!empty($ticketNew['ticketNum']) ? ' №' : '').' '.$ticketNew['ticketNum'].' '.$ticketNew['dispatchDate'].' Мст№'.$ticketNew['seat'].' '.$ticketNew['lastName'].' '.mb_substr($ticketNew['firstName'], 0, 1).'. '.mb_substr($ticketNew['middleName'], 0, 1).'.',
                 "quantity" => [ "value"=> 1, "measure" => 0 ],
                 "itemCode" => "NM-".($key+1),
                 "tax"=> ["taxType"=> 0, "taxSum"=> 0],
-                "itemPrice"=> $ticketNew['price'] * 100
+                "itemPrice"=> ($ticketNew['price'] - $ticketNew['bonusesPrice']) * 100
             ];
 
             $ticketNew['orderBundle'] = json_encode($orderBundleEl);
@@ -136,14 +148,14 @@ class OrderController extends Controller
             'userName' => config('services.payment.userName'),
             'password' => config('services.payment.password'),
             'orderNumber' => $order->id,
-            'amount' => ($order->total + $duePrice) * 100,
+            'amount' => ($order->total - $request->bonuses + $duePrice) * 100,
             'orderBundle' => json_encode($orderBundle),
             'returnUrl' => env('FRONTEND_URL').'/account',
             'dynamicCallbackUrl' => env('BACKEND_URL').'/order/confirm/'
         ];
 
         if($request->insured){
-            $data['amount'] = ($order->total + $duePrice + $request->insurancePrice) * 100;
+            $data['amount'] = ($order->total - $request->bonuses + $duePrice + $request->insurancePrice) * 100;
         }
         $curl = curl_init(); // Инициализируем запрос
         curl_setopt_array($curl, array(
@@ -167,6 +179,7 @@ class OrderController extends Controller
         }
         $orderFromDB->bankOrderId = $payment->orderId;
         $orderFromDB->formUrl = $payment->formUrl;
+        $orderFromDB->bonusesPrice = $request->bonuses;
         $orderFromDB->save();
         curl_close($curl); // Закрываем соединение
 
@@ -199,6 +212,7 @@ class OrderController extends Controller
         $body = FermaEnum::$body;
         $item = FermaEnum::$item;
         $percent = FermaEnum::$percent;
+        $bonuses = FermaEnum::$bonuses;
         $body['Request']['Type'] = 'Income';
         $body['Request']['InvoiceId'] = $transaction->id;
         foreach($order_obj->tickets as $ticket){
@@ -209,8 +223,10 @@ class OrderController extends Controller
             file_put_contents('tickets/'.$file_name, file_get_contents($url));
 
             $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
-            $item['Price'] = $ticket->price;
-            $item['Amount'] = $ticket->price;
+            $item['Price'] = $item['Amount'] = $ticketFromDB->price - $ticketFromDB->bonusesPrice;
+            if($ticketFromDB->bonusesPrice > 0){
+                $item['AdditionalRequisite'] = 'Цена без скидки: '.$ticketFromDB->price;
+            }
             $body['Request']['CustomerReceipt']['Items'][] = $item;
             $ticketFromDB->customerItem = json_encode($item);
             $ticketFromDB->save();
@@ -220,7 +236,7 @@ class OrderController extends Controller
         $order->order_info = $order_json;
 
         
-        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice;
+        $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice;
         $user = $order->user;
         if($user->email){
             $body['Request']['CustomerReceipt']['Email'] = $user->email;
@@ -270,11 +286,14 @@ class OrderController extends Controller
             $insuranceReceivePosition = FermaEnum::$insurance;
             $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
             $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
-            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total + $order->duePrice + $policiesTotalRate;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice + $policiesTotalRate;
         }
         
 
         $percent['Price'] = $percent['Amount'] = $order->duePrice;
+        // $bonuses['Price'] = $bonuses['Amount'] = 0;
+        // $bonuses['Label'] = 'Скидка '.$order->bonusesPrice.' бонусов';
+        // $body['Request']['CustomerReceipt']['Items'][] = $bonuses;
         $body['Request']['CustomerReceipt']['Items'][] = $percent;
 
         Log::info('Body: '.json_encode($body));
@@ -313,10 +332,16 @@ class OrderController extends Controller
         $order->ip = isset($orderFromBank->Ip) ? $orderFromBank->Ip : null;
         $order->pan = isset($orderFromBank->Pan) ? $orderFromBank->Pan : null;
         $order->save();
+        
 
         if($order->user->email){
             Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
         }
+
+        // $user = User::find($order->user_id);
+        $user->bonuses = $user->bonuses - $order->bonusesPrice;
+        $user->save();
+        
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
     }
 
@@ -367,7 +392,7 @@ class OrderController extends Controller
                 'userName' => config('services.payment.userName'),
                 'password' => config('services.payment.password'),
                 'orderId' => $orderFromDB->bankOrderId,
-                'amount' => $ticketFromDB->repayment * 100,
+                'amount' => ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice) * 100 ,
                 'positionId' => $orderBundle['positionId']
             ];
             $curl = curl_init();
@@ -384,9 +409,9 @@ class OrderController extends Controller
             }
             $item = FermaEnum::$item;
             $item['Label'] = 'Бил'.(!empty($ticketFromDB->ticketNum) ? ' №' : '').$ticketFromDB->ticketNum.' '.$ticketFromDB->dispatchDate.' Мст№'.$ticketFromDB->seat.' '.$ticketFromDB->lastName.' '.mb_substr($ticketFromDB->firstName, 0, 1).'. '.mb_substr($ticketFromDB->middleName, 0, 1).'.';
-            $item['Price'] = $item['Amount'] = $ticketFromDB->repayment;
+            $item['Price'] = $item['Amount'] = ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice);
             $body['Request']['CustomerReceipt']['Items'][] = $item;
-            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $ticketFromDB->repayment;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice);
         }
         if(!$returnCount){
             return response([
@@ -446,9 +471,14 @@ class OrderController extends Controller
         $race = json_decode($race_json);
         if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
             $duePrice = 0;
+            $bonusesPrice = 0;
             foreach($tickets as $ticket){
                 $duePrice += $ticket->duePrice;
+                $bonusesPrice += $ticket->bonusesPrice;
             }
+            $user = $orderFromDB->user;
+            $user->bonuses = $user->bonuses + $bonusesPrice;
+            $user->save();
             $data = [
                 'userName' => config('services.payment.userName'),
                 'password' => config('services.payment.password'),

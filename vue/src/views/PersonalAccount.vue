@@ -4,16 +4,20 @@
 <template>
     <div><div class="container"><Header/></div></div>
     <div class="header-menu__personal-account">
-        <div class="container">
+      <!--    -->
+      <div class="container">
         
         <ul class="header-menu__all">
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'UpcomingTrips'}" @click="activeTab = 'UpcomingTrips'" >Список заказов</li>
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'ContactInformation'}" @click="activeTab = 'ContactInformation'">Контактная информация</li>
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'Person'}" @click="activeTab = 'Person'">Пассажиры</li>
+            
         </ul>
+        
         </div>
     </div>
     <div class="container">
+        <!-- <div style="width: 40%; padding: 15px; margin-bottom: 15px;" class="menu__ticket">Мои бонусы: 0.00 руб</div> -->
         <Transition  name="slide-pers" mode="out-in">
             <component :is="activeTab"></component>
         </Transition>

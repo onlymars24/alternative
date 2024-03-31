@@ -268,6 +268,9 @@
         <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >{{ totalCost }},00₽</p></div>
         <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
         <p v-if="insured" style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
+        <label v-if="availableBonuses > 0" class="check" style="padding: 0px; display: flex; align-items: center; font-size: 13px;">
+          <input style="opacity: 1; background-color: initial; margin-right: 3px;" type="checkbox" v-model="bonuses.checkbox">Списать {{ availableBonuses }} бонусов
+        </label>
         <hr class="line-pay">
         <div class="pay-discription">
           <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
@@ -342,7 +345,13 @@ export default
       ticketTypes: [],
       luggageTypeCode: null,
       openRejectionWindow: false,
-      tempInsurancePrice: 0
+      tempInsurancePrice: 0,
+      bonuses: {
+        percent: 0,
+        checkbox: true,
+        max: 0,
+        
+      }
     };
   },
   methods: {
@@ -384,7 +393,9 @@ export default
         // return this.sale
         const promise2 = axiosClient
         .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice, 
-        dispatch_point_id: this.$route.params['dispatch_point_id'], arrival_point_id: this.$route.params['arrival_point_id'] })
+        dispatch_point_id: this.$route.params['dispatch_point_id'], arrival_point_id: this.$route.params['arrival_point_id'],
+        bonuses: this.availableBonuses
+        })
         .then(response => {
           console.log(response)
           this.order = response.data.order
@@ -443,9 +454,9 @@ export default
     async authenticateForForm(){
       const promise1 = axiosClient
       .get('/user')
-      .then(response => (
+      .then(response => {
           this.user = response.data.user
-      ));
+      });
       await promise1
       const promise2 = axiosClient
       .get('/passengers')
@@ -639,6 +650,9 @@ export default
       })
       console.log(totalCost, this.duePrice, this.insurancePrice)
       console.log(totalCost+this.duePrice+this.insurancePrice)
+      if(this.bonuses.checkbox){
+        return totalCost+this.duePrice+this.insurancePrice - this.availableBonuses
+      }
       return totalCost+this.duePrice+this.insurancePrice;
     },
     insurancePrice(){
@@ -671,6 +685,33 @@ export default
         console.log(0)
         return 0;
       }
+    },
+    availableBonuses(){
+      if(!this.auth){
+        return 0
+      }
+      if(this.user.bonuses == 0){
+        return 0
+      }
+
+
+      let totalCost = 0;
+      this.formData.forEach(el => {
+        let ticket_type_code = el.ticket_type_code
+        let ticket_price = this.race.ticketTypes.filter(el => {
+          return el.code == ticket_type_code;
+        })
+        ticket_price = ticket_price[0].price
+        totalCost += ticket_price
+      })
+      let maxBonuses = Math.ceil(totalCost * this.bonuses.percent / 100)
+      if(this.user.bonuses > maxBonuses){
+        return maxBonuses
+      }
+      if(this.user.bonuses <= maxBonuses){
+        return this.user.bonuses
+      }
+      return 0
     }
   },
   async mounted(){
@@ -759,6 +800,16 @@ export default
       console.log(error)
     })
     await promise3
+    const promise4 = axiosClient
+    .get('/settings/bonuses/percent')
+    .then(response => {
+      console.log(response.data.bonusesPercent)
+      this.bonuses.percent = response.data.bonusesPercent
+    })
+    .catch(error => {
+      console.log(error)
+    })
+    await promise4
     this.ticketTypes = this.race.ticketTypes
     this.luggageTypeCode = this.ticketTypes.filter(ticketType => {
       return ticketType.name == 'Багажный';
