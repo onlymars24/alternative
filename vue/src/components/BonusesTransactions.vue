@@ -16,7 +16,7 @@
     </thead>
     <tbody>
       <tr v-for="bonuse in bonuses">
-        <td>{{ bonuse.date }}</td>
+        <td>{{ bonuse.date }} (по московскому времени)</td>
         <td v-if="bonuse.transaction == 'plus'"><span style="color: green;">+{{bonuse.amount}}</span></td>
         <td v-if="bonuse.transaction == 'minus'"><span style="color: red;">-{{bonuse.amount}}</span></td>        
         <td>{{ bonuse.descr }}</td>
