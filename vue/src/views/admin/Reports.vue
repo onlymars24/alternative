@@ -166,6 +166,7 @@
                                 <el-table-column prop="dues" label="Сбор агента" width="150" />
                                 <el-table-column prop="tableDiffPrice" label="Удержание" width="150" />
                                 <el-table-column prop="duePrice" label="Комиссия сайта" width="150" />
+                                <el-table-column prop="bonusesPrice" label="Оплата бонусами" width="150" />
                                 <el-table-column prop="insured" label="Страхование" width="150" />
                                 <el-table-column prop="insurancePrice" label="Цена страховки" width="150" />
                             </el-table>

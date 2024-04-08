@@ -29,7 +29,9 @@ import New from '../views/New.vue'
 import News from '../views/News.vue'
 import EventCreate from '../views/admin/EventCreate.vue'
 import EventEdit from '../views/admin/EventEdit.vue'
-import Bonuses from '../views/admin/Bonuses.vue'
+import BonusesTransactions from '../views/admin/BonusesTransactions.vue'
+import BonusesUsers from '../views/admin/BonusesUsers.vue'
+import BonusesUser from '../views/admin/BonusesUser.vue'
 
 
 const routes = [
@@ -89,12 +91,12 @@ const routes = [
     component: Faq
   },
   {
-    path: '/news',
+    path: '/'+encodeURI('новости'),
     name: 'News',
     component: News
   },  
   {
-    path: '/new/:id',
+    path: '/'+encodeURI('новость')+'/:id',
     name: 'New',
     component: New
   },
@@ -169,9 +171,19 @@ const routes = [
         component: EventEdit
       }, 
       {
-        path: 'bonuses',
-        name: 'Bonuses',
-        component: Bonuses
+        path: 'bonuses/transactions',
+        name: 'BonusesTransactions',
+        component: BonusesTransactions
+      }, 
+      {
+        path: 'bonuses/users',
+        name: 'BonusesUsers',
+        component: BonusesUsers
+      }, 
+      {
+        path: 'bonuses/user/:user_id',
+        name: 'BonusesUser',
+        component: BonusesUser
       }, 
     ]
   },
@@ -204,7 +216,7 @@ router.beforeEach((to, from, next) => {
   }
   else{
     if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback' || to.name === 'Debugging' || to.name === 'BusStations' || to.name === 'EditPoints'
-     || to.name === 'EditMain'){
+     || to.name === 'EditMain' || to.name === 'Bonuses' || to.name === 'EventEdit' || to.name === 'EventCreate'){
       return next({name: 'ALogin'})
     }
   }

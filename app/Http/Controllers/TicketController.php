@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bonus;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Enums\FermaEnum;
@@ -175,8 +176,19 @@ class TicketController extends Controller
             $ticketFromDB->raceCanceled = true;
             $ticketFromDB->save();
             $user = $ticketFromDB->order->user;
-            $user->bonuses = $user->bonuses + $ticketFromDB->bonusesPrice;
-            $user->save();
+            if($ticketFromDB->bonusesPrice > 0){
+                Bonus::create([
+                    'amount' => $ticketFromDB->bonusesPrice,
+                    'transaction' => 'plus',
+                    'user_id' => $user->id,
+                    'order_id' => $ticketFromDB->order_id,
+                    'user_phone' => $user->phone,
+                    'descr' => 'Оформлен частичный возврат заказа с ID: '.$ticketFromDB->order_id
+                ]);
+                $user->bonuses = $user->bonuses + $ticketFromDB->bonusesPrice;
+                $user->save();
+            }
+
         }
 
         $user = $orderFromDb->user;

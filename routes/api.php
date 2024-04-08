@@ -132,6 +132,7 @@ Route::post('/event/delete/station', [EventController::class, 'deleteStation']);
 Route::get('/bonuses/transactions', [BonusesController::class, 'transactions']);
 Route::post('/bonuses/plus', [BonusesController::class, 'plus']);
 Route::post('/bonuses/minus', [BonusesController::class, 'minus']);
+Route::get('/bonuses/user', [BonusesController::class, 'user']);
 Route::get('/users', [AuthController::class, 'users']);
 Route::get('/settings/bonuses/percent', [SettingsController::class, 'getBonusesPercent']);
 

@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->decimal('amount', 8,2)->default(0);
             $table->enum('transaction', ['plus', 'minus']);
+            $table->text('descr');
             $table->string('user_phone');
             $table->integer('user_id');
+            $table->integer('order_id')->nullable();
             $table->timestamps();
         });
     }

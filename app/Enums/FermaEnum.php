@@ -68,21 +68,22 @@ class FermaEnum
         "PaymentType" => 4 
     ];
 
-    public static $bonuses = [
-        "Label" => "Скидка", 
-        "Price" => null, 
-        "Quantity" => 1, 
-        "Amount" => null, 
-        "Vat" => "VatNo", 
-        "PaymentMethod" => 4, 
-        "PaymentType" => 4, 
-        "PaymentAgentInfo" => [
-           "AgentType" => "AGENT", 
-           "SupplierInn" => "2221122730", 
-           "SupplierName" => "\"Артмарк\" ООО", 
-           "SupplierPhone" => "73852359311" 
-        ] 
-    ];
+    // public static $bonuses = [
+    //     "Label" => "Скидка", 
+    //     "Price" => null, 
+    //     "Quantity" => 1, 
+    //     "Amount" => null, 
+    //     "Vat" => "VatNo", 
+    //     "PaymentMethod" => 4, 
+    //     "PaymentType" => 4, 
+    //     "PaymentAgentInfo" => [
+    //        "AgentType" => "AGENT", 
+    //        "SupplierInn" => "2221122730", 
+    //        "SupplierName" => "\"Артмарк\" ООО", 
+    //        "SupplierPhone" => "73852359311" 
+    //     ] 
+    // ];
+
 
 
 }

@@ -11,10 +11,9 @@
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'UpcomingTrips'}" @click="activeTab = 'UpcomingTrips'" >Список заказов</li>
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'ContactInformation'}" @click="activeTab = 'ContactInformation'">Контактная информация</li>
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'Person'}" @click="activeTab = 'Person'">Пассажиры</li>
-            
+            <li v-if="!loading" class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'BonusesTransactions'}" @click="activeTab = 'BonusesTransactions'">Мои бонусы: {{ user.bonuses_balance }} руб </li>
         </ul>
-        
-        </div>
+      </div>
     </div>
     <div class="container">
         <!-- <div style="width: 40%; padding: 15px; margin-bottom: 15px;" class="menu__ticket">Мои бонусы: 0.00 руб</div> -->
@@ -32,17 +31,19 @@ import UpcomingTrips from '../components/UpcomingTrips.vue';
 import ContactInformation from '../components/ContactInformation.vue';
 import Person from '../components/PersonSave.vue';
 import Header from '../components/Header.vue'
+import BonusesTransactions from '../components/BonusesTransactions.vue'
 import PopupWindow from '../components/PopupWindow.vue';
 import axiosClient from '../axios';
 
 export default
 {
-  components: { TravelHistory, UpcomingTrips, ContactInformation, Person, Header, PopupWindow },
+  components: { TravelHistory, UpcomingTrips, ContactInformation, Person, Header, PopupWindow, BonusesTransactions },
   data() {
     return {
       activeTab: 'UpcomingTrips',
       popupEmail: false,
-      user: {}
+      user: {},
+      loading: false
     };
   },
   methods: {
@@ -56,6 +57,9 @@ export default
     }
   },
   async mounted(){
+      this.loading = true
+      const linkCan = document.querySelector('head link[rel="canonical"]');
+      linkCan.setAttribute('href', 'https://росвокзалы.рф');
       const promise = axiosClient
       .get('/user')
       .then(response => {
@@ -66,6 +70,7 @@ export default
       if(!this.user.email){
         this.popupEmail = true
       }
+      this.loading = false
   }
 
 };

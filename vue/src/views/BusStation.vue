@@ -65,6 +65,20 @@ export default{
                 nextEl: '.station__slides-button-next',
                 prevEl: '.station__slides-button-prev',
             },
+            breakpoints: {
+                320: {       
+                    slidesPerView: 1,
+                    // spaceBetween: 10     
+                }, 
+                500: {       
+                    slidesPerView: 2,
+                    // spaceBetween: 10     
+                }, 
+                790: {       
+                    slidesPerView: 3,
+                    // spaceBetween: 10     
+                }, 
+            },
             loading: false
         }
     },
@@ -142,6 +156,7 @@ export default{
             :space-between="20"
             :navigation="navigation"
             :oSwipingSelector="'station__slides-button-disabled'"
+            :breakpoints="breakpoints"
             navigation
             @swiper="onSwiper"
             @slideChange="onSlideChange"

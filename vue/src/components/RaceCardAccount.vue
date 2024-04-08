@@ -2,7 +2,24 @@
 <template>
   <!-- <button @click="$emit('toSeats', race.uid)">Тест</button> -->
   <!-- <pre>{{ this.race.order }}</pre> -->
-   <div class="menu__ticket">
+   <div class="menu__ticket" style="box-shadow: rgb(0 0 0 / 15%) 0px 2px 8px;">
+	
+	 <div class="menu__ticket-medium" style="border-top-right-radius: 6px; border-top-left-radius: 6px;">
+	   <div class="ticket-medium__ins">
+		 <div class="ticket-medium__ins-left ticket-medium__ins-left__up">
+		   	<div><strong>ID: </strong> {{ race.order.id }}</div>
+			<div class="ticket-medium__ins-left__up-date" v-if="race.order.status == 'S'" style="margin: 0;">
+			<strong>Заказ подтверждён: </strong> {{ race.order.finished }} (по местному времени)
+		   </div>
+		   
+		   
+
+   
+		 </div>
+	   </div>
+	 </div>
+
+
 	 <div class="menu__ticket-up">
 	   <div class="ticket-up__left">
 		 <div class="ticket-up__left-ins">
@@ -50,7 +67,7 @@
 		 <div class="ticket-up__right-ins">
 			
 		   <div class="right-ins__left" style="min-width: 113px;">
-			 <p>{{ race.order.total + duePrice}}</p>
+			 <p>{{ race.order.total + duePrice + order.insurancePrice - order.bonusesPrice}}</p>
 			 <p>руб</p>
 		   </div>
 		   <div class="right-ins__right" v-if="!expired">
@@ -79,6 +96,7 @@
 			<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
 			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>			
 		   </div>
+		   <div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class=""><a href="">Чеки</a></div>
 		   <div>
 			<a v-if="!expired && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" @click.prevent="windowOpen = 2" href="">Ещё</a>
 			<!-- <span>Дата покупки</span>	 -->
@@ -86,11 +104,11 @@
 			<transition name="anim-window">
 				<nav style="z-index: 5; display: flex; flex-direction: column; left: 100px; right: auto;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
 					<a v-if="!wentOut" href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
-					<a v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class="header__links__window__myRace-link">Транзакции</a>
 					<a v-if="order.insured && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" href="" @click.prevent="popupInsurancesOpen = true, getInsurances()" class="header__links__window__myRace-link">Страховки</a>
 				</nav>
 			</transition>
 		   </div>
+		   
 
    
 		 </div>
@@ -317,6 +335,10 @@
 </script>
 <style scoped>
 
+strong{
+	margin: 0;
+}
+
 .tickets-list
 {
   position: absolute;
@@ -334,6 +356,11 @@
 	padding: 12px 25px;
 	justify-content: space-between;
 }
+.ticket-medium__ins-left__up div{
+	margin: 0;
+	margin-right: 15px;
+	margin-bottom: 5px;
+}
 @media (max-width:550px)
 {
 .tickets-list
@@ -345,5 +372,16 @@
 	padding: 12px 16px;
 	justify-content: space-around;
 }
+
+.ticket-medium__ins-left__up{
+	display: flex;
+	flex-direction: column;
+}
+.ticket-medium__ins-left__up-date{
+	display: flex;
+	flex-direction: column;
+}
+
+
 }
 </style>

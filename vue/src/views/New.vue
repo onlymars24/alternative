@@ -39,6 +39,15 @@
           console.log(error)
       })
       await promise
+
+      document.title = this.event.title;
+      const descEl = document.querySelector('head meta[name="description"]');
+      descEl.setAttribute('content', this.event.descr);
+
+      const linkCan = document.querySelector('head link[rel="canonical"]');
+      linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
+
+
     }
   }
 </script>

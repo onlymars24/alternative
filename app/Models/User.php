@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function bonuses()
+    {
+        return $this->hasMany(Bonus::class);
+    }
+
     public function passengers()
     {
         return $this->hasMany(Passenger::class);

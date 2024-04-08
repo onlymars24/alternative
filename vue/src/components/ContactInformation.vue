@@ -5,7 +5,7 @@
 <div v-else>
   
   <h3>Контактная информация</h3>
-  <div style="width: 40%; padding: 15px; margin-bottom: 15px;" class="menu__ticket">Мои бонусы: {{user.bonuses}} руб</div>
+  <div style="width: 40%; padding: 15px; margin-bottom: 15px;" class="menu__ticket">Мои бонусы: {{user.bonuses_balance}} руб</div>
   <div class="row g-5">
     <div class="col-sm-6 ">
         <form @submit.prevent="editEmail" class="contact-information__block">

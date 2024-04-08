@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Bonus;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Mail\OrderMail;
@@ -212,7 +213,7 @@ class OrderController extends Controller
         $body = FermaEnum::$body;
         $item = FermaEnum::$item;
         $percent = FermaEnum::$percent;
-        $bonuses = FermaEnum::$bonuses;
+        // $bonuses = FermaEnum::$bonuses;
         $body['Request']['Type'] = 'Income';
         $body['Request']['InvoiceId'] = $transaction->id;
         foreach($order_obj->tickets as $ticket){
@@ -225,7 +226,7 @@ class OrderController extends Controller
             $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
             $item['Price'] = $item['Amount'] = $ticketFromDB->price - $ticketFromDB->bonusesPrice;
             if($ticketFromDB->bonusesPrice > 0){
-                $item['AdditionalRequisite'] = 'Цена без скидки: '.$ticketFromDB->price;
+                $item['AdditionalRequisite'] = 'Цена без скидки: '.$ticketFromDB->price.'.00';
             }
             $body['Request']['CustomerReceipt']['Items'][] = $item;
             $ticketFromDB->customerItem = json_encode($item);
@@ -285,6 +286,8 @@ class OrderController extends Controller
             }
             $insuranceReceivePosition = FermaEnum::$insurance;
             $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
+            $order->insurancePrice = $policiesTotalRate;
+            $order->save();
             $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
             $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice + $policiesTotalRate;
         }
@@ -295,6 +298,11 @@ class OrderController extends Controller
         // $bonuses['Label'] = 'Скидка '.$order->bonusesPrice.' бонусов';
         // $body['Request']['CustomerReceipt']['Items'][] = $bonuses;
         $body['Request']['CustomerReceipt']['Items'][] = $percent;
+        // if($ticketFromDB->bonusesPrice > 0){
+        //     $body['CustomUserProperty']['Name'] = 'Скидка';
+        //     $body['CustomUserProperty']['Value'] = $order->bonusesPrice;
+        // }
+
 
         Log::info('Body: '.json_encode($body));
         $ReceiptId = FermaService::receipt($body);
@@ -339,7 +347,18 @@ class OrderController extends Controller
         }
 
         // $user = User::find($order->user_id);
-        $user->bonuses = $user->bonuses - $order->bonusesPrice;
+        if($order->bonusesPrice > 0){
+            $user->bonuses_balance = $user->bonuses_balance - $order->bonusesPrice;
+            Bonus::create([
+                'amount' => $order->bonusesPrice,
+                'transaction' => 'minus',
+                'user_id' => $user->id,
+                'order_id' => $order->id,
+                'user_phone' => $user->phone,
+                'descr' => 'Оформлен заказ с ID: '.$order->id
+            ]);
+        }
+        
         $user->save();
         
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
@@ -477,8 +496,20 @@ class OrderController extends Controller
                 $bonusesPrice += $ticket->bonusesPrice;
             }
             $user = $orderFromDB->user;
-            $user->bonuses = $user->bonuses + $bonusesPrice;
-            $user->save();
+
+            if($bonusesPrice > 0){
+                Bonus::create([
+                    'amount' => $bonusesPrice,
+                    'transaction' => 'plus',
+                    'user_id' => $user->id,
+                    'order_id' => $orderFromDB->id,
+                    'user_phone' => $user->phone,
+                    'descr' => 'Оформлен возврат заказа с ID: '.$orderFromDB->id
+                ]);
+                $user->bonuses = $user->bonuses + $bonusesPrice;
+                $user->save();                
+            }
+
             $data = [
                 'userName' => config('services.payment.userName'),
                 'password' => config('services.payment.password'),

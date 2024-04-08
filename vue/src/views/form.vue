@@ -27,8 +27,11 @@
       <DepartureArrival :race="race"/>
       <!-- <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div> -->
       <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{totalCost}},00₽  </p></div>
+      <p style="font-size: 13px;">Включая стоимость билетов<br/> {{ticketsPrice}},00₽</p>
       <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
       <p v-if="insured" style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
+      <p v-if="bonuses.checkbox && availableBonuses > 0" style="font-size: 13px;">C учётом списания <br/> {{availableBonuses}} бонусов</p>
+
       <hr>
       <a href="/return/conditions" class="blue__link" target="_blank">Условия возврата</a>
     </div>
@@ -266,11 +269,14 @@
       <div class="form-reg">
       <div class="pay">
         <div class="information-race__payment"><h3>К оплате</h3><p class="total-cost" >{{ totalCost }},00₽</p></div>
+        <p style="font-size: 13px;">Включая стоимость билетов<br/> {{ticketsPrice}},00₽</p>
         <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
         <p v-if="insured" style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
         <label v-if="availableBonuses > 0" class="check" style="padding: 0px; display: flex; align-items: center; font-size: 13px;">
           <input style="opacity: 1; background-color: initial; margin-right: 3px;" type="checkbox" v-model="bonuses.checkbox">Списать {{ availableBonuses }} бонусов
         </label>
+        <p style="font-size: 15px;">У вас на балансе: {{user.bonuses_balance}} бонусов</p>
+        <a v-if="user.bonuses_balance == 0" style="font-size: 14px;" href="#">Как заработать бонусы?</a>
         <hr class="line-pay">
         <div class="pay-discription">
           <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
@@ -351,7 +357,8 @@ export default
         checkbox: true,
         max: 0,
         
-      }
+      },
+      ticketsPrice: 0
     };
   },
   methods: {
@@ -650,9 +657,11 @@ export default
       })
       console.log(totalCost, this.duePrice, this.insurancePrice)
       console.log(totalCost+this.duePrice+this.insurancePrice)
+      this.ticketsPrice = totalCost
       if(this.bonuses.checkbox){
         return totalCost+this.duePrice+this.insurancePrice - this.availableBonuses
       }
+      
       return totalCost+this.duePrice+this.insurancePrice;
     },
     insurancePrice(){
@@ -690,7 +699,7 @@ export default
       if(!this.auth){
         return 0
       }
-      if(this.user.bonuses == 0){
+      if(this.user.bonuses_balance == 0){
         return 0
       }
 
@@ -705,11 +714,11 @@ export default
         totalCost += ticket_price
       })
       let maxBonuses = Math.ceil(totalCost * this.bonuses.percent / 100)
-      if(this.user.bonuses > maxBonuses){
+      if(this.user.bonuses_balance > maxBonuses){
         return maxBonuses
       }
-      if(this.user.bonuses <= maxBonuses){
-        return this.user.bonuses
+      if(this.user.bonuses_balance <= maxBonuses){
+        return this.user.bonuses_balance
       }
       return 0
     }

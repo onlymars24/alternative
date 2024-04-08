@@ -17,27 +17,36 @@ class BonusesController extends Controller
 
     public function plus(Request $request){
         $user = User::find($request->id);
-        $user->bonuses = $user->bonuses + $request->bonuses;
+        $user->bonuses_balance = $user->bonuses_balance + $request->bonuses;
         $user->save();
         $bonuse = Bonus::create([
             'amount' => $request->bonuses,
             'transaction' => 'plus',
             'user_id' => $user->id,
-            'user_phone' => $user->phone
+            'user_phone' => $user->phone,
+            'descr' => $request->descr
         ]);
-        
     }
+
     public function minus(Request $request){
         $user = User::find($request->id);
-        if($user->bonuses >= $request->bonuses){
-            $user->bonuses = $user->bonuses - $request->bonuses;
+        if($user->bonuses_balance >= $request->bonuses){
+            $user->bonuses_balance = $user->bonuses_balance - $request->bonuses;
             $user->save();
             $bonuse = Bonus::create([
                 'amount' => $request->bonuses,
                 'transaction' => 'minus',
                 'user_id' => $user->id,
-                'user_phone' => $user->phone
+                'user_phone' => $user->phone,
+                'descr' => $request->descr
             ]);
         }
+    }
+
+    public function user(Request $request){
+        $user = User::find($request->id);
+        return response([
+            'bonuses' => $user->bonuses
+        ]);
     }
 }

@@ -14,5 +14,7 @@ class Bonus extends Model
         'amount',
         'user_phone',
         'user_id',
+        'descr',
+        'order_id'
     ];
 }

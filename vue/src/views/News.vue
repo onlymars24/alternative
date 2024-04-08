@@ -90,7 +90,7 @@ export default{
     /* justify-content: space-between; */
 }
 .news__card{
-    width: 32%;
+    width: 30%;
     margin-bottom: 10px;
     cursor: pointer;
     margin-right: 15px;

@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->after('phone', function ($table) {
-                $table->decimal('bonuses_balance', 8,2)->default(0);
+        Schema::table('orders', function (Blueprint $table) {
+            $table->after('insured', function ($table) {
+                $table->integer('insurancePrice')->default(0);
             });
         });
     }
@@ -27,8 +27,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['bonuses_balance']);
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn(['insurancePrice']);
         });
     }
 };
