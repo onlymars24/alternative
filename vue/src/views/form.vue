@@ -358,7 +358,8 @@ export default
         max: 0,
         
       },
-      ticketsPrice: 0
+      ticketsPrice: 0,
+      utm_data: {}
     };
   },
   methods: {
@@ -401,13 +402,16 @@ export default
         const promise2 = axiosClient
         .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice, 
         dispatch_point_id: this.$route.params['dispatch_point_id'], arrival_point_id: this.$route.params['arrival_point_id'],
-        bonuses: this.availableBonuses
+        bonuses: this.availableBonuses,
+        utm_data: this.utm_data
         })
         .then(response => {
           console.log(response)
           this.order = response.data.order
           this.payment = response.data.payment
           console.log(this.payment.formUrl)
+          localStorage.removeItem('utm_data')
+
         })
         .catch(error => {
           console.log(error)
@@ -724,6 +728,22 @@ export default
     }
   },
   async mounted(){
+    console.log(document.referrer)
+    console.log(JSON.parse(localStorage.getItem('utm_data')))
+    this.utm_data = JSON.parse(localStorage.getItem('utm_data'))
+    if(this.utm_data && this.utm_data.utm_source && this.utm_data.utm_medium && this.utm_data.utm_campaign && this.utm_data.utm_content){
+      console.log(this.utm_data)
+      console.log('OK utm')
+    }
+    // if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
+    //     localStorage.setItem('utm_data', JSON.stringify({
+    //         utm_source: this.$route.query.utm_source,
+    //         utm_medium: this.$route.query.utm_medium,
+    //         utm_campaign: this.$route.query.utm_campaign,
+    //         utm_content: this.$route.query.utm_content,
+    //         referrer_url: document.referrer,
+    //     }))
+    // }
     this.loading = true
     var dateNewGet = new Date();
     this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();

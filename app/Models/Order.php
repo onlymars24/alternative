@@ -26,7 +26,12 @@ class Order extends Model
         'dispatchPointId',
         'arrivalPointId',
         'bonusesPrice',
-        'insurancePrice'
+        'insurancePrice',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_content',
+        'referrer_url',
     ];
 
     public function transactions()

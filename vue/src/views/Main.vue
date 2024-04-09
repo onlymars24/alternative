@@ -55,6 +55,7 @@ export default{
 
     },
     async mounted() {
+        console.log(document.referrer)
         document.title = "Автовокзалы России";
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content', 'Билеты на автобус онлайн');

@@ -51,7 +51,7 @@ export default
     data() {
         return {
             phone: '',
-            transactionsPerPage: 2,
+            transactionsPerPage: 20,
             paginationOffset: 0,
         }
     },

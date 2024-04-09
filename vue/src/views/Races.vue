@@ -17,9 +17,9 @@
 		<div class="container">
             <BusLoading v-if="loadingRaces"/>
             <div v-else-if="!races.length && notExistingRace" class="not__found">
-                <div class="not__found-img">
+                <!-- <div class="not__found-img">
                     <img src="../assets/free-icon-sad-3350122.png">
-                </div>
+                </div> -->
                 <div class="not__found-text">
                     <p class="not__found-title">
                         Маршрута {{errorNames.dispatch}} — {{errorNames.arrival}}
@@ -31,9 +31,9 @@
                 </div>
             </div>
             <div v-else-if="!races.length && !notExistingRace" class="not__found">
-                <div class="not__found-img">
+                <!-- <div class="not__found-img">
                     <img src="../assets/free-icon-sad-3350122.png">
-                </div>
+                </div> -->
                 <div class="not__found-text">
                     <p class="not__found-title">
                         {{errorNames.dispatch}} — {{errorNames.arrival}}
@@ -231,6 +231,7 @@ export default {
         }
     },
     async mounted(){
+        console.log(document.referrer)
         document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
@@ -289,6 +290,16 @@ export default {
             this.notExistingRace = true
             return
         }
+        if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
+            console.log('update')
+            localStorage.setItem('utm_data', JSON.stringify({
+                utm_source: this.$route.query.utm_source,
+                utm_medium: this.$route.query.utm_medium,
+                utm_campaign: this.$route.query.utm_campaign,
+                utm_content: this.$route.query.utm_content,
+                referrer_url: document.referrer,
+            }))
+        }
         if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
             this.dispatchEl.id = dispatchPoint.id
             this.arrivalEl.id = arrivalPoint.id
@@ -339,6 +350,8 @@ export default {
         async changeRaces0(date, dispatch_id, arrival_id, dispatch_name, arrival_name){
             this.loadingRaces = true
             this.races = []
+            this.errorNames.dispatch = dispatch_name
+            this.errorNames.arrival = arrival_name
 
             const promise1 = axiosClient
             .post('/races/xml/create', {dispatchName: dispatch_name, arrivalName: arrival_name})

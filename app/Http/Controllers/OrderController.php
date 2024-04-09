@@ -178,6 +178,18 @@ class OrderController extends Controller
                 'error' => $payment
             ], 422);
         }
+
+        $utm_data = $request->utm_data;
+        Log::info('utm_data: '.json_encode($utm_data));
+        // Log::info('utm_data->utm_source: '.$utm_data['utm_source']);
+
+
+        $orderFromDB->utm_source = isset($utm_data['utm_source']) ? $utm_data['utm_source'] : null;
+        $orderFromDB->utm_medium = isset($utm_data['utm_medium']) ? $utm_data['utm_medium'] : null;
+        $orderFromDB->utm_campaign = isset($utm_data['utm_campaign']) ? $utm_data['utm_campaign'] : null;
+        $orderFromDB->utm_content = isset($utm_data['utm_content']) ? $utm_data['utm_content'] : null;
+        $orderFromDB->referrer_url = isset($utm_data['referrer_url']) ? $utm_data['referrer_url'] : null;
+        
         $orderFromDB->bankOrderId = $payment->orderId;
         $orderFromDB->formUrl = $payment->formUrl;
         $orderFromDB->bonusesPrice = $request->bonuses;

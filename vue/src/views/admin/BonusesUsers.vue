@@ -10,6 +10,7 @@
                                 <span>Список пользователей</span>
                             </div>
                         </template>
+                        <!-- <el-input size="small" ref="refPhoneInput" v-mask="'+7 (###) ### ####'" v-model="phone" /> -->
                         <el-table :data="paginatedUsers">
                             <el-table-column prop="id" label="ID" width="80" />
                             <el-table-column prop="phone" label="Телефон" width="160" />
@@ -93,6 +94,7 @@ import router from '../../router'
 import PopupWindow from '../../components/PopupWindow.vue';
 import dayjs from 'dayjs';
 import Paginate from "vuejs-paginate-next";
+import TheMask from 'vue-the-mask'
 
 export default
 {
@@ -105,8 +107,9 @@ export default
 
             minusModalOpened: false,
             currentMinusRow: {},
-            usersPerPage: 2,
+            usersPerPage: 20,
             paginationOffset: 0,
+            phone: ''
         }
     },
     async mounted(){
@@ -181,6 +184,13 @@ export default
         paginatedUsers(){
             return this.users.slice(this.paginationOffset, this.paginationOffset + this.usersPerPage)
         },
+        // filteredUsers(){
+        //     return this.users.filter(
+        //         (user) =>
+        //         !this.phone ||
+        //         user.user_phone.toLowerCase().includes(this.phone.toLowerCase())
+        //     )
+        // }
     }
 }
 </script>

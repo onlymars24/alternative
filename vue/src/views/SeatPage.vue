@@ -35,6 +35,7 @@ export default {
     }
   },
   async mounted(){
+    console.log(document.referrer)
     const promise = axiosClient
       .get('/race?dispatchPointId='+this.$route.params['dispatch_point_id']+'&arrivalPointId='+this.$route.params['arrival_point_id']+'&date='+this.$route.params['date']+'&uid='+this.$route.params['race_id'])
       .then(response => {

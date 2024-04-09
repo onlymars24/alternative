@@ -15,6 +15,12 @@
                         <el-descriptions-item label="Номер карты">{{order_outside.pan}}</el-descriptions-item>
                         <el-descriptions-item label="Сервисный сбор">{{order_outside.duePercent}}%</el-descriptions-item>
                         <el-descriptions-item label="Сумма сервисного сбора">{{order_outside.duePrice}}₽</el-descriptions-item>
+
+                        <el-descriptions-item label="utm_source">{{order_outside.utm_source}}</el-descriptions-item>
+                        <el-descriptions-item label="utm_medium">{{order_outside.utm_medium}}</el-descriptions-item>
+                        <el-descriptions-item label="utm_campaign">{{order_outside.utm_campaign}}</el-descriptions-item>
+                        <el-descriptions-item label="utm_content">{{order_outside.utm_content}}</el-descriptions-item>
+                        <el-descriptions-item label="referrer_url">{{order_outside.referrer_url}}</el-descriptions-item>
                     </el-descriptions>
                     <el-button v-if="order_outside.dispatchPointId && order_outside.arrivalPointId" type="primary" style="margin-top: 20px;" @click="toReturnRace">Обратный рейс</el-button>
                     <div style="margin-top: 20px;">
