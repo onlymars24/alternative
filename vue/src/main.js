@@ -13,6 +13,7 @@ import * as directives from 'vuetify/directives'
 import ticketStatuses from './data/TicketStatuses';
 import VueTheMask from 'vue-the-mask'
 import CKEditor from '@ckeditor/ckeditor5-vue';
+// import VueMasonry from 'vue-masonry-css'
 
 const vuetify = createVuetify({
     components,
@@ -20,6 +21,7 @@ const vuetify = createVuetify({
   })
 
 createApp(App)
+// .use(VueMasonry)
 .use(CKEditor)
 .use(VueTheMask)
 .use(store)

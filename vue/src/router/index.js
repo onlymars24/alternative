@@ -21,6 +21,7 @@ import Feedback from '../views/admin/Feedback.vue'
 import ReturnConditions from '../views/ReturnConditions.vue'
 import Debugging from '../views/admin/Debugging.vue'
 import EditMain from '../views/admin/EditMain.vue'
+import EditUpcomingTrips from '../views/admin/EditUpcomingTrips.vue'
 import EditPoints from '../views/admin/EditPoints.vue'
 import BusStations from '../views/admin/BusStations.vue'
 import BusStation from '../views/BusStation.vue'
@@ -149,6 +150,11 @@ const routes = [
         path: 'edit/main',
         component: EditMain,
         name: 'EditMain'
+      },
+      {
+        path: 'edit/upcoming/trips',
+        component: EditUpcomingTrips,
+        name: 'EditUpcomingTrips'
       },
       {
         path: 'edit/points',

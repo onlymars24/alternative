@@ -15,7 +15,7 @@ class InsertPageMain extends Seeder
      */
     public function run()
     {
-        $pageMain = Setting::where('name', 'PageMain')->first();
+        $pageMain = Setting::where('name', 'pageMain')->first();
         if($pageMain){
             $pageMain->delete();
         }

@@ -12,6 +12,6 @@ class RacesExistingMailController extends Controller
     public function send(Request $request){
         $order = Order::find($request->orderId);
         $phone = $order->user->phone;
-        Mail::to(env('RACES_EXISTING_MAIL'))->send(new RacesExistingMail($request->status, $request->points, $request->orderId, $phone));
+        Mail::to(env('RACES_EXISTING_MAIL'))->send(new RacesExistingMail($request->status, $request->points, $request->orderId, $phone, $request->from_admin));
     }
 }

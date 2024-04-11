@@ -23,13 +23,15 @@ class RacesExistingMail extends Mailable
     private $points;
     private $orderId;
     private $phone;
+    private $from_admin;
 
-    public function __construct($status, $points, $orderId, $phone)
+    public function __construct($status, $points, $orderId, $phone, $from_admin)
     {
         $this->status = $status;
         $this->points = $points;
         $this->orderId = $orderId;
         $this->phone = $phone;
+        $this->from_admin = $from_admin;
     }
 
     /**
@@ -58,6 +60,7 @@ class RacesExistingMail extends Mailable
                 'points' => $this->points,
                 'orderId' => $this->orderId,
                 'phone' => $this->phone,
+                'from_admin' => $this->from_admin,
                 'whatsLink' => 'https://wa.me/'.preg_replace('/\D/', '', $this->phone)
             ]            
         );

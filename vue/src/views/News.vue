@@ -3,8 +3,8 @@
 
 
     <div class="about" style="margin-top: 50px;">
+         
         <div class="container">
-            
             <div class="news__cards">
                 <h2 class="news__cards-title">Новости</h2>
                 <div v-for="event in events" class="news__card" @click="toNew(event.id)">
@@ -12,17 +12,18 @@
                         <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
                         <div class="card-body">
                             <h5 class="card-title">{{event.title}}</h5>
-                            <p class="card-text">{{event.descr}}</p>
+                            <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
                         </div>
                         <div class="card-footer">
                             {{ event.date }}
                         </div>
                     </div>                     
                 </div>
-               
-            </div>
-
+            </div>           
         </div>
+
+
+
     </div>
     
     <hr class="bef__footer">
@@ -39,6 +40,9 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
+// import Masonry from "masonry-layout"
+import VueMasonry from 'vue-masonry-css'
+
 
 export default{
     name: "Main",
@@ -84,6 +88,7 @@ export default{
 
 
 <style scoped>
+
 .news__cards{
     display: flex;
     flex-wrap: wrap;

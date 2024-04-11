@@ -13,6 +13,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
+
+
 export default{
     name: "Main",
     components: {
@@ -68,10 +70,12 @@ export default{
             breakpoints: {
                 320: {       
                     slidesPerView: 1,
+                    allowTouchMove: true
                     // spaceBetween: 10     
                 }, 
                 500: {       
                     slidesPerView: 2,
+                    allowTouchMove: true
                     // spaceBetween: 10     
                 }, 
                 790: {       
@@ -129,7 +133,7 @@ export default{
         .get('/station/events?id='+this.station.id)
         .then(response => {
             console.log(response)
-            this.events = response.data.events.reverse()
+            this.events = response.data.events
             console.log()
         })
         .catch(error => {
@@ -149,35 +153,40 @@ export default{
         <div class="container">
             <div v-if="events.length > 0" class="station__slides">
             <h2 class="station__slides-title">Новости</h2>
-            <swiper
-            :modules="modules"
-            :allowTouchMove="false"
-            :slides-per-view="3"
-            :space-between="20"
-            :navigation="navigation"
-            :oSwipingSelector="'station__slides-button-disabled'"
-            :breakpoints="breakpoints"
-            navigation
-            @swiper="onSwiper"
-            @slideChange="onSlideChange"
-            >
-                <swiper-slide v-for="event in events">
-                    <div class="card station__slide" style="height: 250px;" @click="toNew(event.id)">
-                        <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
-                        <div class="card-body">
-                            <h5 class="card-title">{{event.title}}</h5>
-                            <p class="card-text">{{event.descr}}</p>
-                        </div>
-                        <div class="card-footer">
-                            {{event.date}}
-                        </div>
-                    </div>      
-                </swiper-slide>
-            </swiper>
-            <div class="station__slides-buttons">
-                <div class="station__slides-button station__slides-button-prev">&#9668;</div>
-                <div class="station__slides-button station__slides-button-next">&#9658;</div>
-            </div>                
+                <swiper
+                :modules="modules"
+                :allowTouchMove="false"
+                :slides-per-view="3"
+                :space-between="8"
+                :navigation="navigation"
+                :oSwipingSelector="'station__slides-button-disabled'"
+                :breakpoints="breakpoints"
+                navigation
+                @swiper="onSwiper"
+                @slideChange="onSlideChange"
+                :class="{'station__slides-wrapper': events.length > 3}"
+                >
+                    <swiper-slide v-for="event in events">
+                        <div class="card station__slide" style="height: 250px;" @click="toNew(event.id)">
+                            <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
+                            <div class="card-body">
+                                <h5 class="card-title">{{event.title}}</h5>
+                                <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
+                            </div>
+                            <div class="card-footer">
+                                {{event.date}}
+                            </div>
+                        </div>      
+                    </swiper-slide>
+                
+                    <!-- <div class="station__slides-buttons">
+
+                    </div>                     -->
+                </swiper>
+                
+                <div v-if="events.length > 3" class="station__slides-button station__slides-button-prev">&#9668;</div>
+                <div v-if="events.length > 3" class="station__slides-button station__slides-button-next">&#9658;</div>   
+                <div class="station__slides-link"><a href="/новости" target="_blank">Все новости</a></div>           
             </div>
         
             <div class="about__inner">
@@ -202,8 +211,12 @@ export default{
 </template>
 
 <style scoped>
+    .station__slides-wrapper{
+        width: 94%;
+    }
     .station__slides{
         margin-bottom: 50px;
+        position: relative;
     }
     .station__slides-title{
         margin-bottom: 30px;
@@ -230,15 +243,40 @@ export default{
         display: flex;
         margin-top: 15px;
     }
-    .station__slides-buttons .station__slides-button{
-        margin-right: 15px;
+    .station__slides-button{
+        /* margin-right: 15px; */
         padding: 1px 5px;
         border: 2px solid #0275fe;
         border-radius: 50%;
         color: #0275fe;
+        z-index: 20;
+        position: absolute;
+        top: 50%;
+        /* width: 3%; */
+        /* width: 30px;
+        height: 30px;
+        margin-top: -15px; */
+        /* background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        border-radius: 50%;
+        cursor: pointer; */
+    }
+    .station__slides-button-next{
+        right: 0px;
+    }
+    .station__slides-button-prev{
+        left: 0px;
     }
     .swiper-button-disabled{
         border: 2px solid grey !important;
         color: grey !important; 
+    }
+    .station__slides-link{
+        margin-top: 15px;
+    }
+    @media(max-width: 790px){
+        .station__slides-button{
+            display: none;
+        }
     }
 </style>

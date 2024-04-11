@@ -12,6 +12,7 @@ use App\Http\Controllers\MatchController;
 use App\Http\Controllers\OrderController;
 // use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\BonusesController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\FeedbackController;
@@ -28,9 +29,9 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\PopularPointsController;
 use App\Http\Controllers\Api\ArrivalPointsController;
+use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
-use App\Http\Controllers\BonusesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,9 @@ Route::get('/get/feedback', [FeedbackController::class, 'get']);
 
 Route::get('/page/main', [PageMainController::class, 'get']);
 Route::post('/page/main', [PageMainController::class, 'edit']);
+
+Route::get('/page/upcoming/trips', [PageUpcomingTripsController::class, 'get']);
+Route::post('/page/upcoming/trips', [PageUpcomingTripsController::class, 'edit']);
 
 
 Route::get('/bus/stations', [BusStationController::class, 'all']);

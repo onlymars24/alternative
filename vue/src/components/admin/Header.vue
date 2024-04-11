@@ -12,7 +12,11 @@
         <el-menu-item index="1" @click="logout">Выход</el-menu-item>
         <el-menu-item index="2" @click="$router.push({name: 'Tickets'})">Список билетов</el-menu-item>
         <el-menu-item index="3" @click="$router.push({name: 'Debugging'})">Отладка</el-menu-item>
-        <el-menu-item index="4" @click="$router.push({name: 'EditMain'})">Редактировать контент</el-menu-item>
+        <el-sub-menu index="4">
+            <template #title>Редактировать контент</template>
+            <el-menu-item index="4-1" @click="$router.push({name: 'EditMain'})">Главная страница</el-menu-item>
+            <el-menu-item index="4-2" @click="$router.push({name: 'EditUpcomingTrips'})">Список заказов</el-menu-item>
+        </el-sub-menu>
         <el-menu-item index="5" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
         <el-menu-item index="6" @click="$router.push({name: 'BusStations'})">Автовокзалы</el-menu-item>
         <el-sub-menu index="7">

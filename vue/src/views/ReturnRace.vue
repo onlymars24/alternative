@@ -78,7 +78,8 @@ export default
       .post('/send/race/existing', {
         status: 'Неудачная',
         points: this.$route.params['arrival_station_name']+' - '+this.$route.params['dispatch_station_name'],
-        orderId: this.$route.params['order_id']
+        orderId: this.$route.params['order_id'],
+        from_admin: this.$route.query.from_admin ? true : false
       })
       .then(response => {
         console.log(response)
@@ -149,7 +150,8 @@ export default
     .post('/send/race/existing', {
       status: this.status,
       points: this.dispatchEl.name+' - '+this.arrivalEl.name,
-      orderId: this.$route.params['order_id']
+      orderId: this.$route.params['order_id'],
+      from_admin: this.$route.query.from_admin ? true : false
     })
     .then(response => {
       console.log(response)

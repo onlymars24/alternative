@@ -27,7 +27,7 @@ class EventController extends Controller
     public function stationOnes(Request $request){
         $station = BusStation::find($request->id);
         return response([
-            'events' => $station->events
+            'events' => $station->events()->latest()->take(5)->get()
         ]);
     }
 
