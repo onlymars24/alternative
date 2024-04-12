@@ -1,6 +1,7 @@
 <template>
   <BusLoading v-if="loading"/>
   <div v-else-if="bonuses.length != 0">
+    <h3>Операции с бонусами</h3>
     <div style="width: 40%; padding: 15px; margin-bottom: 15px;" class="menu__ticket">Мои бонусы: {{user.bonuses_balance}} руб</div>
     
     <table style="" class="table table-bordered">

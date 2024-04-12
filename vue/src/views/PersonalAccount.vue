@@ -8,10 +8,10 @@
       <div class="container">
         
         <ul class="header-menu__all">
-            <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'UpcomingTrips'}" @click="activeTab = 'UpcomingTrips'" >Список заказов</li>
-            <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'ContactInformation'}" @click="activeTab = 'ContactInformation'">Контактная информация</li>
+            <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'UpcomingTrips'}" @click="activeTab = 'UpcomingTrips'" >Заказы</li>
+            <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'ContactInformation'}" @click="activeTab = 'ContactInformation'">Мои контакты</li>
             <li class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'Person'}" @click="activeTab = 'Person'">Пассажиры</li>
-            <li v-if="!loading" class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'BonusesTransactions'}" @click="activeTab = 'BonusesTransactions'">Мои бонусы: {{ user.bonuses_balance }} руб </li>
+            <li v-if="!loading" class="header-menu__item" :class="{'header-menu__item-active': activeTab == 'BonusesTransactions'}" @click="activeTab = 'BonusesTransactions'">Мой баланс: {{ user.bonuses_balance }} руб </li>
         </ul>
       </div>
     </div>

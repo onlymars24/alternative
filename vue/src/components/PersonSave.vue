@@ -15,6 +15,7 @@
         </div>
     </div>
     <ul v-else>
+      <h3>Сохранённые пассажиры</h3>
       <li v-for="(passenger, index) in passengers" class="person-window">
         <div class="person-btn">
           <div>{{passenger.surname}} {{passenger.name}} {{passenger.patronymic}}</div>

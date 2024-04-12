@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Bonus;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Mail\OrderMail;
