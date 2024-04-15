@@ -34,7 +34,7 @@ class LeaveReviewMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Оставьте отзыв о поездке '.$this->ticket->raceName,
+            subject: 'Верните часть стоимости поездки '.$this->ticket->raceName,
         );
     }
 

@@ -395,7 +395,7 @@
    background-color: transparent;
  }
  .ticket-medium__ins-left * {
-   margin: 0px 10px;
+   margin: 0px 7px;
  }
  
  /* Нижний Блок */

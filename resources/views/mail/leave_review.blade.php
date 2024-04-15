@@ -10,15 +10,27 @@
  
 </head>
 <body>
-    <!-- <div class="header__logo" style="margin-top: 15px;">
-        <a href="https://росвокзалы.рф" style="align-items: center; color: black;
-            text-decoration: none;
-            display: flex;
-            align-items: flex-end;"> 
-            <img src="https://xn--80adplhnbnk0i.xn--p1ai/assets/741411-b74a89de.png" alt="" class="header-inner-image" style="margin-right: 5px; width: 25px;">
-            <span style="font-size: 24px;" class="">Росвокзалы.рф</span>
-        </a>
-    </div>     -->
+    <h2>
+        Как вернуть часть стоимости билетов
+    </h2>
+    <p>
+        <span class="text-small"><strong>Всё просто — поделитесь ВКонтакте ссылкой на наш сайт:</strong></span>
+    </p>
+    <p>
+        <span class="text-small">𝟏. Нажмите ниже на кнопку "Поделиться".</span>
+    </p>
+    <p>
+        <span class="text-small">𝟐. На вашей странице ВК допишите комментарий и опубликуйте его.</span>
+    </p>
+    <p>
+        <span class="text-small">𝟑. Подпишитесь на </span><a href="https://vk.com/rosvokzaly" target="_blank"><span class="text-small">официальную страницу Автовокзалы России</span></a><span class="text-small">. Так мы увидим, что вы поделились ссылкой, и зачислим часть стоимости поездки на ваш баланс на сайте.</span>
+    </p>
+    <a style="display: block;" href="https://vk.com/share.php?url=https://росвокзалы.рф" target="_blank">
+        <button style="padding: 9px 12px; display: flex; align-items: center; border-radius: 5px; color: #fff; background-color: #4C75A3; border: none; cursor: pointer;">
+            <img style="width: 27px; margin-right: 7px;" src="{{$message->embed('img/vk_logo_new.png')}}" alt="">
+            <span style="font-size: 18px;">Поделиться</span>
+        </button>
+    </a>
     <p>Расскажите, как прошла ваша поездка {{$ticket->raceName}} {{$ticket->dispatchDate}}</p>
     <div class=""><a href="https://vk.me/rosvokzaly">Оставить отзыв</a></div>
     <p>

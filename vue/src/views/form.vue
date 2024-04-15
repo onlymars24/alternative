@@ -299,6 +299,7 @@
     </div>
     </div>
   </div>
+  <Footer/>
   <transition name="fade" >
     <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false, Scroll()" :content="content"/>
   </transition>
@@ -318,10 +319,11 @@ import Registration from '../components/Registration.vue';
 import ResetPassword from '../components/ResetPassword.vue';
 import Header from '../components/Header.vue';
 import BusLoading from '../components/BusLoading.vue';
+import Footer from '../components/Footer.vue'
 
 export default
 {
-  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration, Header, ResetPassword, BusLoading },
+  components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration, Header, ResetPassword, BusLoading, Footer },
   data() {
     return {
       user: [],

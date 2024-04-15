@@ -25,6 +25,29 @@
             <li>Билет №{{$ticket->ticketNum}} {{$ticket->lastName}} {{$ticket->firstName}} {{$ticket->middleName}} Место {{$ticket->seat}}</li>
         @endforeach
     </ul>
+
+    <h2>
+        Как вернуть часть стоимости билетов
+    </h2>
+    <p>
+        <span class="text-small"><strong>Всё просто — поделитесь ВКонтакте ссылкой на наш сайт:</strong></span>
+    </p>
+    <p>
+        <span class="text-small">𝟏. Нажмите ниже на кнопку "Поделиться".</span>
+    </p>
+    <p>
+        <span class="text-small">𝟐. На вашей странице ВК допишите комментарий и опубликуйте его.</span>
+    </p>
+    <p>
+        <span class="text-small">𝟑. Подпишитесь на </span><a href="https://vk.com/rosvokzaly" target="_blank"><span class="text-small">официальную страницу Автовокзалы России</span></a><span class="text-small">. Так мы увидим, что вы поделились ссылкой, и зачислим часть стоимости поездки на ваш баланс на сайте.</span>
+    </p>
+    <a style="display: block;" href="https://vk.com/share.php?url=https://росвокзалы.рф" target="_blank">
+        <button style="padding: 9px 12px; display: flex; align-items: center; border-radius: 5px; color: #fff; background-color: #4C75A3; border: none; cursor: pointer;">
+            <img style="width: 27px; margin-right: 7px;" src="{{$message->embed('img/vk_logo_new.png')}}" alt="">
+            <span style="font-size: 18px;">Поделиться</span>
+        </button>
+    </a>
+
     <p>
         Будем рады, если <a href="https://vk.com/rosvokzaly">станете нашим подписчиком в ВК</a>:<br>
         - так мы станем ближе и сможем оперативнее отвечать на ваши вопросы,<br>

@@ -21,6 +21,7 @@
             <component :is="activeTab"></component>
         </Transition>
     </div>
+    <Footer/>
     <template v-if="popupEmail">
         <PopupWindow @CloseWindow="popupEmail = false;" :content="9" @editEmail="editEmail"/>
 	  </template>
@@ -34,10 +35,11 @@ import Header from '../components/Header.vue'
 import BonusesTransactions from '../components/BonusesTransactions.vue'
 import PopupWindow from '../components/PopupWindow.vue';
 import axiosClient from '../axios';
+import Footer from '../components/Footer.vue'
 
 export default
 {
-  components: { TravelHistory, UpcomingTrips, ContactInformation, Person, Header, PopupWindow, BonusesTransactions },
+  components: { TravelHistory, UpcomingTrips, ContactInformation, Person, Header, PopupWindow, BonusesTransactions, Footer },
   data() {
     return {
       activeTab: 'UpcomingTrips',

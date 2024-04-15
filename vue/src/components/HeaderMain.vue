@@ -93,6 +93,7 @@ import Header from '../components/Header.vue'
 import PopularPoint from '../components/PopularPoint.vue'
 import dayjs from 'dayjs'
 export default{
+        name: "HeaderMain",
         components: {
             Header,
             PopularPoint

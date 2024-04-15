@@ -13,6 +13,7 @@
         <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
       </div>
     </div>
+    <Footer/>
   </template>
 
 <script>
@@ -22,10 +23,11 @@ import Header from '../components/Header.vue';
 import BusLoading from '../components/BusLoading.vue';
 import axios from 'axios';
 import axiosClient from '../axios'
-import router from '../router';
+import router from '../router'
+import Footer from '../components/Footer.vue'
 
 export default {
-  components: { Seat, HeaderСrumbsVue, Header, BusLoading },
+  components: { Seat, HeaderСrumbsVue, Header, BusLoading, Footer },
   data(){
     return {
       race: [],

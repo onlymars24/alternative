@@ -24,11 +24,11 @@
             <el-menu-item index="7-1" @click="$router.push({name: 'EventCreate'})">Добавить новость</el-menu-item>
             <el-menu-item index="7-2" @click="$router.push({name: 'EventEdit'})">Редактировать новости</el-menu-item>
         </el-sub-menu>
-        <el-sub-menu index="8">
+        <!-- <el-sub-menu index="8">
             <template #title>Sitemap</template>
             <el-menu-item index="8-1" @click="sitemapView()">Предпросмотр</el-menu-item>
             <el-menu-item index="8-2" @click="sitemapExport()">Экспорт</el-menu-item>
-        </el-sub-menu>
+        </el-sub-menu> -->
         <el-menu-item index="9" @click="$router.push({name: 'Feedback'})">Обратная связь</el-menu-item>
         <el-menu-item index="10" @click="$router.push({name: 'Reports'})">Отчёты</el-menu-item>
         <el-menu-item index="11" @click="$router.push({name: 'Sms'})">Учет СМС</el-menu-item>

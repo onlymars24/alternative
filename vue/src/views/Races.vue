@@ -290,16 +290,16 @@ export default {
             this.notExistingRace = true
             return
         }
-        if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
-            console.log('update')
-            localStorage.setItem('utm_data', JSON.stringify({
-                utm_source: this.$route.query.utm_source,
-                utm_medium: this.$route.query.utm_medium,
-                utm_campaign: this.$route.query.utm_campaign,
-                utm_content: this.$route.query.utm_content,
-                referrer_url: document.referrer,
-            }))
-        }
+        // if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
+        //     console.log('update')
+        //     localStorage.setItem('utm_data', JSON.stringify({
+        //         utm_source: this.$route.query.utm_source,
+        //         utm_medium: this.$route.query.utm_medium,
+        //         utm_campaign: this.$route.query.utm_campaign,
+        //         utm_content: this.$route.query.utm_content,
+        //         referrer_url: document.referrer,
+        //     }))
+        // }
         if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
             this.dispatchEl.id = dispatchPoint.id
             this.arrivalEl.id = arrivalPoint.id

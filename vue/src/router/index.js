@@ -6,7 +6,6 @@ import form from '../views/form.vue'
 import AuthorizationPage from '../views/AuthorizationPage.vue'
 import PersonalAccount from '../views/PersonalAccount.vue'
 import Error from '../views/Error.vue'
-import Payment from '../views/Payment.vue'
 import Faq from '../views/Faq.vue'
 import RacesWithoutDate from '../views/RacesWithoutDate.vue'
 import Avtobus from '../views/Avtobus.vue'
@@ -75,11 +74,6 @@ const routes = [
     path: '/account',
     name: 'Account',
     component: PersonalAccount
-  },
-  {
-    path: '/payment/:order_id',
-    name: 'Payment',
-    component: Payment
   },
   {
     path: '/return/conditions',

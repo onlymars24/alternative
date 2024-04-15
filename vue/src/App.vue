@@ -7,7 +7,9 @@ export default
   data()
   {
     return{
-      openInputs: false
+      openInputs: false,
+      utm_data_old: null,
+      utm_data_new: null,
     }
   },
   async mounted(){
@@ -21,10 +23,50 @@ export default
       })
       .catch(error => {
         localStorage.removeItem('authToken')
-        router.push({name: 'Login'})        
+        router.push({name: 'Login'})
       })
-
+      await promise
     }
+    if(this.utm_data_old){
+      console.log('пустота считается не пустотой')
+    }
+    if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
+        // console.log('update')
+        this.utm_data_new = {
+            utm_source: this.$route.query.utm_source,
+            utm_medium: this.$route.query.utm_medium,
+            utm_campaign: this.$route.query.utm_campaign,
+            utm_content: this.$route.query.utm_content,
+            referrer_url: document.referrer,
+        }
+        localStorage.setItem('utm_data', JSON.stringify(this.utm_data_new))
+    }
+    else{
+      this.utm_data_old = JSON.parse(localStorage.getItem('utm_data'))
+      if(this.utm_data_old){
+        this.utm_data_old.referrer_url = document.referrer
+      }
+      else{
+        this.utm_data_old = {
+            utm_source: '',
+            utm_medium: '',
+            utm_campaign: '',
+            utm_content: '',
+            referrer_url: document.referrer,
+        }
+      }
+      localStorage.setItem('utm_data', JSON.stringify(this.utm_data_old))
+    }
+    
+    if(this.utm_data_old){
+      console.log('utm_data_old exists!')
+    }
+    if(this.utm_data && this.utm_data.utm_source && this.utm_data.utm_medium && this.utm_data.utm_campaign && this.utm_data.utm_content){
+      console.log(this.utm_data)
+      console.log('OK utm')
+    }
+
+
   }
 }
 </script>

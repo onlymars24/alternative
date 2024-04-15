@@ -5,16 +5,21 @@
    <div class="menu__ticket" style="box-shadow: rgb(0 0 0 / 15%) 0px 2px 8px;">
 	
 	 <div class="menu__ticket-medium" style="border-top-right-radius: 6px; border-top-left-radius: 6px;">
-	   <div class="ticket-medium__ins">
-		 <div class="ticket-medium__ins-left ticket-medium__ins-left__up">
-		   	<div><strong>ID: </strong> {{ race.order.id }}</div>
+	   <div class="ticket-medium__ins" style="width: 100%;">
+		 <div class="ticket-medium__ins-left ticket-medium__ins-left__up" style="display: block; max-width: none;">
+		   	<div style="display: flex; justify-content: space-between; width: 100%;">
+				<div><strong>ID: </strong> {{ race.order.id }}</div>
+				<div style="margin: 0; margin-right: 10px;">
+					<p v-if="race.order.status == 'S'" style="color: green; font-size: 12px;"><strong>Заказ оплачен</strong></p>
+					<p style="color: #dc3545;" v-if="race.order.status == 'B' && !expired">Заказ забронирован, но не оплачен!</p>
+					<p v-if="race.order.status == 'R'">Заказ возвращён</p>
+					<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
+					<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>			
+				</div>				
+			</div>
 			<div class="ticket-medium__ins-left__up-date" v-if="race.order.status == 'S'" style="margin: 0;">
-			<strong>Заказ подтверждён: </strong> {{ race.order.finished }} (по местному времени)
-		   </div>
-		   
-		   
-
-   
+				<strong>Заказ подтверждён: </strong> {{ race.order.finished }} (по местному времени)
+		   	</div>
 		 </div>
 	   </div>
 	 </div>
@@ -86,42 +91,24 @@
 		 </div>
 	   </div>
 	 </div>
-	 <div class="menu__ticket-medium">
-	   <div class="ticket-medium__ins">
+	 <div class="menu__ticket-medium" style="justify-content: flex-start;">
+	   <div class="ticket-medium__ins" style="padding-left: 10px;">
 		 <div class="ticket-medium__ins-left">
-		   <div style="margin: 0; margin-right: 10px;">
-			<p v-if="race.order.status == 'S'">Заказ оплачен</p>
-			<p style="color: #dc3545;" v-if="race.order.status == 'B' && !expired">Заказ забронирован, но не оплачен!</p>
-			<p v-if="race.order.status == 'R'">Заказ возвращён</p>
-			<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
-			<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>			
-		   </div>
-		   <div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" href="" @click.prevent="popupTransactionsOpen = true, getTransactions()" class=""><a href="">Чеки</a></div>
-		   <div>
-			<a v-if="!expired && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" @click.prevent="windowOpen = 2" href="">Ещё</a>
-			<!-- <span>Дата покупки</span>	 -->
-			
-			<transition name="anim-window">
-				<nav style="z-index: 5; display: flex; flex-direction: column; left: 100px; right: auto;" @mouseenter="windowOpen = 2" @mouseleave="windowOpen = 0" class="header__links__window" v-show="windowOpen == 2">
-					<a v-if="!wentOut" href="" @click.prevent="popupOpen = true" class="header__links__window__myRace-link">Вернуть билет</a>
-					<a v-if="order.insured && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')" href="" @click.prevent="popupInsurancesOpen = true, getInsurances()" class="header__links__window__myRace-link">Страховки</a>
-				</nav>
-			</transition>
-		   </div>
-		   
+			<div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" class="">
+				<a @click.prevent="tickets = !tickets" href="">Список билетов</a>
+			</div>		 
+			<ul class="tickets-list" v-show="tickets">
+				<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></li>
+			</ul>  
+		   <div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" class=""><a href="" @click.prevent="popupTransactionsOpen = true, getTransactions()">Чеки</a></div>
+		   <div v-if="order.insured && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')"><a href="" @click.prevent="popupInsurancesOpen = true, getInsurances()" class="">Страховки</a></div>
 
    
 		 </div>
-	 
-		<!-- <div><p>Заказ оформлен: {{ race.order.created }}</p></div>
-		<div><p>Заказ оплачен: {{ race.order.finished }}</p></div> -->
+
 	   </div>
-		<div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" class="" style="width: 30%;">
-			<a @click.prevent="tickets = !tickets" href="">Список билетов</a>
-		</div>		 
-		<ul class="tickets-list" v-show="tickets">
-			<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></li>
-		</ul>  
+
+		<div v-if="!wentOut"><a href="" @click.prevent="popupOpen = true" class="">Вернуть</a></div>
 	 </div>
    </div>
    	<template v-if="popupOpen">
@@ -348,7 +335,7 @@ strong{
   border-radius: 10px;
   top: 35px;
   right: 190px;
-  width: 250px;
+  width: 280px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
 }
 
@@ -365,7 +352,7 @@ strong{
 {
 .tickets-list
 {
-  right: 0px;
+  left: 0px;
   top: 40px;
 }
 .ticket-up__left-ins{

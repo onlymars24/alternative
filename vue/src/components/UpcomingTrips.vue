@@ -1,7 +1,7 @@
 <template>
   <BusLoading v-if="loading"/>
   <div v-else>
-    <!-- <h3>Контактная информация</h3> -->
+    <h2>Список моих заказов</h2>
     <div style="padding: 15px; margin-bottom: 15px;" class="menu__ticket menu__ticket-bonuses">Мой баланс: {{user.bonuses_balance}} руб</div>
     <div v-if="content" style="padding: 15px; margin-bottom: 15px;">
       <div v-html="content"></div>
