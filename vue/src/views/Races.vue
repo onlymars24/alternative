@@ -303,7 +303,6 @@ export default {
         if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
             this.dispatchEl.id = dispatchPoint.id
             this.arrivalEl.id = arrivalPoint.id
-            console.log('нету да')
             this.$router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date } })
             this.paramKey = true
         }
@@ -397,7 +396,6 @@ export default {
             }
         },
         toSeats(raceId){
-            
             router.push({name: 'SeatPage', params: {dispatch_point_id: this.dispatchEl.id, arrival_point_id: this.arrivalEl.id, date: this.$route.query.on, race_id: raceId}})
         }
     },

@@ -10,9 +10,18 @@ export default
       openInputs: false,
       utm_data_old: null,
       utm_data_new: null,
+      newReferrer: '',
+      oldReferrer: '',
     }
   },
   async mounted(){
+    console.log(location.hostname)
+    let tempUtm = JSON.parse(localStorage.getItem('utm_data'))
+    if(tempUtm && tempUtm.referrer_url){
+      this.oldReferrer = tempUtm.referrer_url
+    }
+
+    this.newReferrer = !document.referrer.includes(location.hostname) ? document.referrer : this.oldReferrer
     let token = localStorage.getItem('authToken')
     let user = []
     if(token){
@@ -26,7 +35,7 @@ export default
         router.push({name: 'Login'})
       })
       await promise
-    }
+    }  
     if(this.utm_data_old){
       console.log('пустота считается не пустотой')
     }
@@ -37,14 +46,14 @@ export default
             utm_medium: this.$route.query.utm_medium,
             utm_campaign: this.$route.query.utm_campaign,
             utm_content: this.$route.query.utm_content,
-            referrer_url: document.referrer,
+            referrer_url: this.newReferrer,
         }
         localStorage.setItem('utm_data', JSON.stringify(this.utm_data_new))
     }
     else{
       this.utm_data_old = JSON.parse(localStorage.getItem('utm_data'))
       if(this.utm_data_old){
-        this.utm_data_old.referrer_url = document.referrer
+        this.utm_data_old.referrer_url = this.newReferrer
       }
       else{
         this.utm_data_old = {
@@ -52,7 +61,7 @@ export default
             utm_medium: '',
             utm_campaign: '',
             utm_content: '',
-            referrer_url: document.referrer,
+            referrer_url: this.newReferrer,
         }
       }
       localStorage.setItem('utm_data', JSON.stringify(this.utm_data_old))

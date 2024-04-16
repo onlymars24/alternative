@@ -108,7 +108,7 @@
 
 	   </div>
 
-		<div v-if="!wentOut"><a href="" @click.prevent="popupOpen = true" class="">Вернуть</a></div>
+		<div v-if="!wentOut && (race.order.status == 'S' || race.order.status == 'P')"><a href="" @click.prevent="popupOpen = true" class="">Вернуть</a></div>
 	 </div>
    </div>
    	<template v-if="popupOpen">
