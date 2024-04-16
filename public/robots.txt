@@ -1,2 +1,2 @@
-User-agent: *
+User-agent: Yandex
 Disallow: https://api.xn--80adplhnbnk0i.xn--p1ai/
