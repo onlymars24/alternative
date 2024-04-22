@@ -203,11 +203,11 @@ router.beforeEach((to, from, next) => {
   const authToken = localStorage.getItem('authToken')
   const authAdminToken = localStorage.getItem('authAdminToken')
 
-  if(!authToken){
-    if(to.name === 'Account'){
-      return next({name: 'Main'})
-    }
-  }
+  // if(!authToken){
+  //   if(to.name === 'Account'){
+  //     return next({name: 'Main'})
+  //   }
+  // }
 
   if(authAdminToken){
     if(to.name === 'ALogin'){

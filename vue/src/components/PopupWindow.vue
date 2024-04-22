@@ -3,7 +3,7 @@
 <template>
 <div class="background-close" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')"></div>
 <div class="popup-container" :class="{'feedback-popup': this.content==7, 'rejection__popup': this.content==8 || 9}">
-    <div v-if="this.content != 8" class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
+    <div v-if="this.content != 8 && this.content != 10" class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
     <div v-if="this.content==3" class="content-popap">
@@ -167,6 +167,9 @@
         </form>
       </div> 
     </div>
+    <div v-if="this.content==10">
+      <FixUser :unfixedUserData="unfixedUserData" />
+    </div>
 </div>
 </template>
 <script scoped>
@@ -177,6 +180,8 @@ import axiosClient from '../axios'
 import Login from "../components/Login.vue";
 import Registration from "../components/Registration.vue";
 import ResetPassword from "../components/ResetPassword.vue";
+import FixUser from "../components/FixUser.vue";
+import TheMask from 'vue-the-mask';
 
 export default
 {
@@ -201,12 +206,13 @@ export default
       emailEditObj: {
         value: '',
         loading: false
-      }
+      },
+      // unfixedUserStep: 1
     }
   },
-  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice'],
+  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice', 'unfixedUserData'],
   emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail'],
-  components: { Seat, Login, Registration, ResetPassword },
+  components: { Seat, Login, Registration, ResetPassword, FixUser },
   computed: {
     UserAgreement() {
       return UserAgreement;

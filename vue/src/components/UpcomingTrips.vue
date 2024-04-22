@@ -46,23 +46,27 @@ export default
     this.loading = true
     // document.getElementById('vk_share_button').innerHTML = 'Smth new'
     // document.getElementById('vk_share_button').innerHTML = VK.Share.button('http://mysite.com', {type: 'link'});
-    const promise1 = axiosClient
-    .get('/page/upcoming/trips')
-    .then(response => {
-        console.log(response)
-        this.content = response.data.pageUpcomingTrips
-    })
-    .catch(error => {
-        console.log(error)
-    })
-    await promise1
-    const promise2 = axiosClient
-    .get('/user')
-    .then(response => {
-        this.user = response.data.user
-    })
-    await promise2
-	  this.updateOrders()
+    let authToken = localStorage.getItem('authToken')
+    if(authToken){
+      const promise1 = axiosClient
+      .get('/page/upcoming/trips')
+      .then(response => {
+          console.log(response)
+          this.content = response.data.pageUpcomingTrips
+      })
+      .catch(error => {
+          console.log(error)
+      })
+      await promise1
+      const promise2 = axiosClient
+      .get('/user')
+      .then(response => {
+          this.user = response.data.user
+      })
+      await promise2
+      this.updateOrders()
+    }
+	  
   },
   computed: {
     vkShare(){

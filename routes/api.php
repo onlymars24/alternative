@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\FixUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,7 @@ Route::middleware('auth:api')->group(function(){
     Route::post('/edit/email', [AuthController::class, 'editEmail']);
     Route::post('/sms/order', [SmsController::class, 'sendOrder']);
     Route::get('/sms/order', [SmsController::class, 'getOrder']);
-    Route::post('/order/book', [OrderController::class, 'book']);
+    
     Route::get('/orders', [OrderController::class, 'all']);
     Route::get('/passengers', [PassengersController::class, 'all']);
     Route::post('/passenger/delete', [PassengersController::class, 'delete']);
@@ -61,7 +62,16 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/tickets', [TicketController::class, 'all']);
     Route::post('/debugging', [DebuggingController::class, 'get']);
 });
-    // Route::post('/force/ticket/return', [TicketController::class, 'getBackForce']);
+
+
+Route::get('/unfixed/user', [FixUserController::class, 'unfixedUser']);
+Route::post('/fix/user/sms', [FixUserController::class, 'smsSend']);
+Route::get('/fix/user/sms', [FixUserController::class, 'smsGet']);
+Route::post('/fix/user', [FixUserController::class, 'fix']);
+
+Route::post('/order/book', [OrderController::class, 'book']);
+
+// Route::post('/force/ticket/return', [TicketController::class, 'getBackForce']);
 
 
 Route::post('/order/transactions', [TransactionController::class, 'all']);

@@ -18,19 +18,47 @@ use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Services\DeletePassportService;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
     public function book(Request $request){
+        
+        $user = null;
+        if(!$request->auth){
+            $validator = Validator::make($request->all(), [
+                'phone' => 'required|size:17'
+            ]);
+            if($validator->fails()){
+                return response(
+                    [
+                        'errors' => $validator->errors()
+                    ], 422
+                );
+            }
+            $user = User::create([
+                'phone' => $request->phone,
+                'confirmed' => false,
+                'password' => Hash::make($request->newPassword)
+            ]);
+        }
+        else{
+            $user = User::where([['id', '=',$request->userId], ['confirmed', '=', true]])->first();
+        }
+
         $body = json_encode($request->sale);
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->withBody($body, 'application/json')->post(env('AVTO_SERVICE_URL').'/order/book/'.$request->uid);
         $order = json_decode($order_json);
         if(!isset($order->id)){
+            if(!$request->auth){
+                $user->delete();
+            }
             return response([
                 'error' => $order
             ], 422);
@@ -52,7 +80,7 @@ class OrderController extends Controller
             'dispatchPointId' => $request->dispatch_point_id,
             'arrivalPointId' => $request->arrival_point_id,
             'bonusesPrice' => $request->bonuses,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
         ]);
         $orderBundle = [
             'agent' => ['agentType' => 7],
@@ -140,7 +168,7 @@ class OrderController extends Controller
                     'doc_series' => $el['docSeries'],
                     'doc_type' => $el['docTypeName'],
                     'ticket_type' => $el['ticketTypeName'],
-                    'user_id' => Auth::id()
+                    'user_id' => $user->id
                 ]);
             }
         }

@@ -36,6 +36,7 @@ import BonusesTransactions from '../components/BonusesTransactions.vue'
 import PopupWindow from '../components/PopupWindow.vue';
 import axiosClient from '../axios';
 import Footer from '../components/Footer.vue'
+import router from '../router'
 
 export default
 {
@@ -45,7 +46,8 @@ export default
       activeTab: 'UpcomingTrips',
       popupEmail: false,
       user: {},
-      loading: false
+      loading: false,
+      phone: ''
     };
   },
   methods: {
@@ -62,19 +64,51 @@ export default
       this.loading = true
       const linkCan = document.querySelector('head link[rel="canonical"]');
       linkCan.setAttribute('href', 'https://росвокзалы.рф');
-      const promise = axiosClient
-      .get('/user')
-      .then(response => {
-          this.user = response.data.user
-      })
-      await promise
-      console.log(this.user.email)
-      if(!this.user.email){
+      let authToken = localStorage.getItem('authToken')
+      if(authToken){
+        const promise = axiosClient
+        .get('/user')
+        .then(response => {
+            this.user = response.data.user
+        })
+        .catch(error => {
+          // router.push({name: 'Main'})
+        })
+        await promise        
+      }
+
+
+      if(!this.user.id && this.$route.query.orderId){
+        console.log('top condition')
+        console.log('this.$route.query.orderId', this.$route.query.orderId)
+        const promise1 = axiosClient
+        .get('/unfixed/user?bankOrderId='+this.$route.query.orderId)
+        .then(response => {
+            console.log('need fixing')
+            this.phone = response.data.phone
+            // location.reload(); return false;
+        })
+        .catch(error => {
+          console.log(error)
+        })
+        await promise1
+        localStorage.setItem('unfixedUser', JSON.stringify({phone: this.phone, bankOrderId: this.$route.query.orderId}))
+        // router.push({name: 'Account'})
+        window.location.replace(window.location.origin + window.location.pathname);
+        // return
+        // location.reload();
+      }
+      else if(!this.user.id){
+        console.log('bottom condition')
+        router.push({name: 'Main'})
+        // location.reload();
+      }
+      console.log('off top')
+      if(this.user.id && !this.user.email){
         this.popupEmail = true
       }
       this.loading = false
   }
-
 };
 </script>
 <style>

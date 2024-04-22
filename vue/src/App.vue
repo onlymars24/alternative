@@ -1,9 +1,11 @@
 <script>
 import axiosClient from './axios';
 import router from './router'
+import PopupWindow from './components/PopupWindow.vue';
 
 export default
 {
+  components: { PopupWindow },
   data()
   {
     return{
@@ -12,9 +14,15 @@ export default
       utm_data_new: null,
       newReferrer: '',
       oldReferrer: '',
+
+      unfixedUser: false,
+      unfixedUserData: {
+        
+      }
     }
   },
   async mounted(){
+    console.log(this.$route)
     console.log(location.hostname)
     let tempUtm = JSON.parse(localStorage.getItem('utm_data'))
     if(tempUtm && tempUtm.referrer_url){
@@ -24,6 +32,12 @@ export default
     this.newReferrer = !document.referrer.includes(location.hostname) ? document.referrer : this.oldReferrer
     let token = localStorage.getItem('authToken')
     let user = []
+    
+    this.unfixedUserData = JSON.parse(localStorage.getItem('unfixedUser'))
+    if(this.unfixedUserData && this.unfixedUserData.phone && this.unfixedUserData.bankOrderId){
+      this.unfixedUser = true
+      console.log('need fixing')
+    }
     if(token){
       const promise = axiosClient
       .get('/user')
@@ -32,15 +46,19 @@ export default
       })
       .catch(error => {
         localStorage.removeItem('authToken')
-        router.push({name: 'Login'})
+        router.push({name: 'Main'})
       })
       await promise
     }  
+    console.log(this.$route.query.orderIdd)
+    // if(!token && this.$route.query.orderId){
+    //   console.log('need fixing!')
+    // }
     if(this.utm_data_old){
       console.log('пустота считается не пустотой')
     }
+    console.log(this.$route.query.utm_source)
     if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
-        // console.log('update')
         this.utm_data_new = {
             utm_source: this.$route.query.utm_source,
             utm_medium: this.$route.query.utm_medium,
@@ -74,8 +92,6 @@ export default
       console.log(this.utm_data)
       console.log('OK utm')
     }
-
-
   }
 }
 </script>
@@ -84,6 +100,7 @@ export default
   
   <router-view @click.prevent="$store.commit('windowHeader', 0)"></router-view>
 
+  <PopupWindow v-if="unfixedUser" :content="10" :unfixedUserData="unfixedUserData"/>
 </template>
 
 <style>

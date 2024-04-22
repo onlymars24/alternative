@@ -93,27 +93,30 @@ import PopupWindow from '../components/PopupWindow.vue';
     methods: {
 
     },
-    mounted(){
+    async mounted(){
 		this.baseUrl = import.meta.env.VITE_API_BASE_URL
 
-        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-            tooltipButtonText: "Есть вопрос?",
-            expanded: "0",
-            widgetPosition: "left"
-        });
-
-        // Подключение виджета сообщества
-
-        VK.init({
-            apiId: this.groupID,
-            onlyWidgets: true
-        });
-        VK.Widgets.Group("vk_groups", 
-            {
-                mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
-            }, 
-            this.groupID
-        );
+        try {
+            VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+                tooltipButtonText: "Есть вопрос?",
+                expanded: "0",
+                widgetPosition: "left"
+            });
+            //Подключение виджета сообщества
+            VK.init({
+                apiId: this.groupID,
+                onlyWidgets: true
+            });
+            VK.Widgets.Group("vk_groups", 
+                {
+                    mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
+                }, 
+                this.groupID
+            );            
+        }
+        catch (e) {
+            // console.log(e)
+        }
     }
 	}
 </script>

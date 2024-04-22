@@ -334,7 +334,7 @@ strong{
   padding: 10px;
   border-radius: 10px;
   top: 35px;
-  right: 190px;
+  left: 0px;
   width: 280px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
 }

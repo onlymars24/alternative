@@ -77,7 +77,7 @@ class SmsController extends Controller
             'code' => $code,
             'used' => false,
             'type' => 'reset'
-        ]);        
+        ]);
         
         $sms->cost = isset($smsService->data->cost) ? $smsService->data->cost : null;
         $sms->status = isset($smsService->data->status) ? $smsService->data->status : null;

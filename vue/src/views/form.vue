@@ -26,7 +26,7 @@
       <hr>
       <DepartureArrival :race="race"/>
       <!-- <div class="information-race__price"><p>Цена:</p><p>1050,00₽</p></div> -->
-      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{totalCost}},00₽  </p></div>
+      <div class="information-race__payment"><p class="inf-race-price-heading">К оплате <span class="inf-race__type__ticket"></span></p><p class="total-cost" >{{totalCost}},00₽</p></div>
       <p style="font-size: 13px;">Включая стоимость билетов<br/> {{ticketsPrice}},00₽</p>
       <p style="font-size: 13px;">Включая сервисный сбор<br/> {{duePrice}},00₽</p>
       <p v-if="insured" style="font-size: 13px;">Включая страхование<br/> {{insurancePrice}},00₽</p>
@@ -258,8 +258,25 @@
         </div>
 
       </div> 
-      <label v-if="unAuthMessage" style="color: red; font-size: 12px;">Для оформления билета необходимо авторизоваться!</label>
-      <div v-if="!authForForm" class="form-reg" :class="{'unauth__user': unAuthMessage}">
+
+
+      <div v-if="!authForForm" class="form-reg" style="position: relative;">
+        
+        <h5>Информация о покупателе</h5>
+        <p class="form-description">Укажите ваш номер телефона: он необходим для входа в личный кабинет и возможности скачать или вернуть билет.</p>
+        <div class="ticket-registration">
+          <hr>
+          <label for="" class="form-label">Номер телефона</label>
+          <input style="font-size: 24px;" ref="refPhoneInput" @focus="phoneError = ''" v-model="phone" v-mask="'+7 (###) ### ####'" type="tel" class="form-control phone__input" :class="{'is-invalid': phoneError}" id="tel1" maxlength="17">
+          <div v-if="phoneError" class="invalid-feedback">
+            {{ phoneError }}
+          </div>          
+        </div>
+      </div>
+
+
+      <label v-if="false" style="color: red; font-size: 12px;">Для оформления билета необходимо авторизоваться!</label>
+      <div v-if="false" class="form-reg" :class="{'unauth__user': unAuthMessage}">
         <div class="information-buyer">
           <Login v-if="option == 'login'" @resetSection="option = 'reset'" @registrationSection="option = 'registration'" :authForForm="authForForm" @authenticateForForm="authenticateForForm" @putRedFromLoginAway="putRedFromLoginAway" />
           <Registration v-else-if="option == 'registration'" @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway" :authForForm="authForForm" @authenticateForForm="authenticateForForm"/>
@@ -275,8 +292,8 @@
         <label v-if="availableBonuses > 0" class="check" style="padding: 0px; display: flex; align-items: center; font-size: 13px;">
           <input style="opacity: 1; background-color: initial; margin-right: 3px;" type="checkbox" v-model="bonuses.checkbox">Списать {{ availableBonuses }} бонусов
         </label>
-        <p style="font-size: 15px;">У вас на балансе: {{user.bonuses_balance}} бонусов</p>
-        <a v-if="user.bonuses_balance == 0" style="font-size: 14px;" href="#">Как заработать бонусы?</a>
+        <p v-if="authForForm" style="font-size: 15px;">У вас на балансе: {{user.bonuses_balance}} бонусов</p>
+        <a v-if="!authForForm || user.bonuses_balance == 0" style="font-size: 14px;" href="#">Как заработать бонусы?</a>
         <hr class="line-pay">
         <div class="pay-discription">
           <p>Ваши платежные и личные данные надежно защищены в соответствии с международными стандартами безопасности.</p>
@@ -320,13 +337,16 @@ import ResetPassword from '../components/ResetPassword.vue';
 import Header from '../components/Header.vue';
 import BusLoading from '../components/BusLoading.vue';
 import Footer from '../components/Footer.vue'
+import TheMask from 'vue-the-mask'
 
 export default
 {
   components: { HeaderСrumbsVue, DepartureArrival, PopupWindow, Login, Registration, Header, ResetPassword, BusLoading, Footer },
   data() {
     return {
-      user: [],
+      user: {},
+      phone: '',
+      phoneError: '',
       openWindow: false,
       content: 2,
       chosenSeats: [],
@@ -365,6 +385,14 @@ export default
     };
   },
   methods: {
+    randomString(length){
+        let result = '';
+        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result
+    },
     NoScroll() {
       document.body.style.overflow = 'hidden';
     },
@@ -375,6 +403,7 @@ export default
       if(!this.validateFrom()){
         this.confirmBookLoading = true
         this.errorMessageFromAPI = ''
+        this.phoneError = ''
         this.sale = []
         this.formData.forEach(el => {this.sale.push(
           {
@@ -388,7 +417,7 @@ export default
             gender: el.gender,
             citizenship: el.citizenship,
             birthday: el.birth_date,
-            phone: this.user.phone,
+            phone: this.user.phone ? this.user.phone : this.phone,
             email: this.user.email,
             seatCode: el.ticket_type_code == this.luggageTypeCode ? null : el.seat.code,
             ticketTypeCode: el.ticket_type_code,
@@ -402,10 +431,14 @@ export default
         console.log(this.sale)
         // return this.sale
         const promise2 = axiosClient
-        .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice, 
+        .post('/order/book', {uid: this.$route.params['race_id'], sale: this.sale, insured: this.insured, insurancePrice: this.insurancePrice,
         dispatch_point_id: this.$route.params['dispatch_point_id'], arrival_point_id: this.$route.params['arrival_point_id'],
         bonuses: this.availableBonuses,
-        utm_data: this.utm_data
+        utm_data: this.utm_data,
+        auth: this.authForForm,
+        phone: this.phone,
+        userId: this.user.id,
+        newPassword: this.randomString(15)
         })
         .then(response => {
           console.log(response)
@@ -417,7 +450,10 @@ export default
         })
         .catch(error => {
           console.log(error)
-          if(error.response.data.error == null || error.response.data.error.errorMessage == null){
+          if(error.response.data.errors && error.response.data.errors.phone && error.response.data.errors.phone[0]){
+            this.phoneError = error.response.data.errors.phone[0]
+          }
+          else if(error.response.data.error == null || error.response.data.error.errorMessage == null){
             this.errorMessageFromAPI = 'Произошла непредвиденная ошибка. Повторите ещё раз позже!'
           }
           else{
@@ -458,10 +494,6 @@ export default
           el.errors.doc_series = ''
         }
       })
-      if(!this.authForForm){
-        this.unAuthMessage = 'Необходимо авторизоваться!'
-        formHasErrors = true
-      }
       return formHasErrors
     },
     async authenticateForForm(){
@@ -702,7 +734,8 @@ export default
       }
     },
     availableBonuses(){
-      if(!this.auth){
+      console.log('auth', this.authForForm, this.user)
+      if(!this.authForForm){
         return 0
       }
       if(this.user.bonuses_balance == 0){
@@ -856,6 +889,7 @@ export default
   }
 };
 </script>
+
 <style>
 
 .fade-enter-active, .fade-leave-active {

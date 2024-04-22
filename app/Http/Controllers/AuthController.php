@@ -47,7 +47,7 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
-        if(!Auth::attempt($request->all())){
+        if(!Auth::attempt(['phone' => $request->phone, 'password' => $request->password, 'confirmed' => true])){
             return response(['message' => 'Неверный номер или пароль!'], 422);
         }
 
