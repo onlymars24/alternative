@@ -34,7 +34,12 @@ class BusStationController extends Controller
         $newLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
         $xml = simplexml_load_file(env('XML_FILE_NAME'));
         for($i = 0; $i < count($xml->url); $i++){
+            $xml->url[$i]->lastmod = date('Y-m-d');
+        }
+        for($i = 0; $i < count($xml->url); $i++){
             if($xml->url[$i]->loc == $newLoc){
+                File::put(env('XML_FILE_NAME'), $xml->asXML());
+                FtpLoadingService::put();
                 return response([
                     'existing' => true
                 ]);

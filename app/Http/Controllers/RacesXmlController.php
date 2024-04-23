@@ -13,11 +13,12 @@ class RacesXmlController extends Controller
     //arrivalName
     public function create(Request $request){
         $xml = simplexml_load_file(env('XML_FILE_NAME'));
-
+        for($i = 0; $i < count($xml->url); $i++){
+          $xml->url[$i]->lastmod = date('Y-m-d');
+        }
         $newLoc = env('FRONTEND_URL').'/автобус/'.$request->dispatchName.'/'.$request->arrivalName;
         for($i = 0; $i < count($xml->url); $i++){
           if($xml->url[$i]->loc == $newLoc){
-            $xml->url[$i]->lastmod = date('Y-m-d');
             File::put(env('XML_FILE_NAME'), $xml->asXML());
             FtpLoadingService::put();
             return response([

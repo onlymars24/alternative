@@ -208,7 +208,8 @@ router.beforeEach((to, from, next) => {
   //     return next({name: 'Main'})
   //   }
   // }
-
+  console.log('to.query')
+  console.log(to.query.utm_source)
   if(authAdminToken){
     if(to.name === 'ALogin'){
       return next({name: 'Tickets'})
@@ -220,6 +221,50 @@ router.beforeEach((to, from, next) => {
       return next({name: 'ALogin'})
     }
   }
+
+  // console.log('to')
+  // console.log(to)
+  if(to.name == 'Main' || to.name == 'Races' || to.name == 'BusStation' || to.name == 'New' || to.name == 'News'){
+    let utm_data_old = null;
+    let utm_data_new = null;
+    let newReferrer = '';
+    let oldReferrer = '';
+
+    let tempUtm = JSON.parse(localStorage.getItem('utm_data'))
+    if(tempUtm && tempUtm.referrer_url){
+      oldReferrer = tempUtm.referrer_url
+    }
+    newReferrer = (!document.referrer.includes(location.hostname) && document.referrer) ? document.referrer : oldReferrer
+    
+    if(to.query.utm_source && to.query.utm_medium && to.query.utm_campaign && to.query.utm_content){
+      utm_data_new = {
+        utm_source: to.query.utm_source,
+        utm_medium: to.query.utm_medium,
+        utm_campaign: to.query.utm_campaign,
+        utm_content: to.query.utm_content,
+        referrer_url: newReferrer,
+      }
+      localStorage.setItem('utm_data', JSON.stringify(utm_data_new))
+      return next({name: to.name, params: to.params})
+    }
+    else{
+      utm_data_old = JSON.parse(localStorage.getItem('utm_data'))
+      if(utm_data_old){
+        utm_data_old.referrer_url = newReferrer
+      }
+      else{
+        utm_data_old = {
+            utm_source: '',
+            utm_medium: '',
+            utm_campaign: '',
+            utm_content: '',
+            referrer_url: newReferrer,
+        }
+      }
+      localStorage.setItem('utm_data', JSON.stringify(utm_data_old))
+    }
+  }
+  //utm the end
 
   next()
 })
