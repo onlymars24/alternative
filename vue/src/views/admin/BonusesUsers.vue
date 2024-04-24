@@ -44,7 +44,7 @@
 
 
     
-                    <el-dialog v-model="plusModalOpened" :title="'Ночислить бонусы для пользователя: '+currentPlusRow.phone" width="550">
+                    <el-dialog v-model="plusModalOpened" :title="'Начислить бонусы для пользователя: '+currentPlusRow.phone" width="550">
                         <el-form :model="form">
                         <el-form-item label="Количество бонусов" :label-width="formLabelWidth">
                             <el-input v-model="currentPlusRow.amount" autocomplete="off" />

@@ -71,11 +71,11 @@ export default{
         await promise
         console.log('this.$route.query')
         
-        VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-            tooltipButtonText: "Есть вопрос?",
-            expanded: "0",
-            widgetPosition: "left"
-        });
+        // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+        //     tooltipButtonText: "Есть вопрос?",
+        //     expanded: "0",
+        //     widgetPosition: "left"
+        // });
     }
 }
 </script>

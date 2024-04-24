@@ -21,29 +21,29 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            $now = date('Y-m-d H:i:s');
-            $monthAgo = date_create($now);
-            date_modify($monthAgo, '-32 days');
-            $monthAgo = date_format($monthAgo, 'Y-m-d H:i:s');
+        // $schedule->call(function () {
+        //     $now = date('Y-m-d H:i:s');
+        //     $monthAgo = date_create($now);
+        //     date_modify($monthAgo, '-32 days');
+        //     $monthAgo = date_format($monthAgo, 'Y-m-d H:i:s');
 
-            $orders = Order::where([['dispatched', '=', false], ['created_at', '>', $monthAgo]])->get();
-            foreach($orders as $order){
-                $ticket = $order->tickets[0];
+        //     $orders = Order::where([['dispatched', '=', false], ['created_at', '>', $monthAgo]])->get();
+        //     foreach($orders as $order){
+        //         $ticket = $order->tickets[0];
                 
-                $tz = $order->timezone;
-                $timestamp = time();
-                $dt = new DateTime("now", new DateTimeZone($tz));
-                $dt->setTimestamp($timestamp);
-                if($ticket->dispatchDate < $now && $order->user && $order->user->email){
-                    Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new LeaveReviewMail($ticket));
+        //         $tz = $order->timezone;
+        //         $timestamp = time();
+        //         $dt = new DateTime("now", new DateTimeZone($tz));
+        //         $dt->setTimestamp($timestamp);
+        //         if($ticket->dispatchDate < $now && $order->user && $order->user->email){
+        //             Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new LeaveReviewMail($ticket));
                     
-                    $order->dispatched = true;
-                    $order->save();
-                    Log::info('Отзыв предложен! orderId: '.$order->id.'; ticketId: '.$ticket->id);
-                }
-            }
-        })->daily();
+        //             $order->dispatched = true;
+        //             $order->save();
+        //             Log::info('Отзыв предложен! orderId: '.$order->id.'; ticketId: '.$ticket->id);
+        //         }
+        //     }
+        // })->daily();
     }
 
     /**

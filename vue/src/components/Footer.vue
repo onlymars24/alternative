@@ -47,7 +47,10 @@
                         <a :href="baseUrl+'/agreement/privacypolicy.pdf'">Политика конфиденциальности</a>
                     </div>
                 </div>
-                <div style="margin: 20px 0;" class="footer__info-about"><div id="vk_groups"></div><div id='vk_community_messages'></div></div>
+                <div style="margin: 20px 0;" class="footer__info-about">
+                    <!-- <div id="vk_groups"></div>
+                    <div id='vk_community_messages'></div> -->
+                </div>
             </div>
             <div class="copyright__text">
                 <p>© 2023, OOO АЛЬТЕРНАТИВА. Все права защищены. АЛЬТЕРНАТИВА — Онлайн сервис продажи билетов</p>
@@ -97,22 +100,23 @@ import PopupWindow from '../components/PopupWindow.vue';
 		this.baseUrl = import.meta.env.VITE_API_BASE_URL
 
         try {
-            VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
-                tooltipButtonText: "Есть вопрос?",
-                expanded: "0",
-                widgetPosition: "left"
-            });
+            // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
+            //     tooltipButtonText: "Есть вопрос?",
+            //     expanded: "0",
+            //     widgetPosition: "left"
+            // });
+
             //Подключение виджета сообщества
-            VK.init({
-                apiId: this.groupID,
-                onlyWidgets: true
-            });
-            VK.Widgets.Group("vk_groups", 
-                {
-                    mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
-                }, 
-                this.groupID
-            );            
+            // VK.init({
+            //     apiId: this.groupID,
+            //     onlyWidgets: true
+            // });
+            // VK.Widgets.Group("vk_groups", 
+            //     {
+            //         mode: 3, color1: "FFFFFF", color2: "000000", color3: "5181B8"
+            //     }, 
+            //     this.groupID
+            // );            
         }
         catch (e) {
             // console.log(e)

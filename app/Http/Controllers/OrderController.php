@@ -181,6 +181,7 @@ class OrderController extends Controller
             'amount' => ($order->total - $request->bonuses + $duePrice) * 100,
             'orderBundle' => json_encode($orderBundle),
             'returnUrl' => env('FRONTEND_URL').'/account',
+            'sessionTimeoutSecs' => 870,
             'dynamicCallbackUrl' => env('BACKEND_URL').'/order/confirm/'
         ];
 
