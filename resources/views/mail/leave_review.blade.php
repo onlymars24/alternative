@@ -27,7 +27,7 @@
     </p>
     <a style="display: block;" href="https://vk.com/share.php?url=https://росвокзалы.рф" target="_blank">
         <button style="padding: 9px 12px; display: flex; align-items: center; border-radius: 5px; color: #fff; background-color: #4C75A3; border: none; cursor: pointer;">
-            <img style="width: 27px; margin-right: 7px;" src="{{$message->embed('img/vk_logo_new.png')}}" alt="">
+            <img style="width: 27px; margin-right: 7px;" src="{{$message->embed(public_path('img/vk_logo_new.png'))}}" alt="">
             <span style="font-size: 18px;">Поделиться</span>
         </button>
     </a>
@@ -40,7 +40,7 @@
     </p>
     <div style="border-radius: 15px;">
         <a href="https://vk.com/rosvokzaly" target="_blank">
-            <img src="{{$message->embed('img/vk_bus_mail.png')}}" alt="">
+            <img src="{{$message->embed(public_path('img/vk_bus_mail.png'))}}" alt="">
         </a>
     </div>
     <br><br>

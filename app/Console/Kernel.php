@@ -35,12 +35,12 @@ class Kernel extends ConsoleKernel
                 $timestamp = time();
                 $dt = new DateTime("now", new DateTimeZone($tz));
                 $dt->setTimestamp($timestamp);
-                if($ticket->dispatchDate < $now && $order->user->email){
+                if($ticket->dispatchDate < $now && $order->user && $order->user->email){
                     Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new LeaveReviewMail($ticket));
                     
                     $order->dispatched = true;
                     $order->save();
-                    Log::info('Отзыв предложен! orderId: '+$order->id+'; ticketId: '+$ticket->id);
+                    Log::info('Отзыв предложен! orderId: '.$order->id.'; ticketId: '.$ticket->id);
                 }
             }
         })->daily();

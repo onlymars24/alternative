@@ -45,6 +45,7 @@ class OrderController extends Controller
                 'confirmed' => false,
                 'password' => Hash::make($request->newPassword)
             ]);
+            
         }
         else{
             $user = User::where([['id', '=',$request->userId], ['confirmed', '=', true]])->first();
@@ -384,6 +385,10 @@ class OrderController extends Controller
 
         if($order->user->email){
             Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
+            Log::info('sent!');
+        }
+        else{
+            Log::info('not sent!');
         }
 
         // $user = User::find($order->user_id);
