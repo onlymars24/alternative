@@ -33,6 +33,11 @@ import BonusesTransactions from '../views/admin/BonusesTransactions.vue'
 import BonusesUsers from '../views/admin/BonusesUsers.vue'
 import BonusesUser from '../views/admin/BonusesUser.vue'
 
+import BusRoutes from '../views/admin/BusRoutes.vue'
+import BusRoutesEdit from '../views/admin/BusRoutesEdit.vue'
+
+
+
 
 const routes = [
   // {
@@ -160,6 +165,18 @@ const routes = [
         component: BusStations,
         name: 'BusStations'
       },
+
+      {
+        path: 'bus/routes',
+        component: BusRoutes,
+        name: 'BusRoutes'
+      },
+      {
+        path: 'bus/routes/edit/:dispatchPointName/:arrivalPointName',
+        component: BusRoutesEdit,
+        name: 'BusRoutesEdit'
+      },
+
       {
         path: 'event/create',
         name: 'EventCreate',

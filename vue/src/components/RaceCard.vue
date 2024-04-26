@@ -15,10 +15,13 @@
 				   </div>
 				 </div>
 			   </div>
+         
 			   <div class="left-ins__left-up-second">
 				 <!-- <p>7 ч. 3 мин. в пути</p> -->
 			   </div>
+        
 			 </div>
+        <div style="font-size: 13px;">Отправление и приытие по местному времени</div>
 			 <div class="left-ins__left-down">
 			   <p class="race__address">{{ race.dispatchStationName }}</p>
 			   <!-- <p>Автовокзал Краснодар, площадь Привокзальная; дом 5</p> -->
@@ -34,7 +37,9 @@
 				   </div>
 				 </div>
 			   </div>
+         
 			 </div>
+       <div style="font-size: 13px;">Отправление и приытие по местному времени</div>
 			 <div class="left-ins__left-down">
 			   <p class="race__address">{{ race.arrivalStationName }}</p>
 			   <!-- <p>Автовокзал Сочи, улица Горького; 56А</p> -->

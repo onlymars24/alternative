@@ -16,6 +16,7 @@
             <template #title>Редактировать контент</template>
             <el-menu-item index="4-1" @click="$router.push({name: 'EditMain'})">Главная страница</el-menu-item>
             <el-menu-item index="4-2" @click="$router.push({name: 'EditUpcomingTrips'})">Список заказов</el-menu-item>
+            <el-menu-item index="4-2" @click="$router.push({name: 'BusRoutes'})">Страница с маршрутом</el-menu-item>
         </el-sub-menu>
         <el-menu-item index="5" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
         <el-menu-item index="6" @click="$router.push({name: 'BusStations'})">Автовокзалы</el-menu-item>

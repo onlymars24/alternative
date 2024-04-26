@@ -13,8 +13,10 @@ use App\Http\Controllers\OrderController;
 // use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\BonusesController;
+use App\Http\Controllers\FixUserController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
+use App\Http\Controllers\BusRouteController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PageMainController;
 use App\Http\Controllers\RacesXmlController;
@@ -32,7 +34,6 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
-use App\Http\Controllers\FixUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,13 @@ Route::get('/bus/station', [BusStationController::class, 'one']);
 Route::post('/bus/station/create', [BusStationController::class, 'create']);
 Route::post('/bus/station/edit', [BusStationController::class, 'edit']);
 Route::post('/bus/station/delete', [BusStationController::class, 'delete']);
+
+
+Route::get('/bus/route', [BusRouteController::class, 'one']);
+Route::get('/bus/routes', [BusRouteController::class, 'all']);
+Route::post('/bus/route/create', [BusRouteController::class, 'create']);
+Route::post('/bus/route/edit', [BusRouteController::class, 'edit']);
+Route::post('/bus/route/delete', [BusRouteController::class, 'delete']);
 
 
 Route::post('/popular/points/edit', [PopularPointsController::class, 'edit']);

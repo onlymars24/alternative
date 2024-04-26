@@ -7,12 +7,6 @@
             <el-link type="primary" :href="'/fj239f3j984jsdiaisja/bonuses/user/'+scope.row.user_id" target="_blank">{{ scope.row.user_phone }}</el-link>
         </template>
     </el-table-column>
-    <!-- <el-table-column prop="order_id" label="Заказ" width="200" /> -->
-    <!-- <el-table-column label="Заказ" width="180">
-        <template #default="scope">
-            <el-link type="primary" :href="'/fj239f3j984jsdiaisja/order/'+scope.row.order_id" target="_blank">{{ scope.row.order_id }}</el-link>
-        </template>
-    </el-table-column> -->
     <el-table-column prop="date" label="Дата" width="200" />
     <el-table-column prop="transaction" label="Транзакция" width="180">
         <template #default="scope">

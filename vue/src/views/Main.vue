@@ -59,6 +59,8 @@ export default{
         const descEl = document.querySelector('head meta[name="description"]');
         descEl.setAttribute('content', 'Билеты на автобус онлайн');
 
+        
+
         const promise = axiosClient
         .get('/page/main')
         .then(response => {

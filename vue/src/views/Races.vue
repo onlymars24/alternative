@@ -16,65 +16,69 @@
     <div class="menu">
 		<div class="container">
             <BusLoading v-if="loadingRaces"/>
-            <div v-else-if="!races.length && notExistingRace" class="not__found">
-                <!-- <div class="not__found-img">
-                    <img src="../assets/free-icon-sad-3350122.png">
-                </div> -->
-                <div class="not__found-text">
-                    <p class="not__found-title">
-                        Маршрута {{errorNames.dispatch}} — {{errorNames.arrival}}
-                        не существует
-                    </p>
-                    <p class="not__found-descr">
-                        Выберите другие точки отправления и прибытия.
-                    </p>
+            <div v-else>
+                <div v-if="!races.length && notExistingRace" class="not__found">
+                    <!-- <div class="not__found-img">
+                        <img src="../assets/free-icon-sad-3350122.png">
+                    </div> -->
+                    <div class="not__found-text">
+                        <p class="not__found-title">
+                            Маршрута {{errorNames.dispatch}} — {{errorNames.arrival}}
+                            не существует
+                        </p>
+                        <p class="not__found-descr">
+                            Выберите другие точки отправления и прибытия.
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div v-else-if="!races.length && !notExistingRace" class="not__found">
-                <!-- <div class="not__found-img">
-                    <img src="../assets/free-icon-sad-3350122.png">
-                </div> -->
-                <div class="not__found-text">
-                    <p class="not__found-title">
-                        {{errorNames.dispatch}} — {{errorNames.arrival}}
-                        на {{ dateForError }}
-                        Билеты не найдены
-                    </p>
-                    <p class="not__found-descr">
-                        Выберите другую дату или точки отправления и прибытия.
-                    </p>
+                <div v-else-if="!races.length && !notExistingRace" class="not__found">
+                    <!-- <div class="not__found-img">
+                        <img src="../assets/free-icon-sad-3350122.png">
+                    </div> -->
+                    <div class="not__found-text">
+                        <p class="not__found-title">
+                            {{errorNames.dispatch}} — {{errorNames.arrival}}
+                            на {{ dateForError }}
+                            Билеты не найдены
+                        </p>
+                        <p class="not__found-descr">
+                            Выберите другую дату или точки отправления и прибытия.
+                        </p>
+                    </div>
                 </div>
+                <div v-else class="menu__intro">
+                    <!-- <p>Отправление и прибытие по местному времени</p>
+                    <h4>Расписание автобусов {{dispatchEl.name}} — {{arrivalEl.name}}</h4> -->
+                    <div class="menu__inro-sort">
+                    <div class="inro-sort__button">
+                        <button @click="sort($event, 'dispatchDate')" :class="{active: sortingParams.param == 'dispatchDate'}">
+                            Время отправления <img v-if="sortingParams.param == 'dispatchDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
+                        </button>
+                    </div>
+                    <!-- <div class="inro-sort__button">
+                        <button @click="sort($event, 'freeSeatCount')" :class="{active: sortingParams.param == 'freeSeatCount'}">
+                            Количество билетов <img v-if="sortingParams.param == 'freeSeatCount'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
+                        </button>
+                    </div> -->
+                    <div class="inro-sort__button">
+                        <button @click="sort($event, 'arrivalDate')" :class="{active: sortingParams.param == 'arrivalDate'}">
+                            Время прибытия <img v-if="sortingParams.param == 'arrivalDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
+                        </button>
+                    </div>
+                    <div class="inro-sort__button">
+                        <button @click="sort($event, 'price')" :class="{active: sortingParams.param == 'price'}">
+                            Стоимость <img v-if="sortingParams.param == 'price'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
+                        </button>
+                    </div>
+                    </div>
+                    <template v-for="race in sortedRaces">
+                        <!-- <pre>{{ race }}</pre> -->
+                        <RaceCard @toSeats="toSeats" :race="race"/> 
+                    </template>                
+                </div>
+                <div style="margin-top: 20px; list-style-type: unset;" v-if="busRoute" v-html="busRoute.content"></div>
             </div>
-            <div v-else class="menu__intro">
-				<!-- <p>Отправление и прибытие по местному времени</p>
-				<h4>Расписание автобусов {{dispatchEl.name}} — {{arrivalEl.name}}</h4> -->
-				<div class="menu__inro-sort">
-				<div class="inro-sort__button">
-                	<button @click="sort($event, 'dispatchDate')" :class="{active: sortingParams.param == 'dispatchDate'}">
-                		Время отправления <img v-if="sortingParams.param == 'dispatchDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
-                	</button>
-            	</div>
-            	<!-- <div class="inro-sort__button">
-                	<button @click="sort($event, 'freeSeatCount')" :class="{active: sortingParams.param == 'freeSeatCount'}">
-                		Количество билетов <img v-if="sortingParams.param == 'freeSeatCount'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
-                	</button>
-            	</div> -->
-            	<div class="inro-sort__button">
-                	<button @click="sort($event, 'arrivalDate')" :class="{active: sortingParams.param == 'arrivalDate'}">
-                		Время прибытия <img v-if="sortingParams.param == 'arrivalDate'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
-                	</button>
-            	</div>
-            	<div class="inro-sort__button">
-                	<button @click="sort($event, 'price')" :class="{active: sortingParams.param == 'price'}">
-                		Стоимость <img v-if="sortingParams.param == 'price'" :src="sortingParams.arrowUp ?  '/img/arrow_up.svg' : '/img/arrow_down.svg'" alt="">
-                	</button>
-            	</div>
-				</div>
-                <template v-for="race in sortedRaces">
-                    <!-- <pre>{{ race }}</pre> -->
-                    <RaceCard @toSeats="toSeats" :race="race"/> 
-                </template>                
-			</div>
+
             
 
             <!-- <RaceCard/>  -->
@@ -227,7 +231,8 @@ export default {
                 arrowUp: false,
                 param: 'dispatchDate'
             },
-            paramKey: false
+            paramKey: false,
+            busRoute: null
         }
     },
     async mounted(){
@@ -238,6 +243,21 @@ export default {
 
         const linkCan = document.querySelector('head link[rel="canonical"]');
         linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
+
+
+        const twitterTitle = document.querySelector('head meta[name="twitter:title"]');
+        twitterTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
+
+        const twitterDescr = document.querySelector('head meta[name="twitter:description"]');
+        twitterDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
+
+        const ogTitle = document.querySelector('head meta[name="og:title"]');
+        ogTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
+
+        const ogDescr = document.querySelector('head meta[name="og:description"]');
+        ogDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
+
+
 
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if(!regex.test(this.date)){
@@ -382,6 +402,14 @@ export default {
                 var calendarInput = document.querySelector('#calendar');
                 calendarInput.focus();
             }
+            const promise3 = axiosClient
+            .get('/bus/route?dispatchPointName='+dispatch_name+'&arrivalPointName='+arrival_name)
+            .then(response => {
+                this.busRoute = response.data.busRoute
+            })
+            .catch(error => {
+                console.log(error)
+            })
             this.loadingRaces = false
         },
         sort(event, param){
