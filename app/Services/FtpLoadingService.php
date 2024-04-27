@@ -13,7 +13,8 @@ class FtpLoadingService
     public static function put(){
         if(env('APP_ENV') == 'production'){
             $newSitemap = File::get(env('XML_FILE_NAME'));
-            $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemaps/росвокзалы.рф/directions.xml.gz', $newSitemap);
+            $gzdata = gzencode($newSitemap, 9);
+            $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemaps/directions.xml.gz', $gzdata);
         }
     }
 }
