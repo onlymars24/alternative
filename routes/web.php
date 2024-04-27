@@ -54,6 +54,7 @@ Route::get('/spread/', function (Request $request) {
   }
   File::put(env('XML_FILE_NAME'), $xml->asXML());
   FtpLoadingService::put();
+  dd('');
   // $gzdata = gzencode($newSitemap, 9);
   // $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemaps/directions.xml.gz', $gzdata);
   
