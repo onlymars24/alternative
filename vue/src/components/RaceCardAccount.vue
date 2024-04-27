@@ -43,6 +43,7 @@
 				 <!-- <p>7 ч. 3 мин. в пути</p> -->
 			   </div>
 			 </div>
+			 <div style="font-size: 13px;">Время местное</div>
 			 <div class="left-ins__left-down">
 			   <p class="race__address">{{ race.order.tickets[0].dispatchStation }}</p>
 			   <!-- <p>Автовокзал Краснодар, площадь Привокзальная; дом 5</p> -->
@@ -59,6 +60,7 @@
 				 </div>
 			   </div>
 			 </div>
+			 <div style="font-size: 13px;">Время местное</div>
 			 <div class="left-ins__left-down">
 			   <p class="race__address">{{ race.order.tickets[0].arrivalStation }}</p>
 			   <!-- <p>Автовокзал Сочи, улица Горького; 56А</p> -->

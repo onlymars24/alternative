@@ -19,6 +19,7 @@ use App\Exports\ReportsExport;
 use App\Services\FermaService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\CacheArrivalPoint;
+use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -46,7 +47,33 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-
+  $dispatchPoints = DispatchPoint::all();
+  $xml = simplexml_load_file(env('XML_FILE_NAME'));
+  foreach($dispatchPoints as $dispatchPoint){
+    $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $dispatchPoint->id)->first();
+    if(!$arrival_points){
+        $arrival_points_remoted = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
+        $arrival_points = CacheArrivalPoint::create([
+            'dispatch_point_id' => $dispatchPoint->id,
+            'arrival_points' => json_encode($arrival_points_remoted)
+        ]);
+    }
+    $arrival_points = json_decode($arrival_points->arrival_points);
+    foreach($arrival_points as $arrivalPoint){
+      $newLoc = env('FRONTEND_URL').'/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
+      $newNode = $xml->addChild('url');
+      $newNode->addChild('loc', $newLoc);
+      $newNode->addChild('lastmod', date('Y-m-d'));
+      $newNode->addChild('changefreq', 'daily');
+      $newNode->addChild('priority', '1.0');
+      // break;
+    }  
+    // break;
+  }
+  File::put(env('XML_FILE_NAME'), $xml->asXML());
+  FtpLoadingService::put();
 });
 
 

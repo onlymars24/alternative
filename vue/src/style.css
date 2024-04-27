@@ -114,6 +114,7 @@ outline: none;
 }
 .main__header{
   margin: 0 auto;
+  background-image: url(img/bus_rosvokzaly_50pr.jpg);
   background-image: url(img/image.jpg);
   background-position: center center;
   background-size: cover;

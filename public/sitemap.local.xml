@@ -2,10 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<loc>https://xn--80adplhnbnk0i.xn--p1ai/автовокзал/Томск</loc>
-<lastmod>2024-04-26</lastmod>
+<loc>https://xn--80adplhnbnk0i.xn--p1ai/sitemaps/росвокзалы.рф/directions.xml.gz</loc>
+<lastmod>2024-04-27</lastmod>
 <changefreq>weekly</changefreq>
 <priority>1.0</priority>
 </url>
 
-<url><loc>http://localhost:5173/автобус/Новосибирск/Барнаул</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Москва/Котельники</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Барнаул/Новосибирск</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автовокзал/Томск</loc><lastmod>2024-04-26</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Москва/Краснодар</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Москва/Армавир</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Москва/Аксай</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Москва/Аксай пов</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Москва/Буево</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Новосибирск/Кемерово</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>http://localhost:5173/автобус/Новосибирск/Томск</loc><lastmod>2024-04-26</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url></urlset>
+</urlset>

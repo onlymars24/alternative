@@ -234,13 +234,11 @@ router.beforeEach((to, from, next) => {
   }
   else{
     if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback' || to.name === 'Debugging' || to.name === 'BusStations' || to.name === 'EditPoints'
-     || to.name === 'EditMain' || to.name === 'Bonuses' || to.name === 'EventEdit' || to.name === 'EventCreate'){
+     || to.name === 'EditMain' || to.name === 'Bonuses' || to.name === 'EventEdit' || to.name === 'EventCreate' || to.name === 'BusRoutesEdit' ||  to.name === 'BusRoutes'){
       return next({name: 'ALogin'})
     }
   }
 
-  // console.log('to')
-  // console.log(to)
   if(to.name == 'Main' || to.name == 'Races' || to.name == 'BusStation' || to.name == 'New' || to.name == 'News'){
     let utm_data_old = null;
     let utm_data_new = null;
