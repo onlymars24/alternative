@@ -49,7 +49,7 @@ use App\Http\Controllers\PaymentController;
 Route::get('/spread/', function (Request $request) {
   $newSitemap = File::get(env('XML_FILE_NAME'));
   $gzdata = gzencode($newSitemap, 9);
-  $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemaps/росвокзалы.рф/directions.xml.gz', $gzdata);
+  $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemaps/directions.xml.gz', $gzdata);
   // $ftp = Storage::put('sitemaps/directions.xml.gz', $gzdata);
   
   // $dispatchPoints = DispatchPoint::all();
