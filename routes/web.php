@@ -48,13 +48,13 @@ use App\Http\Controllers\PaymentController;
 
 Route::get('/spread/', function (Request $request) {
   // dd(date(DATE_ATOM));
-  $xml = simplexml_load_file(env('XML_FILE_NAME'));
-  for($i = 0; $i < count($xml->url); $i++){
-    $xml->url[$i]->lastmod = date(DATE_ATOM);
-  }
-  File::put(env('XML_FILE_NAME'), $xml->asXML());
-  FtpLoadingService::put();
-  dd('');
+  // $xml = simplexml_load_file(env('XML_FILE_NAME'));
+  // for($i = 0; $i < count($xml->url); $i++){
+  //   $xml->url[$i]->lastmod = date(DATE_ATOM);
+  // }
+  // File::put(env('XML_FILE_NAME'), $xml->asXML());
+  // FtpLoadingService::put();
+  // dd('');
   // $gzdata = gzencode($newSitemap, 9);
   // $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemaps/directions.xml.gz', $gzdata);
   
