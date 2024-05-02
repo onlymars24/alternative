@@ -1,5 +1,5 @@
 <template>
-    <div class="" style="margin-bottom: 250px;" v-loading.fullscreen.lock="loading">
+    <div class="" v-loading.fullscreen.lock="loading">
         <p style=" margin-top: 30px;">Соответствия точек для обратных рейсов</p>
         <el-table :data="matches" style="width: 100%; margin-top: 10px;">
         <el-table-column label="ID точки из заказа, 

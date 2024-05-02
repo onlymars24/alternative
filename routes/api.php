@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\NewPointsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,6 +112,10 @@ Route::post('/bus/route/delete', [BusRouteController::class, 'delete']);
 
 
 Route::post('/popular/points/edit', [PopularPointsController::class, 'edit']);
+
+Route::get('/new/points', [NewPointsController::class, 'get']);
+Route::post('/new/points', [NewPointsController::class, 'add']);
+
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
