@@ -50,7 +50,7 @@ class SmsController extends Controller
             );
         }
 
-        $user = User::where('phone', $request->phone)->first();
+        $user = User::where([['phone', $request->phone], ['confirmed', true]])->first();
         if(!$user){
             $notExistingNumberMessage = 'Проверьте правильность ввода номера телефона:';
             Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
@@ -137,19 +137,24 @@ class SmsController extends Controller
 
         
         $validator = Validator::make($user, [
-            'phone' => 'required|size:17|unique:users',
+            'phone' => 'required|size:17',
             'password' => 'required|between:7,30|confirmed',
             'formConditionTop' => 'accepted'
         ]);
-        if($validator->fails()){
+        $userExisted = User::where([['phone', $user['phone']], ['confirmed', true]])->first();
+        if($validator->fails() || $userExisted){
+        // if($validator->fails()){
             $tempErrors = $validator->errors();
             $tempErrors = json_encode($tempErrors);
             $tempErrors = (array)json_decode($tempErrors);
+            if($userExisted){
+                $tempErrors['phone'][] = 'Данный номер телефона уже зарегистрирован.';
+            }
             Mail::to(env('MAIL_FEEDBACK'))->send(new DataErrorMail(
                 $user['phone'], 'регистрации', $tempErrors));
             return response(
                 [
-                    'errors' => $validator->errors()
+                    'errors' => (object)$tempErrors
                 ], 422
             );
         }

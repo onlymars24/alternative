@@ -213,6 +213,8 @@ class TicketController extends Controller
         if($orderFromDb->user->email){
             Mail::to($orderFromDb->user->email)->bcc(env('TICKETS_MAIL'))->send(new ReturnMail([$ticketFromDB]));
         }
+        Log::info('ticket: '.json_encode($ticket));
+        Log::info('repayment: '.json_encode($repayment));
         return response([
             'ticket' => $ticket,
             'repayment' => $repayment

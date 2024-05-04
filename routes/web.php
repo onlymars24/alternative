@@ -18,6 +18,7 @@ use App\Models\DispatchPoint;
 use App\Exports\ReportsExport;
 use App\Services\FermaService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\FixUserService;
 use App\Models\CacheArrivalPoint;
 use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
@@ -47,6 +48,7 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
+  // dd(FixUserService::auth('+7 (961) 529 6784'));
   // dd(date(DATE_ATOM));
   // $xml = simplexml_load_file(env('XML_FILE_NAME'));
   // for($i = 0; $i < count($xml->url); $i++){

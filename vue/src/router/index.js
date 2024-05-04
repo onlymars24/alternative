@@ -251,12 +251,12 @@ router.beforeEach((to, from, next) => {
     }
     newReferrer = (!document.referrer.includes(location.hostname) && document.referrer) ? document.referrer : oldReferrer
     
-    if(to.query.utm_source && to.query.utm_medium && to.query.utm_campaign && to.query.utm_content){
+    if(to.query.utm_source || to.query.utm_medium || to.query.utm_campaign || to.query.utm_content){
       utm_data_new = {
-        utm_source: to.query.utm_source,
-        utm_medium: to.query.utm_medium,
-        utm_campaign: to.query.utm_campaign,
-        utm_content: to.query.utm_content,
+        utm_source: to.query.utm_source ? to.query.utm_source : '',
+        utm_medium: to.query.utm_medium ? to.query.utm_medium : '',
+        utm_campaign: to.query.utm_campaign ? to.query.utm_campaign : '',
+        utm_content: to.query.utm_content ? to.query.utm_content : '',
         referrer_url: newReferrer,
       }
       localStorage.setItem('utm_data', JSON.stringify(utm_data_new))

@@ -168,7 +168,7 @@
       </div> 
     </div>
     <div v-if="this.content==10">
-      <FixUser :unfixedUserData="unfixedUserData" />
+      <FixUser :unfixedUserData="unfixedUserData" @makeFixed="$emit('makeFixed')"/>
     </div>
 </div>
 </template>
@@ -211,7 +211,7 @@ export default
     }
   },
   props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice', 'unfixedUserData'],
-  emits: ['confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail'],
+  emits: ['makeFixed', 'confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail'],
   components: { Seat, Login, Registration, ResetPassword, FixUser },
   computed: {
     UserAgreement() {

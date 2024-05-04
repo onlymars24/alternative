@@ -22,6 +22,13 @@ export default
       }
     }
   },
+  methods: {
+    makeFixed(){
+      console.log('its 422 !!!!!')
+      localStorage.removeItem('unfixedUser')
+      this.unfixedUser = false
+    }
+  },
   async mounted(){
 
     let token = localStorage.getItem('authToken')
@@ -57,7 +64,7 @@ export default
   
   <router-view @click.prevent="$store.commit('windowHeader', 0)"></router-view>
 
-  <PopupWindow v-if="unfixedUser" :content="10" :unfixedUserData="unfixedUserData"/>
+  <PopupWindow v-if="unfixedUser" :content="10" :unfixedUserData="unfixedUserData" @makeFixed="makeFixed"/>
 </template>
 
 <style>

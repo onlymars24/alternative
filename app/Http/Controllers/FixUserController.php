@@ -6,6 +6,7 @@ use App\Models\Sms;
 use App\Models\User;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Services\FixUserService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -106,7 +107,10 @@ class FixUserController extends Controller
         $userOld = User::where([['phone', '=', $request->phone], ['confirmed', '=', true]])->first();
 
         $user = null;
-        if($userOld){
+        if($userOld && $userNew && $userOld->id == $userNew->id){
+            $user = $userOld;
+        }
+        elseif($userOld){
             $userNew->delete();
             $order->user_id = $userOld->id;
             $order->save();
@@ -117,7 +121,7 @@ class FixUserController extends Controller
             $userNew->save();
             $user = $userNew;
         }
-    
+        FixUserService::auth($request->phone);
         Auth::loginUsingId($user->id);
         $token = Auth::user()->createToken('authToken')->accessToken;
         return response([

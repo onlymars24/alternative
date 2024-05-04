@@ -6,6 +6,7 @@ use App\Models\Sms;
 use App\Models\User;
 use App\Mail\OrderMail;
 use Illuminate\Http\Request;
+use App\Services\FixUserService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +37,8 @@ class AuthController extends Controller
         if(!$user){
             return response()->json(['success' => false, 'message' => 'Registration is failed'], 500);
         }
-
+        
+        FixUserService::auth($request->phone);
         Auth::loginUsingId($user->id);
         $token = Auth::user()->createToken('authToken')->accessToken;
         Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail($request->phone, 'Регистрация', true));
@@ -51,6 +53,8 @@ class AuthController extends Controller
             return response(['message' => 'Неверный номер или пароль!'], 422);
         }
 
+        FixUserService::auth($request->phone);
+        
         $token = Auth::user()->createToken('authToken')->accessToken;
 
         return response([
@@ -59,7 +63,7 @@ class AuthController extends Controller
     }
 
     public function reset(Request $request){
-        $user = User::where('phone', $request->phone)->first();
+        $user = User::where([['phone', $request->phone], ['confirmed', true]])->first();
         if(!$user){
             return response([
                 'error' => 'Пользователя с таким номером не существует!'
@@ -86,7 +90,7 @@ class AuthController extends Controller
                 ], 422
             );
         }
-        $user = User::where('phone', $request->phone)->first();
+        // $user = User::where('phone', $request->phone)->first();
         foreach($user->tokens as $token) {
             $token->revoke();
         }
@@ -94,6 +98,7 @@ class AuthController extends Controller
         $user->save();
         
         Auth::loginUsingId($user->id);
+        FixUserService::auth($request->phone);
         $token = Auth::user()->createToken('authToken')->accessToken;
         Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail($request->phone, 'Смена пароля', true));
         return response([

@@ -58,6 +58,7 @@ import router from '../router'
 
     export default{
         props: ['unfixedUserData'],
+        emits: ['makeFixed'],
         data(){
             return{
                 step: 1,
@@ -73,7 +74,21 @@ import router from '../router'
             async smsCodeSend(){
                 this.phoneErrorMessage = ''
                 this.loading = true
-                const promise = axiosClient
+                const promise1 = axiosClient
+                .get('/unfixed/user?bankOrderId='+this.unfixedUserData.bankOrderId)
+                .then(response => {
+                    console.log('need fixing')
+                    // location.reload(); return false;
+                })
+                .catch(error => {
+                    console.log(error)
+                    if(error.response.status == 422){
+                        console.log('its 422')
+                        this.$emit('makeFixed')
+                    }
+                })
+                await promise1
+                const promise2 = axiosClient
                 .post('/fix/user/sms/', { phone: this.unfixedUserData.phone, bankOrderId: this.unfixedUserData.bankOrderId })
                 .then(response => {
                     console.log(response.data)
@@ -86,13 +101,12 @@ import router from '../router'
                     console.log(error)
                     console.log('end')
                     if(error.response.status == 422){
-
                         if(error.response.data.errors && error.response.data.errors.phone && error.response.data.errors.phone[0]){
                             this.phoneErrorMessage = error.response.data.errors.phone[0]
                         }
                     }
                 });
-                await promise
+                await promise2
                 this.loading = false
             },
             async smsCodeConfirm(){
