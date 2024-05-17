@@ -55,9 +55,9 @@ export default{
 
     },
     async mounted() {
-        document.title = "Автовокзалы России";
-        const descEl = document.querySelector('head meta[name="description"]');
-        descEl.setAttribute('content', 'Билеты на автобус онлайн');
+        // document.title = "Автовокзалы России";
+        // const descEl = document.querySelector('head meta[name="description"]');
+        // descEl.setAttribute('content', 'Билеты на автобус онлайн');
 
         
 

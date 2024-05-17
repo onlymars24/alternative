@@ -34,7 +34,7 @@
                         <br>
                         <a href="/return/conditions">Условия возврата</a>
                         <br>
-                        <a href="" @click.prevent="openFeedbackWindow = true">Контакты</a>
+                        <a style="cursor: pointer;" @click.prevent="openFeedbackWindow = true">Контакты</a>
                     </div>
                 </div>
                 <div class="footer__info-about">

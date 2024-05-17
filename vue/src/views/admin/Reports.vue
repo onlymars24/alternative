@@ -148,7 +148,8 @@
                             </template>
                             <el-table :data="ticketsTable" style="width: 100%">
                                 <el-table-column prop="dispatchDate" label="Дата и время отправления (местное)" width="200" />
-                                <el-table-column prop="created_at" label="Дата и время брони (GMT +3)" width="160" />
+                                <el-table-column prop="created_at" label="Дата создания заказа на росвокзалах (GMT +3)" width="190" />
+                                <el-table-column prop="confirmed_at" label="Дата покупки (местное)" width="180" />
                                 <el-table-column prop="dateReturned" label="Дата и время возврата (GMT +3)" width="180" />
                                 <el-table-column prop="timezone" label="Часовой пояс" width="135" />
                                 <el-table-column prop="ticketNum" label="Номер билета" width="120" />

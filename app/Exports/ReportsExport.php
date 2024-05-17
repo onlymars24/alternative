@@ -69,8 +69,11 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
         $tickets[] = ['']; 
         $tickets[] = [
 'Дата и время отправления
-(местное)', 'Дата и время брони
-(GMT +3)', 'Дата и время возврата
+(местное)', 'Дата создания заказа на
+росвокзалах(GMT +3)', 
+'Дата покупки 
+(местное)',
+'Дата и время возврата
 (GMT +3)', 'Часовой 
 пояс', 'Номер 
 билета', 'ID заказа', 'Пункт 
@@ -80,7 +83,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
 агента', 'Удержание', 'Комиссия 
 сайта', 'Страхование', 'Цена страховки'];
         foreach($this->tickets as $ticket){
-            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->status == 'R' ? $ticket->updated_at : null, $ticket->timezone, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], ($ticket->created_at > $this->request->comparingDate1 && $ticket->created_at < $this->request->comparingDate2) ? $ticket->price : '0', ($ticket->status == 'R' && $ticket->updated_at > $this->request->comparingDate1 && $ticket->updated_at < $this->request->comparingDate2) ? $ticket->repayment : '0', $ticket->supplierDues, $ticket->dues, ($ticket->status == 'R' && $ticket->updated_at > $this->request->comparingDate1 && $ticket->updated_at < $this->request->comparingDate2) ? (string)($ticket->price - $ticket->repayment) : '0', $ticket->duePrice, $ticket->insurance ? 'Застрахован' : 'Не застрахован', $ticket->insurance ? json_decode($ticket->insurance)->rate[0]->value : '0'];
+            $tickets[] = [$ticket->dispatchDate, $ticket->created_at, $ticket->confirmed_at, $ticket->status == 'R' ? $ticket->updated_at : null, $ticket->timezone, $ticket->ticketNum, $ticket->order_id, $ticket->dispatchStation, $ticket->arrivalStation, $ticket->lastName, $ticket->firstName, $ticket->middleName, $ticket->raceCancelled ? 'Отменён' : 'Не отменён', $ticketStatuses[$ticket->status]['label'], ($ticket->created_at > $this->request->comparingDate1 && $ticket->created_at < $this->request->comparingDate2) ? $ticket->price : '0', ($ticket->status == 'R' && $ticket->updated_at > $this->request->comparingDate1 && $ticket->updated_at < $this->request->comparingDate2) ? $ticket->repayment : '0', $ticket->supplierDues, $ticket->dues, ($ticket->status == 'R' && $ticket->updated_at > $this->request->comparingDate1 && $ticket->updated_at < $this->request->comparingDate2) ? (string)($ticket->price - $ticket->repayment) : '0', $ticket->duePrice, $ticket->insurance ? 'Застрахован' : 'Не застрахован', $ticket->insurance ? json_decode($ticket->insurance)->rate[0]->value : '0'];
         }
 
         return $tickets;
@@ -91,22 +94,23 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
         return [
             'A' => 19,
             'B' => 20,  
-            'C' => 18,
-            'D' => 16, 
-            'E' => 16,  
-            'F' => 13,  
-            'G' => 18,  
-            'H' => 17,  
-            'I' => 12,  
+            'C' => 20,
+            'D' => 18,
+            'E' => 16, 
+            'F' => 16,  
+            'G' => 13,  
+            'H' => 18,  
+            'I' => 17,  
             'J' => 12,  
-            'K' => 15,  
-            'L' => 13,  
+            'K' => 12,  
+            'L' => 15,  
             'M' => 13,  
             'N' => 13,  
-            'O' => 12,  
-            'P' => 11,  
-            'Q' => 12,   
-            'R' => 10,    
+            'O' => 13,  
+            'P' => 12,  
+            'Q' => 11,  
+            'R' => 12,   
+            'S' => 10,    
         ];
     }
 
@@ -160,7 +164,7 @@ class ReportsExport implements FromArray, WithColumnWidths, WithStyles
                             ]    
                         ], 
                 ],
-                'A19:U19' => [ 
+                'A19:V19' => [ 
                     'font' => [
                         'bold' => true,
                     ],

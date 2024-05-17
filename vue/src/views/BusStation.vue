@@ -121,13 +121,13 @@ export default{
             router.push({ name: 'Main'})
             return
         }
-        document.title = this.station.name;
+        // document.title = this.station.name;
         
-        const descEl = document.querySelector('head meta[name="description"]');
-        descEl.setAttribute('content',this.station.description);
+        // const descEl = document.querySelector('head meta[name="description"]');
+        // descEl.setAttribute('content',this.station.description);
 
-        const linkCan = document.querySelector('head link[rel="canonical"]');
-        linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.station.title);
+        // const linkCan = document.querySelector('head link[rel="canonical"]');
+        // linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.station.title);
 
         const promise2 = axiosClient
         .get('/station/events?id='+this.station.id)
@@ -152,7 +152,7 @@ export default{
     <div class="about" style="margin-top: 50px;">
         <div class="container">
             <div v-if="events.length > 0" class="station__slides">
-            <h2 class="station__slides-title">Новости</h2>
+            <h2 class="station__slides-title">{{ station.name }}</h2>
                 <swiper
                 :modules="modules"
                 :allowTouchMove="false"
@@ -167,16 +167,18 @@ export default{
                 :class="{'station__slides-wrapper': events.length > 3}"
                 >
                     <swiper-slide v-for="event in events">
-                        <div class="card station__slide" style="height: 250px;" @click="toNew(event.id)">
-                            <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
-                            <div class="card-body">
-                                <h5 class="card-title">{{event.title}}</h5>
-                                <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
-                            </div>
-                            <div class="card-footer">
-                                {{event.date}}
-                            </div>
-                        </div>      
+                        <router-link :to="{ name: 'New', params: { id: event.id }}" target="_blank">
+                            <div class="card station__slide" style="height: 250px; text-decoration: none; color: black;">
+                                <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
+                                <div class="card-body">
+                                    <h5 class="card-title">{{event.title}}</h5>
+                                    <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
+                                </div>
+                                <div class="card-footer">
+                                    {{event.date}}
+                                </div>
+                            </div>    
+                        </router-link>  
                     </swiper-slide>
                 
                     <!-- <div class="station__slides-buttons">
@@ -186,7 +188,7 @@ export default{
                 
                 <div v-if="events.length > 3" class="station__slides-button station__slides-button-prev">&#9668;</div>
                 <div v-if="events.length > 3" class="station__slides-button station__slides-button-next">&#9658;</div>   
-                <div class="station__slides-link"><a href="/новости" target="_blank">Все новости</a></div>           
+                <div class="station__slides-link"><router-link :to="{ name: 'News'}" target="_blank">Все новости</router-link></div>           
             </div>
         
             <div class="about__inner">

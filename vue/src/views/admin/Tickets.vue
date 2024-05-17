@@ -26,6 +26,8 @@
                                 <div>Номер телефона:</div>   
                                 <div v-show="!filterArr['phone'].set">
                                     <el-input
+                                        v-mask="'+7 (###) ### ####'"
+                                        ref="refPhoneInput"
                                         v-model="filterArr['phone'].value"
                                         style="width: 120px; margin-right: 6px;"
                                         size="small"
@@ -108,6 +110,7 @@ import axiosClient from "../../axios";
 import axiosAdmin from "../../axiosAdmin";
 import Paginate from "vuejs-paginate-next";
 import ticketStatuses from '../../data/TicketStatuses';
+import TheMask from 'vue-the-mask'
 // import { Edit, View as IconView } from '@element-plus/icons-vue'
 // import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 export default
@@ -270,47 +273,47 @@ export default
         filterCondition(ind, elem){
             return (!this.filterArr[ind].set || (this.filterArr[ind].set && elem[ind] == this.filterArr[ind].value))
         },
-        resetPhoneFilter(){
-            [].forEach.call(document.querySelectorAll(".phone__input-filter div input"), function (input) {
-            var keyCode;
-            function mask(event) {
-            event.keyCode && (keyCode = event.keyCode);
-            var pos = this.selectionStart;
-            if (pos < 3) event.preventDefault();
-            var matrix = "+7 (___) ___ ____",
-                i = 0,
-                def = matrix.replace(/\D/g, ""),
-                val = this.value.replace(/\D/g, ""),
-                new_value = matrix.replace(/[_\d]/g, function (a) {
-                return i < val.length ? val.charAt(i++) || def.charAt(i) : a;
-                });
-            i = new_value.indexOf("_");
-            if (i != -1) {
-                i < 5 && (i = 3);
-                new_value = new_value.slice(0, i);
-            }
-            var reg = matrix
-                .substr(0, this.value.length)
-                .replace(/_+/g, function (a) {
-                return "\\d{1," + a.length + "}";
-                })
-                .replace(/[+()]/g, "\\$&");
-            reg = new RegExp("^" + reg + "$");
-            if (
-                !reg.test(this.value) ||
-                this.value.length < 5 ||
-                (keyCode > 47 && keyCode < 58)
-            )
-                this.value = new_value;
-            if (event.type == "blur" && this.value.length < 5) this.value = "";
-            }
-            input.addEventListener("input", mask, false);
-            input.addEventListener("focus", mask, false);
-            input.addEventListener("blur", mask, false);
-            input.addEventListener("keydown", mask, false);
-        });
-        return 'ok';
-        }
+        // resetPhoneFilter(){
+        //     [].forEach.call(document.querySelectorAll(".phone__input-filter div input"), function (input) {
+        //     var keyCode;
+        //     function mask(event) {
+        //     event.keyCode && (keyCode = event.keyCode);
+        //     var pos = this.selectionStart;
+        //     if (pos < 3) event.preventDefault();
+        //     var matrix = "+7 (___) ___ ____",
+        //         i = 0,
+        //         def = matrix.replace(/\D/g, ""),
+        //         val = this.value.replace(/\D/g, ""),
+        //         new_value = matrix.replace(/[_\d]/g, function (a) {
+        //         return i < val.length ? val.charAt(i++) || def.charAt(i) : a;
+        //         });
+        //     i = new_value.indexOf("_");
+        //     if (i != -1) {
+        //         i < 5 && (i = 3);
+        //         new_value = new_value.slice(0, i);
+        //     }
+        //     var reg = matrix
+        //         .substr(0, this.value.length)
+        //         .replace(/_+/g, function (a) {
+        //         return "\\d{1," + a.length + "}";
+        //         })
+        //         .replace(/[+()]/g, "\\$&");
+        //     reg = new RegExp("^" + reg + "$");
+        //     if (
+        //         !reg.test(this.value) ||
+        //         this.value.length < 5 ||
+        //         (keyCode > 47 && keyCode < 58)
+        //     )
+        //         this.value = new_value;
+        //     if (event.type == "blur" && this.value.length < 5) this.value = "";
+        //     }
+        //     input.addEventListener("input", mask, false);
+        //     input.addEventListener("focus", mask, false);
+        //     input.addEventListener("blur", mask, false);
+        //     input.addEventListener("keydown", mask, false);
+        // });
+        // return 'ok';
+        // }
     },
     computed: {
         filteredTickets(){
@@ -345,7 +348,8 @@ export default
         }
     },
     async mounted(){
-        this.resetPhoneFilter()
+        this.$refs.refPhoneInput.focus()
+        // this.resetPhoneFilter()
         this.ticketsLoading = true
         const promise = axiosAdmin
         .get('/tickets')

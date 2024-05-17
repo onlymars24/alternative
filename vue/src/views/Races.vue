@@ -236,26 +236,26 @@ export default {
         }
     },
     async mounted(){
-        console.log(document.referrer)
-        document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
-        const descEl = document.querySelector('head meta[name="description"]');
-        descEl.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
+        // console.log(document.referrer)
+        // document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
+        // const descEl = document.querySelector('head meta[name="description"]');
+        // descEl.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
 
-        const linkCan = document.querySelector('head link[rel="canonical"]');
-        linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
+        // const linkCan = document.querySelector('head link[rel="canonical"]');
+        // linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
 
 
-        const twitterTitle = document.querySelector('head meta[name="twitter:title"]');
-        twitterTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
+        // const twitterTitle = document.querySelector('head meta[name="twitter:title"]');
+        // twitterTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
 
-        const twitterDescr = document.querySelector('head meta[name="twitter:description"]');
-        twitterDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
+        // const twitterDescr = document.querySelector('head meta[name="twitter:description"]');
+        // twitterDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
 
-        const ogTitle = document.querySelector('head meta[name="og:title"]');
-        ogTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
+        // const ogTitle = document.querySelector('head meta[name="og:title"]');
+        // ogTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
 
-        const ogDescr = document.querySelector('head meta[name="og:description"]');
-        ogDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
+        // const ogDescr = document.querySelector('head meta[name="og:description"]');
+        // ogDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
 
 
 

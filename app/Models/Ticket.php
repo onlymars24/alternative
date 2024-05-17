@@ -67,7 +67,8 @@ class Ticket extends Model
         'duePrice',
         'timezone',
         'insurance',
-        'bonusesPrice'
+        'bonusesPrice',
+        'confirmed_at'
     ];
     public function passengers()
     {

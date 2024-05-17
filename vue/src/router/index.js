@@ -96,7 +96,7 @@ const routes = [
     component: News
   },  
   {
-    path: '/'+encodeURI('новость')+'/:id',
+    path: '/'+encodeURI('новости')+'/:id',
     name: 'New',
     component: New
   },

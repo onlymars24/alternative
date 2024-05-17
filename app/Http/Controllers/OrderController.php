@@ -239,7 +239,7 @@ class OrderController extends Controller
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->post(env('AVTO_SERVICE_URL').'/order/confirm/'.$request->orderNumber.'/По банковской карте');
-        Log::info('obj_json: '.$order_json);
+        Log::info('order_id: '.$request->orderNumber.'; obj_json: '.$order_json);
         $order_obj = json_decode($order_json);
         if(!isset($order_obj->id)){
             return;
@@ -272,6 +272,7 @@ class OrderController extends Controller
             }
             $body['Request']['CustomerReceipt']['Items'][] = $item;
             $ticketFromDB->customerItem = json_encode($item);
+            $ticketFromDB->confirmed_at = $order_obj->finished;
             $ticketFromDB->save();
         }
 

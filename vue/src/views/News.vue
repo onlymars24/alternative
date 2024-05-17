@@ -7,19 +7,21 @@
         <div class="container">
             <div class="news__cards">
                 <h2 class="news__cards-title">Новости</h2>
-                <div v-for="event in events" class="news__card" @click="toNew(event.id)">
-                    <div class="card" style="height: 250px;">
-                        <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
-                        <div class="card-body">
-                            <h5 class="card-title">{{event.title}}</h5>
-                            <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
+                <div v-for="event in events" class="news__card">
+                    <router-link :to="{ name: 'New', params: { id: event.id }}" target="_blank">
+                        <div class="card" style="height: 250px; text-decoration: none; color: black;">
+                            <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
+                            <div class="card-body">
+                                <h5 class="card-title">{{event.title}}</h5>
+                                <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
+                            </div>
+                            <div class="card-footer">
+                                {{ event.date }}
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            {{ event.date }}
-                        </div>
-                    </div>                     
+                    </router-link>                     
                 </div>
-            </div>           
+            </div>          
         </div>
 
 

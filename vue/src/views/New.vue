@@ -6,8 +6,12 @@
     <h1 style="text-align: center; margin: 30px 0;">{{event.title}}</h1>
     <div class="new">
     <div class="new-wrapper">
-      <div v-html="this.event.content"></div>
+      <div v-html="event.content"></div>
+      <div class="" style="margin-bottom: 15px;"> <string>Дата новости: </string> {{ event.date }}</div>
+      <div class="station__slides-link"><router-link :to="{ name: 'News'}" target="_blank">Все новости</router-link></div>  
     </div>
+
+    
     </div>
   </div>
   <hr class="bef__footer">
@@ -17,6 +21,7 @@
   import Header from '../components/Header.vue';
   import Footer from '../components/Footer.vue'
   import axiosClient from "../axios"
+import { stringifyQuery } from 'vue-router';
 
   export default
   {
@@ -40,12 +45,12 @@
       })
       await promise
 
-      document.title = this.event.title;
-      const descEl = document.querySelector('head meta[name="description"]');
-      descEl.setAttribute('content', this.event.descr);
+      // document.title = this.event.title;
+      // const descEl = document.querySelector('head meta[name="description"]');
+      // descEl.setAttribute('content', this.event.descr);
 
-      const linkCan = document.querySelector('head link[rel="canonical"]');
-      linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
+      // const linkCan = document.querySelector('head link[rel="canonical"]');
+      // linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
 
 
     }

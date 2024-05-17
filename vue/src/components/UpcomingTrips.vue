@@ -6,7 +6,7 @@
     <div v-if="content" style="padding: 15px; margin-bottom: 15px;">
       <div v-html="content"></div>
       <!-- <div style="margin-top: 10px;" v-html="vkShare"></div> -->
-      <a style="display: block;" href="https://vk.com/share.php?url=https://росвокзалы.рф" target="_blank">
+      <a style="display: block;" href="https://vk.com/share.php?url=https://xn--80adplhnbnk0i.xn--p1ai" target="_blank">
         <button style="padding: 9px 12px; display: flex; align-items: center; border-radius: 5px; color: #fff; background-color: #4C75A3; border: none; cursor: pointer;">
             <img style="width: 27px; margin-right: 7px;" src="/img/vk_logo_new.png" alt="">
             <span style="font-size: 18px;">Поделиться</span>
