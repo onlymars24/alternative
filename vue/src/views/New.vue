@@ -7,7 +7,7 @@
     <div class="new">
     <div class="new-wrapper">
       <div v-html="event.content"></div>
-      <div class="" style="margin-bottom: 15px;"> <string>Дата новости: </string> {{ event.date }}</div>
+      <div class="" style="margin: 15px 0;"> <strong>Дата новости: </strong> {{ event.date }}</div>
       <div class="station__slides-link"><router-link :to="{ name: 'News'}" target="_blank">Все новости</router-link></div>  
     </div>
 

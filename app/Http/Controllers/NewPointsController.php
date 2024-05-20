@@ -72,8 +72,8 @@ class NewPointsController extends Controller
                 'address' => $point->address,
                 'latitude' => $point->latitude,
                 'longitude' => $point->longitude,
-                'okato' => $point->okato,
-                'place' => $point->place
+                'okato' => $point->okato ? $point->okato : '1',
+                'place' => $point->place ? $point->place : 1
             ]);
             $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $dispatchPoint->id)->first();
             if(!$arrival_points){
