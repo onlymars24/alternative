@@ -62,8 +62,8 @@ export default
   },
   async mounted(){
       this.loading = true
-      const linkCan = document.querySelector('head link[rel="canonical"]');
-      linkCan.setAttribute('href', 'https://росвокзалы.рф');
+      // const linkCan = document.querySelector('head link[rel="canonical"]');
+      // linkCan.setAttribute('href', 'https://росвокзалы.рф');
       let authToken = localStorage.getItem('authToken')
       if(authToken){
         const promise = axiosClient

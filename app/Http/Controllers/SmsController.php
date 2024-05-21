@@ -165,6 +165,11 @@ class SmsController extends Controller
         ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text=Код на '.'росвокзалы.рф'.': '.$code.'
 Поддержка в ВК-группе: vk.com/rosvokzaly');
         $smsService = json_decode($smsService);
+        if(!isset($smsService->data->id)){
+            return response([
+                'errors' => ['phone' => ['Прошло слишком мало времени после предыдущего смс!']]
+            ], 422);
+        }
         $sms = Sms::create([
             'id' => $smsService->data->id,
             'phone' => $user['phone'],

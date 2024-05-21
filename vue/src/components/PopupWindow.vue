@@ -245,7 +245,7 @@ export default
   },
   mounted(){
     // v-on:keydown.enter="reloadPage(); $emit('CloseWindow');"
-    this.$refs.refPhoneInput.focus()
+    // this.$refs.refPhoneInput.focus()
     let that = this
     window.addEventListener('keyup', function (evt) {
         if (evt.keyCode === 27) {

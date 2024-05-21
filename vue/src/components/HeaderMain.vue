@@ -19,7 +19,7 @@
                 </p>
             </div>
             
-            <form @submit.prevent="findRaces" class="main__table">
+            <div class="main__table">
                 <div class="main__table-table">
                     <!-- <ul v-if="dispatchPointEmpty" class="hint">
                         <li class="hint__title">
@@ -71,11 +71,15 @@
                     <input id="calendar" class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
                 </div>  
                 <div class="main__table-button">
-                    <button type="submit" class="main__button" :disabled="disabledButton">
+                    <button v-if="disabledButton" @click="findRaces" type="button" class="main__button">
                         Найти билет
-                    </button>
+                    </button>                    
+                    <a v-else href="" @click="otherDay(date)" type="button" class="main__button" disabled>
+                        Найти билет
+                    </a>
+
                 </div>
-            </form>
+            </div>
             <div v-if="dispatchEl.id && arrivalEl.id" class="main__another__date">
                 <a href="" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.today)">Сегодня</a>
                 <a href="" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.tomorrow)">Завтра</a>
@@ -298,7 +302,8 @@ export default{
         findRaces(){
             this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id, this.dispatchEl.name, this.arrivalEl.name)
             console.log(this.dispatchEl, this.arrivalEl, this.data)
-            router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
+            console.log(router.push({ name: 'Races', query: {  on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } }))
+            // window.location.replace(window.location.origin + window.location.pathname);
         },
         otherDay(date){
             this.date = date

@@ -48,71 +48,56 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  // dd(FixUserService::auth('+7 (961) 529 6784'));
-  // dd(date(DATE_ATOM));
-  // $xml = simplexml_load_file(env('XML_FILE_NAME'));
-  // for($i = 0; $i < count($xml->url); $i++){
-  //   $xml->url[$i]->lastmod = date(DATE_ATOM);
+
+
+  $body = [
+    'body' => 'Код на росвокзалы.рф: 211211
+Поддержка в ВК-группе: vk.com/rosvokzaly',
+    'recipient' => '+7 (900) 254 8038'
+  ];
+  $body = json_encode($body);
+  $whatsAppSms = Http::withHeaders([
+    'Authorization' => 'c3d983e5325f664630602f4bef44234542f77d7a',
+  ])->withBody($body, 'application/json')->post('https://wappi.pro/api/sync/message/send?profile_id=c974fcbd-63d6');
+  $whatsAppSms = json_decode($whatsAppSms);
+
+
+  $whatsAppSms2 = Http::withHeaders([
+      'Authorization' => 'c3d983e5325f664630602f4bef44234542f77d7a',
+  ])->get('https://wappi.pro/api/sync/messages/id/get?profile_id=c974fcbd-63d6&message_id='
+  .$whatsAppSms->message_id
+);
+  $whatsAppSms2 = json_decode($whatsAppSms2);
+
+
+  dd($whatsAppSms2);
+
+  // $regions = Http::withHeaders([
+  //   'Authorization' => env('AVTO_SERVICE_KEY'),
+  // ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
+  // $points = [];
+  // foreach($regions as $region){
+  //     $pointsTemp = Http::withHeaders([
+  //         'Authorization' => env('AVTO_SERVICE_KEY'),
+  //     ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
+  //     if($pointsTemp){
+  //         foreach($pointsTemp as $point){
+  //             // DispatchPoint::create([
+  //             //     'id' => $point->id,
+  //             //     'name' => $point->name,
+  //             //     'region' => $point->region,
+  //             //     'details' => $point->details,
+  //             //     'address' => $point->address,
+  //             //     'latitude' => $point->latitude,
+  //             //     'longitude' => $point->longitude,
+  //             //     'okato' => $point->okato,
+  //             //     'place' => $point->place
+  //             // ]);
+  //             $points[] = $point;
+  //         }   
+  //     }
   // }
-  // File::put(env('XML_FILE_NAME'), $xml->asXML());
-  // FtpLoadingService::put();
-  // dd('');
-  // $gzdata = gzencode($newSitemap, 9);
-  // $ftp = Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemaps/directions.xml.gz', $gzdata);
-  
-  // $dispatchPoints = DispatchPoint::all();
-  // $xml = simplexml_load_file(env('XML_FILE_NAME'));
-  // foreach($dispatchPoints as $dispatchPoint){
-  //   $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $dispatchPoint->id)->first();
-  //   if(!$arrival_points){
-  //       $arrival_points_remoted = Http::withHeaders([
-  //           'Authorization' => env('AVTO_SERVICE_KEY'),
-  //       ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
-  //       $arrival_points = CacheArrivalPoint::create([
-  //           'dispatch_point_id' => $dispatchPoint->id,
-  //           'arrival_points' => json_encode($arrival_points_remoted)
-  //       ]);
-  //   }
-  //   $arrival_points = json_decode($arrival_points->arrival_points);
-  //   foreach($arrival_points as $arrivalPoint){
-  //     $newLoc = env('FRONTEND_URL').'/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
-  //     $newNode = $xml->addChild('url');
-  //     $newNode->addChild('loc', $newLoc);
-  //     $newNode->addChild('lastmod', date('Y-m-d'));
-  //     $newNode->addChild('changefreq', 'daily');
-  //     $newNode->addChild('priority', '1.0');
-  //     // break;
-  //   }  
-  //   // break;
-  // }
-  // File::put(env('XML_FILE_NAME'), $xml->asXML());
-  // FtpLoadingService::put();
-  $regions = Http::withHeaders([
-    'Authorization' => env('AVTO_SERVICE_KEY'),
-  ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
-  $points = [];
-  foreach($regions as $region){
-      $pointsTemp = Http::withHeaders([
-          'Authorization' => env('AVTO_SERVICE_KEY'),
-      ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
-      if($pointsTemp){
-          foreach($pointsTemp as $point){
-              // DispatchPoint::create([
-              //     'id' => $point->id,
-              //     'name' => $point->name,
-              //     'region' => $point->region,
-              //     'details' => $point->details,
-              //     'address' => $point->address,
-              //     'latitude' => $point->latitude,
-              //     'longitude' => $point->longitude,
-              //     'okato' => $point->okato,
-              //     'place' => $point->place
-              // ]);
-              $points[] = $point;
-          }   
-      }
-  }
-  dd($points); 
+  // dd($points); 
 });
 
 
