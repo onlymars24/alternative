@@ -6,6 +6,7 @@ use App\Models\Sms;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\CustomMail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RegisterReset\SendDataMail;
@@ -25,6 +26,10 @@ class SmsController extends Controller
             $smsService = json_decode($smsService);
             $sms->status = isset($smsService->data) && isset($smsService->data->status) ? $smsService->data->status : $sms->status;
             $sms->save();
+        }
+        $smsLast = Sms::orderByDesc('id')->first();
+        if($smsLast->balance < 300){
+          Mail::to(env('MAIL_FEEDBACK'))->send(new CustomMail('ПОПОЛНИТЕ БАЛАНС SMSAERO!!!', 'ПОПОЛНИТЕ БАЛАНС SMSAERO!!!'));
         }
         Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($request->phone, 'сброса пароля'));
         //2 часа замер
@@ -136,6 +141,10 @@ class SmsController extends Controller
             $sms->status = isset($smsService->data) && isset($smsService->data->status) ? $smsService->data->status : $sms->status;
             $sms->save();
         }
+        $smsLast = Sms::orderByDesc('id')->first();
+        if($smsLast->balance < 300){
+          Mail::to(env('MAIL_FEEDBACK'))->send(new CustomMail('ПОПОЛНИТЕ БАЛАНС SMSAERO!!!', 'ПОПОЛНИТЕ БАЛАНС SMSAERO!!!'));
+        }
         $user = $request->user;
         Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($user['phone'], 'регистрации'));
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
@@ -235,6 +244,11 @@ class SmsController extends Controller
 
     public function getAll(Request $request){
         $smsAll = Sms::orderByDesc('id')->get();
+        // $sms = $smsAll[0];
+        // if($sms->balance < 300){
+        //     Mail::to(env('MAIL_FEEDBACK'))->send(new CustomMail('ПОПОЛНИТЕ БАЛАНС SMSAERO!!!', 'ПОПОЛНИТЕ БАЛАНС SMSAERO!!!'));
+        // }
+
         // foreach($smsAll as $sms){
         //     if(($sms->status != 1 || $sms->status != 6) && $sms->id > 1000){
         //         $smsService = Http::withHeaders([

@@ -49,8 +49,15 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  $smsAll = Sms::where([['status', '!=', 1], ['status', '!=', 2], ['status', '!=', 6]])->get();
+  // $smsAll = Sms::where([['status', '!=', 1], ['status', '!=', 2], ['status', '!=', 6]])->get();
+  $smsAll = Sms::orderByDesc('id')->first();
   dd($smsAll);
+  // $sms = $smsAll[0];
+  // if($sms->balance < 300){
+  //   Mail::to(env('MAIL_FEEDBACK'))->send(new CustomMail('ПОПОЛНИТЕ БАЛАНС SMSAERO!!!', 'ПОПОЛНИТЕ БАЛАНС SMSAERO!!!'));
+  // }
+  
+  // dd($sms->balance < 300);
 
   $body = [
     'body' => 'Код на росвокзалы.рф: 211211
