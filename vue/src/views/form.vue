@@ -213,7 +213,7 @@
                     <input type="text"
                       class="form-control"
                       :class="{'is-invalid': el.errors.doc_number}"
-                      maxlength='10'
+                      maxlength='16'
                       v-model="el.doc_number"
                       @focus="el.errors.doc_number = ''"
                       required

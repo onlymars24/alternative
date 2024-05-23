@@ -217,16 +217,16 @@ class SmsController extends Controller
 
     public function getAll(Request $request){
         $smsAll = Sms::orderByDesc('id')->get();
-        foreach($smsAll as $sms){
-            if(($sms->status != 1 || $sms->status != 6) && $sms->id > 1000){
-                $smsService = Http::withHeaders([
-                    'Authorization' => env('SMS_SERVICE_KEY'),
-                ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/status?id='.$sms->id);
-                $smsService = json_decode($smsService);
-                $sms->status = isset($smsService->data->status) ? $smsService->data->status : $sms->status;
-                $sms->save();
-            }
-        }
+        // foreach($smsAll as $sms){
+        //     if(($sms->status != 1 || $sms->status != 6) && $sms->id > 1000){
+        //         $smsService = Http::withHeaders([
+        //             'Authorization' => env('SMS_SERVICE_KEY'),
+        //         ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/status?id='.$sms->id);
+        //         $smsService = json_decode($smsService);
+        //         $sms->status = isset($smsService->data->status) ? $smsService->data->status : $sms->status;
+        //         $sms->save();
+        //     }
+        // }
         return response([
             'sms' => $smsAll
         ]);
