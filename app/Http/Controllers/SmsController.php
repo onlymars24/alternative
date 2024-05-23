@@ -17,6 +17,15 @@ use App\Mail\RegisterReset\DataSuccessMail;
 class SmsController extends Controller
 {
     public function sendReset(Request $request){
+        $smsAll = Sms::where([['status', '!=', 1], ['status', '!=', 2], ['status', '!=', 6]])->get();
+        foreach($smsAll as $sms){
+            $smsService = Http::withHeaders([
+                'Authorization' => env('SMS_SERVICE_KEY'),
+            ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/status?id='.$sms->id);
+            $smsService = json_decode($smsService);
+            $sms->status = isset($smsService->data) && isset($smsService->data->status) ? $smsService->data->status : $sms->status;
+            $sms->save();
+        }
         Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($request->phone, 'сброса пароля'));
         //2 часа замер
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));
@@ -118,6 +127,15 @@ class SmsController extends Controller
     }
 
     public function sendRegister(Request $request){ 
+        $smsAll = Sms::where([['status', '!=', 1], ['status', '!=', 2], ['status', '!=', 6]])->get();
+        foreach($smsAll as $sms){
+            $smsService = Http::withHeaders([
+                'Authorization' => env('SMS_SERVICE_KEY'),
+            ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/status?id='.$sms->id);
+            $smsService = json_decode($smsService);
+            $sms->status = isset($smsService->data) && isset($smsService->data->status) ? $smsService->data->status : $sms->status;
+            $sms->save();
+        }
         $user = $request->user;
         Mail::to(env('MAIL_FEEDBACK'))->send(new SendDataMail($user['phone'], 'регистрации'));
         $currentTime = mktime(date('H')-2, date('i'), date('s'), date('n'), date('d'), date('Y'));

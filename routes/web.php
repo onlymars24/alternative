@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Sms;
 use App\Models\User;
 use App\Models\Bonus;
 use App\Models\Order;
@@ -48,7 +49,8 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-
+  $smsAll = Sms::where([['status', '!=', 1], ['status', '!=', 2], ['status', '!=', 6]])->get();
+  dd($smsAll);
 
   $body = [
     'body' => 'Код на росвокзалы.рф: 211211
