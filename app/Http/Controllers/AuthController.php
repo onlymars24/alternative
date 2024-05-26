@@ -69,16 +69,7 @@ class AuthController extends Controller
                 'error' => 'Пользователя с таким номером не существует!'
             ], 422);
         }
-        $sms = Sms::where([
-            ['phone', '=', $request->phone],
-            ['code', '=', $request->code],
-            ['type', '=', 'reset']
-        ])->first();
-        if(!$sms){
-            return response([
-                'error' => 'Код неверный!'
-            ], 422);
-        }
+
         $validator = Validator::make($request->all(), [
             'password' => 'required|between:6,30|confirmed'
         ]);

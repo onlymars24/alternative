@@ -36,12 +36,15 @@
                     <div v-else-if="phoneErrorMessage" class="alert alert-danger" role="alert">
                         {{ phoneErrorMessage }}
                     </div>                    
-                    <p class="code__tel">Введите код, отправленный на номер <br><strong>{{ unfixedUserData.phone }}</strong></p>
+                    <p class="code__tel">Введите код, отправленный <strong v-if="this.whatsAppSent">НА WHATSAPP</strong><strong v-else>ПО СМС</strong> на номер <br><strong>{{ unfixedUserData.phone }}</strong></p>
                     <label for="tel" class="form-label label-gray">Код подтверждения</label>
                     <input type="text" class="form-control inp-gray"  id="code" v-model="code">
                     <button @click="smsCodeConfirm" class="btn btn-primary btn-code">Подтвердить</button>
                     <p v-if="countDown" style="font-size: 14px; margin-top: 8px;">Повторное СМС можно отправить через {{ countDown }} сек.</p>
-                    <button v-else @click="smsCodeSend" class="btn-code btn__new-code">Повторное СМС</button>
+                    <div v-else class="">
+                        <button v-if="this.whatsAppSent" @click="this.whatsAppChosen = true; smsCodeSend()" class="btn-code btn__new-code">Отправить код повторно на WhatsApp</button>
+                        <button @click="this.whatsAppChosen = false; smsCodeSend()" class="btn-code btn__new-code">Отправить код повторно по СМС</button>
+                    </div>
 
                     <div v-if="loading" class="text-center" style="margin-top: 10px;">
                       <div class="spinner-border" role="status"></div>
@@ -67,7 +70,9 @@ import router from '../router'
                 phoneErrorMessage: '',
                 loading: false,
                 code: '',
-                wrongCodeMessage: ''
+                wrongCodeMessage: '',
+                whatsAppChosen: true,
+                whatsAppSent: true
             }
         },
         methods: {
@@ -89,8 +94,9 @@ import router from '../router'
                 })
                 await promise1
                 const promise2 = axiosClient
-                .post('/fix/user/sms/', { phone: this.unfixedUserData.phone, bankOrderId: this.unfixedUserData.bankOrderId })
+                .post('/fix/user/sms/', { phone: this.unfixedUserData.phone, bankOrderId: this.unfixedUserData.bankOrderId, whatsAppChosen: this.whatsAppChosen })
                 .then(response => {
+                    this.whatsAppSent = response.data.whatsAppSent
                     console.log(response.data)
                     this.step = 2
                     this.countDown = 120

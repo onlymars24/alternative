@@ -450,7 +450,9 @@ export default{
 }
 </script>
 <style>
-
+.main__button{
+    text-align: center;
+}
 .main__another__date{
   text-align: center;
   margin-top: 15px;

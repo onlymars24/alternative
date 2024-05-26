@@ -60,13 +60,17 @@
                     <div v-if="wrongCodeMessage" class="alert alert-danger" role="alert">
                         {{ wrongCodeMessage }}
                     </div>
-                      <p class="code__tel">Введите код, отправленный на номер <br><strong>{{ user.phone }}</strong></p>
+                      <p class="code__tel">Введите код, отправленный <strong v-if="this.whatsAppSent">НА WHATSAPP</strong><strong v-else>ПО СМС</strong> на номер <br><strong>{{ user.phone }}</strong></p>
                       <label for="tel" class="form-label label-gray">Код подтверждения</label>
                       <input type="text" class="form-control inp-gray"  id="code" v-model="code">
                       <span class="approval">Вы предоставляете и подтверждаете <a href="">согласие на обработку персональных данных.</a> </span>
                       <button @click="confirmCode" class="btn btn-primary btn-code">Подтвердить</button>
-                      <p v-if="countDown" style="font-size: 14px; margin-top: 8px;">Повторное СМС можно отправить через {{ countDown }} сек.</p>
-                      <button v-else @click="sendCode" class="btn-code btn__new-code">Повторное СМС</button>
+                      <p v-if="countDown" style="font-size: 14px; margin-top: 8px;">Отправить КОД повторно можно через {{ countDown }} сек.</p>
+                      <div v-else class="">
+                        <button v-if="this.whatsAppSent" @click="this.whatsAppChosen = true; sendCode()" class="btn-code btn__new-code">Отправить код повторно на WhatsApp</button>
+                        <button @click="this.whatsAppChosen = false; sendCode()" class="btn-code btn__new-code">Отправить код повторно по СМС</button>
+                      </div>
+                      
                       <div v-if="registerLoading" class="text-center" style="margin-top: 10px;">
                         <div class="spinner-border" role="status"></div>
                       </div>
@@ -101,7 +105,9 @@ export default {
             sms: [],
             resUser: [],
             registerLoading: false,
-            baseUrl: ''
+            baseUrl: '',
+            whatsAppChosen: true,
+            whatsAppSent: true
         };
     },
     mounted(){
@@ -154,16 +160,17 @@ export default {
             this.errorMessage = ''
             this.userErrors = {};
             const promise = axiosClient
-            .post('/sms/register', { user: this.user })
+            .post('/sms/register', { user: this.user, whatsAppChosen: this.whatsAppChosen })
             .then(response => {
-                console.log(response.data)
+                // console.log(response.data)
                 this.sms = response.data
+                this.whatsAppSent = response.data.whatsAppSent
             })
             .catch(error => {
                 console.log(error)
                 if(error.response.status == 422){
-                    console.log('No Valid')
-                    console.log(error)
+                    // console.log('No Valid')
+                    // console.log(error)
                     if(error.response.data.errorMessage){
                         this.errorMessage = error.response.data.errorMessage
                     }
@@ -173,7 +180,7 @@ export default {
                 }
             });
             await promise
-            console.log(this.sms)
+            // console.log(this.sms)
             
             if(!Object.keys(this.userErrors).length && this.errorMessage === ''){
                 this.stepLog=2

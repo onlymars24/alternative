@@ -35,8 +35,7 @@ import BonusesUser from '../views/admin/BonusesUser.vue'
 
 import BusRoutes from '../views/admin/BusRoutes.vue'
 import BusRoutesEdit from '../views/admin/BusRoutesEdit.vue'
-
-
+import WhatsAppSms from '../views/admin/WhatsAppSms.vue'
 
 
 const routes = [
@@ -129,6 +128,11 @@ const routes = [
         path: 'sms',
         component: Sms,
         name: 'Sms'
+      },
+      {
+        path: 'whatsapp',
+        component: WhatsAppSms,
+        name: 'WhatsAppSms'
       },
       {
         path: 'reports',

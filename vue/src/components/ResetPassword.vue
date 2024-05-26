@@ -43,12 +43,15 @@
                     <div v-if="wrongCodeMessage" class="alert alert-danger" role="alert">
                         {{ wrongCodeMessage }}
                     </div>
-                      <p class="code__tel">Введите код, отправленный на номер <br><strong>{{ user.phone }}</strong></p>
+                      <p class="code__tel">Введите код, отправленный <strong v-if="this.whatsAppSent">НА WHATSAPP</strong><strong v-else>ПО СМС</strong> на номер <br><strong>{{ user.phone }}</strong></p>
                       <label for="tel" class="form-label label-gray">Код подтверждения</label>
                       <input type="text" class="form-control inp-gray"  id="code" v-model="code">
                       <button @click="confirmCode" class="btn btn-primary btn-code">Подтвердить</button>
                       <p v-if="countDown" style="font-size: 14px; margin-top: 8px;">Повторное СМС можно отправить через {{ countDown }} сек.</p>
-                      <button v-else @click="sendCode" class="btn-code btn__new-code">Повторное СМС</button>
+                      <div v-else class="">
+                        <button v-if="this.whatsAppSent" @click="this.whatsAppChosen = true; sendCode()" class="btn-code btn__new-code">Отправить код повторно на WhatsApp</button>
+                        <button @click="this.whatsAppChosen = false; sendCode()" class="btn-code btn__new-code">Отправить код повторно по СМС</button>
+                      </div>
                       <div v-if="resetLoading" class="text-center" style="margin-top: 10px;">
                         <div class="spinner-border" role="status"></div>
                       </div>
@@ -98,7 +101,9 @@ export default {
             resetResponseStatus: null,
             successfulResetMessage: '',
             resetLoading: false,
-            notExistingUser: false
+            notExistingUser: false,
+            whatsAppChosen: true,
+            whatsAppSent: true
         };
     },
     mounted(){
@@ -119,16 +124,16 @@ export default {
             this.userErrors = [];
             this.errorMessage = ''
             const promise = axiosClient
-            .post('/sms/reset', {  phone: this.user.phone, url: window.location.host })
+            .post('/sms/reset', {  phone: this.user.phone, whatsAppChosen: this.whatsAppChosen })
             .then(response => {
-                this.sms = response.data.sms
+                this.whatsAppSent = response.data.whatsAppSent
                 console.log(response)
             })
             .catch(error => {
                 console.log(error)
                 if(error.response.status == 422){
                     this.userErrors =  error.response.data.errors
-                    if(this.userErrors['phone'][0] && this.userErrors['phone'][0] == 'Проверьте правильность ввода номера телефона:'){
+                    if(this.userErrors['phone'] && this.userErrors['phone'][0] && this.userErrors['phone'][0] == 'Проверьте правильность ввода номера телефона:'){
                         this.notExistingUser = true
                     }
                 }
@@ -156,6 +161,7 @@ export default {
         async confirmCode(){
             this.sms = []
             this.resetLoading = true;
+            this.userErrors = [];
             this.wrongCodeMessage = ''
             const promise = axiosClient
             .get('/sms/reset?code='+this.code+'&phone='+this.user.phone)
@@ -204,22 +210,25 @@ export default {
             }
         },
         async reset(){
+            console.log('done0')
             this.resetLoading = true;
             this.userErrors = []
             this.successfulResetMessage = ''
+            console.log('done1')
             const promise = axiosClient
             .post('/reset', {
                 phone: this.user.phone, 
-                code: this.code, 
                 password: this.user.password, 
                 password_confirmation: this.user.password_confirmation, 
             })
             .then(response => {
+                console.log('done2')
                 localStorage.setItem('authToken', response.data.token)
                 this.$emit('authSelf');
                 this.$emit('authenticateForForm');
             })
             .catch(error => {
+                console.log(error)
                 if(error.response.status == 422){
                     this.userErrors = error.response.data.errors
                 }

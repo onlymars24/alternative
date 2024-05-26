@@ -32,7 +32,12 @@
         </el-sub-menu> -->
         <el-menu-item index="9" @click="$router.push({name: 'Feedback'})">Обратная связь</el-menu-item>
         <el-menu-item index="10" @click="$router.push({name: 'Reports'})">Отчёты</el-menu-item>
-        <el-menu-item index="11" @click="$router.push({name: 'Sms'})">Учет СМС</el-menu-item>
+        <el-sub-menu index="11">
+            <template #title>Учет сообщений</template>
+            <el-menu-item index="11-1" @click="$router.push({name: 'Sms'})">Smsaero</el-menu-item>
+            <el-menu-item index="11-1" @click="$router.push({name: 'WhatsAppSms'})">WhatsApp</el-menu-item>
+        </el-sub-menu>
+        
         <el-sub-menu index="12">
             <template #title>Бонусы</template>
             <el-menu-item index="12-1" @click="$router.push({name: 'BonusesUsers'})">Пользователи</el-menu-item>

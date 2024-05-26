@@ -12,6 +12,7 @@ use App\Mail\ReturnMail;
 use Nette\Utils\DateTime;
 use App\Models\Transaction;
 use App\Enums\InsuranceEnum;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use App\Exports\WrongsExport;
 use App\Mail\LeaveReviewMail;
@@ -49,6 +50,11 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
+  dd();
+
+  // dd($number);
+
+
   // $smsAll = Sms::where([['status', '!=', 1], ['status', '!=', 2], ['status', '!=', 6]])->get();
   $smsAll = Sms::orderByDesc('id')->first();
   dd($smsAll);
@@ -59,23 +65,23 @@ Route::get('/spread/', function (Request $request) {
   
   // dd($sms->balance < 300);
 
-  $body = [
-    'body' => 'Код на росвокзалы.рф: 211211
-Поддержка в ВК-группе: vk.com/rosvokzaly',
-    'recipient' => '+7 (900) 254 8038'
-  ];
-  $body = json_encode($body);
+//   $body = [
+//     'body' => 'Код на росвокзалы.рф: 211211
+// Поддержка в ВК-группе: vk.com/rosvokzaly',
+//     'recipient' => '+7 (900) 254 8038'
+//   ];
+//   $body = json_encode($body);
   $whatsAppSms = Http::withHeaders([
     'Authorization' => 'c3d983e5325f664630602f4bef44234542f77d7a',
-  ])->withBody($body, 'application/json')->post('https://wappi.pro/api/sync/message/send?profile_id=c974fcbd-63d6');
+  ])
+  // ->withBody($body, 'application/json')
+  ->post('https://biz.wapico.ru/api/task_add.php?access_token=b58a6607f1db1b075d48afc443277fc1&number=79002548038&type=text&message=test message 123456&instance_id=664DD8720625A&timeout=0');
   $whatsAppSms = json_decode($whatsAppSms);
 
 
   $whatsAppSms2 = Http::withHeaders([
       'Authorization' => 'c3d983e5325f664630602f4bef44234542f77d7a',
-  ])->get('https://wappi.pro/api/sync/messages/id/get?profile_id=c974fcbd-63d6&message_id='
-  .$whatsAppSms->message_id
-);
+  ])->get('https://biz.wapico.ru/api/task_status.php?access_token=b58a6607f1db1b075d48afc443277fc1&task_id='.$whatsAppSms->data->task_id);
   $whatsAppSms2 = json_decode($whatsAppSms2);
 
 
