@@ -2,11 +2,14 @@
 
 namespace App\Console;
 
-use App\Mail\LeaveReviewMail;
 use DateTimeZone;
 use App\Models\Order;
 use Nette\Utils\DateTime;
+use App\Models\WhatsAppSms;
+use App\Services\SmsService;
+use App\Mail\LeaveReviewMail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -44,6 +47,51 @@ class Kernel extends ConsoleKernel
         //         }
         //     }
         // })->daily();
+        $schedule->call(function () {
+            $now = date('Y-m-d H:i:s');
+            $currentOrdersTime = date_create($now);
+            date_modify($currentOrdersTime, '-15 min');
+            $currentOrdersTime = date_format($currentOrdersTime, 'Y-m-d H:i:s');
+            $orders = Order::where([['created_at', '>', $currentOrdersTime], ['paymentInformed', '=', false]])->get();
+            foreach($orders as $order){
+                $createdAt = date_format($order->created_at, 'Y-m-d H:i:s');
+                $orderPlus5min = date_create($createdAt);
+                date_modify($orderPlus5min, '+5 min');
+                $orderPlus5min = date_format($orderPlus5min, 'Y-m-d H:i:s');
+                $orderObj = json_decode($order->order_info);
+                if($orderPlus5min < $now && !$order->paymentInformed && $orderObj->status == 'B'){
+                    $user = $order->user;
+                    $phoneWithoutMask = SmsService::removeMask($user->phone);
+                    $checkWhatsApp = Http::
+                    post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));
+                    $checkWhatsApp = json_decode($checkWhatsApp);
+
+                    if(isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
+                        $message = 'Ваш забронированный билет ожидает оплаты.
+
+На всякий случай дублируем ссылку на оплату:
+'.$order->formUrl;
+                        $whatsAppService = Http::
+                        post(env('WAPICO_URL').'/task_add.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&message='.$message
+                        .'&instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');
+                        $whatsAppService = json_decode($whatsAppService);
+                        if(!isset($whatsAppService->data->task_id)){
+                            Log::info('whatsAppService: '.json_encode($whatsAppService));
+                            continue;
+                        }
+                        $whatsAppSms = WhatsAppSms::create([
+                            'id' => $whatsAppService->data->task_id,
+                            'phone' => $user->phone,
+                            'type' => 'paymentReminder',
+                            'status' => 0,
+                            'message' => $message
+                        ]);
+                        $order->paymentInformed = true;
+                        $order->save();
+                    }
+                }
+            }
+        })->everyThreeMinutes();
     }
 
     /**

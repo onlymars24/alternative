@@ -32,6 +32,7 @@ class Order extends Model
         'utm_campaign',
         'utm_content',
         'referrer_url',
+        'paymentInformed',
     ];
 
     public function transactions()

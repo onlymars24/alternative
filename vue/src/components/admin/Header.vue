@@ -35,7 +35,7 @@
         <el-sub-menu index="11">
             <template #title>Учет сообщений</template>
             <el-menu-item index="11-1" @click="$router.push({name: 'Sms'})">Smsaero</el-menu-item>
-            <el-menu-item index="11-1" @click="$router.push({name: 'WhatsAppSms'})">WhatsApp</el-menu-item>
+            <el-menu-item index="11-2" @click="$router.push({name: 'WhatsAppSms'})">WhatsApp</el-menu-item>
         </el-sub-menu>
         
         <el-sub-menu index="12">

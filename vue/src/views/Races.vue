@@ -5,7 +5,6 @@
     <div class="menu" style="margin-top: 50px;">
         <div class="container">
             <div class="menu__intro">
-                <p>Отправление и прибытие по местному времени</p>
                 <h2 style="font-size: 24px; margin: 10px 0;">Расписание автобусов {{errorNames.dispatch}} — {{errorNames.arrival}}</h2>
                 <div class="menu__inro-sort">
                 </div>              

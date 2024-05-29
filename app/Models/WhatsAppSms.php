@@ -15,6 +15,7 @@ class WhatsAppSms extends Model
         'type',
         'phone',
         'used',
-        'status'
+        'status',
+        'message'
     ];
 }

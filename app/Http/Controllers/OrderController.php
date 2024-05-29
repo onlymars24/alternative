@@ -12,7 +12,9 @@ use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
 use App\Models\Passenger;
 use App\Models\Transaction;
+use App\Models\WhatsAppSms;
 use App\Enums\InsuranceEnum;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
@@ -225,6 +227,33 @@ class OrderController extends Controller
         $orderFromDB->bonusesPrice = $request->bonuses;
         $orderFromDB->save();
         curl_close($curl); // Закрываем соединение
+        
+        $phoneWithoutMask = SmsService::removeMask($user->phone);
+        $checkWhatsApp = Http::
+        post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));
+        $checkWhatsApp = json_decode($checkWhatsApp);
+
+        if(isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
+            $message = 'Благодарим за оформление электронного билета *'.$orderFromDB->tickets[0]->raceName.' '.date("d.m.Y", strtotime($orderFromDB->tickets[0]->dispatchDate)).' в '.date("H:i", strtotime($orderFromDB->tickets[0]->dispatchDate)).'*. 
+
+С момента бронирования заказа необходимо оплатить в течение 15 минут, иначе бронирование отменится.
+
+На всякий случай дублируем ссылку на оплату: '.$orderFromDB->formUrl;
+            $whatsAppService = Http::
+            post(env('WAPICO_URL').'/task_add.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&message='.$message
+            .'&instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');
+            $whatsAppService = json_decode($whatsAppService);
+            Log::info('whatsAppService: '.json_encode($whatsAppService));
+            if(isset($whatsAppService->data->task_id)){
+                $whatsAppSms = WhatsAppSms::create([
+                    'id' => $whatsAppService->data->task_id,
+                    'phone' => $user->phone,
+                    'type' => 'paymentReminder',
+                    'status' => 0,
+                    'message' => $message
+                ]);            
+            }
+        }
 
         return response([
             'order' => $order,
