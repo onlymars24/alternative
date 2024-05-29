@@ -236,7 +236,7 @@ class OrderController extends Controller
         if(isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
             $message = 'Благодарим за оформление электронного билета *'.$orderFromDB->tickets[0]->raceName.' '.date("d.m.Y", strtotime($orderFromDB->tickets[0]->dispatchDate)).' в '.date("H:i", strtotime($orderFromDB->tickets[0]->dispatchDate)).'*. 
 
-С момента бронирования заказа необходимо оплатить в течение 15 минут, иначе бронирование отменится.
+Заказ необходимо оплатить в течение 15 минут с момента бронирования, иначе бронирование отменится.
 
 На всякий случай дублируем ссылку на оплату: '.$orderFromDB->formUrl;
             $whatsAppService = Http::
