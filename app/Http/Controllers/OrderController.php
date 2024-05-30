@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Services\DeletePassportService;
+use App\Services\UtmService;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -253,6 +254,10 @@ class OrderController extends Controller
                     'message' => $message
                 ]);            
             }
+        }
+
+        if($request->auth){
+            UtmService::update($orderFromDB->id);
         }
 
         return response([

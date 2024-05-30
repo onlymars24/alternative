@@ -50,7 +50,17 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  dd('');
+  $orders = Order::all();
+  dd($orders);
+
+  $order = Order::find(2085247);
+  
+  $user = $order->user;
+  // dd($user);
+  $user->bonuses_balance = 12;
+  $user->save();
+
+  dd($order);
   // dd(date('Y-m-d H:i:s'));
 
 

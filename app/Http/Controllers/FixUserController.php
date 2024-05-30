@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\WhatsAppSms;
 use App\Services\SmsService;
+use App\Services\UtmService;
 use Illuminate\Http\Request;
 use App\Services\FixUserService;
 use Illuminate\Support\Facades\Log;
@@ -192,6 +193,7 @@ class FixUserController extends Controller
             $user = $userNew;
         }
         FixUserService::auth($request->phone);
+        UtmService::update($order->id);
         Auth::loginUsingId($user->id);
         $token = Auth::user()->createToken('authToken')->accessToken;
         return response([
