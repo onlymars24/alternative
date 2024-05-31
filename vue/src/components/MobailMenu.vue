@@ -3,9 +3,17 @@
     <div class="mobail__header">
       <div class="mobail-menu__logo">
         <div class="header__logo">
-          <a href="/"
-            ><img src="/src/img/741411.png" alt="" class="header-inner-image" />
-            <span class="logo-txt-mob">Автовокзал</span>
+          <a href="/">
+            <!-- <img src="/src/img/741411.png" alt="" class="header-inner-image" /> -->
+            <svg style="width: 30px; margin-right: 5px;" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#2196F3" class="bi bi-geo-alt">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier"> 
+                    <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"></path> 
+                    <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path> 
+                </g>
+            </svg>     
+            <span class="logo-txt-mob">Росвокзалы.рф</span>
           </a>
         </div>
       </div>
@@ -58,10 +66,7 @@
     <nav>
       <ul class="mobail-menu__links2">
         <li><a href="/faq" target="_blank">Вопросы и ответы</a></li>
-        <!-- <li><router-link to="">Сотрудничество</router-link></li> -->
         <li><a @click.prevent="this.$emit('OpenWindowFeedback')" target="_blank">Задать вопрос</a></li>
-        <li><router-link to="">О нас</router-link></li>
-        <!-- <li><router-link to="">Блог</router-link></li> -->
       </ul>
     </nav>
     <hr />
