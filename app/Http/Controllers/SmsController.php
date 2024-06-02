@@ -401,6 +401,4 @@ class SmsController extends Controller
             'smsWhatsAppAll' => $smsWhatsAppAll
         ]);
     }
-
-    
 }

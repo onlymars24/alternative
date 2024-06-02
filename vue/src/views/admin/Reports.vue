@@ -21,7 +21,6 @@
                                         :clearable="true"
                                     />
                                     </el-config-provider>
-
                                 </div>
                             </template>
                             <table class="table" style="width: 100%">
@@ -124,12 +123,107 @@
                                     <tr>
                                         <td>Продажа страховок</td>
                                         <td>{{salesInsurances[0]}}</td>
-                                        <td>{{salesInsurances[1]}}</td>
+                                        <td>{{salesInsurances[1]}}₽</td>
                                     </tr>
                                     <tr>
                                         <td>Возврат</td>
                                         <td>{{returnsInsurances[0]}}</td>
-                                        <td>{{returnsInsurances[1]}}</td>
+                                        <td>{{returnsInsurances[1]}}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Итого</td>
+                                        <td>{{ totalInsurances[0] }}</td>
+                                        <td>{{ totalInsurances[1] }}₽</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- <table class="table" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Карта</th>
+                                        <th>СБП</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Эквайринг</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Итого</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table> -->
+
+                            <table class="table" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>WhatsApp</th>
+                                        <th>СМС</th>
+                                        <th>Сервер</th>
+                                        <th>Онлайн касса</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Накладные расходы</td>
+                                        <td>{{ expensesTotal.whatsapp }}₽</td>
+                                        <td>{{ expensesTotal.sms }}₽</td>
+                                        <td>{{ expensesTotal.server_host }}₽</td>
+                                        <td>{{ expensesTotal.ofd_ferma }}₽</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Доход сайта</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Комиссия сайта(продажа билетов)</td>
+                                        <td>+{{ salesSiteCommission }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Комиссия сайта(возврат)</td>
+                                        <td>-{{ returnsSiteCommission }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>50% от суммы невозвращённых страховок</td>
+                                        <td>+{{ totalInsurances[1] / 2 }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Стоимость эквайринга</td>
+                                        <td>-{{ acqDues }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Стоимость смс</td>
+                                        <td>-{{ expensesTotal.sms }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Стоимость WhatsApp</td>
+                                        <td>-{{ expensesTotal.whatsapp }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Стоимость сервера</td>
+                                        <td>-{{ expensesTotal.server_host }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Стоимость онлайн-кассы</td>
+                                        <td>-{{ expensesTotal.ofd_ferma }}₽</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Итого</td>
+                                        <td>{{ expensesTotal.profit }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -167,6 +261,7 @@
                                 <el-table-column prop="dues" label="Сбор агента" width="150" />
                                 <el-table-column prop="tableDiffPrice" label="Удержание" width="150" />
                                 <el-table-column prop="duePrice" label="Комиссия сайта" width="150" />
+                                <el-table-column prop="acqPrice" label="Комиссия эквайринга" width="170" />
                                 <el-table-column prop="bonusesPrice" label="Оплата бонусами" width="150" />
                                 <el-table-column prop="insured" label="Страхование" width="150" />
                                 <el-table-column prop="insurancePrice" label="Цена страховки" width="150" />
@@ -207,7 +302,8 @@ export default
             date1: null,
             ticketStatuses: ticketStatuses,
             locale: ru,
-            ticketsTableVar: []
+            ticketsTableVar: [],
+            expenses: []
         }
     },
     async mounted(){
@@ -232,7 +328,7 @@ export default
         ]
         console.log(this.defaultTime2)
         
-        const promise = axiosAdmin
+        const promise1 = axiosAdmin
         .get('/tickets')
         .then(response => {
             console.log(response.data)
@@ -242,7 +338,7 @@ export default
         .catch( error => {
 
         })
-        await promise
+        await promise1
         this.ticketsArray.forEach(ticket => {
             ticket.updated_at = dayjs(ticket.updated_at).format('YYYY-MM-DD HH:mm:ss')
             if(ticket.status == 'R'){
@@ -267,7 +363,15 @@ export default
             ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
             ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
         })
-        
+        const promise2 = axiosAdmin
+        .get('/expenses')
+        .then(response => {
+            this.expenses = response.data.expenses
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        await promise2
         this.loading = false
     },
     methods: {
@@ -277,6 +381,24 @@ export default
         exportDataToPdf(){
             window.open(this.downloadPDF, '_blank');
         },
+
+        daysInDateRange(startDate, endDate) {
+            let daysInMonthCount = {};
+            
+            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                let month = d.getMonth() + 1;
+                month = month < 10 ? '0' + month : month.toString();
+                let year = d.getFullYear();
+                
+                if (!daysInMonthCount.hasOwnProperty(year+'-'+month)) {
+                    daysInMonthCount[year+'-'+month] = 0;
+                }
+                
+                daysInMonthCount[year+'-'+month]++;
+            }
+            
+            return daysInMonthCount;
+        }
     },
     watch: {
         value2(value2){
@@ -370,6 +492,70 @@ export default
                 ]
             }
         },
+        expensesTotal(){
+            let comparingDates = [
+                dayjs(this.comparingDates[0]).format('YYYY-MM-DD'),
+                dayjs(this.comparingDates[1]).format('YYYY-MM-DD')
+            ];
+
+            let comparingDatesWithoutDays = [
+                dayjs(this.comparingDates[0]).format('YYYY-MM'),
+                dayjs(this.comparingDates[1]).format('YYYY-MM')
+            ];
+
+            let filteredExpenses = this.expenses.filter(expense => {
+                return expense.period <= comparingDatesWithoutDays[1] && expense.period >= comparingDatesWithoutDays[0]
+            })
+            console.log('filteredExpenses first')
+            console.log(filteredExpenses)
+            let pricesExpenses = {
+                whatsapp: 0,
+                sms: 0,
+                server_host: 0,
+                ofd_ferma: 0,
+                total: 0,
+                profit: 0
+            }
+
+            // console.log(comparingDatesWithoutDays)
+            let daysInMonths = this.daysInDateRange(new Date(comparingDates[0]), new Date(comparingDates[1]))
+            
+
+            console.log('filteredExpenses second')
+            Object.keys(daysInMonths).forEach(key => {
+                let expense = filteredExpenses.filter(el => {
+                    // console.log(el['period'], key)
+                    return el['period'] == key
+                })[0]
+                if(expense){
+                    let expenseDate = expense.period.split('-')
+                    let totalDays = new Date(Number(expenseDate[0]), Number(expenseDate[1]), 0).getDate()
+                    console.log(key, daysInMonths[key], expense, expenseDate)
+                    pricesExpenses.whatsapp += (expense.whatsapp / totalDays * daysInMonths[key])
+                    pricesExpenses.sms += (expense.sms / totalDays * daysInMonths[key])
+                    pricesExpenses.server_host += (expense.server_host / totalDays * daysInMonths[key])
+                    pricesExpenses.ofd_ferma += (expense.ofd_ferma / totalDays * daysInMonths[key])
+                }
+            })
+            pricesExpenses.profit = this.salesSiteCommission - this.returnsSiteCommission + (this.totalInsurances[1] / 2) 
+                                    - this.acqDues - pricesExpenses.sms - pricesExpenses.whatsapp - pricesExpenses.server_host
+                                    - pricesExpenses.ofd_ferma
+            pricesExpenses.total = (pricesExpenses.whatsapp + pricesExpenses.server_host + pricesExpenses.ofd_ferma).toFixed(2)
+            pricesExpenses.whatsapp = pricesExpenses.whatsapp.toFixed(2)
+            pricesExpenses.sms = pricesExpenses.sms.toFixed(2)
+            pricesExpenses.server_host = pricesExpenses.server_host.toFixed(2)
+            pricesExpenses.ofd_ferma = pricesExpenses.ofd_ferma.toFixed(2)
+            
+            return pricesExpenses
+            // this.pricesExpenses.whatsapp = this.pricesExpenses.whatsapp.toFixed(2)
+            // this.pricesExpenses.server_host = this.pricesExpenses.server_host.toFixed(2)
+            // this.pricesExpenses.ofd_ferma = this.pricesExpenses.ofd_ferma.toFixed(2)
+            // console.log(daysInMonths)
+            // console.log(this.expenses)
+            
+            
+            // return comparingDates;
+        },
         ticketsTable(){
             let comparingDates = [
                 dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss'),
@@ -431,7 +617,7 @@ export default
         },
         tickets(){
             return this.ticketsArray.filter(ticket => {
-                return  ticket.status != 'B' && 
+                return  ticket.status != 'B' &&
                         ticket.created_at > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
                         ticket.created_at < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
             })
@@ -775,6 +961,16 @@ export default
                 }
             })
             return [amount, price.toFixed(2)]
+        },
+        totalInsurances(){
+            return [(this.salesInsurances[0]-this.returnsInsurances[0]), (this.salesInsurances[1]-this.returnsInsurances[1]).toFixed(2)]
+        },
+        acqDues(){
+            let acqDues = 0
+            this.tickets.forEach(ticket => {
+                acqDues += Number(ticket.acqPrice)
+            })
+            return acqDues.toFixed(2)
         }
     }
 }
