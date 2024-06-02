@@ -8,6 +8,16 @@ use App\Http\Controllers\Controller;
 
 class SettingsController extends Controller
 {
+
+    public function getDues(){
+        $setting = Setting::where('name', 'dues')->first()->data;
+        $dues = json_decode($setting);
+        return response([
+            'dues' => $dues
+        ]);
+    }
+
+
     public function getClusterDue(){
         $setting = Setting::where('name', 'dues')->first()->data;
         $setting = (array)json_decode($setting);
@@ -24,6 +34,17 @@ class SettingsController extends Controller
         ]);
         return response([
             'message' => 'Great!'
+        ]);
+    }
+
+    public function setDue(Request $request){
+        $setting = Setting::where('name', 'dues')->first();
+        $dues = (array)json_decode($setting->data);
+        $dues[$request->name] = $request->percent;
+        $setting->data = json_encode($dues);
+        $setting->save();
+        return response([
+            'setting' => $setting
         ]);
     }
 

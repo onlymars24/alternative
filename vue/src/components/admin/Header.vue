@@ -43,6 +43,7 @@
             <el-menu-item index="12-1" @click="$router.push({name: 'BonusesUsers'})">Пользователи</el-menu-item>
             <el-menu-item index="12-2" @click="$router.push({name: 'BonusesTransactions'})">Транзакции</el-menu-item>
         </el-sub-menu>
+        <el-menu-item index="13" @click="$router.push({name: 'Settings'})">Базовые настройки</el-menu-item>
     </el-menu>
 </el-header>
 

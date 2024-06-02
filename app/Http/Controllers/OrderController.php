@@ -441,6 +441,36 @@ class OrderController extends Controller
         }
         
         $user->save();
+
+        $acqDuePercent = null;
+        $setting = Setting::where('name', 'dues')->first();
+        $dues = (array)json_decode($setting->data);
+        Log::info(json_encode($dues));
+
+        if($order->pan){
+            $acqDuePercent = $dues['acqCardDue'];
+        }
+        else{
+            $acqDuePercent = $dues['acqSbpDue'];
+        }
+
+
+        foreach($order->tickets as $ticket){
+            $ticket->acqPercent = $acqDuePercent;
+            $tempDuePrice = $ticket->price + $ticket->duePrice - $ticket->bonusesPrice;
+            if($ticket->insurance){
+                $tempInsurance = json_decode($ticket->insurance);
+                if(isset($tempInsurance->rate[0]->value) && $tempInsurance->rate[0]->value){
+                    $tempDuePrice += $tempInsurance->rate[0]->value;
+                }
+            }
+            $ticket->acqPrice = $tempDuePrice * $acqDuePercent / 100;
+            $ticket->save();
+        }
+
+
+        
+
         
         Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
     }

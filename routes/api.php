@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\NewPointsController;
 
 /*
@@ -117,6 +118,12 @@ Route::get('/new/points', [NewPointsController::class, 'get']);
 Route::post('/new/points', [NewPointsController::class, 'add']);
 
 
+Route::get('/expenses', [ExpensesController::class, 'all']);
+Route::post('/expense/create', [ExpensesController::class, 'create']);
+Route::post('/expense/delete', [ExpensesController::class, 'delete']);
+Route::post('/expense', [ExpensesController::class, 'one']);
+
+
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
@@ -133,6 +140,8 @@ Route::get('/sms/all', [SmsController::class, 'getAll']);
 Route::get('/sms/whatsapp/all', [SmsController::class, 'getWhatsAppAll']);
 
 
+Route::get('/dues', [SettingsController::class, 'getDues']);
+Route::post('/dues/set', [SettingsController::class, 'setDue']);
 
 Route::get('/settings/cluster/due', [SettingsController::class, 'getClusterDue']);
 

@@ -36,6 +36,9 @@ import BonusesUser from '../views/admin/BonusesUser.vue'
 import BusRoutes from '../views/admin/BusRoutes.vue'
 import BusRoutesEdit from '../views/admin/BusRoutesEdit.vue'
 import WhatsAppSms from '../views/admin/WhatsAppSms.vue'
+import Settings from '../views/admin/Settings.vue'
+
+
 
 
 const routes = [
@@ -205,6 +208,11 @@ const routes = [
         path: 'bonuses/user/:user_id',
         name: 'BonusesUser',
         component: BonusesUser
+      }, 
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: Settings
       }, 
     ]
   },
