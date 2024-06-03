@@ -223,7 +223,7 @@
                                     </tr>
                                     <tr>
                                         <td>Итого</td>
-                                        <td>{{ expensesTotal.profit }}</td>
+                                        <td>{{ expensesTotal.profit }}₽</td>
                                     </tr>
                                 </tbody>
                             </table>
