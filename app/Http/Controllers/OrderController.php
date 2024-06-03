@@ -267,6 +267,10 @@ class OrderController extends Controller
     }
 
     public function confirm(Request $request){
+        Log::info('entry!');
+        Log::info('orderNumber '.$request->orderNumber);
+        Log::info('operation '.$request->operation);
+        Log::info('status '.$request->status);
         if(empty($request->orderNumber) || $request->operation != 'deposited' || $request->status == 0){
             return;
         }
@@ -464,7 +468,11 @@ class OrderController extends Controller
                     $tempDuePrice += $tempInsurance->rate[0]->value;
                 }
             }
-            $ticket->acqPrice = $tempDuePrice * $acqDuePercent / 100;
+            $resultAcqPrice = $tempDuePrice * $acqDuePercent / 100;
+            if($resultAcqPrice < 5){
+                $resultAcqPrice = 5;
+            }
+            $ticket->acqPrice = $resultAcqPrice;
             $ticket->save();
         }
 

@@ -537,9 +537,9 @@ export default
                     pricesExpenses.ofd_ferma += (expense.ofd_ferma / totalDays * daysInMonths[key])
                 }
             })
-            pricesExpenses.profit = this.salesSiteCommission - this.returnsSiteCommission + (this.totalInsurances[1] / 2) 
-                                    - this.acqDues - pricesExpenses.sms - pricesExpenses.whatsapp - pricesExpenses.server_host
-                                    - pricesExpenses.ofd_ferma
+            pricesExpenses.profit = (Number(this.salesSiteCommission) - Number(this.returnsSiteCommission) + Number((this.totalInsurances[1] / 2)) 
+                                    - Number(this.acqDues) - Number(pricesExpenses.sms) - Number(pricesExpenses.whatsapp) - Number(pricesExpenses.server_host)
+                                    - Number(pricesExpenses.ofd_ferma)).toFixed(2)
             pricesExpenses.total = (pricesExpenses.whatsapp + pricesExpenses.server_host + pricesExpenses.ofd_ferma).toFixed(2)
             pricesExpenses.whatsapp = pricesExpenses.whatsapp.toFixed(2)
             pricesExpenses.sms = pricesExpenses.sms.toFixed(2)

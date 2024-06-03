@@ -50,8 +50,40 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
+  $tickets = Ticket::where([['status', '!=', 'B'], ['created_at', '>', '2023-12-31 23:59:59']])->get();
+  foreach($tickets as $ticket){
 
-  dd('');
+    $order = $ticket->order;
+    // $order_info = json_decode($order->order_info);    
+
+    $acqDuePercent = null;
+    $setting = Setting::where('name', 'dues')->first();
+    $dues = (array)json_decode($setting->data);
+
+    if($order->pan){
+        $acqDuePercent = $dues['acqCardDue'];
+    }
+    else{
+        $acqDuePercent = $dues['acqSbpDue'];
+    }
+
+    $ticket->acqPercent = $acqDuePercent;
+    $tempDuePrice = $ticket->price + $ticket->duePrice - $ticket->bonusesPrice;
+    if($ticket->insurance){
+        $tempInsurance = json_decode($ticket->insurance);
+        if(isset($tempInsurance->rate[0]->value) && $tempInsurance->rate[0]->value){
+            $tempDuePrice += $tempInsurance->rate[0]->value;
+        }
+    }
+    $resultAcqPrice = $tempDuePrice * $acqDuePercent / 100;
+    if($resultAcqPrice < 5){
+        $resultAcqPrice = 5;
+    }
+    $ticket->acqPrice = $resultAcqPrice;
+    $ticket->save(); 
+  }
+  
+  dd('Awesome!');
   // dd(date('Y-m-d H:i:s'));
 
 
