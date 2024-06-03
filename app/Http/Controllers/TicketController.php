@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use DateTimeZone;
 use App\Models\Bonus;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
+use Nette\Utils\DateTime;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Services\FermaService;
@@ -48,6 +50,22 @@ class TicketController extends Controller
         //обновление в БД
         $ticketFromDB = Ticket::find($ticket->id);
         $ticketFromDB->update((array)$ticket);
+        
+        if($ticketFromDB->returned && $ticketFromDB->timezone){
+            $originalTime = $ticketFromDB->returned;
+            $fromTimeZone = $ticketFromDB->timezone;
+            $toTimeZone = 'Europe/Moscow';
+            $date = new DateTime($originalTime, new DateTimeZone($fromTimeZone));
+            $date->setTimeZone(new DateTimeZone($toTimeZone));
+            $convertedTime =  $date->format('Y-m-d H:i:s');
+        
+            $ticketFromDB->returnedMoscow = $convertedTime;
+            $ticketFromDB->save();            
+        }
+
+
+
+
         $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket->hash.'.pdf';
         $file_name = basename($url);
         file_put_contents('tickets/'.$ticket->hash.'_r.pdf', file_get_contents($url));

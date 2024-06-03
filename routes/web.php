@@ -50,6 +50,37 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
+
+// // Пример использования:
+// $originalTime = '2024-06-03 13:28';
+// $fromTimeZone = 'Asia/Novosibirsk';
+// $toTimeZone = 'Europe/Moscow';
+
+// $date = new DateTime($originalTime, new DateTimeZone($fromTimeZone));
+// $date->setTimeZone(new DateTimeZone($toTimeZone));
+
+// dd($date->format('Y-m-d H:i')); // Вывод будет зависеть от разницы в часовых поясах
+
+
+
+  $tickets = Ticket::where([['status', '=', 'R'], ['created_at', '>', '2023-12-31 23:59:59']])->get();
+  foreach($tickets as $ticket){
+    $originalTime = $ticket->returned;
+    $fromTimeZone = $ticket->timezone;
+    $toTimeZone = 'Europe/Moscow';
+    $date = new DateTime($originalTime, new DateTimeZone($fromTimeZone));
+    $date->setTimeZone(new DateTimeZone($toTimeZone));
+    $convertedTime =  $date->format('Y-m-d H:i:s');
+
+    $ticket->returnedMoscow = $convertedTime;
+    $ticket->save();
+    // dd($ticket->timezone, $originalTime, $convertedTime);    
+  }
+  dd('awesome');
+  // Пример использования:
+
+
+
   $tickets = Ticket::where([['status', '!=', 'B'], ['created_at', '>', '2023-12-31 23:59:59']])->get();
   foreach($tickets as $ticket){
 

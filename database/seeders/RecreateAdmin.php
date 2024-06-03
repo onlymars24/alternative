@@ -19,7 +19,7 @@ class RecreateAdmin extends Seeder
         $adminOld = User::where('admin', true)->delete();
         $admin = User::create([
             'phone' => '+7 (777) 777 7777',
-            'password' => Hash::make('Ga2QrtUI30oPjhsad09gfsda'),
+            'password' => Hash::make(env('ADMIN_PASSWORD')),
             'admin' => 1
         ]);
     }

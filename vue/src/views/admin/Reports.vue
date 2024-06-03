@@ -340,8 +340,10 @@ export default
         })
         await promise1
         this.ticketsArray.forEach(ticket => {
-            ticket.updated_at = dayjs(ticket.updated_at).format('YYYY-MM-DD HH:mm:ss')
+            
             if(ticket.status == 'R'){
+                
+                ticket.updated_at = dayjs(ticket.returnedMoscow).format('YYYY-MM-DD HH:mm:ss')
                 ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
                 ticket.dateReturned = ticket.updated_at
             }
@@ -363,6 +365,7 @@ export default
             ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
             ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
         })
+        console.log(this.ticketsArray)
         const promise2 = axiosAdmin
         .get('/expenses')
         .then(response => {

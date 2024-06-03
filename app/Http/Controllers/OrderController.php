@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTimeZone;
 use App\Models\User;
 use App\Models\Bonus;
 use App\Models\Order;
@@ -11,10 +12,12 @@ use App\Models\Setting;
 use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
 use App\Models\Passenger;
+use Nette\Utils\DateTime;
 use App\Models\Transaction;
 use App\Models\WhatsAppSms;
 use App\Enums\InsuranceEnum;
 use App\Services\SmsService;
+use App\Services\UtmService;
 use Illuminate\Http\Request;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +27,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Services\DeletePassportService;
-use App\Services\UtmService;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -518,6 +520,17 @@ class OrderController extends Controller
             //возврат в бд
             $ticketFromDB = Ticket::find($ticket->id);
             $ticketFromDB->update((array) $ticket_obj);
+            if($ticketFromDB->returned && $ticketFromDB->timezone){
+                $originalTime = $ticketFromDB->returned;
+                $fromTimeZone = $ticketFromDB->timezone;
+                $toTimeZone = 'Europe/Moscow';
+                $date = new DateTime($originalTime, new DateTimeZone($fromTimeZone));
+                $date->setTimeZone(new DateTimeZone($toTimeZone));
+                $convertedTime =  $date->format('Y-m-d H:i:s');
+            
+                $ticketFromDB->returnedMoscow = $convertedTime;
+                $ticketFromDB->save();            
+            }
             $mailTickets[] = $ticketFromDB;
             $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket_obj->hash.'.pdf';
             $file_name = basename($url);
