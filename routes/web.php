@@ -50,7 +50,7 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-dd('');
+  dd();
 });
 
 

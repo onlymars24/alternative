@@ -17,6 +17,7 @@ use App\Http\Controllers\FixUserController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\BusRouteController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PageMainController;
 use App\Http\Controllers\RacesXmlController;
@@ -24,6 +25,8 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AllPointsController;
 use App\Http\Controllers\Api\RacesController;
 use App\Http\Controllers\DebuggingController;
+use App\Http\Controllers\NewPointsController;
+use App\Http\Controllers\RobotsTxtController;
 use App\Http\Controllers\BusStationController;
 use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\Api\SendSmsController;
@@ -34,8 +37,6 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
-use App\Http\Controllers\ExpensesController;
-use App\Http\Controllers\NewPointsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +94,11 @@ Route::get('/get/feedback', [FeedbackController::class, 'get']);
 
 Route::get('/page/main', [PageMainController::class, 'get']);
 Route::post('/page/main', [PageMainController::class, 'edit']);
+
+
+Route::get('/robots/txt', [RobotsTxtController::class, 'get']);
+Route::post('/robots/txt', [RobotsTxtController::class, 'edit']);
+
 
 Route::get('/page/upcoming/trips', [PageUpcomingTripsController::class, 'get']);
 Route::post('/page/upcoming/trips', [PageUpcomingTripsController::class, 'edit']);

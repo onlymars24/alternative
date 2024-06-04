@@ -37,7 +37,7 @@ import BusRoutes from '../views/admin/BusRoutes.vue'
 import BusRoutesEdit from '../views/admin/BusRoutesEdit.vue'
 import WhatsAppSms from '../views/admin/WhatsAppSms.vue'
 import Settings from '../views/admin/Settings.vue'
-
+import EditRobotsTxt from '../views/admin/EditRobotsTxt.vue'
 
 
 
@@ -213,6 +213,11 @@ const routes = [
         path: 'settings',
         name: 'Settings',
         component: Settings
+      }, 
+      {
+        path: 'edit/robots/txt',
+        name: 'EditRobotsTxt',
+        component: EditRobotsTxt
       }, 
     ]
   },
