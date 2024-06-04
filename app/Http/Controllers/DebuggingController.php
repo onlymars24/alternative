@@ -42,18 +42,21 @@ class DebuggingController extends Controller
             if(($order_info->status == 'B' && !isset($orderRemoted->status)) || $order_info->status != $orderRemoted->status){
                 $bugs[$orderDB->id][] = 'Status заказа в е-траффик не совпадает со статусом в БД!';
             }
-            foreach($orderRemoted->tickets as $ticket){
-                $ticketDB = Ticket::find($ticket->id);
-                if($ticketDB->status != $ticket->status){
-                    $bugs[$orderDB->id][] = 'Status билета ID'.$ticket->id.' в е-трафик не совпадает со Status в БД tickets!';
-                }
-                if($ticketDB->price != $ticket->price){
-                    $bugs[$orderDB->id][] = 'Price билета ID'.$ticket->id.' в е-трафик не совпадает с Price в БД tickets!';
-                }
-                if($ticketDB->repayment != $ticket->repayment){
-                    $bugs[$orderDB->id][] = 'Repayment билета ID'.$ticket->id.' в е-трафик не совпадает с Repayment в БД tickets!';
-                }
+            if(isset($orderRemoted->tickets)){
+                foreach($orderRemoted->tickets as $ticket){
+                    $ticketDB = Ticket::find($ticket->id);
+                    if($ticketDB->status != $ticket->status){
+                        $bugs[$orderDB->id][] = 'Status билета ID'.$ticket->id.' в е-трафик не совпадает со Status в БД tickets!';
+                    }
+                    if($ticketDB->price != $ticket->price){
+                        $bugs[$orderDB->id][] = 'Price билета ID'.$ticket->id.' в е-трафик не совпадает с Price в БД tickets!';
+                    }
+                    if($ticketDB->repayment != $ticket->repayment){
+                        $bugs[$orderDB->id][] = 'Repayment билета ID'.$ticket->id.' в е-трафик не совпадает с Repayment в БД tickets!';
+                    }
+                }                
             }
+
             foreach($order_info->tickets as $ticket){
                 $ticketDB = Ticket::find($ticket->id);
                 if($ticketDB->status != $ticket->status){
