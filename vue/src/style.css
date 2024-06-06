@@ -528,8 +528,8 @@ outline: none;
     border-radius: 0;
     margin: 0 auto;
   }
-  .main__table-button{
-    
+  .main__table-button a{
+    line-height: 100%;
   }
   .choice__inner{
       flex-direction: column;
