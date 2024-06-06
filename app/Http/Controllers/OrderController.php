@@ -477,7 +477,37 @@ class OrderController extends Controller
             $ticket->acqPrice = $resultAcqPrice;
             $ticket->save();
         }
+        $phoneWithoutMask = SmsService::removeMask($user->phone);
+        $checkWhatsApp = Http::
+        post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));
+        $checkWhatsApp = json_decode($checkWhatsApp);
+      
+        if(isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
+            $message = '💳 *Получите Кэшбэк!*
 
+*Благодарим за оформление электронного билета!*
+
+Рекомендуем сразу посмотреть билеты на обратный рейс (при его наличии) на сайте
+Росвокзалы.рф
+
+🎫🚍 Также для вас доступна возможность *компенсировать до 50% стоимости поездки.* Если хотите получить частичную компенсацию, напишите в ответ слово *"кэшбэк"*.💰
+
+Мы вышлем, что нужно для этого сделать.';
+            $whatsAppService = Http::
+            post(env('WAPICO_URL').'/task_add.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&message='.$message
+            .'&instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');
+            $whatsAppService = json_decode($whatsAppService);
+            Log::info('whatsAppService: '.json_encode($whatsAppService));
+            if(isset($whatsAppService->data->task_id)){
+                $whatsAppSms = WhatsAppSms::create([
+                    'id' => $whatsAppService->data->task_id,
+                    'phone' => $user->phone,
+                    'type' => 'Подтверждение заказа',
+                    'status' => 0,
+                    'message' => $message
+                ]);            
+            }
+        }
 
         
 

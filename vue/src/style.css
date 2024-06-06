@@ -520,16 +520,31 @@ outline: none;
     max-width: 80%;
     margin: 0 auto;
   }
+  .main__table-button{
+    margin: 0 auto;
+    min-width: 80%;
+    max-width: 80%;
+  }
   .main__table-button .main__button{
     display: block;
-    width: 80%;
+    width: 100%;
     margin-left: 0;
-    padding: 25px 0;
+    /* padding: 25px 0; */
     border-radius: 0;
     margin: 0 auto;
   }
-  .main__table-button a{
+  .main__table-button a.main__button{
     line-height: 100%;
+    height: 77px;
+    padding: 0;
+    border-radius: unset;
+    background: #0275fe;
+  }
+  .main__button-link{
+    background-color: #0275fe;
+  }
+  .main__button div{
+    height: 77px;
   }
   .choice__inner{
       flex-direction: column;

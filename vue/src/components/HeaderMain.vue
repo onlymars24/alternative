@@ -73,10 +73,15 @@
                 <div class="main__table-button">
                     <button v-if="disabledButton" @click="findRaces" type="button" class="main__button">
                         Найти билет
-                    </button>                    
-                    <a v-else href="" @click="otherDay(date)" type="button" class="main__button" disabled>
-                        Найти билет
-                    </a>
+                    </button>
+                    <div class="main__button-link" v-else>
+                        <a style="width:100%;" href="" @click="otherDay(date)" type="button" class="main__button" disabled>
+                            <div style="display: flex; align-items: center; justify-content: center;">
+                                <p>Найти билет</p>
+                            </div>
+                        </a>
+                    </div>                    
+
 
                 </div>
             </div>

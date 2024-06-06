@@ -7,9 +7,10 @@
                     <el-card class="box-card" style="width: 35%;">
                         <template #header>
                             <div class="card-header" style="display: flex; justify-content: space-between;">
-                                <span>Список пользователей</span>
+                                <span>Список пользователей</span><el-button @click="exportDataToCsv" type="primary">Скачать .csv</el-button>
                             </div>
                         </template>
+                        
                         <!-- <el-input size="small" ref="refPhoneInput" v-mask="'+7 (###) ### ####'" v-model="phone" /> -->
                         <el-table :data="paginatedUsers">
                             <el-table-column prop="id" label="ID" width="80" />
@@ -129,6 +130,9 @@ export default
 
     },
     methods: {
+        exportDataToCsv(){
+            window.open(import.meta.env.VITE_API_BASE_URL+'/export/users/', '_blank');
+        },
         openPlusModal(row){
             this.plusModalOpened = true
             this.currentPlusRow = row
