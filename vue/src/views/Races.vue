@@ -272,6 +272,7 @@ export default {
         this.dates.today = dayjs().format('DD.MM.YYYY')
         this.dates.tomorrow = dayjs().add(1, 'day').format('DD.MM.YYYY')
         this.dates.afterTomorrow = dayjs().add(2, 'day').format('DD.MM.YYYY')
+        window.scrollTo(0, 600);
         // console.log(document.referrer)
         // document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
         // const descEl = document.querySelector('head meta[name="description"]');
@@ -406,6 +407,7 @@ export default {
     methods: {
         async findOtherDates(){
             this.loadingRaces = true
+            window.scrollTo(0, 600);
             this.existingRaces.step = 2
             const promise1 = axiosClient
                 .get('/seven/days/races?dispatchPointId='+this.$route.query.from_id+'&arrivalPointId='+this.$route.query.to_id+'&date='+this.$route.query.on)
@@ -461,7 +463,7 @@ export default {
                     this.races = response.data
                 ));
             await promise2
-            window.scrollTo(0, 600);
+            // window.scrollTo(0, 600);
             if(this.races.length > 0){
                 this.races.forEach(race => {
                     race.section = 'route'

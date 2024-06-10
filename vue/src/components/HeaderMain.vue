@@ -308,12 +308,14 @@ export default{
             this.$emit('changeRaces', this.date, this.dispatchEl.id, this.arrivalEl.id, this.dispatchEl.name, this.arrivalEl.name)
             console.log(this.dispatchEl, this.arrivalEl, this.data)
             console.log(router.push({ name: 'Races', query: {  on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } }))
+            // window.scrollTo(0, 600);
             // window.location.replace(window.location.origin + window.location.pathname);
         },
         otherDay(date){
             this.date = date
             this.$emit('changeRaces', date, this.dispatchEl.id, this.arrivalEl.id, this.dispatchEl.name, this.arrivalEl.name)
             router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date}, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
+            // window.scrollTo(0, 600);
         }
     },
     watch: {
