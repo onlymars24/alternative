@@ -24,7 +24,7 @@ class ScheduleService
         $orders = Order::where([['moscowDispatchTime', '<', $dispatchTimeRight],
         ['moscowDispatchTime', '>', $dispatchTimeLeft], 
         ['dispatchInformed', '=', false]])->get();
-        Log::info('Заказов: '.count($orders));
+        // Log::info('Заказов: '.count($orders));
         // dd($orders);
         foreach($orders as $order){
             $order_info = json_decode($order->order_info);
