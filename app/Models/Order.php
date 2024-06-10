@@ -33,6 +33,8 @@ class Order extends Model
         'utm_content',
         'referrer_url',
         'paymentInformed',
+        'moscowDispatchTime',
+        'dispatchInformed',
     ];
 
     public function transactions()

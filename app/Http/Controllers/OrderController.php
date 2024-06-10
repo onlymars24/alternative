@@ -230,6 +230,18 @@ class OrderController extends Controller
         $orderFromDB->bonusesPrice = $request->bonuses;
         $orderFromDB->save();
         curl_close($curl); // Закрываем соединение
+
+        if(isset($orderFromDB->tickets[0]->dispatchDate) && $orderFromDB->tickets[0]->dispatchDate){
+            $originalTime = $orderFromDB->tickets[0]->dispatchDate;
+            $fromTimeZone = $orderFromDB->timezone;
+            $toTimeZone = 'Europe/Moscow';
+            $date = new DateTime($originalTime, new DateTimeZone($fromTimeZone));
+            $date->setTimeZone(new DateTimeZone($toTimeZone));
+            $convertedTime =  $date->format('Y-m-d H:i:s');
+        
+            $orderFromDB->moscowDispatchTime = $convertedTime;
+            $orderFromDB->save();            
+        }
         
         $phoneWithoutMask = SmsService::removeMask($user->phone);
         $checkWhatsApp = Http::

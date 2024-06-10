@@ -8,6 +8,7 @@ use Nette\Utils\DateTime;
 use App\Models\WhatsAppSms;
 use App\Services\SmsService;
 use App\Mail\LeaveReviewMail;
+use App\Services\ScheduleService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -91,6 +92,8 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
+
+            ScheduleService::dispatchInform();
         })->everyThreeMinutes();
     }
 

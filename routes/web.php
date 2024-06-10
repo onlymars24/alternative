@@ -36,7 +36,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-
+use App\Http\Controllers\UsersExportController;
+use App\Services\ScheduleService;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,8 +51,7 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-
-
+  ScheduleService::dispatchInform();
 });
 
 

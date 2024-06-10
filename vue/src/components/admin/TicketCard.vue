@@ -94,7 +94,7 @@ export default
     mounted(){
         // console.log(this.ticket.insurance ? this.ticket.insurance.ticket.price.value : null)
         this.baseUrl = import.meta.env.VITE_API_BASE_URL
-        this.ticket.dispatchDate = dayjs(this.ticket.dispatchDate).format('YYYY-MM-DD hh:mm')
+        // this.ticket.dispatchDate = dayjs(this.ticket.dispatchDate).format('YYYY-MM-DD hh:mm')
         this.ticket.birthday = dayjs(this.ticket.birthday).format('YYYY-MM-DD')
     }
 }
