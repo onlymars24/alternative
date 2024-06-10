@@ -179,7 +179,7 @@ Route::get('/bonuses/user', [BonusesController::class, 'user']);
 Route::get('/users', [AuthController::class, 'users']);
 Route::get('/settings/bonuses/percent', [SettingsController::class, 'getBonusesPercent']);
 
-
+Route::get('/seven/days/races', [RaceController::class, 'sevenDaysRaces']);
 
 
 

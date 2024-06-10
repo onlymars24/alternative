@@ -14,6 +14,7 @@
    
     <div class="menu">
 		<div class="container">
+            <!-- {{ dates }} -->
             <BusLoading v-if="loadingRaces"/>
             <div v-else>
                 <div v-if="!races.length && notExistingRace" class="not__found">
@@ -35,14 +36,32 @@
                         <img src="../assets/free-icon-sad-3350122.png">
                     </div> -->
                     <div class="not__found-text">
-                        <p class="not__found-title">
+                        <p v-if="this.existingRaces.step == 1" style="margin-bottom: 7px; line-height: 30px;" class="not__found-title">
                             {{errorNames.dispatch}} — {{errorNames.arrival}}
-                            на {{ dateForError }}
+                            на <strong> {{ dateForError == dates.today ? 'сегодня' : '' }} 
+                            {{ dateForError == dates.tomorrow ? 'завтра' : '' }} 
+                            {{ dateForError == dates.afterTomorrow ? 'послезавтра' : '' }} {{ dateForError }}</strong>
                             Билеты не найдены
                         </p>
-                        <p class="not__found-descr">
+                        <!-- <p class="not__found-descr">
                             Выберите другую дату или точки отправления и прибытия.
-                        </p>
+                        </p> -->
+                        <div v-if="this.existingRaces.step == 1">
+                            <p style="font-size: 24px;  line-height: 30px;">Выберите другую дату или точки отправления и прибытия.</p>
+                            <p style="font-size: 24px; margin-top: 10px; line-height: 30px;">Найти ближайшие рейсы на другую дату?</p>
+                            <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 7px;">
+                            <button class="btn btn-primary btn-code" @click="findOtherDates"><div style="font-size: 20px;">Найти</div></button>    
+                            <!-- <button class="btn btn-outline-secondary btn-code" @click="$emit('CloseWindow')"><div style="font-size: 20px;">Нет</div></button> -->
+                            </div> 
+                        </div>
+                        <div v-if="this.existingRaces.step == 2">
+                            <div>
+                                <p style="font-size: 24px;">{{errorNames.dispatch}} — {{errorNames.arrival}}
+                                    на ближайшие 7 дней рейсы не найдены.</p>
+                                <p style="font-size: 30px; margin-top: 10px;">Выберите другую дату или точки отправления и прибытия.</p>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
                 <div v-else class="menu__intro">
@@ -83,6 +102,8 @@
             <!-- <RaceCard/>  -->
 		</div>
 	</div>
+
+    <!-- <PopupWindow v-if="openWindow" @findOtherDates="findOtherDates" :existingRaces="existingRaces" @CloseWindow="openWindow = false, Scroll()" :content="11"/> -->
 
 
 </div>
@@ -196,13 +217,15 @@ import router from '../router';
 import axios from 'axios';
 import axiosClient from '../axios'
 import dayjs from 'dayjs'
+import PopupWindow from '../components/PopupWindow.vue';
 
 export default {
     components: {
         HeaderMain,
         Footer,
         RaceCard,
-        BusLoading
+        BusLoading,
+        PopupWindow
     },
     data(){
         return{
@@ -230,11 +253,25 @@ export default {
                 arrowUp: false,
                 param: 'dispatchDate'
             },
-            paramKey: false,
-            busRoute: null
+            paramKey: 0,
+            busRoute: null,
+            openWindow: false,
+            existingRaces: {
+                loading: false,
+                step: 1,
+                date: null
+            },
+            dates: {
+                today: '',
+                tomorrow: '',
+                afterTomorrow: ''
+            }
         }
     },
     async mounted(){
+        this.dates.today = dayjs().format('DD.MM.YYYY')
+        this.dates.tomorrow = dayjs().add(1, 'day').format('DD.MM.YYYY')
+        this.dates.afterTomorrow = dayjs().add(2, 'day').format('DD.MM.YYYY')
         // console.log(document.referrer)
         // document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
         // const descEl = document.querySelector('head meta[name="description"]');
@@ -323,7 +360,7 @@ export default {
             this.dispatchEl.id = dispatchPoint.id
             this.arrivalEl.id = arrivalPoint.id
             this.$router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date } })
-            this.paramKey = true
+            this.paramKey ++
         }
 
         // const promise3 = axiosClient
@@ -340,6 +377,8 @@ export default {
 
         this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id, dispatchPoint.name, arrivalPoint.name);
         this.dateForError = dayjs(this.date).format('DD.MM.YYYY')
+        // console.log(window.location.origin + this.$route.fullPath)
+        // console.log(this.$route)
     },
     computed: {
         sortedRaces(){
@@ -365,8 +404,44 @@ export default {
         }
     },
     methods: {
-        async changeRaces0(date, dispatch_id, arrival_id, dispatch_name, arrival_name){
+        async findOtherDates(){
             this.loadingRaces = true
+            this.existingRaces.step = 2
+            const promise1 = axiosClient
+                .get('/seven/days/races?dispatchPointId='+this.$route.query.from_id+'&arrivalPointId='+this.$route.query.to_id+'&date='+this.$route.query.on)
+                .then(response => {
+                    console.log(response)
+                    this.existingRaces.date = response.data.date
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+            await promise1
+            this.loadingRaces = false
+            if(!this.existingRaces.date){
+                return
+            }
+            // this.openWindow = false
+            // router.push({name: 'Main'})
+            console.log(this.existingRaces.date)
+            
+            router.push({ name: 'Races', query: { from_id: this.$route.query.from_id, to_id: this.$route.query.to_id, on: this.existingRaces.date}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
+            this.date = this.existingRaces.date
+            this.paramKey ++
+            // this.$forceUpdate(); 
+
+            // router.go(1)
+            console.log(this.$route)
+            console.log(window.location.origin + this.$route.fullPath)
+            // router.replace(this.$route.path)
+            // window.location.replace(window.location.origin + this.$route.fullPath);
+            this.changeRaces0(this.existingRaces.date, this.$route.query.from_id, this.$route.query.to_id, this.$route.params['dispatch_name'], this.$route.params['arrival_name'])
+        },
+        async changeRaces0(date, dispatch_id, arrival_id, dispatch_name, arrival_name){
+            // window.scrollTo(0, 600);
+            this.loadingRaces = true
+
+
             this.races = []
             this.errorNames.dispatch = dispatch_name
             this.errorNames.arrival = arrival_name
@@ -380,13 +455,13 @@ export default {
                 console.log(error)
             })
             await promise1
-
-            const promis2 = axiosClient
+            const promise2 = axiosClient
                 .get('/races/'+date+'/?dispatch_point_id='+dispatch_id+'&arrival_point_id='+arrival_id)
                 .then(response => (
                     this.races = response.data
                 ));
-            await promis2
+            await promise2
+            window.scrollTo(0, 600);
             if(this.races.length > 0){
                 this.races.forEach(race => {
                     race.section = 'route'
@@ -398,8 +473,9 @@ export default {
                 });
             }
             else{
-                var calendarInput = document.querySelector('#calendar');
-                calendarInput.focus();
+                // this.openWindow = true
+                // var calendarInput = document.querySelector('#calendar');
+                // calendarInput.focus();
             }
             const promise3 = axiosClient
             .get('/bus/route?dispatchPointName='+dispatch_name+'&arrivalPointName='+arrival_name)

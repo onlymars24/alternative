@@ -50,7 +50,17 @@ use App\Http\Controllers\PaymentController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  dd();
+  $date1 = '2024-06-06';
+  $arr = [];
+  for($i = 1; $i <= 7; $i++){
+    $datetime = new DateTime($date1);
+    $datetime->modify('+'.$i.' day');
+    $date = $datetime->format('Y-m-d');    
+    $arr[] = $date;
+  }
+
+  dd($arr);
+
 });
 
 

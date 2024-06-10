@@ -170,6 +170,27 @@
     <div v-if="this.content==10">
       <FixUser :unfixedUserData="unfixedUserData" @makeFixed="$emit('makeFixed')"/>
     </div>
+    <div v-if="this.content==11">
+      <div v-if="this.existingRaces.step == 1">
+        <p style="font-size: 24px;">Найти ближайшие рейсы на другую дату?</p>
+        <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 10px;">
+          <button class="btn btn-primary btn-code" @click="$emit('findOtherDates')"><div style="font-size: 20px;">Да</div></button>    
+          <button class="btn btn-outline-secondary btn-code" @click="$emit('CloseWindow')"><div style="font-size: 20px;">Нет</div></button>
+        </div> 
+      </div>
+      <div v-if="this.existingRaces.step == 2">
+          <div v-if="this.existingRaces.loading" class="loader__outside">
+            <img src="../assets/bus_loading.png" style="max-width: 90%;">
+            <p style="color: grey;">Загрузка.....</p>  
+            <div class="loader"></div>
+          </div>
+          <div v-else>
+            <div v-if="!existingRaces.date">
+              <p style="font-size: 24px;">На ближайшие 7 дней рейсы не найдены.</p>
+            </div>
+          </div>
+      </div>
+    </div>
 </div>
 </template>
 <script scoped>
@@ -210,8 +231,8 @@ export default
       // unfixedUserStep: 1
     }
   },
-  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice', 'unfixedUserData'],
-  emits: ['makeFixed', 'confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail'],
+  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice', 'unfixedUserData', 'existingRaces'],
+  emits: ['makeFixed', 'confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail', 'findOtherDates'],
   components: { Seat, Login, Registration, ResetPassword, FixUser },
   computed: {
     UserAgreement() {
