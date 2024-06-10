@@ -36,7 +36,6 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\UsersExportController;
 
 
 /*
@@ -51,30 +50,8 @@ use App\Http\Controllers\UsersExportController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  $user = User::find(2);
-  $phoneWithoutMask = SmsService::removeMask($user->phone);
-  $checkWhatsApp = Http::
-  post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));
-  $checkWhatsApp = json_decode($checkWhatsApp);
 
-  if(isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
-      $message = '💳 *Получите Кэшбэк!*
 
-*Благодарим за оформление электронного билета!*
-
-Рекомендуем сразу посмотреть билеты на обратный рейс (при его наличии) на сайте
-Росвокзалы.рф
-
-🎫🚍 Также для вас доступна возможность *компенсировать до 50% стоимости поездки.* Если хотите получить частичную компенсацию, напишите в ответ слово *"кэшбэк"*.💰
-
-Мы вышлем, что нужно для этого сделать.';
-      $whatsAppService = Http::
-      post(env('WAPICO_URL').'/task_add.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&message='.$message
-      .'&instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');
-      $whatsAppService = json_decode($whatsAppService);
-      Log::info('whatsAppService: '.json_encode($whatsAppService));
-      dd('');
-}
 });
 
 
@@ -89,8 +66,6 @@ Route::get('/download/sitemap', function (Request $request) {
 });
 
 Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');
-
-Route::get('/export/users/', [UsersExportController::class, 'export'])->name('export.users');
 
 Route::get('/export/pdf/', [PdfController::class, 'export'])->name('export.pdf');
 

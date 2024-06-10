@@ -72,7 +72,6 @@ export default
       await promise2
       this.updateOrders()
     }
-	  
   },
   computed: {
     // vkShare(){
