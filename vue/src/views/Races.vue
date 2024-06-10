@@ -38,16 +38,16 @@
                     <div class="not__found-text">
                         <p v-if="this.existingRaces.step == 1" style="margin-bottom: 7px; line-height: 30px;" class="not__found-title">
                             {{errorNames.dispatch}} — {{errorNames.arrival}}
-                            на <strong> {{ dateForError == dates.today ? 'сегодня' : '' }} 
+                            <strong>на  {{ dateForError == dates.today ? 'сегодня' : '' }} 
                             {{ dateForError == dates.tomorrow ? 'завтра' : '' }} 
-                            {{ dateForError == dates.afterTomorrow ? 'послезавтра' : '' }} {{ dateForError }}</strong>
-                            Билеты не найдены
+                            {{ dateForError == dates.afterTomorrow ? 'послезавтра' : '' }} {{ dateForError }}
+                            билеты не найдены.</strong>
                         </p>
                         <!-- <p class="not__found-descr">
                             Выберите другую дату или точки отправления и прибытия.
                         </p> -->
                         <div v-if="this.existingRaces.step == 1">
-                            <p style="font-size: 24px;  line-height: 30px;">Выберите другую дату или точки отправления и прибытия.</p>
+                            <!-- <p style="font-size: 24px;  line-height: 30px;">Выберите другую дату или точки отправления и прибытия.</p> -->
                             <p style="font-size: 24px; margin-top: 10px; line-height: 30px;">Найти ближайшие рейсы на другую дату?</p>
                             <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 7px;">
                             <button class="btn btn-primary btn-code" @click="findOtherDates"><div style="font-size: 20px;">Найти</div></button>    
