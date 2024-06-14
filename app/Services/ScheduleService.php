@@ -28,8 +28,12 @@ class ScheduleService
         // dd($orders);
         foreach($orders as $order){
             $order_info = json_decode($order->order_info);
-            if($order_info->status != 'R' && $order_info->status != 'B'){
-                $user = $order->user;
+            $user = $order->user;
+            $threeMinBefore = date_create($now);
+            date_modify($threeMinBefore, '-3 min');
+            $threeMinBefore = date_format($threeMinBefore, 'Y-m-d H:i:s');
+            if($order_info->status != 'R' && $order_info->status != 'B' && !WhatsAppSms::where([['created_at', '<', $threeMinBefore], ['phone', '=', $user->phone]])->first()){
+                
                 $phoneWithoutMask = SmsService::removeMask($user->phone);
                 $checkWhatsApp = Http::
                 post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));

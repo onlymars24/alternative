@@ -11,6 +11,7 @@ use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
 use Nette\Utils\DateTime;
 use App\Models\Transaction;
+use App\Models\WhatsAppSms;
 use App\Enums\InsuranceEnum;
 use App\Services\SmsService;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ use App\Services\FermaService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\FixUserService;
 use App\Models\CacheArrivalPoint;
+use App\Services\ScheduleService;
 use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +39,6 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
-use App\Services\ScheduleService;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +52,12 @@ use App\Services\ScheduleService;
 */
 
 Route::get('/spread/', function (Request $request) {
-  ScheduleService::dispatchInform();
+  // // ScheduleService::dispatchInform();
+  // $now = date('Y-m-d H:i:s');
+  // $threeMinBefore = date_create($now);
+  // date_modify($threeMinBefore, '-3 min');
+  // $threeMinBefore = date_format($threeMinBefore, 'Y-m-d H:i:s');
+  // dd(WhatsAppSms::where([['created_at', '>', '2024-06-10 13:27:01']])->first());
 });
 
 
