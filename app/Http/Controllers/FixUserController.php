@@ -162,7 +162,7 @@ class FixUserController extends Controller
         }
 
         if(!$sms && !$smsWhatsApp){
-            Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail('+'.$request->phone, 'Смена пароля', false));
+            // Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail('+'.$request->phone, 'Смена пароля', false));
             return response([
                 'errorMessage' => 'Код подтверждения неверный!'
             ], 422);

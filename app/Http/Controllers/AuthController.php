@@ -177,7 +177,7 @@ class AuthController extends Controller
             $sms->save();
         }
         else{
-            Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail('+'.$request->phone, 'Сменя пароля', false));
+            // Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail('+'.$request->phone, 'Сменя пароля', false));
             return response([
                 'error' => 'Код подтверждения неверный!'
             ], 422);
