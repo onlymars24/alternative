@@ -88,8 +88,8 @@ class SmsController extends Controller
             ], 422);
         }
         $code = random_int(100000, 999999);
-        $message = 'Код на росвокзалы.рф: '.$code.'
-Поддержка в ВК-группе: vk.com/rosvokzaly';
+                $message = 'Код на росвокзалы.рф: '.$code.'
+        Поддержка в ВК-группе: vk.com/rosvokzaly';
         $whatsAppSent = false;
         $phoneWithoutMask = SmsService::removeMask($request->phone);
         $checkWhatsApp = Http::
@@ -268,11 +268,11 @@ class SmsController extends Controller
             );
         }
 
-        $code = random_int(100000, 999999);
-        $message = 'Код на росвокзалы.рф: '.$code.'
-Поддержка в ВК-группе: vk.com/rosvokzaly';
-//         $messageWhatsApp = 'Код на росвокзалы.рф: '.$code.'
-// Поддержка в ВК-группе: vk.com/rosvokzaly';
+                $code = random_int(100000, 999999);
+                $message = 'Код на росвокзалы.рф: '.$code.'
+        Поддержка в ВК-группе: vk.com/rosvokzaly';
+        // $messageWhatsApp = 'Код на росвокзалы.рф: '.$code.'
+        // Поддержка в ВК-группе: vk.com/rosvokzaly';
         $whatsAppSent = false;
 
 

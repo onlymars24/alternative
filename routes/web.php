@@ -52,6 +52,7 @@ use App\Http\Controllers\UsersExportController;
 */
 
 Route::get('/spread/', function (Request $request) {
+  // dd(Auth::attempt(['phone' => '+7 (900) 254 8038', 'confirmed' => 1]));
   // // ScheduleService::dispatchInform();
   // $now = date('Y-m-d H:i:s');
   // $threeMinBefore = date_create($now);

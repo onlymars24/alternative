@@ -18,12 +18,19 @@
                     </div>
                     <div>
                       <label for="tel1" class="form-label label-gray">Телефон</label>
-                      <input style="font-size: 24px;" @focus="phoneErrorMessage=''" ref="refPhoneInput" v-mask="'+7 (###) ### ####'" type="tel" v-model="unfixedUserData.phone" class="form-control phone__input" :class="{'is-invalid': phoneErrorMessage}" id="tel1" maxlength="17">
+                      <input style="font-size: 24px;" @focus="phoneErrorMessage=''" ref="refPhoneInput" placeholder="+7 (___) ___ ____" v-mask="'+7 (9##) ### ####'" type="tel" v-model="unfixedUserData.phone" class="form-control phone__input" :class="{'is-invalid': phoneErrorMessage}" id="tel1" maxlength="17">
                       <div v-if="phoneErrorMessage" id="validationServer03Feedback" class="invalid-feedback" style="margin-bottom: 10px;">
                         {{phoneErrorMessage}}
                       </div>  
                     </div>
                     <button @click="smsCodeSend" :disabled="loading" class="btn btn-primary btn-code" ><div>Всё верно</div></button>
+                    <div class="block__check">
+                    <label style="padding-left: 0; margin-top: 10px;" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/offercontract.pdf'" target="_blank" style="color: var(--blue);">Пользовательского соглашения</a> и <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank" style="color: var(--blue);">Политики конфиденциальности</a>
+                        <!-- <input type="checkbox" v-model="user.formConditionTop"> -->
+                        <!-- <span class="checkmark is-invalid"></span>
+                        <div v-if="userErrors['formConditionTop']" class="invalid-feedback">{{ userErrors['formConditionTop'][0] }}</div> -->
+                    </label>
+                </div>
                     <div v-if="loading" class="text-center" style="margin-top: 10px;">
                         <div class="spinner-border" role="status"></div>
                     </div>
@@ -40,7 +47,7 @@
                     <label for="tel" class="form-label label-gray">Код подтверждения</label>
                     <input type="text" class="form-control inp-gray"  id="code" v-model="code">
                     <button @click="smsCodeConfirm" class="btn btn-primary btn-code">Подтвердить</button>
-                    <p v-if="countDown" style="font-size: 14px; margin-top: 8px;">Повторное СМС можно отправить через {{ countDown }} сек.</p>
+                    <p v-if="countDown" style="font-size: 14px; margin-top: 8px;">Повторно код подтверждения можно отправить через {{ countDown }} сек.</p>
                     <div v-else class="">
                         <button v-if="this.whatsAppSent" @click="this.whatsAppChosen = true; smsCodeSend()" class="btn-code btn__new-code">Отправить код повторно на WhatsApp</button>
                         <button @click="this.whatsAppChosen = false; smsCodeSend()" class="btn-code btn__new-code">Отправить код повторно по СМС</button>
@@ -78,6 +85,7 @@ import router from '../router'
         methods: {
             async smsCodeSend(){
                 this.phoneErrorMessage = ''
+                this.wrongCodeMessage = ''
                 this.loading = true
                 const promise1 = axiosClient
                 .get('/unfixed/user?bankOrderId='+this.unfixedUserData.bankOrderId)
@@ -94,12 +102,17 @@ import router from '../router'
                 })
                 await promise1
                 const promise2 = axiosClient
-                .post('/fix/user/sms/', { phone: this.unfixedUserData.phone, bankOrderId: this.unfixedUserData.bankOrderId, whatsAppChosen: this.whatsAppChosen })
+                .post('/send/sms/auth/', { user: {phone: this.unfixedUserData.phone}, whatsAppChosen: this.whatsAppChosen })
                 .then(response => {
                     this.whatsAppSent = response.data.whatsAppSent
                     console.log(response.data)
                     this.step = 2
-                    this.countDown = 120
+                    if(this.whatsAppSent){
+                        this.countDown = 30
+                    }
+                    else{
+                        this.countDown = 120
+                    }
                     console.log('start')
                     this.countDownTimer()
                 })
@@ -109,6 +122,9 @@ import router from '../router'
                     if(error.response.status == 422){
                         if(error.response.data.errors && error.response.data.errors.phone && error.response.data.errors.phone[0]){
                             this.phoneErrorMessage = error.response.data.errors.phone[0]
+                        }
+                        if(error.response.data.errorMessage){
+                            this.phoneErrorMessage = error.response.data.errorMessage
                         }
                     }
                 });
@@ -128,8 +144,8 @@ import router from '../router'
                 .catch(error => {
                     console.log(error)
                     if(error.response.status == 422){
-                        if(error.response.data.error){
-                            this.wrongCodeMessage = error.response.data.error
+                        if(error.response.data.errorMessage){
+                            this.wrongCodeMessage = error.response.data.errorMessage
                         }
                     }
                 });

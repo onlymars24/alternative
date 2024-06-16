@@ -48,7 +48,6 @@ class OrderController extends Controller
             $user = User::create([
                 'phone' => $request->phone,
                 'confirmed' => false,
-                'password' => Hash::make($request->newPassword)
             ]);
             
         }
@@ -266,7 +265,7 @@ class OrderController extends Controller
                     'type' => 'paymentReminder',
                     'status' => 0,
                     'message' => $message
-                ]);            
+                ]);
             }
         }
 

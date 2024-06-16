@@ -267,7 +267,7 @@
         <div class="ticket-registration">
           <hr>
           <label for="" class="form-label">Номер телефона</label>
-          <input style="font-size: 24px;" ref="refPhoneInput" @focus="phoneError = ''" v-model="phone" v-mask="'+7 (###) ### ####'" type="tel" class="form-control phone__input" :class="{'is-invalid': phoneError}" id="tel1" maxlength="17">
+          <input style="font-size: 24px;" ref="refPhoneInput" @focus="phoneError = ''" v-model="phone" placeholder="+7 (___) ___ ____" v-mask="'+7 (9##) ### ####'" type="tel" class="form-control phone__input" :class="{'is-invalid': phoneError}" id="tel1" maxlength="17">
           <div v-if="phoneError" class="invalid-feedback">
             {{ phoneError }}
           </div>          

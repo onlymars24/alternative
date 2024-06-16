@@ -135,13 +135,22 @@ Route::post('/expense', [ExpensesController::class, 'one']);
 // });
 
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/sms/reset', [SmsController::class, 'sendReset']);
-Route::get('/sms/reset', [SmsController::class, 'getReset']);
-Route::post('/sms/register', [SmsController::class, 'sendRegister']);
-Route::get('/sms/register', [SmsController::class, 'getRegister']);
-Route::post('/reset', [AuthController::class, 'reset']);
+// Route::post('/register', [AuthController::class, 'register']);
+// Route::post('/login', [AuthController::class, 'login']);
+
+Route::post('/send/sms/auth', [AuthController::class, 'sendSmsAuth']);
+Route::get('/confirm/sms/auth', [AuthController::class, 'confirmAuth']);
+
+
+
+
+// Route::post('/sms/reset', [SmsController::class, 'sendReset']);
+// Route::get('/sms/reset', [SmsController::class, 'getReset']);
+// Route::post('/sms/register', [SmsController::class, 'sendRegister']);
+// Route::get('/sms/register', [SmsController::class, 'getRegister']);
+// Route::post('/reset', [AuthController::class, 'reset']);
+
+
 Route::get('/sms/all', [SmsController::class, 'getAll']);
 Route::get('/sms/whatsapp/all', [SmsController::class, 'getWhatsAppAll']);
 
