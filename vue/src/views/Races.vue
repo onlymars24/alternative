@@ -94,7 +94,7 @@
                         <RaceCard @toSeats="toSeats" :race="race"/> 
                     </template>                
                 </div>
-                <div style="margin-top: 20px; list-style-type: unset;" v-if="busRoute" v-html="busRoute.content"></div>
+                <!-- <div style="margin-top: 20px; list-style-type: unset;" v-if="busRoute" v-html="busRoute.content"></div> -->
             </div>
 
             
@@ -107,7 +107,7 @@
 
 
 </div>
-<Footer/>
+<!-- <Footer/> -->
 </template>
 
 <style>

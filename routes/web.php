@@ -52,13 +52,15 @@ use App\Http\Controllers\UsersExportController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  // dd(Auth::attempt(['phone' => '+7 (900) 254 8038', 'confirmed' => 1]));
-  // // ScheduleService::dispatchInform();
-  // $now = date('Y-m-d H:i:s');
-  // $threeMinBefore = date_create($now);
-  // date_modify($threeMinBefore, '-3 min');
-  // $threeMinBefore = date_format($threeMinBefore, 'Y-m-d H:i:s');
-  // dd(WhatsAppSms::where([['created_at', '>', '2024-06-10 13:27:01']])->first());
+  $tickets = Ticket::all();
+  foreach($tickets as $ticket){
+    $order = $ticket->order;
+    $order_info = json_decode($order->order_info);
+    if(isset($order_info->status) && $order_info->status != 'B' && isset($order_info->finished)){
+      $ticket->confirmed_at = $order_info->finished;
+      $ticket->save();
+    }
+  }
 });
 
 
