@@ -14,8 +14,20 @@
    
     <div class="menu">
 		<div class="container">
-            <!-- {{ dates }} -->
-            <BusLoading v-if="loadingRaces"/>
+            <div v-if="loadingRaces">
+                <div v-if="formatedCacheRaces.length">
+                    <div class="loader__outside">
+                        <img src="../assets/bus_loading.png" style="max-width: 20%;">
+                        <p style="color: grey; font-size: 27px;">Обновляем список доступных рейсов.....</p>  
+                        <div class="loader"></div>
+                    </div>
+                    <template v-for="race in formatedCacheRaces">
+                        <RaceCard @toSeats="toSeats" :race="race" :cached="true"/> 
+                    </template>   
+                </div>
+                <BusLoading v-else/>
+            </div>
+            
             <div v-else>
                 <div v-if="!races.length && notExistingRace" class="not__found">
                     <!-- <div class="not__found-img">
@@ -35,7 +47,12 @@
                     <!-- <div class="not__found-img">
                         <img src="../assets/free-icon-sad-3350122.png">
                     </div> -->
-                    <div class="not__found-text">
+                    <div v-if="!this.$route.query.from_id || !this.$route.query.to_id" class="not__found-text">
+                        <p class="not__found-title">
+                            Выберите дату отправления и нажмите "Найти"
+                        </p>
+                    </div>
+                    <div v-else class="not__found-text">
                         <p v-if="this.existingRaces.step == 1" style="margin-bottom: 7px; line-height: 30px;" class="not__found-title">
                             {{errorNames.dispatch}} — {{errorNames.arrival}}
                             <strong>на  {{ dateForError == dates.today ? 'сегодня' : '' }} 
@@ -91,7 +108,7 @@
                     </div>
                     <template v-for="race in sortedRaces">
                         <!-- <pre>{{ race }}</pre> -->
-                        <RaceCard @toSeats="toSeats" :race="race"/> 
+                        <RaceCard @toSeats="toSeats" :race="race" :cached="false"/> 
                     </template>                
                 </div>
                 <!-- <div style="margin-top: 20px; list-style-type: unset;" v-if="busRoute" v-html="busRoute.content"></div> -->
@@ -230,11 +247,11 @@ export default {
     data(){
         return{
             arrivalEl: {
-                id: this.$route.query.to_id,
+                id: null,
                 name: this.$route.params['arrival_name']
             },
             dispatchEl: {
-                id: this.$route.query.from_id,
+                id: null,
                 name: this.$route.params['dispatch_name']
             },
             date: this.$route.query.on,
@@ -265,58 +282,47 @@ export default {
                 today: '',
                 tomorrow: '',
                 afterTomorrow: ''
-            }
+            },
+            cacheRaces: [],
+            formatedCacheRaces: []
         }
     },
+    // beforeMount(){
+    //     window.scrollTo(0, 600);
+    //     console.log('должен был съехать mounted')
+    // },
     async mounted(){
+        // window.scrollTo(0, 600);
+        // this.customScroll()
+        // console.log('должен был съехать mounted')
         this.dates.today = dayjs().format('DD.MM.YYYY')
         this.dates.tomorrow = dayjs().add(1, 'day').format('DD.MM.YYYY')
         this.dates.afterTomorrow = dayjs().add(2, 'day').format('DD.MM.YYYY')
-        window.scrollTo(0, 600);
-        // console.log(document.referrer)
-        // document.title = 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name'];
-        // const descEl = document.querySelector('head meta[name="description"]');
-        // descEl.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
-
-        // const linkCan = document.querySelector('head link[rel="canonical"]');
-        // linkCan.setAttribute('href', 'https://росвокзалы.рф/автобус/'+this.dispatchEl.name+'/'+this.arrivalEl.name);
-
-
-        // const twitterTitle = document.querySelector('head meta[name="twitter:title"]');
-        // twitterTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
-
-        // const twitterDescr = document.querySelector('head meta[name="twitter:description"]');
-        // twitterDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
-
-        // const ogTitle = document.querySelector('head meta[name="og:title"]');
-        // ogTitle.setAttribute('content', 'Автобус '+this.$route.params['dispatch_name']+' - '+this.$route.params['arrival_name']);
-
-        // const ogDescr = document.querySelector('head meta[name="og:description"]');
-        // ogDescr.setAttribute('content', 'Автобус '+this.dispatchEl.name+' — '+this.arrivalEl.name+': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.');
-
-
+        
 
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if(!regex.test(this.date)){
             console.log('нет')
-            this.date = dayjs().format('YYYY-MM-DD') 
+            this.date = dayjs().format('YYYY-MM-DD')
         }
         let dispatchPoints =[]
+        
+
         const promise1 = axiosClient
         .get('/dispatch_points')
         .then(response => {
             dispatchPoints = response.data
         });
         await promise1
+        this.customScroll()
+        // console.log('должен был съехать mounted')
         let dispatchPoint = dispatchPoints.filter(point => {
             return point.name == this.dispatchEl.name
         })[0]
-        // if(!dispatchPoint){
-        //     this.$router.push({ name: 'Main' })
-        // }
-        
+
         let arrivalPoints = [];
         let arrivalPoint = null
+
         if(dispatchPoint){
             const promise2 = axiosClient
             .get('/arrival_points/'+dispatchPoint.id)
@@ -329,57 +335,35 @@ export default {
             })[0]
         }
 
-
-        // let arrivalPoints = [];
-        // const promise2 = axiosClient
-        // .get('/arrival_points/'+dispatchPoint.id)
-        // .then(response => {
-        //     arrivalPoints = JSON.parse(response.data.arrival_points)
-        // });
-        // await promise2
-        // let arrivalPoint = arrivalPoints.filter(point => {
-        //     return point.name == this.arrivalEl.name
-        // })[0]
         if(!arrivalPoint || !dispatchPoint){
-            // this.$router.push({ name: 'Main' })
             this.races = []
             this.loadingRaces = false
             this.notExistingRace = true
             return
         }
-        // if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
-        //     console.log('update')
-        //     localStorage.setItem('utm_data', JSON.stringify({
-        //         utm_source: this.$route.query.utm_source,
-        //         utm_medium: this.$route.query.utm_medium,
-        //         utm_campaign: this.$route.query.utm_campaign,
-        //         utm_content: this.$route.query.utm_content,
-        //         referrer_url: document.referrer,
-        //     }))
-        // }
-        if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
+        
+        
+
+        this.dispatchEl.id = dispatchPoint.id
+        this.arrivalEl.id = arrivalPoint.id
+        this.paramKey ++
+        if(!this.$route.query.from_id || !this.$route.query.to_id){
+            this.loadingRaces = false
+            console.log('Нету query')
+        }
+        else if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
             this.dispatchEl.id = dispatchPoint.id
             this.arrivalEl.id = arrivalPoint.id
             this.$router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date } })
             this.paramKey ++
         }
+        else{
+            this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id, dispatchPoint.name, arrivalPoint.name);
+            // this.loadingRaces = false
+        }
 
-        // const promise3 = axiosClient
-        // .post('/races/xml/create', {dispatchName: dispatchPoint.name, arrivalName: arrivalPoint.name})
-        // .then(response => {
-        //     console.log(response)
-        // })
-        // .catch(error => {
-        //     console.log(error)
-        // })
-        // await promise3
-
-        
-
-        this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id, dispatchPoint.name, arrivalPoint.name);
+        // 
         this.dateForError = dayjs(this.date).format('DD.MM.YYYY')
-        // console.log(window.location.origin + this.$route.fullPath)
-        // console.log(this.$route)
     },
     computed: {
         sortedRaces(){
@@ -394,20 +378,24 @@ export default {
             }
             let key = this.sortingParams.param
             return this.races.sort(function (a, b) {
-            if (a[key] > b[key]) {
-                return direction[0];
-            }
-            if (a[key] < b[key]) {
-                return direction[1];
-            }
-            return 0;
+                if (a[key] > b[key]) {
+                    return direction[0];
+                }
+                if (a[key] < b[key]) {
+                    return direction[1];
+                }
+                return 0;
             });
         }
     },
     methods: {
+        customScroll(){
+            window.scrollTo(0, 800);
+        },
         async findOtherDates(){
             this.loadingRaces = true
             window.scrollTo(0, 600);
+            // console.log('должен был съехать findOtherDates')
             this.existingRaces.step = 2
             const promise1 = axiosClient
                 .get('/seven/days/races?dispatchPointId='+this.$route.query.from_id+'&arrivalPointId='+this.$route.query.to_id+'&date='+this.$route.query.on)
@@ -441,6 +429,7 @@ export default {
         },
         async changeRaces0(date, dispatch_id, arrival_id, dispatch_name, arrival_name){
             // window.scrollTo(0, 600);
+            // console.log('должен был съехать changeRaces0')
             this.loadingRaces = true
 
 
@@ -448,22 +437,48 @@ export default {
             this.errorNames.dispatch = dispatch_name
             this.errorNames.arrival = arrival_name
 
+            // const promise = axiosClient
+            // .post('/races/xml/create', {dispatchName: dispatch_name, arrivalName: arrival_name})
+            // .then(response => {
+            //     console.log(response)
+            // })
+            // .catch(error => {
+            //     console.log(error)
+            // })
+            // await promise
+
             const promise1 = axiosClient
-            .post('/races/xml/create', {dispatchName: dispatch_name, arrivalName: arrival_name})
-            .then(response => {
-                console.log(response)
+            .get('/cache/races?dispatchPointName='+dispatch_name+'&arrivalPointName='+arrival_name+'&date='+date)
+            .then(response => {       
+                this.cacheRaces = response.data.cacheRaces
+                console.log(this.cacheRaces)
             })
             .catch(error => {
                 console.log(error)
             })
             await promise1
+
+            if(this.cacheRaces.length > 0){
+                this.cacheRaces.forEach(race => {
+                    race.section = 'route'
+                    race.details_menu = false
+                    race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
+                    race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
+                    race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
+                    race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
+                });
+                this.formatedCacheRaces = this.cacheRaces
+            }
+
+            console.log(dispatch_name, arrival_name)
+
             const promise2 = axiosClient
-                .get('/races/'+date+'/?dispatch_point_id='+dispatch_id+'&arrival_point_id='+arrival_id)
-                .then(response => (
-                    this.races = response.data
-                ));
+            .get('/races/'+date+'/?dispatch_point_id='+dispatch_id+'&arrival_point_id='+arrival_id
+            +'&dispatch_point_name='+dispatch_name+'&arrival_point_name='+arrival_name)
+            .then(response => (
+                this.races = response.data
+            ));
             await promise2
-            // window.scrollTo(0, 600);
             if(this.races.length > 0){
                 this.races.forEach(race => {
                     race.section = 'route'
@@ -474,11 +489,6 @@ export default {
                     race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
                 });
             }
-            else{
-                // this.openWindow = true
-                // var calendarInput = document.querySelector('#calendar');
-                // calendarInput.focus();
-            }
             const promise3 = axiosClient
             .get('/bus/route?dispatchPointName='+dispatch_name+'&arrivalPointName='+arrival_name)
             .then(response => {
@@ -487,6 +497,7 @@ export default {
             .catch(error => {
                 console.log(error)
             })
+            await promise3
             this.loadingRaces = false
         },
         sort(event, param){

@@ -9,6 +9,7 @@ use App\Mail\OrderMail;
 use App\Models\Setting;
 use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
+use App\Models\CacheRace;
 use Nette\Utils\DateTime;
 use App\Models\Transaction;
 use App\Models\WhatsAppSms;
@@ -52,15 +53,7 @@ use App\Http\Controllers\UsersExportController;
 */
 
 Route::get('/spread/', function (Request $request) {
-  $tickets = Ticket::all();
-  foreach($tickets as $ticket){
-    $order = $ticket->order;
-    $order_info = json_decode($order->order_info);
-    if(isset($order_info->status) && $order_info->status != 'B' && isset($order_info->finished)){
-      $ticket->confirmed_at = $order_info->finished;
-      $ticket->save();
-    }
-  }
+
 });
 
 

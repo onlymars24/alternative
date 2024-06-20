@@ -2,6 +2,7 @@
 <template>
   <!-- <button @click="$emit('toSeats', race.uid)">Тест</button> -->
    <div class="menu__ticket">
+    <!-- <p v-if="cached">CACHED</p> -->
 	 <div class="menu__ticket-up">
 	   <div class="ticket-up__left">
 		 <div class="ticket-up__left-ins">
@@ -55,9 +56,14 @@
 		   </div>
 		   <div class="right-ins__right">
 			 <div class="right-ins__right-button">
-			   <button :disabled="race.freeSeatCount == 0" @click="$emit('toSeats', race.uid)" class="buy__but">
+			   
+        <button v-if="!cached" :disabled="race.freeSeatCount == 0" @click="$emit('toSeats', race.uid)" class="buy__but">
 				 Выбрать
 			   </button>
+         <button v-else style="background-color: gray;" class="buy__but">
+          Обновляем...
+			   </button>
+
 			 </div>
 			 <div class="right-ins__right-text">Количество мест: {{ race.freeSeatCount }}</div>
 		   </div>
@@ -992,7 +998,7 @@
 	import router from '../router'
 	export default{
 		components: { DepartureArrival, TicketLow },
-		props: ['race', 'button_status'],
+		props: ['race', 'button_status', 'cached'],
     emits: ['toSeats'],
 		data(){
 			return{

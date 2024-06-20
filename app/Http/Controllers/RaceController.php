@@ -49,4 +49,5 @@ class RaceController extends Controller
             'date' => null
         ]);
     }
+
 }

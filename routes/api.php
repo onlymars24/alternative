@@ -29,6 +29,7 @@ use App\Http\Controllers\NewPointsController;
 use App\Http\Controllers\RobotsTxtController;
 use App\Http\Controllers\BusStationController;
 use App\Http\Controllers\PassengersController;
+use App\Http\Controllers\RacesCacheController;
 use App\Http\Controllers\Api\SendSmsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
@@ -170,6 +171,8 @@ Route::post('/match/delete', [MatchController::class, 'delete']);
 
 Route::post('/match/replacement', [MatchController::class, 'replacement']);
 Route::post('/races/xml/create', [RacesXmlController::class, 'create']);
+
+Route::get('/cache/races', [RacesCacheController::class, 'get']);
 
 
 Route::get('/events', [EventController::class, 'all']);

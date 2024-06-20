@@ -343,7 +343,7 @@ export default
             
             if(ticket.status == 'R'){
                 
-                ticket.updated_at = dayjs(ticket.returnedMoscow).format('YYYY-MM-DD HH:mm:ss')
+                ticket.updated_at = dayjs(ticket.returned).format('YYYY-MM-DD HH:mm:ss')
                 ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
                 ticket.dateReturned = ticket.updated_at
             }
@@ -567,8 +567,8 @@ export default
             let ticketsTable = this.ticketsArray.filter(ticket => {
                 return  (
                             ticket.status != 'B' &&
-                            ticket.created_at > comparingDates[0] &&
-                            ticket.created_at < comparingDates[1]
+                            ticket.confirmed_at > comparingDates[0] &&
+                            ticket.confirmed_at < comparingDates[1]
                         )
                         ||
                         (
@@ -583,16 +583,16 @@ export default
                 ticket.tableDiffPrice = (0).toFixed(2)
             if(ticket.status != 'B' && 
                     ticket.status != 'R' && 
-                    ticket.created_at > comparingDates[0] &&
-                    ticket.created_at < comparingDates[1]
+                    ticket.confirmed_at > comparingDates[0] &&
+                    ticket.confirmed_at < comparingDates[1]
                 ){
                     ticket.tablePrice = ticket.price
                     ticket.tableRepayment = (0).toFixed(2)
                     ticket.tableDiffPrice = (0).toFixed(2)
                 }
             else if(ticket.status == 'R' && 
-                    ticket.created_at > comparingDates[0] &&
-                    ticket.created_at < comparingDates[1] &&
+                    ticket.confirmed_at > comparingDates[0] &&
+                    ticket.confirmed_at < comparingDates[1] &&
                     ticket.updated_at > comparingDates[0] &&
                     ticket.updated_at < comparingDates[1]
                 ){
@@ -621,8 +621,8 @@ export default
         tickets(){
             return this.ticketsArray.filter(ticket => {
                 return  ticket.status != 'B' &&
-                        ticket.created_at > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
-                        ticket.created_at < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
+                        ticket.confirmed_at > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
+                        ticket.confirmed_at < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
             })
         },
         returnedTickets(){

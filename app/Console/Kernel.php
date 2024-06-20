@@ -4,6 +4,7 @@ namespace App\Console;
 
 use DateTimeZone;
 use App\Models\Order;
+use App\Models\CacheRace;
 use Nette\Utils\DateTime;
 use App\Models\WhatsAppSms;
 use App\Services\SmsService;
@@ -95,6 +96,13 @@ class Kernel extends ConsoleKernel
 
             ScheduleService::dispatchInform();
         })->everyThreeMinutes();
+
+        $schedule->call(function () {
+            $cacheRaces = CacheRace::where([
+                ['date', '<', date('Y-m-d')]
+            ])->delete();
+            Log::info('Deleted successful!');
+        })->daily();
     }
 
     /**
