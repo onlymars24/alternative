@@ -85,7 +85,7 @@ class AuthController extends Controller
                     'errors' => ['phone' => ['Произошла непредвиденная ошибка! Повторите позднее!']]
                 ], 422);
             }
-
+            sleep(2);
             $whatsAppService2 = Http::
             post(env('WAPICO_URL').'/task_add.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&message='.$code.'
             &instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');

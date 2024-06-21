@@ -117,7 +117,6 @@ class SmsController extends Controller
                 'type' => 'reset',
                 'status' => 0
             ]);
-
             $whatsAppService2 = Http::
             get(env('WAPICO_URL').'/task_status.php?access_token='.env('WAPICO_KEY').'&task_id='.$whatsAppService->data->task_id);
 

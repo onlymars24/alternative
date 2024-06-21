@@ -44,7 +44,8 @@
 
         <div class="text item"><strong>Тип билета:</strong> {{ ticket.ticketType }}</div>
         <div class="text item"><strong>ФИО:</strong> {{ ticket.lastName }} {{ ticket.firstName }} {{ ticket.middleName }}</div>
-        <div class="text item"><strong>Телефон:</strong> {{ ticket.phone }}</div>
+        <div class="text item"><strong>Телефон сохранённый на Етрафике:</strong><br/> {{ ticket.phone }}</div>
+        <div class="text item"><strong>Телефон аккаунта:</strong> {{ (ticket.order && ticket.order.user && ticket.order.user.phone) ? ticket.order.user.phone : '' }}</div>
         <div class="text item"><strong>Страхование:</strong> {{ ticket.insurance ? 'Застрахован' : 'Не застрахован' }}</div>
         <div class="text item"><strong>Стоимость страховки:</strong> {{ this.ticket.insurance !== null ? this.ticket.insurance.rate[0].value : 0 }}.00₽</div>
         <div v-if="ticket.status == 'S'" class="text item" style="margin-top: 5px;"><el-button type="danger" :loading="returnLoading" @click="returnTicket(this.ticket.id, this.ticket.order_id)">Вернуть билет</el-button> </div>

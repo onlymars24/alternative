@@ -28,7 +28,7 @@ class TicketController extends Controller
                 'errorMessage' => 'Ошибка доступа!'
             ], 401);
         }
-        $tickets = Ticket::orderByDesc('id')->get();
+        $tickets = Ticket::orderByDesc('id')->with('order.user')->get();
         return response([
             'tickets' => $tickets
         ]);

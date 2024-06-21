@@ -390,7 +390,7 @@ export default {
     },
     methods: {
         customScroll(){
-            window.scrollTo(0, 800);
+            window.scrollTo(0, 600);
         },
         async findOtherDates(){
             this.loadingRaces = true

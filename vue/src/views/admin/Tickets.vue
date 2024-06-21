@@ -23,7 +23,7 @@
                             <FilterSelect :title="'Тип билета'" :ind="'ticketType'" :selectData="ticketTypes" :filterEl="filterArr['ticketType']" @setSelectFilter="setSelectFilter" @deleteSelectFilter="deleteSelectFilter"/>
                             <FilterSelect :title="'Статус билета'" :ind="'status'" :selectData="ticketStatuses" :filterEl="filterArr['status']" @setSelectFilter="setSelectFilter" @deleteSelectFilter="deleteSelectFilter"/>
                             <div class="text item" style="margin-bottom: 10px;">
-                                <div>Номер телефона:</div>   
+                                <div>Телефон аккаунта:</div>   
                                 <div v-show="!filterArr['phone'].set">
                                     <el-input
                                         v-mask="'+7 (###) ### ####'"
@@ -273,51 +273,13 @@ export default
         filterCondition(ind, elem){
             return (!this.filterArr[ind].set || (this.filterArr[ind].set && elem[ind] == this.filterArr[ind].value))
         },
-        // resetPhoneFilter(){
-        //     [].forEach.call(document.querySelectorAll(".phone__input-filter div input"), function (input) {
-        //     var keyCode;
-        //     function mask(event) {
-        //     event.keyCode && (keyCode = event.keyCode);
-        //     var pos = this.selectionStart;
-        //     if (pos < 3) event.preventDefault();
-        //     var matrix = "+7 (___) ___ ____",
-        //         i = 0,
-        //         def = matrix.replace(/\D/g, ""),
-        //         val = this.value.replace(/\D/g, ""),
-        //         new_value = matrix.replace(/[_\d]/g, function (a) {
-        //         return i < val.length ? val.charAt(i++) || def.charAt(i) : a;
-        //         });
-        //     i = new_value.indexOf("_");
-        //     if (i != -1) {
-        //         i < 5 && (i = 3);
-        //         new_value = new_value.slice(0, i);
-        //     }
-        //     var reg = matrix
-        //         .substr(0, this.value.length)
-        //         .replace(/_+/g, function (a) {
-        //         return "\\d{1," + a.length + "}";
-        //         })
-        //         .replace(/[+()]/g, "\\$&");
-        //     reg = new RegExp("^" + reg + "$");
-        //     if (
-        //         !reg.test(this.value) ||
-        //         this.value.length < 5 ||
-        //         (keyCode > 47 && keyCode < 58)
-        //     )
-        //         this.value = new_value;
-        //     if (event.type == "blur" && this.value.length < 5) this.value = "";
-        //     }
-        //     input.addEventListener("input", mask, false);
-        //     input.addEventListener("focus", mask, false);
-        //     input.addEventListener("blur", mask, false);
-        //     input.addEventListener("keydown", mask, false);
-        // });
-        // return 'ok';
-        // }
     },
     computed: {
         filteredTickets(){
             return this.tickets.filter(elem => {
+                // console.log('elem')
+                // console.log(elem)
+                // console.log(elem.order.user.phone)
                 return  this.filterCondition('firstName', elem) &&
                         this.filterCondition('birthday', elem) &&
                         (elem.price > this.filterArr.price.value[0] && elem.price < this.filterArr.price.value[1]) &&
@@ -329,7 +291,8 @@ export default
                         this.filterCondition('ticketNum', elem) &&
                         this.filterCondition('docSeries', elem) &&
                         this.filterCondition('docNum', elem) &&
-                        this.filterCondition('phone', elem) &&
+                        // this.filterCondition('phone', elem) &&
+                        (elem['order'] && elem['order']['user'] ? (!this.filterArr['phone'].set || (this.filterArr['phone'].set && elem['order']['user']['phone'] == this.filterArr['phone'].value)) : (!this.filterArr['phone'].set || (this.filterArr['phone'].set && elem['phone'] == this.filterArr['phone'].value))) &&
                         this.filterCondition('ticketType', elem) &&
                         this.filterCondition('status', elem) &&
                         this.filterCondition('order_id', elem) &&
