@@ -103,7 +103,7 @@
 						<span>{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} </span>
 						<br/>
 						<div class="order__card-ticket__info">
-							<a :href="ticket.status == 'R' ? baseUrl+'/ticket/download/'+ticket.hash+'_r.pdf' : baseUrl+'/ticket/download/'+ticket.hash+'.pdf'" style="display: block; color: #fff;" target="_blank">
+							<a :href="ticket.status == 'R' ? baseUrl+'/ticket/download/'+ticket.hash+'_r.pdf/'+(ticket.lastName+'_'+ticket.firstName+'_'+ticket.middleName+'_Место_'+ ticket.seat) : baseUrl+'/ticket/download/'+ticket.hash+'.pdf/'+(ticket.lastName+'_'+ticket.firstName+'_'+ticket.middleName+'_Место_'+ ticket.seat)" style="display: block; color: #fff;" target="_blank">
 								Скачать билет 
 							</a>
 							<!-- <br/> -->
