@@ -13,6 +13,16 @@ import * as directives from 'vuetify/directives'
 import ticketStatuses from './data/TicketStatuses';
 import VueTheMask from 'vue-the-mask'
 import CKEditor from '@ckeditor/ckeditor5-vue';
+
+import '@fontsource/roboto/100.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/roboto/900.css';
+
+import '@fontsource-variable/roboto-condensed';
+
 // import VueMasonry from 'vue-masonry-css'
 
 const vuetify = createVuetify({

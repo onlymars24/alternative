@@ -22,7 +22,7 @@
                         <div class="loader"></div>
                     </div>
                     <template v-for="race in formatedCacheRaces">
-                        <RaceCard @toSeats="toSeats" :race="race" :cached="true"/> 
+                        <RaceCard @toSeats="toSeats" :race="race" :button_status="'Обновляем...'"/> 
                     </template>   
                 </div>
                 <BusLoading v-else/>
@@ -43,16 +43,23 @@
                         </p>
                     </div>
                 </div>
-                <div v-else-if="!races.length && !notExistingRace" class="not__found">
-                    <!-- <div class="not__found-img">
-                        <img src="../assets/free-icon-sad-3350122.png">
-                    </div> -->
-                    <div v-if="!this.$route.query.from_id || !this.$route.query.to_id" class="not__found-text">
-                        <p class="not__found-title">
-                            Выберите дату отправления и нажмите "Найти"
-                        </p>
+                <div v-else-if="!races.length && !notExistingRace && !this.$route.query.from_id || !this.$route.query.to_id">
+                    <div class="not__found">
+                        <div class="not__found-text">
+                            <p class="not__found-title">
+                                Выберите дату отправления и нажмите "Найти билет"
+                            </p>
+                        </div>
                     </div>
-                    <div v-else class="not__found-text">
+                        <div v-if="formatedCacheRaces.length > 0">
+                            <template v-for="race in formatedCacheRaces">
+                                <RaceCard @toSeats="toSeats" :race="race" :button_status="'Обновить'" @findRacesWithDate="findRacesWithDate"/> 
+                            </template>
+                        </div>                       
+                </div>
+                <div v-else-if="!races.length && !notExistingRace" class="not__found">
+
+                    <div class="not__found-text">
                         <p v-if="this.existingRaces.step == 1" style="margin-bottom: 7px; line-height: 30px;" class="not__found-title">
                             {{errorNames.dispatch}} — {{errorNames.arrival}}
                             <strong>на  {{ dateForError == dates.today ? 'сегодня' : '' }} 
@@ -60,9 +67,6 @@
                             {{ dateForError == dates.afterTomorrow ? 'послезавтра' : '' }} {{ dateForError }}
                             билеты не найдены.</strong>
                         </p>
-                        <!-- <p class="not__found-descr">
-                            Выберите другую дату или точки отправления и прибытия.
-                        </p> -->
                         <div v-if="this.existingRaces.step == 1">
                             <!-- <p style="font-size: 24px;  line-height: 30px;">Выберите другую дату или точки отправления и прибытия.</p> -->
                             <p style="font-size: 24px; margin-top: 10px; line-height: 30px;">Найти ближайшие рейсы на другую дату?</p>
@@ -77,7 +81,6 @@
                                     на ближайшие 7 дней рейсы не найдены.</p>
                                 <p style="font-size: 30px; margin-top: 10px;">Выберите другую дату или точки отправления и прибытия.</p>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -108,9 +111,10 @@
                     </div>
                     <template v-for="race in sortedRaces">
                         <!-- <pre>{{ race }}</pre> -->
-                        <RaceCard @toSeats="toSeats" :race="race" :cached="false"/> 
+                        <RaceCard @toSeats="toSeats" :race="race" :button_status="'Выбрать'"/> 
                     </template>                
                 </div>
+
                 <!-- <div style="margin-top: 20px; list-style-type: unset;" v-if="busRoute" v-html="busRoute.content"></div> -->
             </div>
 
@@ -299,12 +303,36 @@ export default {
         this.dates.tomorrow = dayjs().add(1, 'day').format('DD.MM.YYYY')
         this.dates.afterTomorrow = dayjs().add(2, 'day').format('DD.MM.YYYY')
         
-
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if(!regex.test(this.date)){
             console.log('нет')
             this.date = dayjs().format('YYYY-MM-DD')
         }
+
+        const promise = axiosClient
+        .get('/cache/races?dispatchPointName='+this.dispatchEl.name+'&arrivalPointName='+this.arrivalEl.name+'&date='+this.date)
+        .then(response => {       
+            this.cacheRaces = response.data.cacheRaces
+            console.log(this.cacheRaces)
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        await promise
+
+        if(this.cacheRaces.length > 0){
+            this.cacheRaces.forEach(race => {
+                race.section = 'route'
+                race.details_menu = false
+                race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
+                race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
+                race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
+                race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
+            });
+            this.formatedCacheRaces = this.cacheRaces
+        }
+
+
         let dispatchPoints =[]
         
 
@@ -314,7 +342,10 @@ export default {
             dispatchPoints = response.data
         });
         await promise1
-        this.customScroll()
+        if(this.$route.query.from_id && this.$route.query.to_id && this.$route.query.on){
+            window.scrollTo(0, 600);
+        }
+        
         // console.log('должен был съехать mounted')
         let dispatchPoint = dispatchPoints.filter(point => {
             return point.name == this.dispatchEl.name
@@ -349,7 +380,7 @@ export default {
         this.paramKey ++
         if(!this.$route.query.from_id || !this.$route.query.to_id){
             this.loadingRaces = false
-            console.log('Нету query')
+            // console.log('Нету query')
         }
         else if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
             this.dispatchEl.id = dispatchPoint.id
@@ -389,8 +420,11 @@ export default {
         }
     },
     methods: {
-        customScroll(){
-            window.scrollTo(0, 600);
+        // customScroll(){
+        //     window.scrollTo(0, 600);
+        // },
+        findRacesWithDate(){
+            router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: dayjs().format('YYYY-MM-DD')}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
         },
         async findOtherDates(){
             this.loadingRaces = true
@@ -398,14 +432,14 @@ export default {
             // console.log('должен был съехать findOtherDates')
             this.existingRaces.step = 2
             const promise1 = axiosClient
-                .get('/seven/days/races?dispatchPointId='+this.$route.query.from_id+'&arrivalPointId='+this.$route.query.to_id+'&date='+this.$route.query.on)
-                .then(response => {
-                    console.log(response)
-                    this.existingRaces.date = response.data.date
-                })
-                .catch(error => {
-                    console.log(error)
-                });
+            .get('/seven/days/races?dispatchPointId='+this.$route.query.from_id+'&arrivalPointId='+this.$route.query.to_id+'&date='+this.$route.query.on)
+            .then(response => {
+                console.log(response)
+                this.existingRaces.date = response.data.date
+            })
+            .catch(error => {
+                console.log(error)
+            });
             await promise1
             this.loadingRaces = false
             if(!this.existingRaces.date){
@@ -447,28 +481,28 @@ export default {
             // })
             // await promise
 
-            const promise1 = axiosClient
-            .get('/cache/races?dispatchPointName='+dispatch_name+'&arrivalPointName='+arrival_name+'&date='+date)
-            .then(response => {       
-                this.cacheRaces = response.data.cacheRaces
-                console.log(this.cacheRaces)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-            await promise1
+            // const promise1 = axiosClient
+            // .get('/cache/races?dispatchPointName='+dispatch_name+'&arrivalPointName='+arrival_name+'&date='+date)
+            // .then(response => {       
+            //     this.cacheRaces = response.data.cacheRaces
+            //     console.log(this.cacheRaces)
+            // })
+            // .catch(error => {
+            //     console.log(error)
+            // })
+            // await promise1
 
-            if(this.cacheRaces.length > 0){
-                this.cacheRaces.forEach(race => {
-                    race.section = 'route'
-                    race.details_menu = false
-                    race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
-                    race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
-                    race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
-                    race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
-                });
-                this.formatedCacheRaces = this.cacheRaces
-            }
+            // if(this.cacheRaces.length > 0){
+            //     this.cacheRaces.forEach(race => {
+            //         race.section = 'route'
+            //         race.details_menu = false
+            //         race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
+            //         race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
+            //         race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
+            //         race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
+            //     });
+            //     this.formatedCacheRaces = this.cacheRaces
+            // }
 
             console.log(dispatch_name, arrival_name)
 

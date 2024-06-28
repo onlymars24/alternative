@@ -14,8 +14,8 @@
     
     </div>
   </div>
-  <hr class="bef__footer">
-    <Footer/>
+  <!-- <hr class="bef__footer">
+    <Footer/> -->
 </template>
 <script>
   import Header from '../components/Header.vue';

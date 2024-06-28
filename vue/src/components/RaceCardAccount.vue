@@ -95,22 +95,31 @@
 	 </div>
 	 <div class="menu__ticket-medium" style="justify-content: flex-start;">
 	   <div class="ticket-medium__ins" style="padding-left: 10px;">
-		 <div class="ticket-medium__ins-left">
-			<div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" class="">
-				<a @click.prevent="tickets = !tickets" href="">Список билетов</a>
-			</div>		 
-			<ul class="tickets-list" v-show="tickets">
-				<li v-for="ticket in race.order.tickets"><a :href="ticket.status == 'R' ? baseUrl+'/tickets/'+ticket.hash+'_r.pdf' : baseUrl+'/tickets/'+ticket.hash+'.pdf'" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></li>
-			</ul>  
-		   <div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" class=""><a href="" @click.prevent="popupTransactionsOpen = true, getTransactions()">Чеки</a></div>
-		   <div v-if="order.insured && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')"><a href="" @click.prevent="popupInsurancesOpen = true, getInsurances()" class="">Страховки</a></div>
-
-   
-		 </div>
+		 <div class="order__card-bottom">
+			<div class="order__card-tickets" v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'">
+				<!-- <a @click.prevent="tickets = !tickets" href="">Список билетов</a> -->
+				<ul>
+					<li v-for="ticket in race.order.tickets">
+						<span>{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} </span>
+						<br/>
+						<div class="order__card-ticket__info">
+							<a :href="ticket.status == 'R' ? baseUrl+'/ticket/download/'+ticket.hash+'_r.pdf' : baseUrl+'/ticket/download/'+ticket.hash+'.pdf'" style="display: block; color: #fff;" target="_blank">
+								Скачать билет 
+							</a>
+							<!-- <br/> -->
+							<a v-if="ticket.ticketType != 'Багажный' && !wentOut" href="#" style="display: block; color: #fff;" @click="buyLuggage(ticket)">Купить багажный</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="order__card-buttons">
+				<div style="margin-bottom: 10px;" v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'" class=""><a href="" @click.prevent="popupTransactionsOpen = true, getTransactions()">Чеки</a></div>
+				<div style="margin-bottom: 10px;" v-if="order.insured && (race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R')"><a href="" @click.prevent="popupInsurancesOpen = true, getInsurances()" class="">Страховки</a></div>
+				<div v-if="!wentOut && (race.order.status == 'S' || race.order.status == 'P')"><a href="" @click.prevent="popupOpen = true" class="">Вернуть</a></div>
+			</div>
+		</div>
 
 	   </div>
-
-		<div v-if="!wentOut && (race.order.status == 'S' || race.order.status == 'P')"><a href="" @click.prevent="popupOpen = true" class="">Вернуть</a></div>
 	 </div>
    </div>
    	<template v-if="popupOpen">
@@ -290,6 +299,23 @@
 			})
 			await promise
 			this.insurancesInfo.loading = false
+		},
+		buyLuggage(ticket){
+			localStorage.setItem('luggageData', JSON.stringify(ticket))
+			let routeData = router.resolve( { 
+				name: 'Form', 
+				params: { 
+					dispatch_point_id: this.order.dispatchPointId, 
+					arrival_point_id: this.order.arrivalPointId,
+					date: dayjs(ticket.dispatchDate).format('YYYY-MM-DD'),
+					race_id: ticket.raceUid
+				},
+				query: {
+					luggage: true
+				}
+			} )
+			// const routeData = router.resolve({name: 'routeName', query: {data: "someData"}});
+			window.open(routeData.href, '_blank');
 		}
     },
     mounted(){
@@ -350,6 +376,38 @@ strong{
 	margin-right: 15px;
 	margin-bottom: 5px;
 }
+
+.order__card-bottom{
+	margin: 0 10px;
+	font-size: 19px;
+}
+.order__card-buttons{
+	display: flex;
+	width: 320px;
+	justify-content: space-between;
+	margin-top: 30px;
+}
+.order__card-buttons div{
+	margin-right: 10px;
+}
+.order__card-tickets ul li{
+	margin-bottom: 13px;
+	line-height: 32px;
+}
+.order__card-ticket__info{
+	display: flex;
+	/* justify-content: space-between; */
+}
+.order__card-ticket__info a{
+	margin-right: 25px;
+	background-color: #0275fe;
+	padding: 2px 5px;
+	border-radius: 4px;
+}
+.order__card-tickets ul li span{
+	/* margin: 0 6px; */
+	margin-bottom: 10px;
+}
 @media (max-width:550px)
 {
 .tickets-list
@@ -372,5 +430,16 @@ strong{
 }
 
 
+}
+@media (max-width:375px){
+	.order__card-ticket__info{
+		/* justify-content: space-between; */
+		flex-direction: column;
+		align-items: flex-start;
+	}	
+	.order__card-ticket__info a{
+		margin-right: 0;
+		margin-bottom: 15px;
+	}
 }
 </style>

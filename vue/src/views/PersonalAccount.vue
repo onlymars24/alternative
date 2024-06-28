@@ -21,7 +21,7 @@
             <component :is="activeTab"></component>
         </Transition>
     </div>
-    <Footer/>
+    <!-- <Footer/> -->
     <template v-if="popupEmail">
         <PopupWindow @CloseWindow="popupEmail = false;" :content="9" @editEmail="editEmail"/>
 	  </template>

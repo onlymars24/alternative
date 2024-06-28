@@ -12,6 +12,7 @@
                         </template>
                         
                         <!-- <el-input size="small" ref="refPhoneInput" v-mask="'+7 (###) ### ####'" v-model="phone" /> -->
+                        <el-input size="small" ref="refPhoneInput" v-mask="'+7 (###) ### ####'" v-model="phone" />
                         <el-table :data="paginatedUsers">
                             <el-table-column prop="id" label="ID" width="80" />
                             <el-table-column prop="phone" label="Телефон" width="160" />
@@ -114,6 +115,7 @@ export default
         }
     },
     async mounted(){
+        this.$refs.refPhoneInput.focus()
         const promise1 = axiosClient
         .get('/users')
         .then(response => {
@@ -182,11 +184,16 @@ export default
     },
 
     computed: {
+        filteredUsers(){
+            return this.users.filter(
+                (user) => !this.phone || user.phone.includes(this.phone)
+            )
+        },
         pagesCount(){
-            return Math.ceil(this.users.length / this.usersPerPage);
+            return Math.ceil(this.filteredUsers.length / this.usersPerPage);
         },
         paginatedUsers(){
-            return this.users.slice(this.paginationOffset, this.paginationOffset + this.usersPerPage)
+            return this.filteredUsers.slice(this.paginationOffset, this.paginationOffset + this.usersPerPage)
         },
         // filteredUsers(){
         //     return this.users.filter(

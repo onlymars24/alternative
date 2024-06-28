@@ -208,8 +208,8 @@ export default{
         </div>
     </div>
     
-    <hr class="bef__footer">
-    <Footer/>
+    <!-- <hr class="bef__footer"> -->
+    <!-- <Footer/> -->
 </template>
 
 <style scoped>

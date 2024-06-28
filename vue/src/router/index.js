@@ -7,6 +7,7 @@ import AuthorizationPage from '../views/AuthorizationPage.vue'
 import PersonalAccount from '../views/PersonalAccount.vue'
 import Error from '../views/Error.vue'
 import Faq from '../views/Faq.vue'
+import Contacts from '../views/Contacts.vue'
 import RacesWithoutDate from '../views/RacesWithoutDate.vue'
 import Avtobus from '../views/Avtobus.vue'
 import ALogin from '../views/admin/ALogin.vue'
@@ -91,6 +92,11 @@ const routes = [
     path: '/faq',
     name: 'Faq',
     component: Faq
+  },
+  {
+    path: '/'+encodeURI('контакты'),
+    name: 'Contacts',
+    component: Contacts
   },
   {
     path: '/'+encodeURI('новости'),

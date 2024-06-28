@@ -52,8 +52,11 @@ use App\Http\Controllers\UsersExportController;
 |
 */
 
-Route::get('/spread/', function (Request $request) {
-
+Route::get('/ticket/download/{file}', function (Request $request, $file) {
+  // dd($file);
+  $path = Storage::disk('local')->path('/tickets/'.$file);
+  dd($path, basename($path));
+  return response()->download($path, basename($path));
 });
 
 

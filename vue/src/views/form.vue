@@ -18,7 +18,7 @@
 
   <div class="container" v-if="!loadingRace">
   <!-- <pre>{{ date1 }}</pre> -->
-  <!-- <pre>{{ formData }}</pre>     -->
+  <pre>{{ formData }}</pre>    
   <!-- <pre>{{ race }}</pre>     -->
     <div class="form__content">
     <div class="information-race">
@@ -104,11 +104,9 @@
                   />
                   <!--  -->
                   <!--  -->
-                
                   <!--  -->
                   <!--  -->
                   <!--  -->
-       
         </div>
 
         <div class="right-input all-input-item">
@@ -119,13 +117,14 @@
                     maxlength="60"
                     v-model="el.ticket_type_code"
                     @focus="el.errors.ticket_type_code = ''"
+                    @change="changeTicketType(indexTicket)"
                     required
                     :disabled="el.saved"
                   >
                     <option :data-code="ticket.code" v-for="ticket in race.ticketTypes" :value="ticket.code">{{ ticket.name }}</option>
-                  </select> 
-                             <!--  -->
-                  <!--  -->         
+                  </select>
+                  <!--  -->
+                  <!--  -->
                   <!--  -->
                   <!--  -->
                   <label for="" class="form-label">Пол</label>
@@ -145,6 +144,7 @@
                   </select>
                   <!--  -->
                   <!--  -->
+                  <!-- {{ el.birth_date }} -->
                   <label for="">Дата рождения</label>
                   <input
                     type="date"
@@ -156,6 +156,7 @@
                     :max="dateNew"
                     v-model="el.birth_date"
                     @focus="el.errors.birth_date = ''"
+                    @blur="birthDateBlur(indexTicket)"
                     required
                     :disabled="el.saved"
                   />
@@ -278,7 +279,7 @@
       <label v-if="false" style="color: red; font-size: 12px;">Для оформления билета необходимо авторизоваться!</label>
       <div v-if="false" class="form-reg" :class="{'unauth__user': unAuthMessage}">
         <div class="information-buyer">
-          <Login v-if="option == 'login'" @resetSection="option = 'reset'" @registrationSection="option = 'registration'" :authForForm="authForForm" @authenticateForForm="authenticateForForm" @putRedFromLoginAway="putRedFromLoginAway" />
+          <Login v-if="option == 'login'" @resetSection="option = 'reset'" @registrationSection="option = 'registration'" :authForForm="authForForm" @authenticateForForm="authenticateForForm" @putRedFromLoginAway="putRedFromLoginAway"/>
           <Registration v-else-if="option == 'registration'" @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway" :authForForm="authForForm" @authenticateForForm="authenticateForForm"/>
           <ResetPassword v-else @loginSection="option = 'login'" @putRedFromLoginAway="putRedFromLoginAway" :authForForm="authForForm" @authenticateForForm="authenticateForForm"/>
         </div>
@@ -303,7 +304,7 @@
             <div class="visa__logo pay-sys__logo"></div>
             <div class="mir__logo pay-sys__logo"></div>
           </div>
-        </div>  
+        </div>
       </div>
       </div>
       <div v-if="errorMessageFromAPI" style="color: red;" class="">
@@ -316,11 +317,17 @@
     </div>
     </div>
   </div>
-  <Footer/>
+
+  <!-- <Footer/> -->
   <transition name="fade" >
     <PopupWindow v-if="openWindow" @CloseWindow="openWindow = false, Scroll()" :content="content"/>
   </transition>
   <PopupWindow v-if="openRejectionWindow" @confirmRejection="openRejectionWindow = false, insured = false" @changeMind="openRejectionWindow = false, insured = true" :insurancePrice="tempInsurancePrice" :content="8"/>
+  <PopupWindow v-if="wrongChildAge" @CloseWindow="wrongChildAge = false" :content="12"/>
+
+
+
+
 </template>
 <script>
 import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
@@ -338,6 +345,7 @@ import Header from '../components/Header.vue';
 import BusLoading from '../components/BusLoading.vue';
 import Footer from '../components/Footer.vue'
 import TheMask from 'vue-the-mask'
+import dayjs from 'dayjs'
 
 export default
 {
@@ -378,10 +386,10 @@ export default
         percent: 0,
         checkbox: true,
         max: 0,
-        
       },
       ticketsPrice: 0,
-      utm_data: {}
+      utm_data: {},
+      wrongChildAge: false
     };
   },
   methods: {
@@ -677,8 +685,52 @@ export default
       else{
         return true        
       }
-
-    }//[{"cdode":"118011","name":"Место 20","type":null}]
+    },
+    changeTicketType(indexTicket){
+      if(this.checkForChildType(indexTicket)){
+          this.checkChildAge(indexTicket)
+          if(this.formData[indexTicket].citizenship == 'РОССИЯ'){
+            let childDoc = this.race.docTypes.filter(docType => {
+              return docType.name == 'Свидетельство о рождении РФ' || docType.name == 'Свидетельство о рождении'
+            })[0]
+            if(childDoc){
+              console.log('Свидетельство о рождении есть')
+              this.formData[indexTicket].doc_type = childDoc.code+'____'+childDoc.name
+            }
+          }
+      }
+    },
+    birthDateBlur(indexTicket){
+      if(this.checkForChildType(indexTicket)){
+          this.checkChildAge(indexTicket)
+      }
+    },
+    checkForChildType(indexTicket){
+      let childTypeCode = this.race.ticketTypes.filter(ticketType => {
+        return ticketType.name == 'Детский'
+      })
+      if(!childTypeCode){
+        console.log('no child')
+        return
+      }
+      childTypeCode = childTypeCode[0].code
+      return this.formData[indexTicket].ticket_type_code == childTypeCode
+    },
+    checkChildAge(indexTicket){
+      console.log('birth date set')
+      let dispatchDate = dayjs(this.race.race.dispatchDate)
+      console.log('diff dates')
+      let birthYear = Number(dayjs(this.formData[indexTicket].birth_date).format('YYYY'))
+      let passengerAge = dispatchDate.diff(this.formData[indexTicket].birth_date, 'year', true)
+      console.log('age numbers')
+      console.log(passengerAge)
+      console.log(birthYear)
+      if(passengerAge > 12){
+        this.wrongChildAge = true
+        console.log('wrongChildAge')
+        this.formData[indexTicket].errors.birth_date = 'Возраст не соответствует типу билета'
+      }
+    }
   },
   computed: {
     totalCost(){
@@ -760,6 +812,9 @@ export default
         return this.user.bonuses_balance
       }
       return 0
+    },
+    formDataComputed(){
+      return JSON.stringify(this.formData)
     }
   },
   async mounted(){
@@ -770,15 +825,6 @@ export default
       console.log(this.utm_data)
       console.log('OK utm')
     }
-    // if(this.$route.query.utm_source && this.$route.query.utm_medium && this.$route.query.utm_campaign && this.$route.query.utm_content){
-    //     localStorage.setItem('utm_data', JSON.stringify({
-    //         utm_source: this.$route.query.utm_source,
-    //         utm_medium: this.$route.query.utm_medium,
-    //         utm_campaign: this.$route.query.utm_campaign,
-    //         utm_content: this.$route.query.utm_content,
-    //         referrer_url: document.referrer,
-    //     }))
-    // }
     this.loading = true
     var dateNewGet = new Date();
     this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();
@@ -804,44 +850,85 @@ export default
       ));
     await promise1
     this.chosenSeats = JSON.parse(localStorage.getItem('chosenSeats'))
+
+    let luggageData = JSON.parse(localStorage.getItem('luggageData'))
     
-    if(!this.checkChosenSeats()){
-      router.push({ name: 'SeatPage', params: { race_id: this.race.race.uid} })
-      localStorage.removeItem('chosenSeats')
-      return    
-    }
-    let totalTicketCode = this.race.ticketTypes.filter(el => {
-      return el.name == 'Полный' || 'Пассажирский';
-    })
-    totalTicketCode = totalTicketCode[0].code
-    this.chosenSeats.forEach(el => this.formData.push(
-      {
-        name: '',
-        surname: '',
-        patronymic: '',
-        birth_date: '',
-        gender: '',
-        citizenship: 'РОССИЯ',
-        doc_type: '',
-        doc_number: '',
-        doc_series: '',
-        ticket_type_code: totalTicketCode,
-        seat: el,
-        saved: false,
-        errors: {
+    if(this.checkChosenSeats() && !this.$route.query['luggage']){
+      let totalTicketCode = this.race.ticketTypes.filter(el => {
+        return el.name == 'Полный' || 'Пассажирский';
+      })
+      totalTicketCode = totalTicketCode[0].code
+      
+      this.chosenSeats.forEach(el => this.formData.push(
+        {
           name: '',
           surname: '',
           patronymic: '',
           birth_date: '',
           gender: '',
-          citizenship: '',
+          citizenship: 'РОССИЯ',
           doc_type: '',
           doc_number: '',
           doc_series: '',
-          ticket_type_code: '',
+          ticket_type_code: totalTicketCode,
+          seat: el,
+          saved: false,
+          errors: {
+            name: '',
+            surname: '',
+            patronymic: '',
+            birth_date: '',
+            gender: '',
+            citizenship: '',
+            doc_type: '',
+            doc_number: '',
+            doc_series: '',
+            ticket_type_code: '',
+          }
         }
+      ))
+    }
+    else if(luggageData && this.$route.query['luggage']){
+      let luggageTicketCode = this.race.ticketTypes.filter(el => {
+        return el.name == 'Багажный';
+      })
+      if(luggageTicketCode){
+        luggageTicketCode = luggageTicketCode[0].code
       }
-    ))
+      this.formData.push(
+        {
+          name: luggageData.firstName,
+          surname: luggageData.lastName,
+          patronymic: luggageData.middleName,
+          birth_date: dayjs(luggageData.birthday).format('YYYY-MM-DD'),
+          gender: luggageData.gender,
+          citizenship: 'РОССИЯ',
+          doc_type: luggageData.docTypeCode+'____'+luggageData.docType,
+          doc_number: '',
+          doc_series: '',
+          ticket_type_code: luggageTicketCode,
+          seat: this.race.seats[0],
+          saved: false,
+          errors: {
+            name: '',
+            surname: '',
+            patronymic: '',
+            birth_date: '',
+            gender: '',
+            citizenship: '',
+            doc_type: '',
+            doc_number: '',
+            doc_series: '',
+            ticket_type_code: '',
+          }
+        }
+      )
+    }
+    else{
+      router.push({ name: 'SeatPage', params: { race_id: this.race.race.uid} })
+      localStorage.removeItem('chosenSeats')
+      return    
+    }
     this.updateSession()
     if(this.authForForm){
       const promise2 = axiosClient
@@ -878,6 +965,14 @@ export default
     this.luggageTypeCode = this.ticketTypes.filter(ticketType => {
       return ticketType.name == 'Багажный';
     })[0].code
+
+    // this.formData.forEach((item, index) => {
+    //   this.$watch(`formData[${index}].ticket_type_code`, (newVal, oldVal) => {
+    //     console.log(`Изменение свойства объекта с индексом ${index}:`, newVal);
+    //   });
+    // });
+
+
     this.loadingRace = false
   },
   watch: {
@@ -885,7 +980,8 @@ export default
       if(insured == false){
         this.openRejectionWindow = true
       }
-    }
+    },
+
   }
 };
 </script>

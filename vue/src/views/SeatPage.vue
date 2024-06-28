@@ -13,7 +13,7 @@
         <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
       </div>
     </div>
-    <Footer/>
+    <!-- <Footer/> -->
   </template>
 
 <script>

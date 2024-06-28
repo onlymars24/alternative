@@ -3,7 +3,7 @@
 <template>
 <div class="background-close" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')"></div>
 <div class="popup-container" :class="{'feedback-popup': this.content==7, 'rejection__popup': this.content==8 || 9}">
-    <div v-if="this.content != 8 && this.content != 10" class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
+    <div v-if="this.content != 8 && this.content != 10 && this.content != 12" class="closeWindow" @click="reloadPage(); $emit('CloseWindow'); $emit('CloseFeedbackWindow')">✖</div>
     <!-- <Seat v-if="this.content==1"></Seat> -->
     <div v-if="this.content==2">{{ UserAgreement }}</div>
     <div v-if="this.content==3" class="content-popap">
@@ -78,72 +78,15 @@
       </div> 
     </div>
     <div v-if="this.content==7" style="min-height: 200px;">
-      <div v-if="this.feedbackInfo.step==1">
-        <form @submit.prevent="sendMail">
-        <h4>Задайте нам вопрос</h4>
-        <!-- {{ feedbackCredentials }} -->
-        <ul style="margin-top: 15px;">
-          <li>
-            <!-- <label for="tel" class="form-label label-gray">Ваше имя</label> -->
-            <input v-model="feedbackCredentials.name" class="form-control inp-gray phone__input" placeholder="Ваше имя" required></li>
-          <li>
-            <!-- <label for="tel" class="form-label label-gray">Ваш телефон</label> -->
-            <input v-mask="'+7 (###) ### ####'" ref="refPhoneInput" v-model="feedbackCredentials.phone" class="form-control inp-gray phone__input" placeholder="Ваш телефон" required></li>
-          <li>
-            <!-- <label for="tel" class="form-label label-gray">Ваш email</label> -->
-            <input v-model="feedbackCredentials.email" class="form-control inp-gray" placeholder="Ваш email" required></li>
-          <li>
-            <!-- <label for="tel" class="form-label label-gray">Тема вопроса</label> -->
-            <select 
-              class="form-select form-control "
-              maxlength="60"
-              v-model="feedbackCredentials.topic" 
-              required
-            >
-              <option value="" disabled selected hidden>Выберите тему</option>
-              <option value="Проблема с поиском рейса">Проблема с поиском рейса</option>
-              <option value="Проблема при покупке">Проблема при покупке</option>
-              <option value="Проблема с возвратом билета">Проблема с возвратом билета</option>
-              <option value="На сайте ошибка и что-то не работает">На сайте ошибка и что-то не работает</option>
-              <option value="Другое">Другое</option>
-            </select>
-          </li>
-
-          <li>
-            <!-- <label for="tel" class="form-label label-gray">Описание</label> -->
-            <textarea v-model="feedbackCredentials.descr" style="height: 90px;" cols="30" rows="40" resize="none" class="textarea__feedback form-control inp-gray" placeholder="Описание"></textarea>
-          </li>
-          <li>
-            <div class="block__check" style="padding-top: 4px;">
-              <label @click="" class="check">Я принимаю условия <a :href="baseUrl+'/agreement/offercontract.pdf'" target="_blank" style="color: var(--blue);">Пользовательского соглашения</a> и <a :href="baseUrl+'/agreement/privacypolicy.pdf'" target="_blank" style="color: var(--blue);">Политики конфиденциальности</a>
-                  <input required type="checkbox" v-model="feedbackCredentials.accepted">
-                  <span class="checkmark is-invalid"></span>
-              </label>
-            </div>
-          </li>          
-          <li><button type="submit" style="margin-top: 10px;" class="btn btn-primary btn-code">Отправить</button></li>
-        </ul>
-        </form>
-      </div> 
-      <div v-if="this.feedbackInfo.step==2">
-          <div v-if="this.feedbackInfo.loading" class="loader__outside">
-            <img src="../assets/bus_loading.png" style="max-width: 90%;">
-            <p style="color: grey;">Загрузка.....</p>  
-            <div class="loader"></div>
-          </div>
-          <h5 v-else>
-            С вами свяжется оператор в течение нескольких часов!
-          </h5>
-      </div> 
+      <Feedback/>
     </div>
     <div v-if="this.content==8">
       <div>
-          <p style="font-size: 24px;">Страховка стоит всего {{insurancePrice}} руб и может оказаться полезной в непредвиденной ситуации</p>
-          <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 10px;">
-            <button class="btn btn-outline-secondary btn-code" @click="$emit('confirmRejection')"><div style="font-size: 20px;">Беру все риски на себя</div></button>
-            <button class="btn btn-primary btn-code" @click="$emit('changeMind')"><div style="font-size: 20px;">Оставить страховку</div></button>            
-          </div> 
-
+        <p style="font-size: 24px;">Страховка стоит всего {{insurancePrice}} руб и может оказаться полезной в непредвиденной ситуации</p>
+        <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 10px;">
+          <button class="btn btn-outline-secondary btn-code" @click="$emit('confirmRejection')"><div style="font-size: 20px;">Беру все риски на себя</div></button>
+          <button class="btn btn-primary btn-code" @click="$emit('changeMind')"><div style="font-size: 20px;">Оставить страховку</div></button>            
+        </div> 
       </div> 
     </div>
     <div v-if="this.content==9">
@@ -191,6 +134,20 @@
           </div>
       </div>
     </div>
+    <div v-if="this.content==12">
+      <div style="font-size: 23px;">
+          <p style="margin-bottom: 15px;">
+            <strong>Проверьте дату рождения!</strong>
+          </p>
+          <p style="margin-bottom: 15px;">Для детей до 12 лет оформляется билет со скидкой 50%. <br/>C 12 лет проезд по полной стоимости билета.</p>
+          <p style="margin-bottom: 15px;">
+            <strong>Возраст ребенка определяется на день начала поездки.</strong>
+          </p>
+          <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 10px;">
+            <button class="btn btn-primary btn-code" @click="$emit('CloseWindow')"><div style="font-size: 20px;">Ок</div></button>            
+          </div> 
+      </div> 
+    </div>
 </div>
 </template>
 <script scoped>
@@ -203,6 +160,7 @@ import Registration from "../components/Registration.vue";
 import ResetPassword from "../components/ResetPassword.vue";
 import FixUser from "../components/FixUser.vue";
 import TheMask from 'vue-the-mask';
+import Feedback from '../components/Feedback.vue';
 
 export default
 {
@@ -210,20 +168,7 @@ export default
     return{
       login: true,
       option: 'login',
-      feedbackInfo: {
-        step: 1,
-        loading: false,
-        response: [  ],
-      },
       baseUrl: '',
-      feedbackCredentials: {
-        name: '',
-        phone: '',
-        email: '',
-        descr: '',
-        topic: '',
-        accepted: false
-      },
       emailEditObj: {
         value: '',
         loading: false
@@ -233,7 +178,7 @@ export default
   },
   props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice', 'unfixedUserData', 'existingRaces'],
   emits: ['makeFixed', 'confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail', 'findOtherDates'],
-  components: { Seat, Login, Registration, ResetPassword, FixUser },
+  components: { Seat, Login, Registration, ResetPassword, FixUser, Feedback },
   computed: {
     UserAgreement() {
       return UserAgreement;

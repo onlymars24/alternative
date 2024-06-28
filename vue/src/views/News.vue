@@ -28,8 +28,8 @@
 
     </div>
     
-    <hr class="bef__footer">
-    <Footer/>
+    <!-- <hr class="bef__footer">
+    <Footer/> -->
 </template>
 
 <script>

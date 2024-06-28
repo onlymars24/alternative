@@ -57,15 +57,24 @@
 		   <div class="right-ins__right">
 			 <div class="right-ins__right-button">
 			   
-        <button v-if="!cached" :disabled="race.freeSeatCount == 0" @click="$emit('toSeats', race.uid)" class="buy__but">
-				 Выбрать
-			   </button>
-         <button v-else style="background-color: gray;" class="buy__but">
+         <button v-if="button_status == 'Обновляем...'" style="background-color: gray;" class="buy__but">
           Обновляем...
+			   </button>
+         <a href="" v-if="button_status == 'Обновить'" style="display: block; background-color: gray; color: #fff;" class="buy__but" @click="this.$emit('findRacesWithDate')">
+          Обновить
+			   </a>
+         <button v-if="button_status == 'Выбрать' && race.freeSeatCount == 0" style="background-color: gray;" disabled class="buy__but">
+            Мест нет
+			   </button>
+         <button v-if="button_status == 'Выбрать' && race.freeSeatCount != 0 && race.status && (race.status.name == 'Нет данных' || 'Продажа')" @click="$emit('toSeats', race.uid)" class="buy__but">
+          Выбрать
+			   </button>
+         <button v-if="button_status == 'Выбрать' && race.freeSeatCount != 0 && race.status && (race.status.name != 'Продажа' && race.status.name != 'Нет данных')" style="background-color: gray;" disabled class="buy__but">
+          {{ race.status.name }}
 			   </button>
 
 			 </div>
-			 <div class="right-ins__right-text">Количество мест: {{ race.freeSeatCount }}</div>
+			 <div v-if="button_status == 'Выбрать'" class="right-ins__right-text">Количество мест: {{ race.freeSeatCount }}</div>
 		   </div>
 		 </div>
 	   </div>
@@ -341,7 +350,7 @@
    font-size: 14px;
  }
  
- .right-ins__right-button button {
+ .right-ins__right-button button, .right-ins__right-button a {
    display: inline-block;
    width: auto;
    font-weight: normal;
@@ -404,6 +413,10 @@
  .race__details__but {
    font-size: 12px;
    background-color: transparent;
+   border-bottom: 1px solid #0275fe;
+   color: #0275fe;
+   cursor: pointer;
+   /* text-decoration: dashed; */
  }
  .ticket-medium__ins-left * {
    margin: 0px 7px;
@@ -998,8 +1011,8 @@
 	import router from '../router'
 	export default{
 		components: { DepartureArrival, TicketLow },
-		props: ['race', 'button_status', 'cached'],
-    emits: ['toSeats'],
+		props: ['race', 'button_status'],
+    emits: ['toSeats', 'findRacesWithDate'],
 		data(){
 			return{
 
