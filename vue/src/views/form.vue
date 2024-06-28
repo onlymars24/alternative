@@ -18,7 +18,7 @@
 
   <div class="container" v-if="!loadingRace">
   <!-- <pre>{{ date1 }}</pre> -->
-  <pre>{{ formData }}</pre>    
+  <!-- <pre>{{ formData }}</pre>     -->
   <!-- <pre>{{ race }}</pre>     -->
     <div class="form__content">
     <div class="information-race">
