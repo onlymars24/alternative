@@ -50,6 +50,7 @@ class TicketController extends Controller
             ->where('status', '=', 'R');
         })
         ->orderByDesc('id')
+        ->with('order')
         ->get();
         return response([
             'tickets' => $tickets

@@ -24,6 +24,13 @@
                                         :clearable="true"
                                     />
                                     </el-config-provider>
+                                    <div class="reports__filters">
+                                        <FilterInput :title="'utm_source'" :ind="'utm_source'" :filterEl="filterArr['utm_source']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
+                                        <FilterInput :title="'utm_medium'" :ind="'utm_medium'" :filterEl="filterArr['utm_medium']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
+                                        <FilterInput :title="'utm_campaign'" :ind="'utm_campaign'" :filterEl="filterArr['utm_campaign']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
+                                        <FilterInput :title="'utm_content'" :ind="'utm_content'" :filterEl="filterArr['utm_content']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
+                                        <FilterInput :title="'referrer_url'" :ind="'referrer_url'" :filterEl="filterArr['referrer_url']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
+                                    </div>
                                 </div>
                             </template>
                             <table class="table" style="width: 100%">
@@ -220,7 +227,7 @@
                                     <span>Список билетов</span>
                                 </div>
                             </template>
-                            <el-table :data="ticketsArray" style="width: 100%">
+                            <el-table :data="filteredTickets" style="width: 100%">
                                 <el-table-column prop="dispatchDate" label="Дата и время отправления (местное)" width="200" />
                                 <el-table-column prop="created_at" label="Дата создания заказа на росвокзалах (GMT +3)" width="190" />
                                 <el-table-column prop="confirmed_at" label="Дата покупки (местное)" width="180" />
@@ -245,6 +252,33 @@
                                 <el-table-column prop="bonusesPrice" label="Оплата бонусами" width="150" />
                                 <el-table-column prop="insured" label="Страхование" width="150" />
                                 <el-table-column prop="insurancePrice" label="Цена страховки" width="150" />
+                                <!-- <el-table-column prop="utm_source" label="utm_source" width="150" /> -->
+                                <el-table-column label="utm_source" width="180">
+                                    <template #default="scope">
+                                        <el-text class="mx-1">{{ scope.row.order.utm_source }}</el-text>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="utm_medium" width="180">
+                                    <template #default="scope">
+                                        <el-text class="mx-1">{{ scope.row.order.utm_medium }}</el-text>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="utm_campaign" width="180">
+                                    <template #default="scope">
+                                        <el-text class="mx-1">{{ scope.row.order.utm_campaign }}</el-text>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="utm_content" width="180">
+                                    <template #default="scope">
+                                        <el-text class="mx-1">{{ scope.row.order.utm_content }}</el-text>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="referrer_url" width="180">
+                                    <template #default="scope">
+                                        <el-text class="mx-1">{{ scope.row.order.referrer_url }}</el-text>
+                                    </template>
+                                </el-table-column>
+                                
                             </el-table>
                         </el-card>
                     </div>
@@ -267,10 +301,11 @@ import timezone from 'dayjs/plugin/timezone';
 import axios from 'axios'
 import ticketStatuses from '../../data/TicketStatuses'
 import ru from 'element-plus/dist/locale/ru.mjs'
+import FilterInput from '../../components/admin/FilterInput.vue'
 
 export default
 {
-    components: {Header},
+    components: {Header, FilterInput},
     data() {
         return {
             ticketsArray: [],
@@ -282,7 +317,29 @@ export default
             ticketStatuses: ticketStatuses,
             locale: ru,
             ticketsTableVar: [],
-            expenses: []
+            expenses: [],
+            filterArr: {
+                utm_source: {
+                    set: false,
+                    value: ''
+                },
+                utm_medium: {
+                    set: false,
+                    value: ''
+                },
+                utm_campaign: {
+                    set: false,
+                    value: ''
+                },
+                utm_content: {
+                    set: false,
+                    value: ''
+                },
+                referrer_url: {
+                    set: false,
+                    value: ''
+                },
+            }
         }
     },
     async mounted(){
@@ -372,7 +429,21 @@ export default
             }
             
             return daysInMonthCount;
-        }
+        },
+        setFilter(filterName, value){
+            this.filterArr[filterName].set = true
+            this.filterArr[filterName].value = value
+        },
+        deleteFilter(filterName){
+            this.filterArr[filterName].set = false
+            this.filterArr[filterName].value = ''
+        },
+        filterCondition(ind, elem){
+            console.log('filterCondition')
+            console.log(this.filterArr[ind])
+            console.log(elem[ind])
+            return (!this.filterArr[ind].set || (this.filterArr[ind].set && elem[ind] == this.filterArr[ind].value))
+        },
     },
     watch: {
         async value2(value2){
@@ -462,6 +533,15 @@ export default
         }
     },
     computed: {
+        filteredTickets(){
+            return this.ticketsArray.filter(ticket => {
+                return this.filterCondition('utm_source', ticket.order)
+                this.filterCondition('utm_medium', ticket.order) &&
+                this.filterCondition('utm_campaign', ticket.order) &&
+                this.filterCondition('utm_content', ticket.order) &&
+                this.filterCondition('referrer_url', ticket.order)
+            })
+        },
         downloadExcel(){
             return import.meta.env.VITE_API_BASE_URL+
             '/export/excel/?comparingDate1='+dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss')
@@ -602,95 +682,15 @@ export default
             
             return pricesExpenses
         },
-        async ticketsTable(){
-            // let comparingDates = [
-            //     dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss'),
-            //     dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
-            // ];
-            // const promise = axiosAdmin
-            // .get('/tickets/reports?comparingDate1='+comparingDates[0]+'&comparingDate2='+comparingDates[1])
-            // .then(response => {
-            //     console.log(response.data)
-            //     this.ticketsArray = response.data.tickets
-            //     console.log(this.ticketsArray)
-            // })
-            // .catch(error => {
-            //     console.log(error)
-            // })
-            // await promise
-            // this.ticketsArray.forEach(ticket => {
-            //     if(ticket.status == 'R'){
-            //         ticket.updated_at = dayjs(ticket.returnedMoscow).format('YYYY-MM-DD HH:mm:ss')
-            //         ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
-            //         ticket.dateReturned = ticket.updated_at
-            //     }
-            //     else{
-            //         ticket.diffPrice = (0).toFixed(2)
-            //         ticket.dateReturned = null
-            //     }
-            //     if(ticket.raceCancelled){
-            //         ticket.raceCancelledLabel = 'Отменён'
-            //     }
-            //     else{
-            //         ticket.raceCancelledLabel = 'Не отменён'
-            //     }
-            //     ticket.duePrice = Number(ticket.duePrice).toFixed(2)
-            //     ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
-            //     ticket.fullStatus = ticketStatuses[ticket.status].label
-            //     ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
-            //     ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
-            //     ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
-            // })
-            // this.ticketsArray.forEach(ticket => {
-            //     ticket.tablePrice = (0).toFixed(2)
-            //     ticket.tableRepayment = (0).toFixed(2)
-            //     ticket.tableDiffPrice = (0).toFixed(2)
-            // if(ticket.status != 'B' && 
-            //         ticket.status != 'R' && 
-            //         ticket.confirmed_at > comparingDates[0] &&
-            //         ticket.confirmed_at < comparingDates[1]
-            //     ){
-            //         ticket.tablePrice = ticket.price
-            //         ticket.tableRepayment = (0).toFixed(2)
-            //         ticket.tableDiffPrice = (0).toFixed(2)
-            //     }
-            // else if(ticket.status == 'R' && 
-            //         ticket.confirmed_at > comparingDates[0] &&
-            //         ticket.confirmed_at < comparingDates[1] &&
-            //         ticket.updated_at > comparingDates[0] &&
-            //         ticket.updated_at < comparingDates[1]
-            //     ){
-            //         ticket.tablePrice = ticket.price
-            //         ticket.tableRepayment = ticket.repayment
-            //         ticket.tableDiffPrice = ticket.diffPrice
-            //     }
-            // else if(ticket.status == 'R' &&
-            //         ticket.updated_at > comparingDates[0] &&
-            //         ticket.updated_at < comparingDates[1]
-            //     ){
-            //         ticket.tablePrice = (0).toFixed(2)
-            //         ticket.tableRepayment = ticket.repayment
-            //         ticket.tableDiffPrice = ticket.diffPrice
-            //     }
-            // else if(ticket.status == 'R' &&
-            //         ticket.updated_at > comparingDates[1]
-            //     ){
-            //         ticket.tablePrice = ticket.price
-            //         ticket.tableRepayment = (0).toFixed(2)
-            //         ticket.tableDiffPrice = (0).toFixed(2)
-            //     }
-            // })
-            // return this.ticketsArray
-        },
         tickets(){
-            return this.ticketsArray.filter(ticket => {
+            return this.filteredTickets.filter(ticket => {
                 return  ticket.status != 'B' &&
                         ticket.confirmed_at > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
                         ticket.confirmed_at < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
             })
         },
         returnedTickets(){
-            return this.ticketsArray.filter(ticket => {
+            return this.filteredTickets.filter(ticket => {
                  return ticket.status == 'R' &&
                         ticket.returned > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
                         ticket.returned < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
@@ -1064,6 +1064,12 @@ export default
 }
 .table tr td:last-child, .table tr th:last-child {
 	border-right: none;
+}
+.reports__filters{
+    display: flex;
+    justify-content: space-between;
+    width: 55%;
+    margin-top: 30px;
 }
 
 </style>

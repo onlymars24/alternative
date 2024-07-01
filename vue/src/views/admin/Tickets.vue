@@ -5,7 +5,7 @@
                 <el-aside width="200px" style="padding-top: 20px;">
                     <el-card class="box-card">
                             <template #header>
-                            <div class="card-header" style="display: flex;justify-content: space-between;">
+                            <div class="card-header" style="display: flex; justify-content: space-between;">
                                 <span>Фильтрация</span>
                             </div>
                             </template>
