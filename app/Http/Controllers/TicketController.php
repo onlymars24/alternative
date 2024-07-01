@@ -22,13 +22,35 @@ use App\Services\DeletePassportService;
 class TicketController extends Controller
 {
     public function all(){
-      
         if(!Auth::user()->admin){
             return response([
                 'errorMessage' => 'Ошибка доступа!'
             ], 401);
         }
         $tickets = Ticket::orderByDesc('id')->with('order.user')->get();
+        return response([
+            'tickets' => $tickets
+        ]);
+    }
+
+    public function reports(Request $request){
+        if(!Auth::user()->admin){
+            return response([
+                'errorMessage' => 'Ошибка доступа!'
+            ], 401);
+        }
+        $tickets = Ticket::where(function ($query) use($request) {
+            $query->where('confirmed_at', '>', $request->comparingDate1)
+            ->where('confirmed_at', '<', $request->comparingDate2)
+            ->where('status', '<>', 'B');
+        })
+        ->orWhere(function ($query) use($request) {
+            $query->where('returned', '>', $request->comparingDate1)
+            ->where('returned', '<', $request->comparingDate2)
+            ->where('status', '=', 'R');
+        })
+        ->orderByDesc('id')
+        ->get();
         return response([
             'tickets' => $tickets
         ]);

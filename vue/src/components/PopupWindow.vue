@@ -71,8 +71,8 @@
         <h6>Список полисов</h6>
         <ul>
           <template v-for="ticket in insurancesInfo.response">
-            <p v-if="ticket.status == 'S'"><a :href="ticket.insurance.resources[0]" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></p>
-            <p v-if="ticket.status == 'R'">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - полис возвращён</p>
+            <p v-if="ticket.status == 'S' && ticket.ticketType != 'Багажный'"><a :href="ticket.insurance.resources[0]" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></p>
+            <p v-if="ticket.status == 'R' && ticket.ticketType != 'Багажный'">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - полис возвращён</p>
           </template>
         </ul>
       </div> 

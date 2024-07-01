@@ -1,11 +1,14 @@
 <template>
     <!-- {{ value2[0] }} -->
-    <div class="common-layout">
+    <div class="common-layout" v-loading.fullscreen.lock="loading">
         <Header/>
             <el-container>
                 <el-main>
+                    <!-- {{ defaultTime2 }}
+                    {{ value2 }} -->
                     <div style="margin-top: 20px;">
                         <el-card class="box-card">
+                            <!-- {{ this.ticketsArray }} -->
                             <template #header>
                                 <div class="card-header" style="display: flex; justify-content: space-between;">
                                     <span>Статистика за период</span>
@@ -137,29 +140,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-
-                            <!-- <table class="table" style="width: 100%">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Карта</th>
-                                        <th>СБП</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Эквайринг</td>
-                                        <td>0</td>
-                                        <td>0</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Итого</td>
-                                        <td>0</td>
-                                        <td>0</td>
-                                    </tr>
-                                </tbody>
-                            </table> -->
-
                             <table class="table" style="width: 100%">
                                 <thead>
                                     <tr>
@@ -240,7 +220,7 @@
                                     <span>Список билетов</span>
                                 </div>
                             </template>
-                            <el-table :data="ticketsTable" style="width: 100%">
+                            <el-table :data="ticketsArray" style="width: 100%">
                                 <el-table-column prop="dispatchDate" label="Дата и время отправления (местное)" width="200" />
                                 <el-table-column prop="created_at" label="Дата создания заказа на росвокзалах (GMT +3)" width="190" />
                                 <el-table-column prop="confirmed_at" label="Дата покупки (местное)" width="180" />
@@ -294,7 +274,6 @@ export default
     data() {
         return {
             ticketsArray: [],
-            testArr: [{name: 'Marsel', surname: 'Galimov', patr: 'qwert' }, {name: 'Marsel1', surname: 'Galimov1', patr: 'qwerty' }],
             defaultTime2: [],
             newDate: '',
             loading: false,
@@ -307,13 +286,6 @@ export default
         }
     },
     async mounted(){
-        // dayjs.extend(utc);
-        // dayjs.extend(timezone);
-        // let timeZone = 'Asia/Krasnoyarsk'
-        // let currentTime = dayjs().tz(timeZone).format('YYYY-MM-DD HH:mm:ss');
-
-
-        console.log(this.downloadPDF)
         this.loading = true
         let date = new Date();
         this.date1 = new Date()
@@ -328,43 +300,42 @@ export default
         ]
         console.log(this.defaultTime2)
         
-        const promise1 = axiosAdmin
-        .get('/tickets')
-        .then(response => {
-            console.log(response.data)
-            this.ticketsArray = response.data.tickets
-            console.log(this.ticketsArray)
-        })
-        .catch( error => {
+        // const promise1 = axiosAdmin
+        // .get('/tickets')
+        // .then(response => {
+        //     console.log(response.data)
+        //     this.ticketsArray = response.data.tickets
+        //     console.log(this.ticketsArray)
+        // })
+        // .catch( error => {
 
-        })
-        await promise1
-        this.ticketsArray.forEach(ticket => {
+        // })
+        // await promise1
+        // this.ticketsArray.forEach(ticket => {
             
-            if(ticket.status == 'R'){
+        //     if(ticket.status == 'R'){
                 
-                ticket.updated_at = dayjs(ticket.returned).format('YYYY-MM-DD HH:mm:ss')
-                ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
-                ticket.dateReturned = ticket.updated_at
-            }
-            else{
-                ticket.diffPrice = (0).toFixed(2)
-                ticket.dateReturned = null
-            }
-            if(ticket.raceCancelled){
-                ticket.raceCancelledLabel = 'Отменён'
-            }
-            else{
-                ticket.raceCancelledLabel = 'Не отменён'
-            }
-            ticket.duePrice = Number(ticket.duePrice).toFixed(2)
-            ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
-            ticket.fullStatus = ticketStatuses[ticket.status].label
-            ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
-            // console.log(ticket.insurance)
-            ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
-            ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
-        })
+        //         ticket.updated_at = dayjs(ticket.returnedMoscow).format('YYYY-MM-DD HH:mm:ss')
+        //         ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
+        //         ticket.dateReturned = ticket.updated_at
+        //     }
+        //     else{
+        //         ticket.diffPrice = (0).toFixed(2)
+        //         ticket.dateReturned = null
+        //     }
+        //     if(ticket.raceCancelled){
+        //         ticket.raceCancelledLabel = 'Отменён'
+        //     }
+        //     else{
+        //         ticket.raceCancelledLabel = 'Не отменён'
+        //     }
+        //     ticket.duePrice = Number(ticket.duePrice).toFixed(2)
+        //     ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
+        //     ticket.fullStatus = ticketStatuses[ticket.status].label
+        //     ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
+        //     ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
+        //     ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
+        // })
         console.log(this.ticketsArray)
         const promise2 = axiosAdmin
         .get('/expenses')
@@ -404,10 +375,90 @@ export default
         }
     },
     watch: {
-        value2(value2){
+        async value2(value2){
+            this.loading = true
             if(!value2){
                 this.value2 = this.defaultTime2
-            }
+            }   
+            console.log('lets watch begin')
+            let comparingDates = [
+                dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss'),
+                dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
+            ];
+            const promise = axiosAdmin
+            .get('/tickets/reports?comparingDate1='+comparingDates[0]+'&comparingDate2='+comparingDates[1])
+            .then(response => {
+                console.log(response.data)
+                this.ticketsArray = response.data.tickets
+                console.log(this.ticketsArray)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            await promise
+            this.ticketsArray.forEach(ticket => {
+                if(ticket.status == 'R'){
+                    ticket.updated_at = dayjs(ticket.returnedMoscow).format('YYYY-MM-DD HH:mm:ss')
+                    ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
+                    ticket.dateReturned = ticket.updated_at
+                }
+                else{
+                    ticket.diffPrice = (0).toFixed(2)
+                    ticket.dateReturned = null
+                }
+                if(ticket.raceCancelled){
+                    ticket.raceCancelledLabel = 'Отменён'
+                }
+                else{
+                    ticket.raceCancelledLabel = 'Не отменён'
+                }
+                ticket.duePrice = Number(ticket.duePrice).toFixed(2)
+                ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
+                ticket.fullStatus = ticketStatuses[ticket.status].label
+                ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
+                ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
+                ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
+            })
+            this.ticketsArray.forEach(ticket => {
+                ticket.tablePrice = (0).toFixed(2)
+                ticket.tableRepayment = (0).toFixed(2)
+                ticket.tableDiffPrice = (0).toFixed(2)
+            if(ticket.status != 'B' && 
+                    ticket.status != 'R' && 
+                    ticket.confirmed_at > comparingDates[0] &&
+                    ticket.confirmed_at < comparingDates[1]
+                ){
+                    ticket.tablePrice = ticket.price
+                    ticket.tableRepayment = (0).toFixed(2)
+                    ticket.tableDiffPrice = (0).toFixed(2)
+                }
+            else if(ticket.status == 'R' && 
+                    ticket.confirmed_at > comparingDates[0] &&
+                    ticket.confirmed_at < comparingDates[1] &&
+                    ticket.updated_at > comparingDates[0] &&
+                    ticket.updated_at < comparingDates[1]
+                ){
+                    ticket.tablePrice = ticket.price
+                    ticket.tableRepayment = ticket.repayment
+                    ticket.tableDiffPrice = ticket.diffPrice
+                }
+            else if(ticket.status == 'R' &&
+                    ticket.updated_at > comparingDates[0] &&
+                    ticket.updated_at < comparingDates[1]
+                ){
+                    ticket.tablePrice = (0).toFixed(2)
+                    ticket.tableRepayment = ticket.repayment
+                    ticket.tableDiffPrice = ticket.diffPrice
+                }
+            else if(ticket.status == 'R' &&
+                    ticket.updated_at > comparingDates[1]
+                ){
+                    ticket.tablePrice = ticket.price
+                    ticket.tableRepayment = (0).toFixed(2)
+                    ticket.tableDiffPrice = (0).toFixed(2)
+                }
+            })
+            this.loading = false
         }
     },
     computed: {
@@ -550,73 +601,86 @@ export default
             pricesExpenses.ofd_ferma = pricesExpenses.ofd_ferma.toFixed(2)
             
             return pricesExpenses
-            // this.pricesExpenses.whatsapp = this.pricesExpenses.whatsapp.toFixed(2)
-            // this.pricesExpenses.server_host = this.pricesExpenses.server_host.toFixed(2)
-            // this.pricesExpenses.ofd_ferma = this.pricesExpenses.ofd_ferma.toFixed(2)
-            // console.log(daysInMonths)
-            // console.log(this.expenses)
-            
-            
-            // return comparingDates;
         },
-        ticketsTable(){
-            let comparingDates = [
-                dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss'),
-                dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
-            ];
-            let ticketsTable = this.ticketsArray.filter(ticket => {
-                return  (
-                            ticket.status != 'B' &&
-                            ticket.confirmed_at > comparingDates[0] &&
-                            ticket.confirmed_at < comparingDates[1]
-                        )
-                        ||
-                        (
-                            ticket.status == 'R' &&
-                            ticket.updated_at > comparingDates[0] &&
-                            ticket.updated_at < comparingDates[1]
-                        )
-            })
-            ticketsTable.forEach(ticket => {
-                ticket.tablePrice = (0).toFixed(2)
-                ticket.tableRepayment = (0).toFixed(2)
-                ticket.tableDiffPrice = (0).toFixed(2)
-            if(ticket.status != 'B' && 
-                    ticket.status != 'R' && 
-                    ticket.confirmed_at > comparingDates[0] &&
-                    ticket.confirmed_at < comparingDates[1]
-                ){
-                    ticket.tablePrice = ticket.price
-                    ticket.tableRepayment = (0).toFixed(2)
-                    ticket.tableDiffPrice = (0).toFixed(2)
-                }
-            else if(ticket.status == 'R' && 
-                    ticket.confirmed_at > comparingDates[0] &&
-                    ticket.confirmed_at < comparingDates[1] &&
-                    ticket.updated_at > comparingDates[0] &&
-                    ticket.updated_at < comparingDates[1]
-                ){
-                    ticket.tablePrice = ticket.price
-                    ticket.tableRepayment = ticket.repayment
-                    ticket.tableDiffPrice = ticket.diffPrice
-                }
-            else if(ticket.status == 'R' &&
-                    ticket.updated_at > comparingDates[0] &&
-                    ticket.updated_at < comparingDates[1]
-                ){
-                    ticket.tablePrice = (0).toFixed(2)
-                    ticket.tableRepayment = ticket.repayment
-                    ticket.tableDiffPrice = ticket.diffPrice
-                }
-            else if(ticket.status == 'R' &&
-                    ticket.updated_at > comparingDates[1]
-                ){
-                    ticket.tablePrice = ticket.price
-                    ticket.tableRepayment = (0).toFixed(2)
-                    ticket.tableDiffPrice = (0).toFixed(2)
-                }
-            })
-            return ticketsTable
+        async ticketsTable(){
+            // let comparingDates = [
+            //     dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss'),
+            //     dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
+            // ];
+            // const promise = axiosAdmin
+            // .get('/tickets/reports?comparingDate1='+comparingDates[0]+'&comparingDate2='+comparingDates[1])
+            // .then(response => {
+            //     console.log(response.data)
+            //     this.ticketsArray = response.data.tickets
+            //     console.log(this.ticketsArray)
+            // })
+            // .catch(error => {
+            //     console.log(error)
+            // })
+            // await promise
+            // this.ticketsArray.forEach(ticket => {
+            //     if(ticket.status == 'R'){
+            //         ticket.updated_at = dayjs(ticket.returnedMoscow).format('YYYY-MM-DD HH:mm:ss')
+            //         ticket.diffPrice = (ticket.price - ticket.repayment).toFixed(2)
+            //         ticket.dateReturned = ticket.updated_at
+            //     }
+            //     else{
+            //         ticket.diffPrice = (0).toFixed(2)
+            //         ticket.dateReturned = null
+            //     }
+            //     if(ticket.raceCancelled){
+            //         ticket.raceCancelledLabel = 'Отменён'
+            //     }
+            //     else{
+            //         ticket.raceCancelledLabel = 'Не отменён'
+            //     }
+            //     ticket.duePrice = Number(ticket.duePrice).toFixed(2)
+            //     ticket.created_at = dayjs(ticket.created_at).format('YYYY-MM-DD HH:mm:ss')
+            //     ticket.fullStatus = ticketStatuses[ticket.status].label
+            //     ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
+            //     ticket.insurancePrice = ticket.insurance ? ticket.insurance.rate[0].value.toFixed(2) : (0).toFixed(2)
+            //     ticket.insured = ticket.insurance ? 'Застрахован': 'Не застрахован'
+            // })
+            // this.ticketsArray.forEach(ticket => {
+            //     ticket.tablePrice = (0).toFixed(2)
+            //     ticket.tableRepayment = (0).toFixed(2)
+            //     ticket.tableDiffPrice = (0).toFixed(2)
+            // if(ticket.status != 'B' && 
+            //         ticket.status != 'R' && 
+            //         ticket.confirmed_at > comparingDates[0] &&
+            //         ticket.confirmed_at < comparingDates[1]
+            //     ){
+            //         ticket.tablePrice = ticket.price
+            //         ticket.tableRepayment = (0).toFixed(2)
+            //         ticket.tableDiffPrice = (0).toFixed(2)
+            //     }
+            // else if(ticket.status == 'R' && 
+            //         ticket.confirmed_at > comparingDates[0] &&
+            //         ticket.confirmed_at < comparingDates[1] &&
+            //         ticket.updated_at > comparingDates[0] &&
+            //         ticket.updated_at < comparingDates[1]
+            //     ){
+            //         ticket.tablePrice = ticket.price
+            //         ticket.tableRepayment = ticket.repayment
+            //         ticket.tableDiffPrice = ticket.diffPrice
+            //     }
+            // else if(ticket.status == 'R' &&
+            //         ticket.updated_at > comparingDates[0] &&
+            //         ticket.updated_at < comparingDates[1]
+            //     ){
+            //         ticket.tablePrice = (0).toFixed(2)
+            //         ticket.tableRepayment = ticket.repayment
+            //         ticket.tableDiffPrice = ticket.diffPrice
+            //     }
+            // else if(ticket.status == 'R' &&
+            //         ticket.updated_at > comparingDates[1]
+            //     ){
+            //         ticket.tablePrice = ticket.price
+            //         ticket.tableRepayment = (0).toFixed(2)
+            //         ticket.tableDiffPrice = (0).toFixed(2)
+            //     }
+            // })
+            // return this.ticketsArray
         },
         tickets(){
             return this.ticketsArray.filter(ticket => {
@@ -627,10 +691,9 @@ export default
         },
         returnedTickets(){
             return this.ticketsArray.filter(ticket => {
-                //console.log(ticket.created_at)
                  return ticket.status == 'R' &&
-                        ticket.updated_at > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
-                        ticket.updated_at < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
+                        ticket.returned > dayjs(this.comparingDates[0]).format('YYYY-MM-DD HH:mm:ss') &&
+                        ticket.returned < dayjs(this.comparingDates[1]).format('YYYY-MM-DD HH:mm:ss')
             })
         },
         salesAmount(){

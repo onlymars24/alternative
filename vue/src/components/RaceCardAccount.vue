@@ -100,14 +100,14 @@
 				<!-- <a @click.prevent="tickets = !tickets" href="">Список билетов</a> -->
 				<ul>
 					<li v-for="ticket in race.order.tickets">
-						<span>{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} </span>
+						<span>{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} {{ ticket.status == 'R' ? 'Квитанция возврата' : 'Место '+ticket.seat }}</span>
 						<br/>
 						<div class="order__card-ticket__info">
-							<a :href="ticket.status == 'R' ? baseUrl+'/ticket/download/'+ticket.hash+'_r.pdf/'+(ticket.lastName+'_'+ticket.firstName+'_'+ticket.middleName+'_Место_'+ ticket.seat) : baseUrl+'/ticket/download/'+ticket.hash+'.pdf/'+(ticket.lastName+'_'+ticket.firstName+'_'+ticket.middleName+'_Место_'+ ticket.seat)" style="display: block; color: #fff;" target="_blank">
-								Скачать билет 
+							<a :href="ticket.status == 'R' ? baseUrl+'/ticket/download/'+ticket.hash+'_r.pdf/'+('Возврат_'+ticket.ticketNum+'_'+ticket.lastName+'_'+ticket.firstName+'_'+ticket.middleName+'_Место_'+ ticket.seat) : baseUrl+'/ticket/download/'+ticket.hash+'.pdf/'+('Билет_'+ticket.ticketNum+'_'+ticket.lastName+'_'+ticket.firstName+'_'+ticket.middleName+'_Место_'+ ticket.seat)" style="display: block; color: #fff;" target="_blank">
+								Скачать 
 							</a>
 							<!-- <br/> -->
-							<a v-if="ticket.ticketType != 'Багажный' && !wentOut" href="#" style="display: block; color: #fff;" @click="buyLuggage(ticket)">Купить багажный</a>
+							<a v-if="ticket.ticketType != 'Багажный' && !wentOut && ticket.status != 'R'" href="#" style="display: block; color: #fff;" @click="buyLuggage(ticket)">Купить багажный</a>
 						</div>
 					</li>
 				</ul>
@@ -379,29 +379,31 @@ strong{
 
 .order__card-bottom{
 	margin: 0 10px;
-	font-size: 19px;
+	font-size: 16px;
 }
 .order__card-buttons{
 	display: flex;
 	width: 320px;
 	justify-content: space-between;
-	margin-top: 30px;
+	margin-top: 15px;
 }
 .order__card-buttons div{
 	margin-right: 10px;
 }
 .order__card-tickets ul li{
 	margin-bottom: 13px;
-	line-height: 32px;
+	line-height: 1.25;
 }
 .order__card-ticket__info{
 	display: flex;
+	margin-top: 10px;
+	margin-bottom: 20px;
 	/* justify-content: space-between; */
 }
 .order__card-ticket__info a{
-	margin-right: 25px;
+	margin-right: 15px;
 	background-color: #0275fe;
-	padding: 2px 5px;
+	padding: 4px 5px;
 	border-radius: 4px;
 }
 .order__card-tickets ul li span{
@@ -434,11 +436,11 @@ strong{
 @media (max-width:375px){
 	.order__card-ticket__info{
 		/* justify-content: space-between; */
-		flex-direction: column;
+		/* flex-direction: column; */
 		align-items: flex-start;
 	}	
 	.order__card-ticket__info a{
-		margin-right: 0;
+		margin-right: 25px;
 		margin-bottom: 15px;
 	}
 }

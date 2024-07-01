@@ -52,12 +52,12 @@ use App\Http\Controllers\UsersExportController;
 |
 */
 
-Route::get('/ticket/download/{file}/{name}', function (Request $request, $file, $name) {
-  // dd($file);
-  $path = Storage::disk('local')->path('/tickets/'.$file);
-  // dd($path, basename($path));
-  return response()->download($path, $name.'.pdf');
+
+
+Route::get('/spread', function (Request $request) {
+
 });
+
 
 
 
@@ -69,6 +69,14 @@ Route::get('/download/sitemap', function (Request $request) {
       return response()->json(['error' => 'File not found'], 404);
   }
 });
+
+Route::get('/ticket/download/{file}/{name}', function (Request $request, $file, $name) {
+  // dd($file);
+  $path = Storage::disk('local')->path('/tickets/'.$file);
+  // dd($path, basename($path));
+  return response()->download($path, $name.'.pdf');
+});
+
 
 Route::get('/export/excel/', [ExcelController::class, 'export'])->name('export.excel');
 
