@@ -439,9 +439,6 @@ export default
             this.filterArr[filterName].value = ''
         },
         filterCondition(ind, elem){
-            console.log('filterCondition')
-            console.log(this.filterArr[ind])
-            console.log(elem[ind])
             return (!this.filterArr[ind].set || (this.filterArr[ind].set && elem[ind] == this.filterArr[ind].value))
         },
     },
@@ -534,8 +531,17 @@ export default
     },
     computed: {
         filteredTickets(){
+            if(
+                !this.filterArr.utm_source.set &&
+                !this.filterArr.utm_medium.set &&
+                !this.filterArr.utm_campaign.set &&
+                !this.filterArr.utm_content.set &&
+                !this.filterArr.referrer_url.set
+            ){
+                return this.ticketsArray
+            }
             return this.ticketsArray.filter(ticket => {
-                return this.filterCondition('utm_source', ticket.order)
+                return this.filterCondition('utm_source', ticket.order) &&
                 this.filterCondition('utm_medium', ticket.order) &&
                 this.filterCondition('utm_campaign', ticket.order) &&
                 this.filterCondition('utm_content', ticket.order) &&
