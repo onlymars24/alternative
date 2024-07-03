@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Services\DeletePassportService;
+use Illuminate\Database\Eloquent\Builder;
 
 class TicketController extends Controller
 {
@@ -30,6 +31,160 @@ class TicketController extends Controller
         $tickets = Ticket::orderByDesc('id')->with('order.user')->get();
         return response([
             'tickets' => $tickets
+        ]);
+    }
+
+    public function paginate(Request $request){
+        // return response([
+        //     'filterArr' => $request->filterArr
+        // ]);
+        
+        if(!Auth::user()->admin){
+            return response([
+                'errorMessage' => 'Ошибка доступа!'
+            ], 401);
+        }
+        $filterArr = $request->filterArr;
+        $whereArr = [];                
+        // firstName: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['firstName']['set']){
+            $whereArr[] = ['firstName', 'like', '%'.$filterArr['firstName']['value'].'%'];
+        }
+        // lastName: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['lastName']['set']){
+            $whereArr[] = ['lastName', 'like', '%'.$filterArr['lastName']['value'].'%'];
+        }
+        // middleName: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['middleName']['set']){
+            $whereArr[] = ['middleName', 'like', '%'.$filterArr['middleName']['value'].'%'];
+        }
+        // birthday: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['birthday']['set']){
+            $whereArr[] = ['birthday', 'like', '%'.$filterArr['birthday']['value'].'%'];
+        }
+
+        // price: {
+        //     set: false,
+        //     value: [0, 10000]
+        // },
+        if($filterArr['price']['set']){
+            $whereArr[] = ['price', '>', $filterArr['price']['value'][0]];
+            $whereArr[] = ['price', '<', $filterArr['price']['value'][1]];
+        }
+
+        // dispatchStation: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['dispatchStation']['set']){
+            $whereArr[] = ['dispatchStation', 'like', '%'.$filterArr['dispatchStation']['value'].'%'];
+        }
+
+        // arrivalStation: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['arrivalStation']['set']){
+            $whereArr[] = ['arrivalStation', 'like', '%'.$filterArr['arrivalStation']['value'].'%'];
+        }
+
+        // dispatchDate: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['dispatchDate']['set']){
+            $whereArr[] = ['dispatchDate', 'like', '%'.$filterArr['dispatchDate']['value'].'%'];
+        }
+
+        // created_at: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['created_at']['set']){
+            $whereArr[] = ['created_at', 'like', '%'.$filterArr['created_at']['value'].'%'];
+        }
+
+        // ticketSeries: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['ticketSeries']['set']){
+            $whereArr[] = ['ticketSeries', 'like', '%'.$filterArr['ticketSeries']['value'].'%'];
+        }
+
+
+        // ticketNum: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['ticketNum']['set']){
+            $whereArr[] = ['ticketNum', 'like', '%'.$filterArr['ticketNum']['value'].'%'];
+        }
+
+
+
+        // dispatchDate: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['dispatchDate']['set']){
+            $whereArr[] = ['dispatchDate', 'like', '%'.$filterArr['dispatchDate']['value'].'%'];
+        }
+
+        // ticketType: {
+        //     set: false,
+        //     value: '',
+        //     label: ''
+        // },
+        if($filterArr['ticketType']['set']){
+            $whereArr[] = ['ticketType', 'like', '%'.$filterArr['ticketType']['value'].'%'];
+        }
+
+        // order_id: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['order_id']['set']){
+            $whereArr[] = ['order_id', 'like', '%'.$filterArr['order_id']['value'].'%'];
+        }
+
+        // status: {
+        //     set: false,
+        //     value: '',
+        //     label: ''
+        // },
+        if($filterArr['status']['set']){
+            $whereArr[] = ['status', 'like', '%'.$filterArr['status']['value'].'%'];
+        }
+
+        $tickets = Ticket::where($whereArr);
+// ->orderByDesc('id')->with('order.user')->paginate(8)
+        // phone: {
+        //     set: false,
+        //     value: ''
+        // },
+        if($filterArr['phone']['set']){
+            $tickets = $tickets->whereHas('order.user', function (Builder $query) use($filterArr) {
+                $query->where('phone', 'like', '%'.$filterArr['phone']['value'].'%');
+            });
+        }
+        $tickets = $tickets->orderByDesc('id')->with('order.user')->paginate(8);
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        return response([
+            'tickets' => $tickets,
+            'whereArr' => $whereArr
         ]);
     }
 

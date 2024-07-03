@@ -13,6 +13,7 @@ import * as directives from 'vuetify/directives'
 import ticketStatuses from './data/TicketStatuses';
 import VueTheMask from 'vue-the-mask'
 import CKEditor from '@ckeditor/ckeditor5-vue';
+// import { Bootstrap5Pagination } from 'laravel-vue-pagination';
 
 import '@fontsource/roboto/100.css';
 import '@fontsource/roboto/300.css';
@@ -38,4 +39,5 @@ createApp(App)
 .use(router)
 .use(ElementPlus)
 .use(ticketStatuses)
+// .use(Bootstrap5Pagination)
 .mount('#app')

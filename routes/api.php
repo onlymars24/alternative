@@ -66,6 +66,8 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/order/tickets', [TicketController::class, 'orderTickets']);
     Route::get('/tickets', [TicketController::class, 'all']);
 
+    Route::post('/tickets/paginate', [TicketController::class, 'paginate']);
+    
     Route::get('/tickets/reports', [TicketController::class, 'reports']);
 
     Route::post('/debugging', [DebuggingController::class, 'get']);

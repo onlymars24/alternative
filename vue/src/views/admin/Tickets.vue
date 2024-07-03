@@ -18,8 +18,8 @@
                             <FilterInput :title="'ID заказа'" :ind="'order_id'" :filterEl="filterArr['order_id']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
                             <FilterInput :title="'Серия билета'" :ind="'ticketSeries'" :filterEl="filterArr['ticketSeries']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
                             <FilterInput :title="'Номер билета'" :ind="'ticketNum'" :filterEl="filterArr['ticketNum']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
-                            <FilterInput :title="'Серия документа'" :ind="'docSeries'" :filterEl="filterArr['docSeries']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
-                            <FilterInput :title="'Номер документа'" :ind="'docNum'" :filterEl="filterArr['docNum']" @setFilter="setFilter" @deleteFilter="deleteFilter"/>
+                            <!-- <FilterInput :title="'Серия документа'" :ind="'docSeries'" :filterEl="filterArr['docSeries']" @setFilter="setFilter" @deleteFilter="deleteFilter"/> -->
+                            <!-- <FilterInput :title="'Номер документа'" :ind="'docNum'" :filterEl="filterArr['docNum']" @setFilter="setFilter" @deleteFilter="deleteFilter"/> -->
                             <FilterSelect :title="'Тип билета'" :ind="'ticketType'" :selectData="ticketTypes" :filterEl="filterArr['ticketType']" @setSelectFilter="setSelectFilter" @deleteSelectFilter="deleteSelectFilter"/>
                             <FilterSelect :title="'Статус билета'" :ind="'status'" :selectData="ticketStatuses" :filterEl="filterArr['status']" @setSelectFilter="setSelectFilter" @deleteSelectFilter="deleteSelectFilter"/>
                             <div class="text item" style="margin-bottom: 10px;">
@@ -68,7 +68,7 @@
                             </div>
                             <div class="text item">
                                 <div>Цена:</div> 
-                                <el-slider @change="paginateForPrice" v-model="filterArr.price.value" range :max="10000"></el-slider>
+                                <el-slider @change="setPriceFilter" v-model="filterArr.price.value" range :max="10000"></el-slider>
                             </div>
                             
                         </el-card>
@@ -77,10 +77,16 @@
                     <div>
                         <el-space :fill="false" wrap :size="17">
                             <template v-if="!ticketsLoading">
-                                <TicketCard v-for=" ticket in filteredTicketsForCycle" :ticket="ticket" :ticketStatuses="ticketStatuses" :isOrderPage="false"/>
+                                <TicketCard v-for=" ticket in tickets.data" :ticket="ticket" :ticketStatuses="ticketStatuses" :isOrderPage="false"/>
                             </template>
+                            <!-- <pre>{{ tickets }}</pre> -->
                         </el-space>
-                        <paginate
+                        <Bootstrap5Pagination
+                            :data="tickets"
+                            @pagination-change-page="getTickets"
+                            :limit="1"
+                        />    
+                        <!-- <paginate
                             v-if="!ticketsLoading && filteredTickets.length > ticketsPerPage"
                             :page-count="pagesCount"
                             :click-handler="changePage"
@@ -90,7 +96,8 @@
                             :page-class="'page-item'"
                             v-model="page"
                         >
-                        </paginate>
+                        </paginate> -->
+
                     </div>
                 </el-main>
             </el-container>
@@ -108,14 +115,12 @@ import FilterInput from '../../components/admin/FilterInput.vue'
 import FilterSelect from '../../components/admin/FilterSelect.vue'
 import axiosClient from "../../axios";
 import axiosAdmin from "../../axiosAdmin";
-import Paginate from "vuejs-paginate-next";
 import ticketStatuses from '../../data/TicketStatuses';
 import TheMask from 'vue-the-mask'
-// import { Edit, View as IconView } from '@element-plus/icons-vue'
-// import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { Bootstrap5Pagination } from 'laravel-vue-pagination';
 export default
 {
-    components: {CalendarFilter, Header, TicketCard, FilterInput, paginate: Paginate, FilterSelect},
+    components: {CalendarFilter, Header, TicketCard, FilterInput, FilterSelect, Bootstrap5Pagination},
     data() {
         return {
             drawer: false,
@@ -216,122 +221,76 @@ export default
             ticketStatuses: ticketStatuses,
             tickets: [],
             ticketsLoading: false,
-            // fullscreenLoading: true
         }
     },
     methods: {
-        changePage(page_num){
-            this.page = page_num
-            this.paginationOffset = (this.ticketsPerPage * page_num) - this.ticketsPerPage
-            if(page_num === 1){
-                this.$router.push({name: 'Tickets'})
-            }
-            else{
-                this.$router.push('?page='+page_num)
-            }
-        },
         setFilter(filterName, value){
             this.filterArr[filterName].set = true
             this.filterArr[filterName].value = value
-            this.page = 1
-            this.paginationOffset = (this.ticketsPerPage * this.page) - this.ticketsPerPage
+            this.getTickets(1)
+        },
+        setPriceFilter(){
+            this.filterArr['price'].set = true
+            this.getTickets(1)
         },
         deleteFilter(filterName){
             this.filterArr[filterName].set = false
             this.filterArr[filterName].value = ''
-            this.page = 1
-            this.paginationOffset = (this.ticketsPerPage * this.page) - this.ticketsPerPage
-            console.log(this.filterArr[filterName].value)
-            //console.log(this.resetPhoneFilter())
-            console.log(this.filterArr[filterName].value)
+            this.getTickets(1)
         },
         setSelectFilter(filterName, value, selectData){
             this.filterArr[filterName].set = true
             this.filterArr[filterName].value = value
             this.filterArr[filterName].label = selectData[value].label
-            this.page = 1
-            this.paginationOffset = (this.ticketsPerPage * this.page) - this.ticketsPerPage
+            this.getTickets(1)
         },
         deleteSelectFilter(filterName){
             this.filterArr[filterName].set = false
             this.filterArr[filterName].value = ''
             this.filterArr[filterName].label = ''
-            this.page = 1
-            this.paginationOffset = (this.ticketsPerPage * this.page) - this.ticketsPerPage
+            this.getTickets(1)
         },
         setDateFilter(filterName, value){
             this.filterArr[filterName].value = dayjs(value).format('YYYY-MM-DD')
             this.filterArr[filterName].set = true
-            console.log(this.filterArr[filterName].value)
-            this.page = 1
-            this.paginationOffset = (this.ticketsPerPage * this.page) - this.ticketsPerPage
+            this.getTickets(1)
         },
-        paginateForPrice(){
-            this.page = 1
-            this.paginationOffset = (this.ticketsPerPage * this.page) - this.ticketsPerPage
-        },
-        filterCondition(ind, elem){
-            return (!this.filterArr[ind].set || (this.filterArr[ind].set && elem[ind] == this.filterArr[ind].value))
-        },
+        async getTickets(page = 1){
+            this.ticketsLoading = true
+            const promise = axiosAdmin
+            .post('/tickets/paginate', {page: page, filterArr: this.filterArr})
+            .then(response => {
+                console.log(response.data)
+                this.tickets = response.data.tickets
+            })
+            .catch( error => {
+                console.log(error)
+            })
+            await promise
+            this.tickets.data.forEach(elem => {
+                elem.birthday = dayjs(elem.birthday).format('YYYY-MM-DD')
+                elem.created_at = dayjs(elem.created_at).format('YYYY-MM-DD HH:mm')
+                elem.insurance = elem.insurance ? JSON.parse(elem.insurance) : null
+            })
+            this.ticketsLoading = false
+        }
     },
     computed: {
-        filteredTickets(){
-            return this.tickets.filter(elem => {
-                // console.log('elem')
-                // console.log(elem)
-                // console.log(elem.order.user.phone)
-                return  this.filterCondition('firstName', elem) &&
-                        this.filterCondition('birthday', elem) &&
-                        (elem.price > this.filterArr.price.value[0] && elem.price < this.filterArr.price.value[1]) &&
-                        this.filterCondition('lastName', elem) &&
-                        this.filterCondition('middleName', elem) &&
-                        this.filterCondition('dispatchStation', elem) &&
-                        this.filterCondition('arrivalStation', elem) &&
-                        this.filterCondition('ticketSeries', elem) &&
-                        this.filterCondition('ticketNum', elem) &&
-                        this.filterCondition('docSeries', elem) &&
-                        this.filterCondition('docNum', elem) &&
-                        // this.filterCondition('phone', elem) &&
-                        (elem['order'] && elem['order']['user'] ? (!this.filterArr['phone'].set || (this.filterArr['phone'].set && elem['order']['user']['phone'] == this.filterArr['phone'].value)) : (!this.filterArr['phone'].set || (this.filterArr['phone'].set && elem['phone'] == this.filterArr['phone'].value))) &&
-                        this.filterCondition('ticketType', elem) &&
-                        this.filterCondition('status', elem) &&
-                        this.filterCondition('order_id', elem) &&
-                        (!this.filterArr['dispatchDate'].set || (this.filterArr['dispatchDate'].set && dayjs(elem['dispatchDate']).format('YYYY-MM-DD') == this.filterArr['dispatchDate'].value)) &&
-                        (!this.filterArr['created_at'].set || (this.filterArr['created_at'].set && dayjs(elem['created_at']).format('YYYY-MM-DD') == this.filterArr['created_at'].value))
-            })
-        },
-        pagesCount(){
-            return Math.ceil(this.filteredTickets.length / this.ticketsPerPage);
-        },
-        filteredTicketsForCycle(){
-            return this.filteredTickets.slice(this.paginationOffset, this.paginationOffset + this.ticketsPerPage)
-        },
         ticketStatuses(){
             return ticketStatuses;
         }
     },
+    watch: {
+        filterArr: {
+            handler: function(){
+                console.log(this.filterArr)
+            },
+            deep: true
+        }
+    },
     async mounted(){
         this.$refs.refPhoneInput.focus()
-        // this.resetPhoneFilter()
-        this.ticketsLoading = true
-        const promise = axiosAdmin
-        .get('/tickets')
-        .then(response => {
-            console.log(response.data)
-            this.tickets = response.data.tickets
-            console.log(this.filteredTickets)
-        })
-        .catch( error => {
-            console.log(error)
-        })
-        await promise
-        this.tickets.forEach(elem => {
-            elem.birthday = dayjs(elem.birthday).format('YYYY-MM-DD')
-            elem.created_at = dayjs(elem.created_at).format('YYYY-MM-DD HH:mm')
-            elem.insurance = elem.insurance ? JSON.parse(elem.insurance) : null
-        })
-        this.ticketsLoading = false
-        console.log(this.filterArr['phone'].set)
+        this.getTickets()
     }
 }
 </script>
