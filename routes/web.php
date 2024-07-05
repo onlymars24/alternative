@@ -78,12 +78,12 @@ Route::get('/spread', function (Request $request) {
           $xml->url[$i]->lastmod = date('Y-m-d');
       }
       $xmlExist = false;
-      for($i = 0; $i < count($xml->url); $i++){
-          if($xml->url[$i]->loc == $newLoc){
-              $xmlExist = true;
-              break;
-          }
-      }
+      // for($i = 0; $i < count($xml->url); $i++){
+      //     if($xml->url[$i]->loc == $newLoc){
+      //         $xmlExist = true;
+      //         break;
+      //     }
+      // }
       if(!$xmlExist){
         $newNode = $xml->addChild('url');
         $newNode->addChild('loc', $newLoc);
