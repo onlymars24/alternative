@@ -7,6 +7,7 @@ use App\Models\BusStation;
 use App\Models\DispatchPoint;
 use Illuminate\Database\Seeder;
 use App\Services\FtpLoadingService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -19,6 +20,10 @@ class InsertBusStationsMain extends Seeder
      */
     public function run()
     {
+        // $xmlStr = File::get(public_path(env('XML_FILE_NAME')));
+        // Log::info($xmlStr);
+        // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+
         $busStationsMain = Setting::where('name', 'busStationsMain')->first();
 
 
@@ -36,7 +41,7 @@ class InsertBusStationsMain extends Seeder
             ]);
       
             $newLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
-            $xml = simplexml_load_file(env('XML_FILE_NAME'));
+            $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
             for($i = 0; $i < count($xml->url); $i++){
                 $xml->url[$i]->lastmod = date('Y-m-d');
             }
