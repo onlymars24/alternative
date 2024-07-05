@@ -56,6 +56,10 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  FtpLoadingService::put();
+  dd('');
+
+
   $busStationsMain = Setting::where('name', 'busStationsMain')->first();
 
 
