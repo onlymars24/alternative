@@ -10,7 +10,9 @@ use App\Models\WhatsAppSms;
 use App\Services\SmsService;
 use App\Mail\LeaveReviewMail;
 use App\Services\ScheduleService;
+use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Scheduling\Schedule;
@@ -98,10 +100,17 @@ class Kernel extends ConsoleKernel
         })->everyThreeMinutes();
 
         $schedule->call(function () {
+            $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
             $cacheRaces = CacheRace::where([
                 ['date', '<', date('Y-m-d')]
             ])->delete();
             Log::info('Deleted successful!');
+
+            for($i = 0; $i < count($xml->url); $i++){
+                $xml->url[$i]->lastmod = date('Y-m-d');
+            }
+            File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+            FtpLoadingService::put();
         })->daily();
     }
 
