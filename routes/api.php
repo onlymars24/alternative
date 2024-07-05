@@ -115,7 +115,7 @@ Route::get('/bus/station', [BusStationController::class, 'one']);
 Route::post('/bus/station/create', [BusStationController::class, 'create']);
 Route::post('/bus/station/edit', [BusStationController::class, 'edit']);
 Route::post('/bus/station/delete', [BusStationController::class, 'delete']);
-
+Route::get('/bus/stations/main', [BusStationController::class, 'main']);
 
 Route::get('/bus/route', [BusRouteController::class, 'one']);
 Route::get('/bus/routes', [BusRouteController::class, 'all']);

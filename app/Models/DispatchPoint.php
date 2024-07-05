@@ -20,4 +20,9 @@ class DispatchPoint extends Model
         'okato',
         'place'
     ];
+
+    public function bus_stations()
+    {
+        return $this->hasMany(BusStation::class);
+    }
 }

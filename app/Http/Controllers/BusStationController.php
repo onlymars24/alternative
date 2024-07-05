@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\BusStation;
 use Illuminate\Http\Request;
 use App\Services\FtpLoadingService;
@@ -9,6 +10,11 @@ use Illuminate\Support\Facades\File;
 
 class BusStationController extends Controller
 {
+    public function main(){
+        return response([
+            'busStationsMain' => json_decode(Setting::where('name', 'busStationsMain')->first()->data)
+        ]);
+    }
     public function all(Request $request){
         $busStations = BusStation::all();
         return response([

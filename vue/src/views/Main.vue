@@ -1,6 +1,7 @@
 <script>
 import Footer from '../components/Footer.vue'
 import HeaderMain from '../components/HeaderMain.vue'
+import BusStationsMain from '../components/BusStationsMain.vue'
 import axiosClient from '../axios';
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
@@ -9,6 +10,7 @@ export default{
     components: {
         HeaderMain,
         Footer,
+        BusStationsMain
     },
     data() {
         return {
@@ -215,7 +217,7 @@ export default{
 
     <div class="about">
         <div class="container">
-            <div v-html="content"></div>
+            <div style="margin-bottom: 20px;" v-html="content"></div>
             <!-- <div class="about__inner">
             
                 
@@ -230,9 +232,10 @@ export default{
                     </div>
                 </div>
             </div> -->
-
+            <BusStationsMain/>
         </div>
     </div>
+    
     
     <!-- <hr class="bef__footer">
     <Footer/> -->
