@@ -519,7 +519,26 @@ outline: none;
       margin-bottom: 20px;
   }
 } */
-
+.bus__stations-main__region-name{
+  /* border-bottom: 2px solid #0275fe; */
+  display: inline-block;
+}
+.bus__stations-main__region-list{
+  display: flex;
+  flex-wrap: wrap;
+}
+.bus__stations-main__region-list li{
+  width: 25%;
+  margin-bottom: 20px;
+}
+.bus__stations-main__region{
+  margin-bottom: 10px;
+}
+@media (max-width: 768px) {
+  .bus__stations-main__region-list li{
+      width: 50%;
+  }
+}
 @media screen and (min-width: 768px) and (max-width: 992px){
   .main__table{
       display: block;
