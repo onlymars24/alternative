@@ -94,7 +94,7 @@ Route::get('/spread', function (Request $request) {
   if($user->email){
       $body['Request']['CustomerReceipt']['Email'] = $user->email;
   }
-  dd($body);
+  // dd($body);
   $ReceiptId = FermaService::receipt($body);
   $ReceiptId = json_decode($ReceiptId);
   $ReceiptId = $ReceiptId->Data->ReceiptId;
