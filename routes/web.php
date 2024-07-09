@@ -56,66 +56,61 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  FtpLoadingService::put();
-  dd('');
+  $orderFromDB = Order::find(140803551);
+  $tickets = $orderFromDB->tickets;
 
 
-  $busStationsMain = Setting::where('name', 'busStationsMain')->first();
+  $body = FermaEnum::$body;
+  $body['Request']['Type'] = 'IncomeReturn';
+  $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = 0;
 
 
-  $dispatchPoints = DispatchPoint::all();
-  // $dispatchPoint = DispatchPoint::find(73707);
-  // dd(!$dispatchPoint->bus_stations->count());
-  $busStationsSetting = [];
-  foreach($dispatchPoints as $dispatchPoint){
-    if(!$dispatchPoint->bus_stations->count()){
-      $busStation = BusStation::create([
-          'title' => $dispatchPoint->name,
-          'name' => 'Автовокзал '.$dispatchPoint->name,
-          'dispatch_point_id' => $dispatchPoint->id,
-          'hidden' => false,
-      ]);
-
-      $newLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
-      $xml = simplexml_load_file(env('XML_FILE_NAME'));
-      for($i = 0; $i < count($xml->url); $i++){
-          $xml->url[$i]->lastmod = date('Y-m-d');
-      }
-      $xmlExist = false;
-      // for($i = 0; $i < count($xml->url); $i++){
-      //     if($xml->url[$i]->loc == $newLoc){
-      //         $xmlExist = true;
-      //         break;
-      //     }
-      // }
-      if(!$xmlExist){
-        $newNode = $xml->addChild('url');
-        $newNode->addChild('loc', $newLoc);
-        $newNode->addChild('lastmod', date('Y-m-d'));
-        $newNode->addChild('changefreq', 'weekly');
-        $newNode->addChild('priority', '1.0');
-        File::put(env('XML_FILE_NAME'), $xml->asXML());
-      }
-    }
-    $busStationsSetting[$dispatchPoint['region']][] = $dispatchPoint->toArray();
+  foreach($tickets as $ticket){
+    $ticketFromDB = Ticket::find($ticket->id);
+    $item = FermaEnum::$item;
+    $item['Label'] = 'Бил'.(!empty($ticketFromDB->ticketNum) ? ' №' : '').$ticketFromDB->ticketNum.' '.$ticketFromDB->dispatchDate.' Мст№'.$ticketFromDB->seat.' '.$ticketFromDB->lastName.' '.mb_substr($ticketFromDB->firstName, 0, 1).'. '.mb_substr($ticketFromDB->middleName, 0, 1).'.';
+    $item['Price'] = $item['Amount'] = ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice);
+    $body['Request']['CustomerReceipt']['Items'][] = $item;
+    $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice);
   }
-  FtpLoadingService::put();
 
+  if($orderFromDB->insured){
+    $policyTotalRate = 0;
+    foreach($tickets as $ticket){
+        if($ticket->ticketType != 'Багажный'){
+            $policy = json_decode($ticket->insurance);
+            $policyTotalRate += $policy->rate[0]->value;
+        }
+    }     
 
-  foreach($busStationsSetting as $key => $region){
-    usort($region, function($a, $b) {
-      return strcmp($a['name'], $b['name']);
-    });
-    $busStationsSetting[$key] = $region;
+    $insuranceReceivePosition = FermaEnum::$insurance;
+    $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policyTotalRate;
+    $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+    $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policyTotalRate;            
   }
-  ksort($busStationsSetting);
+  $transaction = Transaction::find(2439);
+  $body['Request']['InvoiceId'] = $transaction->id;
+  $user = $orderFromDB->user;
+  if($user->email){
+      $body['Request']['CustomerReceipt']['Email'] = $user->email;
+  }
+  dd($body);
+  $ReceiptId = FermaService::receipt($body);
+  $ReceiptId = json_decode($ReceiptId);
+  $ReceiptId = $ReceiptId->Data->ReceiptId;
+  $receipt = FermaService::getStatus($ReceiptId);
+  $receipt = json_decode($receipt);
+  $transaction->StatusCode = $receipt->Data->StatusCode;
+  $transaction->ReceiptId = $receipt->Data->ReceiptId;
+  if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+      $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+  }
+  $transaction->save();
 
-  $busStationsMain = Setting::where('name', 'busStationsMain')->first();
-  $busStationsMain->data = json_encode(json_decode(json_encode($busStationsSetting)));
-  $busStationsMain->save();
-  dd($busStationsSetting);
-  
-
+  dd('ok');
+  // return response([
+  //     'tickets' => $tickets->count()
+  // ]);
 
 });
 
