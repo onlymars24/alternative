@@ -58,12 +58,13 @@ use App\Http\Controllers\UsersExportController;
 Route::get('/spread', function (Request $request) {
   // $dispatchPoint = DispatchPoint::find(80153);
   // dd($dispatchPoint->bus_stations->count());
+  // preg_replace('/\//', '%2F', $dispatchPointArr['name'])
   $busStationsMain = Setting::where('name', 'busStationsMain')->first();
   $dispatchPoints = DispatchPoint::all();
   $busStationsSetting = [];
   foreach($dispatchPoints as $dispatchPoint){
     $dispatchPointArr = $dispatchPoint->toArray();
-    $dispatchPointArr['name'] = preg_replace('/\//', '%2F', $dispatchPointArr['name']);
+    // $dispatchPointArr['name'] = preg_replace('/\//', '%2F', $dispatchPointArr['name']);
     $busStationsSetting[$dispatchPoint['region']][] = $dispatchPointArr;
   }
   foreach($busStationsSetting as $key => $region){
