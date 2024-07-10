@@ -106,7 +106,7 @@ export default{
     async mounted() {
         console.log(this.$route.params['title'])
         const promise1 = axiosClient
-        .get('/bus/station?title='+this.$route.params['title'].replace(/\s/g, '_'))
+        .get('/bus/station?title='+this.$route.params['title'])
         .then(response => {
             console.log(response)
             this.station = response.data.station

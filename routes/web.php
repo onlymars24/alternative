@@ -58,21 +58,26 @@ use App\Http\Controllers\UsersExportController;
 Route::get('/spread', function (Request $request) {
   // $dispatchPoint = DispatchPoint::find(80153);
   // dd($dispatchPoint->bus_stations->count());
-
+  $busStationsMain = Setting::where('name', 'busStationsMain')->first();
   $dispatchPoints = DispatchPoint::all();
-  $stations = [];
+  $busStationsSetting = [];
   foreach($dispatchPoints as $dispatchPoint){
-    if(!$dispatchPoint->bus_stations->count()){
-      $busStation = BusStation::create([
-        'title' => $dispatchPoint->name,
-        'name' => 'Автовокзал '.$dispatchPoint->name,
-        'dispatch_point_id' => $dispatchPoint->id,
-        'hidden' => false,
-      ]);
-      $stations[] = $dispatchPoint;
-    }
+    $dispatchPointArr = $dispatchPoint->toArray();
+    $dispatchPointArr['name'] = preg_replace('/\//', '%2F', $dispatchPointArr['name']);
+    $busStationsSetting[$dispatchPoint['region']][] = $dispatchPointArr;
   }
-  dd($stations);
+  foreach($busStationsSetting as $key => $region){
+    usort($region, function($a, $b) {
+      return strcmp($a['name'], $b['name']);
+    });
+    $busStationsSetting[$key] = $region;
+  }
+  ksort($busStationsSetting);
+
+  $busStationsMain = Setting::where('name', 'busStationsMain')->first();
+  $busStationsMain->data = json_encode(json_decode(json_encode($busStationsSetting)));
+  $busStationsMain->save();
+  // dd($stations);
 
 });
 
