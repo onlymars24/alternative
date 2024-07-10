@@ -63,6 +63,12 @@ Route::get('/spread', function (Request $request) {
   $stations = [];
   foreach($dispatchPoints as $dispatchPoint){
     if(!$dispatchPoint->bus_stations->count()){
+      $busStation = BusStation::create([
+        'title' => $dispatchPoint->name,
+        'name' => 'Автовокзал '.$dispatchPoint->name,
+        'dispatch_point_id' => $dispatchPoint->id,
+        'hidden' => false,
+      ]);
       $stations[] = $dispatchPoint;
     }
   }
