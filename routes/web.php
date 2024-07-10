@@ -56,61 +56,14 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  $orderFromDB = Order::find(140803551);
-  $tickets = $orderFromDB->tickets;
-
-
-  $body = FermaEnum::$body;
-  $body['Request']['Type'] = 'IncomeReturn';
-  $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = 0;
-
-
-  foreach($tickets as $ticket){
-    $ticketFromDB = Ticket::find($ticket->id);
-    $item = FermaEnum::$item;
-    $item['Label'] = 'Бил'.(!empty($ticketFromDB->ticketNum) ? ' №' : '').$ticketFromDB->ticketNum.' '.$ticketFromDB->dispatchDate.' Мст№'.$ticketFromDB->seat.' '.$ticketFromDB->lastName.' '.mb_substr($ticketFromDB->firstName, 0, 1).'. '.mb_substr($ticketFromDB->middleName, 0, 1).'.';
-    $item['Price'] = $item['Amount'] = ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice);
-    $body['Request']['CustomerReceipt']['Items'][] = $item;
-    $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += ($ticketFromDB->repayment - $ticketFromDB->bonusesPrice);
+  $dispatchPoints = DispatchPoint::all();
+  $stations = [];
+  foreach($dispatchPoints as $dispatchPoint){
+    if(!$dispatchPoint->bus_stations->count()){
+      $stations[] = $dispatchPoint;
+    }
   }
-
-  if($orderFromDB->insured){
-    $policyTotalRate = 0;
-    foreach($tickets as $ticket){
-        if($ticket->ticketType != 'Багажный'){
-            $policy = json_decode($ticket->insurance);
-            $policyTotalRate += $policy->rate[0]->value;
-        }
-    }     
-
-    $insuranceReceivePosition = FermaEnum::$insurance;
-    $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policyTotalRate;
-    $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
-    $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policyTotalRate;            
-  }
-  $transaction = Transaction::find(2439);
-  $body['Request']['InvoiceId'] = $transaction->id;
-  $user = $orderFromDB->user;
-  if($user->email){
-      $body['Request']['CustomerReceipt']['Email'] = $user->email;
-  }
-  // dd($body);
-  $ReceiptId = FermaService::receipt($body);
-  $ReceiptId = json_decode($ReceiptId);
-  $ReceiptId = $ReceiptId->Data->ReceiptId;
-  $receipt = FermaService::getStatus($ReceiptId);
-  $receipt = json_decode($receipt);
-  $transaction->StatusCode = $receipt->Data->StatusCode;
-  $transaction->ReceiptId = $receipt->Data->ReceiptId;
-  if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-      $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
-  }
-  $transaction->save();
-
-  dd('ok');
-  // return response([
-  //     'tickets' => $tickets->count()
-  // ]);
+  dd($dispatchPoints);
 
 });
 
