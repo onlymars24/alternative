@@ -56,16 +56,17 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  // $dispatchPoint = DispatchPoint::find();
+  // $dispatchPoint = DispatchPoint::find(80153);
+  // dd($dispatchPoint->bus_stations->count());
 
   $dispatchPoints = DispatchPoint::all();
   $stations = [];
   foreach($dispatchPoints as $dispatchPoint){
-    if($dispatchPoint->bus_stations->count() == 0){
+    if(!$dispatchPoint->bus_stations->count()){
       $stations[] = $dispatchPoint;
     }
   }
-  dd($dispatchPoints);
+  dd($stations);
 
 });
 
