@@ -21,7 +21,7 @@ class DispatchController extends Controller
         }
 
         return response([
-            'points' => DispatchPoint::with('kladr')->where($whereArr)->paginate(5)
+            'points' => DispatchPoint::with('kladr')->where($whereArr)->paginate(13)
         ]);
     }
 }

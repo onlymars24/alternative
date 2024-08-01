@@ -262,8 +262,11 @@ router.beforeEach((to, from, next) => {
     }
   }
   else{
-    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Reports' || to.name === 'Feedback' || to.name === 'Debugging' || to.name === 'BusStations' || to.name === 'EditPoints'
-     || to.name === 'EditMain' || to.name === 'Bonuses' || to.name === 'EventEdit' || to.name === 'EventCreate' || to.name === 'BusRoutesEdit' ||  to.name === 'BusRoutes'){
+    if(to.name === 'Tickets' || to.name === 'Order' || to.name === 'Transactions' || to.name === 'Sms' || to.name === 'Sms' || to.name === 'Reports' || to.name === 'Feedback'
+     || to.name === 'Debugging' || to.name === 'EditMain' || to.name === 'EditUpcomingTrips' || to.name === 'EditPoints' || to.name === 'BusStations' ||  to.name === 'BusRoutes'
+     || to.name === 'BusRoutesEdit' || to.name === 'EventCreate' || to.name === 'EventEdit' || to.name === 'EventEdit' || to.name === 'BonusesTransactions' ||  to.name === 'BonusesUsers'
+     || to.name === 'BonusesUser' || to.name === 'Settings' || to.name === 'EditRobotsTxt' || to.name === 'Kladr'
+    ){
       return next({name: 'ALogin'})
     }
   }
