@@ -18,11 +18,16 @@ class DispatchPoint extends Model
         'latitude',
         'longitude',
         'okato',
-        'place'
+        'place',
+        'kladr_id'
     ];
 
     public function bus_stations()
     {
         return $this->hasMany(BusStation::class);
+    }
+
+    public function kladr(){
+        return $this->belongsTo(Kladr::class);
     }
 }

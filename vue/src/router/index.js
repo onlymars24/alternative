@@ -39,6 +39,7 @@ import BusRoutesEdit from '../views/admin/BusRoutesEdit.vue'
 import WhatsAppSms from '../views/admin/WhatsAppSms.vue'
 import Settings from '../views/admin/Settings.vue'
 import EditRobotsTxt from '../views/admin/EditRobotsTxt.vue'
+import Kladr from '../views/admin/Kladr.vue'
 
 
 
@@ -224,6 +225,11 @@ const routes = [
         path: 'edit/robots/txt',
         name: 'EditRobotsTxt',
         component: EditRobotsTxt
+      }, 
+      {
+        path: 'kladr',
+        name: 'Kladr',
+        component: Kladr
       }, 
     ]
   },

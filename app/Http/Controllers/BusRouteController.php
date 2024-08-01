@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BusRoute;
 use Illuminate\Http\Request;
+use App\Services\GraphicService;
 
 class BusRouteController extends Controller
 {
@@ -40,6 +41,7 @@ class BusRouteController extends Controller
             'dispatchPointName' => $request->dispatchPointName,
             'arrivalPointName' => $request->arrivalPointName,
         ]);
+        GraphicService::generateImage($request->dispatchPointName, $request->arrivalPointName);
         return response([
             'busRoute' => $busRoute
         ]);

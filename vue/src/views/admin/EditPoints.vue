@@ -16,7 +16,7 @@
                 </el-select>
                 <el-transfer v-model="popularPoints"
                 :props="{
-                    key: 'id',
+                    key: 'arrival_point_id',
                     label: 'label',
                 }"
                 filterable
@@ -25,7 +25,7 @@
                 :data="arrivalPoints"
                 />
             </div>
-            <el-button type="primary" :loading-icon="Eleme" @click="savePopularPoints" :loading="loading">Сохранить</el-button>
+            <el-button type="primary" @click="savePopularPoints" :loading="loading">Сохранить</el-button>
 
             <PointsMatch/>
             <NewPoints/>
@@ -49,7 +49,6 @@ export default
         return {
             data: this.generateData(),
             popularPoints: [],
-            cacheArrivalPoints: {},
             arrivalPoints: [],
             dispatchPoints: [],
             dispatchPointId: '',
@@ -91,9 +90,11 @@ export default
             const promise2 = axiosClient
             .get('/arrival_points/'+this.dispatchPointId)
             .then(response => {
-                this.cacheArrivalPoints = response.data
-                this.arrivalPoints = JSON.parse(response.data.arrival_points)
-                this.popularPoints = JSON.parse(response.data.popular_arrival_points)
+                this.arrivalPoints = response.data
+                let tempPoint = this.dispatchPoints.filter(point => {
+                    return point.id == this.dispatchPointId
+                })[0]
+                this.popularPoints = JSON.parse(tempPoint.popularPoints)
             })
             .catch(error => {
 

@@ -108,8 +108,8 @@
 			 <div class="ticket-low__ins-down-first">
 			   <div class="ins-down-first__left">
 				 <p>
-				   Маршрут № <b>{{ race.num }} {{ race.name }} </b>, по маршруту
-				   <b>{{ race.dispatchStationName }} — {{ race.arrivalStationName }}</b>
+				   Маршрут № <b>{{ race.num }} {{ race.name }} </b>,<br/>от
+				   <b>{{ race.dispatchStationName }}</b> до <b>{{ race.arrivalStationName }}</b>
 				 </p>
 				 <p v-if="race.type != null">Тип рейса: {{ race.type.name }}</p>
          <p v-if="race.clazz != null">Класс рейса: {{ race.clazz.name }}</p>

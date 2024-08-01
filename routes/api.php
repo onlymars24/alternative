@@ -1,5 +1,6 @@
 <?php
 
+use FontLib\Table\Type\post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
@@ -8,10 +9,12 @@ use App\Http\Controllers\RaceController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\KladrController;
+// use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\OrderController;
-// use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ArrivalController;
 use App\Http\Controllers\BonusesController;
 use App\Http\Controllers\FixUserController;
 use App\Http\Controllers\PaymentController;
@@ -38,6 +41,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\DispatchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +75,10 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/tickets/reports', [TicketController::class, 'reports']);
 
     Route::post('/debugging', [DebuggingController::class, 'get']);
+
+    Route::post('/kladrs/dispatch/add', [KladrController::class, 'addDispatch']);
+    Route::post('/kladrs/arrival/add', [KladrController::class, 'addArrival']);
+
 });
 
 
@@ -197,6 +205,16 @@ Route::get('/users', [AuthController::class, 'users']);
 Route::get('/settings/bonuses/percent', [SettingsController::class, 'getBonusesPercent']);
 
 Route::get('/seven/days/races', [RaceController::class, 'sevenDaysRaces']);
+
+
+Route::get('/kladrs', [KladrController::class, 'all']);
+
+
+
+Route::post('/arrival/points/paginate', [ArrivalController::class, 'paginate']);
+Route::post('/dispatch/points/paginate', [DispatchController::class, 'paginate']);
+
+
 
 
 

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->after('paymentInformed', function ($table) {
+            $table->after('paymentInformed', function ($table) {   
                 $table->string('moscowDispatchTime')->nullable();
                 $table->boolean('dispatchInformed')->default(false);
             });

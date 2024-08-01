@@ -3,8 +3,10 @@
 use App\Models\Sms;
 use App\Models\User;
 use App\Models\Bonus;
+use App\Models\Kladr;
 use App\Models\Order;
 use App\Models\Ticket;
+use XBase\TableReader;
 use App\Mail\OrderMail;
 use App\Models\Setting;
 use App\Enums\FermaEnum;
@@ -24,6 +26,7 @@ use App\Exports\ReportsExport;
 use App\Services\FermaService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\FixUserService;
+use App\Services\GraphicService;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
 use App\Services\FtpLoadingService;
@@ -56,29 +59,118 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  // $dispatchPoint = DispatchPoint::find(80153);
-  // dd($dispatchPoint->bus_stations->count());
-  // preg_replace('/\//', '%2F', $dispatchPointArr['name'])
-  $busStationsMain = Setting::where('name', 'busStationsMain')->first();
-  $dispatchPoints = DispatchPoint::all();
-  $busStationsSetting = [];
-  foreach($dispatchPoints as $dispatchPoint){
-    $dispatchPointArr = $dispatchPoint->toArray();
-    // $dispatchPointArr['name'] = preg_replace('/\//', '%2F', $dispatchPointArr['name']);
-    $busStationsSetting[$dispatchPoint['region']][] = $dispatchPointArr;
-  }
-  foreach($busStationsSetting as $key => $region){
-    usort($region, function($a, $b) {
-      return strcmp($a['name'], $b['name']);
-    });
-    $busStationsSetting[$key] = $region;
-  }
-  ksort($busStationsSetting);
+  dd(CacheArrivalPoint::where('region', 'like', '%район%')->get());
+  // 0201200004200
+  dd(Kladr::
+  where([
+    // ['region', '=', 'Кемеровская обл'],
+    ['name', '=', 'Междуреченск'],
+    // ['district', '=', 'Павловский р-н'],
+    ])
+  // whereRaw("INSTR('Арбузовка', name) > 0 AND INSTR('Алтайский край', region) > 0 AND INSTR('Павловский р-н', district) > 0")
+  // ->take(10)
+  ->get());
 
-  $busStationsMain = Setting::where('name', 'busStationsMain')->first();
-  $busStationsMain->data = json_encode(json_decode(json_encode($busStationsSetting)));
-  $busStationsMain->save();
-  // dd($stations);
+  dd(Kladr::where([
+    ['name', 'like', 'Белояровка'],
+    // ['region', '=', 'Алтайский край'],
+    ['district', '=', 'Топчихинский р-н']
+  ])->get());
+
+  dd(Kladr::where('code', 'like', '%00')->get());
+  $regions = Kladr::where('code', 'like', '%00000000000')->get();
+  $regionsArr = [];
+  foreach($regions as $region){
+    $regionsArr[] =[
+      'name' => $region->name, 
+      'code' => $region->code, 
+      'gninmb' => $region->gninmb, 
+      'socr' => $region->socr,
+    ];
+  }
+  dd($regionsArr);
+  // dd(Kladr::has('dispatchPoints')->with('dispatchPoints')->get());
+  $newArr = [];
+  $table = new TableReader(
+    'KLADR.DBF',
+    [
+        'encoding' => 'cp866'
+    ]
+  );
+  $i = 0;
+  while ($record = $table->nextRecord()) {
+    $i++;
+    if($record->get('name') == 'Краснодарский'){
+      // if($record->get('name') == 'Краснодарский' || $record->get('name') == 'Краснодар'){
+      // while($record = $table->nextRecord() && $record->get('socr') != 'обл'){
+        $newArr[] = [
+          'name' => $record->get('name'), 
+          'code' => $record->get('code'), 
+          'gninmb' => $record->get('gninmb'), 
+          'socr' => $record->get('socr'),
+          'i' => $i
+        ];
+      // }
+
+    }
+    
+    //or
+    // echo $record->my_column;
+  }
+  dd($newArr);
+  dd(File::get('KLADR.DBF'));
+  
+  
+  
+  GraphicService::generateImage('Томск', 'Барнаул');
+  dd('');
+  $imagePath = 'img/bus_bgc.jpg';
+  $image = imagecreatefromjpeg($imagePath);
+
+  $text_color = imagecolorallocate($image, 255, 255, 255); 
+  
+  // Function to create image which contains string. 
+
+  $width = imagesx($image);
+  $height = imagesy($image);
+// Get center coordinates of image
+  $centerX = $width / 2;
+  $centerY = $height / 2;
+// Get size of text
+  $text = 'Новосибирск — \n Шерегеш';
+  $font = 'fonts/FiraSansCondensed-Medium.ttf';
+  $size = 70;
+
+  list($left, $bottom, $right, , , $top) = imageftbbox($size, 0, $font, $text);
+// Determine offset of text
+  $left_offset = ($right - $left) / 2;
+  $top_offset = ($bottom - $top) / 2;
+// Generate coordinates
+  $x = $centerX - $left_offset;
+  $y = 400;
+
+
+
+  imagefttext(
+    $image,
+    $size,
+    0,
+    $x,
+    $y,
+    $text_color,
+    $font,
+    $text,
+    []
+  );
+
+
+  imagejpeg($image, 'routes/new_bus_bgc.jpg');
+  dd($image);
+
+  // $manager = new ImageManager(new Intervention\Image\Drivers\Gd\Driver());
+
+  // reading jpeg image
+  // $image = $manager->read('images/example.jpg');
 
 });
 

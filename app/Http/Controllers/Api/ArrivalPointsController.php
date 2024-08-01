@@ -16,7 +16,7 @@ class ArrivalPointsController extends Controller
      */
     public function index()
     {
-        //
+        return CacheArrivalPoint::with('dispatchPoint')->get();
     }
 
     /**
@@ -38,20 +38,8 @@ class ArrivalPointsController extends Controller
      */
     public function show($id)
     {
-        $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $id)->first();
-        if($arrival_points){
-            return $arrival_points;
-        }
-        else{
-            $arrival_points_remoted = Http::withHeaders([
-                'Authorization' => env('AVTO_SERVICE_KEY'),
-            ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$id)->object();
-            $arrival_points = CacheArrivalPoint::create([
-                'dispatch_point_id' => $id,
-                'arrival_points' => json_encode($arrival_points_remoted)
-            ]);
-            return $arrival_points;
-        }
+        $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $id)->with('kladr')->get();
+        return $arrival_points;
     }
 
     /**

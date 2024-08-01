@@ -358,7 +358,7 @@ export default {
             const promise2 = axiosClient
             .get('/arrival_points/'+dispatchPoint.id)
             .then(response => {
-                arrivalPoints = JSON.parse(response.data.arrival_points)
+                arrivalPoints = response.data
             });
             await promise2
             arrivalPoint = arrivalPoints.filter(point => {
@@ -376,15 +376,15 @@ export default {
         
 
         this.dispatchEl.id = dispatchPoint.id
-        this.arrivalEl.id = arrivalPoint.id
+        this.arrivalEl.id = arrivalPoint.arrival_point_id
         this.paramKey ++
         if(!this.$route.query.from_id || !this.$route.query.to_id){
             this.loadingRaces = false
             // console.log('Нету query')
         }
-        else if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.id){
+        else if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.arrival_point_id){
             this.dispatchEl.id = dispatchPoint.id
-            this.arrivalEl.id = arrivalPoint.id
+            this.arrivalEl.id = arrivalPoint.arrival_point_id
             this.$router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date } })
             this.paramKey ++
         }

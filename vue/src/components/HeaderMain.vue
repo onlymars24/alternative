@@ -51,15 +51,15 @@
                             <span data-id="1770608" data-name="58-й километр (Орд. шоссе)">Ордынский район, от Новосибирск ЖД</span>
                         </li> -->
                         <template v-for="el in popularPoints">
-                            <PopularPoint :id="el.id" :name="el.name" :region="el.region" :details="el.details" @fillArrival="fillArrival"/>
+                            <PopularPoint :id="el.arrival_point_id" :name="el.name" :region="el.region" :details="el.details" @fillArrival="fillArrival"/>
                         </template>
                         
                     </ul>
                     <ul v-if="arrivalPointFilled" class="hint">
-                        <template v-for="el in filteredArrivalPoints" :key="el.id">
-                            <li @mousedown="fillArrival" :data-id="el.id" :data-name="el.name">
-                                <strong :data-id="el.id" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
-                                <span :data-id="el.id" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
+                        <template v-for="el in filteredArrivalPoints" :key="el.arrival_point_id">
+                            <li @mousedown="fillArrival" :data-id="el.arrival_point_id" :data-name="el.name">
+                                <strong :data-id="el.arrival_point_id" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
+                                <span :data-id="el.arrival_point_id" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
                             </li>
                         </template>
                     </ul>
@@ -274,9 +274,14 @@ export default{
                 .get('/arrival_points/'+this.dispatchEl.id)
                 .then(response => {
                     console.log(response)
-                    this.arrivalData = JSON.parse(response.data.arrival_points)
-                    this.popularPoints = this.arrivalData.filter(obj => JSON.parse(response.data.popular_arrival_points).includes(obj.id));
-                    
+                    this.arrivalData = response.data
+                    let tempPoint = this.dispatchData.filter(point => {
+                        return point.id == this.dispatchEl.id
+                    })[0]
+                    // let tempPopularPoints = JSON.parse(tempPoint.popular_arrival_points)
+                    this.popularPoints = this.arrivalData.filter(obj => JSON.parse(tempPoint.popular_arrival_points).includes(obj.arrival_point_id));
+                    console.log('popular points')
+                    console.log(this.popularPoints)
                 });
             await promise
         },

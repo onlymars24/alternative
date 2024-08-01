@@ -34,7 +34,6 @@ export default
             .post('/admin/login', {password: this.password})
             .then(response => {
                 localStorage.setItem('authAdminToken', response.data.token)
-                console.log(response.data.token)
                 router.push({ name: 'Tickets'})
             })
             .catch(error => {

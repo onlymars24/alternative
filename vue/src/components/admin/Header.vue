@@ -19,7 +19,11 @@
             <el-menu-item index="4-3" @click="$router.push({name: 'BusRoutes'})">Страница с маршрутом</el-menu-item>
             <el-menu-item index="4-4" @click="$router.push({name: 'EditRobotsTxt'})">robots.txt</el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="5" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
+        <el-sub-menu index="5">
+            <template #title>Точки</template>
+            <el-menu-item index="5-1" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
+            <el-menu-item index="5-1" @click="$router.push({name: 'Kladr'})">Kladr</el-menu-item>
+        </el-sub-menu>
         <el-menu-item index="6" @click="$router.push({name: 'BusStations'})">Автовокзалы</el-menu-item>
         <el-sub-menu index="7">
             <template #title>Новости</template>

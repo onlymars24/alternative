@@ -15,7 +15,7 @@ class DispatchPointsController extends Controller
      */
     public function index()
     {   
-        $dispatch_points = DispatchPoint::all();
+        $dispatch_points = DispatchPoint::with('kladr')->get();
         return json_encode($dispatch_points);
     }
 

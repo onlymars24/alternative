@@ -53,7 +53,7 @@ export default
         <input v-model="feedbackCredentials.name" class="form-control inp-gray phone__input" placeholder="Ваше имя" required></li>
       <li>
         <!-- <label for="tel" class="form-label label-gray">Ваш телефон</label> -->
-        <input v-mask="'+7 (###) ### ####'" ref="refPhoneInput" v-model="feedbackCredentials.phone" class="form-control inp-gray phone__input" placeholder="Ваш телефон" required></li>
+        <input v-mask="'+7 (9##) ### ####'" ref="refPhoneInput" v-model="feedbackCredentials.phone" class="form-control inp-gray phone__input" placeholder="Ваш телефон" required></li>
       <li>
         <!-- <label for="tel" class="form-label label-gray">Ваш email</label> -->
         <input v-model="feedbackCredentials.email" class="form-control inp-gray" placeholder="Ваш email" required></li>

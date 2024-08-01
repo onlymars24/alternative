@@ -11,7 +11,24 @@ class CacheArrivalPoint extends Model
 
     protected $fillable = [
         'dispatch_point_id',
-        'arrival_points',
-        'popular_arrival_points'
+        'arrival_point_id',
+        'id',
+        'name',
+        'region',
+        'details',
+        'address',
+        'latitude',
+        'longitude',
+        'okato',
+        'place',
+        'kladr_id'
     ];
+
+    public function kladr(){
+        return $this->belongsTo(Kladr::class);
+    }
+
+    public function dispatchPoint(){
+        return $this->belongsTo(DispatchPoint::class);
+    }
 }

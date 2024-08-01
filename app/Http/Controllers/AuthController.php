@@ -71,6 +71,7 @@ class AuthController extends Controller
         $phoneWithoutMask = SmsService::removeMask($user['phone']);
         $checkWhatsApp = Http::
         post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));
+        Log::info($checkWhatsApp);
         $checkWhatsApp = json_decode($checkWhatsApp);
         
         if($request->whatsAppChosen && isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
