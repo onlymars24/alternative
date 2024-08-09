@@ -278,7 +278,7 @@ export default {
         z-index: 2;
         list-style-type: none;
         max-height: 242px;
-        width: 400px;
+        /* width: 400px; */
         overflow-y: auto;
         overflow-x: hidden;
         background-color: #fff;
@@ -339,7 +339,7 @@ Firefox */
     @media (max-width: 993px){
         .hint{
             top: 150px;
-            min-width: 100%;
+            /* min-width: 100%; */
             max-width: 100%;
         }
     }

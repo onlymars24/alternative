@@ -205,13 +205,19 @@ Route::get('/users', [AuthController::class, 'users']);
 Route::get('/settings/bonuses/percent', [SettingsController::class, 'getBonusesPercent']);
 
 Route::get('/seven/days/races', [RaceController::class, 'sevenDaysRaces']);
+Route::get('/races', [RaceController::class, 'races']);
 
 
 Route::get('/kladrs', [KladrController::class, 'all']);
 
 
 
+
+Route::get('/arrival/points', [ArrivalController::class, 'all']);
 Route::post('/arrival/points/paginate', [ArrivalController::class, 'paginate']);
+
+
+Route::get('/dispatch/points', [DispatchController::class, 'all']);
 Route::post('/dispatch/points/paginate', [DispatchController::class, 'paginate']);
 
 
@@ -221,7 +227,7 @@ Route::post('/dispatch/points/paginate', [DispatchController::class, 'paginate']
 Route::apiResources([
     'dispatch_points' => DispatchPointsController::class,
     'arrival_points' => ArrivalPointsController::class,
-    'races' => RacesController::class,
+    // 'races' => RacesController::class,
     // 'race' => RaceController::class,
     'date' => DateController::class,
     'countries' => CountriesController::class,

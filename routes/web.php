@@ -44,6 +44,7 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
+use Illuminate\Database\Eloquent\Builder;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,73 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  $arrivalPoints = CacheArrivalPoint::where([['dispatch_point_id', '=', 5107], ['name', '=', 'Краснодар']])->whereHas('kladr', function(Builder $query){
+    $query->has('arrivalPoints', '>', 1);
+  })
+  ->with('kladr.arrivalPoints')
+  // ->take(10)
+  ->get();
+
+  // $arrivalPoints1 = CacheArrivalPoint::doesntHave('kladr')->where([['dispatch_point_id', '=', 5107], ['name', '=', 'Краснодар']])->get();
+  dd($arrivalPoints);
+
+
+  $races = [];
+
+  $races1 = Http::withHeaders([
+    'Authorization' => env('AVTO_SERVICE_KEY'),
+  ])->get(env('AVTO_SERVICE_URL').'/races/66690/150016/2024-08-07/')->object();
+  $races = array_merge($races, $races1);
+
+  dd($races);
+
+  $races2 = Http::withHeaders([
+    'Authorization' => env('AVTO_SERVICE_KEY'),
+  ])->get(env('AVTO_SERVICE_URL').'/races/66690/150016/2024-08-08/')->object();
+  $races = array_merge($races, $races2);
+
+
+  $races3 = Http::withHeaders([
+    'Authorization' => env('AVTO_SERVICE_KEY'),
+  ])->get(env('AVTO_SERVICE_URL').'/races/66690/150016/2024-08-09/')->object();
+  $races = array_merge($races, $races3);
+  // dd(array_merge($array1, $array2));
+  
+
+  dd($races);
+  // dd('');
+  $arrivalPoints1 = CacheArrivalPoint::doesntHave('kladr')->where([['dispatch_point_id', '=', 66690]])->get();
+  $arrivalPoints2 = CacheArrivalPoint::where([['dispatch_point_id', '=', 66690]])->whereHas('kladr', function(Builder $query){
+      $query->has('arrivalPoints', '>', 1);
+  })
+  ->with('kladr.arrivalPoints')
+  ->get();
+  dd([
+      'kladrs' => Kladr::has('arrivalPoints', '=', 1)->whereHas('arrivalPoints', function(Builder $query){
+            $query->where('dispatch_point_id', '=', 66690);
+        })->with('arrivalPoints')->get(),
+      'arrivalPoints' => $arrivalPoints1->concat($arrivalPoints2)
+      // 'arrivalPoints' => $arrivalPoints2
+  ]);
+  
+  // dd(Kladr::has('dispatchPoints', '=', 1)->with('dispatchPoints')->get());
+  // dd(Kladr::
+  //   // has('arrivalPoints')
+  //   whereHas('arrivalPoints', function (Builder $query) {
+  //     $query->where('dispatch_po', '=', 5107);
+  // })
+  // ->with(['arrivalPoints'])
+  // ->take(10)
+  // ->get());
+  $dispatchPoints1 = DispatchPoint::
+    whereHas('kladr', function(Builder $query){
+      $query->has('dispatchPoints', '=', 1);
+    })
+    ->with('kladr.dispatchPoints')
+    ->get();  
+  $dispatchPoints2 = DispatchPoint::doesntHave('kladr')->get();
+  $dispatchPoints2 = $dispatchPoints1->concat($dispatchPoints2);
+  dd($dispatchPoints2);
 //   $dispatchPoints = DispatchPoint::all();
 //   foreach($dispatchPoints as $point){
 //     $dispatchPoint = DispatchPoint::create([
@@ -92,16 +160,16 @@ Route::get('/spread', function (Request $request) {
 //     // $points[] = $point;
 // }  
   
-  dd();
-  dd(CacheArrivalPoint::where('region', 'like', '%район%')->get());
+  // dd();
+  // dd(CacheArrivalPoint::where('region', 'like', '%район%')->get());
   // 0201200004200
   dd(Kladr::
   where([
-    // ['region', '=', 'Кемеровская обл'],
-    ['name', '=', 'Междуреченск'],
-    // ['district', '=', 'Павловский р-н'],
+    // ['region', '=', 'Павлодарская обл'],
+    ['name', '=', 'Кемерово'],
+    // ['district', '=', 'Ижморский р-н'],
     ])
-  // whereRaw("INSTR('Арбузовка', name) > 0 AND INSTR('Алтайский край', region) > 0 AND INSTR('Павловский р-н', district) > 0")
+  // whereRaw("INSTR('Кемерово', name) > 0 AND INSTR('Кемеровская обл', region) > 0")
   // ->take(10)
   ->get());
 

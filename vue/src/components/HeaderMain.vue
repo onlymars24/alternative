@@ -6,7 +6,7 @@
 
             <div class="main">
                 <h1 style="text-shadow: 1px 1px 5px black" v-if="isRaces" class="main__main">
-                    Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}} 
+                    Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}}
                 </h1>
                 <h1 style="text-shadow: 1px 1px 5px black" v-else-if="station" class="main__main">
                     {{ station.name }}
@@ -18,7 +18,6 @@
                     Билеты на автобус онлайн
                 </p>
             </div>
-            
             <div class="main__table">
                 <div class="main__table-table">
                     <!-- <ul v-if="dispatchPointEmpty" class="hint">
@@ -31,15 +30,19 @@
                         </li>
                     </ul> -->
                     <ul v-if="dispatchPointFilled" class="hint">
-                        <template v-for="el in filteredDispatchPoints" :key="el.id">
-                            <li @mousedown="fillDispatch" :data-id="el.id" :data-name="el.name">
-                                <strong :data-id="el.id" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
-                                <span :data-id="el.id" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
+                        <template v-for="el in filteredDispatchPoints" :key="el.keyId">
+                            <li v-if="el.hasOwnProperty('details')" @mousedown="fillDispatch" :data-id="el.keyId" :data-name="el.name">
+                                <strong :data-id="el.keyId" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
+                                <span :data-id="el.keyId" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
+                            </li>
+                            <li v-else class="big__font-size" @mousedown="fillDispatch" :data-id="el.keyId" :data-name="el.name">
+                                <strong class="big__font-size" :data-id="el.keyId" :data-name="el.name">{{el.name}}{{el.region || el.district ? ', ' : '' }}</strong>
+                                <span style="font-size: 16px;"  :data-id="el.keyId" :data-name="el.name">{{el.region}}{{(el.district && !el.region) || !el.district? '' : ', ' }}{{el.district}}</span>
                             </li>
                         </template>
                     </ul>
                     <p class="">Откуда</p>
-                    <input :data-id="dispatchEl.id" :data-name="dispatchEl.name" @focus="dispatchFocus" @blur="dispatchBlur" v-model="dispatchText" class="main__table-input-1" type="text" placeholder="Заполните откуда">
+                    <input :data-id="dispatchEl.keyId" :data-name="dispatchEl.name" @focus="dispatchFocus" @blur="dispatchBlur" v-model="dispatchText" class="main__table-input-1" type="text" placeholder="Заполните откуда">
                 </div>
                 <div class="main__table-table">
                     <ul v-if="arrivalPointEmpty && popularPoints.length > 0" class="hint">
@@ -55,11 +58,15 @@
                         </template>
                         
                     </ul>
-                    <ul v-if="arrivalPointFilled" class="hint">
-                        <template v-for="el in filteredArrivalPoints" :key="el.arrival_point_id">
-                            <li @mousedown="fillArrival" :data-id="el.arrival_point_id" :data-name="el.name">
-                                <strong :data-id="el.arrival_point_id" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
-                                <span :data-id="el.arrival_point_id" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
+                    <ul v-if="true" class="hint">
+                        <template v-for="el in filteredArrivalPoints" :key="el.keyId">
+                            <li v-if="el.hasOwnProperty('details')" @mousedown="fillArrival" :data-id="el.keyId" :data-name="el.name">
+                                <strong :data-id="el.keyId" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
+                                <span :data-id="el.keyId" :data-name="el.name">{{el.region}}{{(el.details && !el.region) || !el.details? '' : ', ' }}{{el.details}}</span>
+                            </li>
+                            <li v-else class="big__font-size" @mousedown="fillArrival" :data-id="el.keyId" :data-name="el.name">
+                                <strong class="big__font-size" :data-id="el.keyId" :data-name="el.name">{{el.name}}{{el.region || el.district ? ', ' : '' }}</strong>
+                                <span style="font-size: 16px;" :data-id="el.keyId" :data-name="el.name">{{el.region}}{{(el.district && !el.region) || !el.district? '' : ', ' }}{{el.district}}</span>
                             </li>
                         </template>
                     </ul>
@@ -80,7 +87,7 @@
                                 <p>Найти билет</p>
                             </div>
                         </a>
-                    </div>                    
+                    </div>
 
 
                 </div>
@@ -92,6 +99,10 @@
             </div>
         </div>
     </div>
+    <!-- <pre>
+        {{ dispatchEl }}
+        {{ arrivalEl }}
+    </pre> -->
 </template>
 
 <script>
@@ -101,6 +112,7 @@ import axiosClient from '../axios'
 import Header from '../components/Header.vue'
 import PopularPoint from '../components/PopularPoint.vue'
 import dayjs from 'dayjs'
+import { spread } from 'lodash';
 export default{
         name: "HeaderMain",
         components: {
@@ -155,76 +167,8 @@ export default{
             arrivalText: this.arrivalEl0.name,
             // arrivalPointDisabled: true,
 
-            dispatchData: [
-                // {
-                //     id: 80153,
-                //     name: "Новосибирск",
-                //     region: "Новосибирская обл",
-                //     details: null,
-                //     address: null,
-                //     latitude: null,
-                //     longitude: null,
-                //     okato: "50401000000",
-                //     place: true
-                // },
-                // {
-                //     id: 1774915,
-                //     name: "Энск",
-                //     region: "Новосибирская обл",
-                //     details: "Новосибирск г",
-                //     address: null,
-                //     latitude: null,
-                //     longitude: null,
-                //     okato: "",
-                //     place: true
-                // },
-                // {
-                //     id: 73707,
-                //     name: "Псков",
-                //     region: "Псковская обл",
-                //     details: null,
-                //     address: null,
-                //     latitude: null,
-                //     longitude: null,
-                //     okato: "58401000000",
-                //     place: true
-                // }
-            ],
-            arrivalData: [
-                // {
-                //     id: 1770608,
-                //     name: "58-й километр (Орд. шоссе)",
-                //     region: "Ордынский район",
-                //     details: "от Новосибирск ЖД",
-                //     address: null,
-                //     latitude: null,
-                //     longitude: null,
-                //     okato: null,
-                //     place: false
-                // },
-                // {
-                //     id: 1770915,
-                //     name: "58-й километр (Орд. шоссе)",
-                //     region: "Ордынский район",
-                //     details: "от Новосибирск ЮЗ",
-                //     address: null,
-                //     latitude: null,
-                //     longitude: null,
-                //     okato: null,
-                //     place: false
-                // },
-                // {
-                //     id: 1770610,
-                //     name: "Автосервис (Тальменка)",
-                //     region: "Алтайский край",
-                //     details: "от Новосибирск ЖД",
-                //     address: null,
-                //     latitude: null,
-                //     longitude: null,
-                //     okato: null,
-                //     place: false
-                // }
-            ],
+            dispatchData: [],
+            arrivalData: [],
             dates: {
                 today: '0',
                 tomorrow: '0',
@@ -233,7 +177,7 @@ export default{
             dispatchEl: this.dispatchEl0, 
             arrivalEl: this.arrivalEl0,
             dateNew: '',
-            toMount: '',
+            toMonth: '',
             popularPoints: []
         }
     },
@@ -259,6 +203,7 @@ export default{
             }
         },
         async fillDispatch(event){
+            // console.log(event.target.dataset)
             this.dispatchEl.id = event.target.dataset.id
             this.dispatchEl.name = event.target.dataset.name
             this.dispatchText = this.dispatchEl.name
@@ -270,20 +215,37 @@ export default{
         },
 
         async getArrivalData(){
-             const promise = axiosClient
-                .get('/arrival_points/'+this.dispatchEl.id)
-                .then(response => {
-                    console.log(response)
-                    this.arrivalData = response.data
-                    let tempPoint = this.dispatchData.filter(point => {
-                        return point.id == this.dispatchEl.id
-                    })[0]
-                    // let tempPopularPoints = JSON.parse(tempPoint.popular_arrival_points)
+            // console.log(this.dispatchEl, this.dispatchData)
+            let tempPoint = this.dispatchData.filter(point => {
+                return point.keyId == this.dispatchEl.id
+            })[0]
+            let pointType = tempPoint.hasOwnProperty('details') ? 'e' : 'k'
+            let pointId = tempPoint.id
+            // console.log('/arrival/points?pointType='+pointType+'&pointId='+pointId)
+            const promise = axiosClient
+            .get('/arrival/points?pointType='+pointType+'&pointId='+pointId)
+            .then(response => {
+                // console.log(response)
+                this.arrivalData = response.data.arrivalPoints
+                // console.log(this.arrivalData)
+                // // let tempPopularPoints = JSON.parse(tempPoint.popular_arrival_points)
+                if(tempPoint.hasOwnProperty('details')){
                     this.popularPoints = this.arrivalData.filter(obj => JSON.parse(tempPoint.popular_arrival_points).includes(obj.arrival_point_id));
-                    console.log('popular points')
-                    console.log(this.popularPoints)
-                });
+                }
+                // console.log('popular points')
+                // console.log(this.popularPoints)
+            })
+            .catch(error => {
+                // console.log(error)
+            })
             await promise
+
+            // console.log(tempPoint)
+            // console.log('/arrival/points?pointType='+(tempPoint.hasOwnProperty('details') ? 'e' : 'k')+'&pointId='+this.dispatchEl.id)
+
+            // this.arrivalData.forEach((arrival, ind) => {
+            //     arrival.keyId = ind+1
+            // })
         },
 
         arrivalFocus(){
@@ -303,7 +265,7 @@ export default{
             }
         },
         fillArrival(event){
-            console.log(event)
+            // console.log(event)
             this.arrivalEl.id = event.target.dataset.id
             this.arrivalEl.name = event.target.dataset.name
             this.arrivalText = this.arrivalEl.name
@@ -319,7 +281,7 @@ export default{
         otherDay(date){
             this.date = date
             // this.$emit('changeRaces', date, this.dispatchEl.id, this.arrivalEl.id, this.dispatchEl.name, this.arrivalEl.name)
-            router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date }, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
+            router.push({ name: 'Races', query: { on: this.date }, params: { dispatch_name: this.dispatchEl.name, arrival_name: this.arrivalEl.name } })
             
             // window.scrollTo(0, 600);
         }
@@ -416,7 +378,6 @@ export default{
                 || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
                 || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
             })
-            
         },
         disabledButton(){
             return !this.dispatchEl.id || !this.arrivalEl.id || !this.date;
@@ -436,10 +397,17 @@ export default{
             this.auth = true
         }
         const promise = axiosClient
-        .get('/dispatch_points')
-        .then(response => (this.dispatchData = response.data));
+        .get('/dispatch/points')
+        .then(response => {
+            // console.log(response)
+            this.dispatchData = response.data.dispatchPoints
+        });
         await promise
-        console.log('this.busStationDispatchPointId '+this.busStationDispatchPointId)
+        // this.dispatchData.forEach((dispatch, ind) => {
+        //     dispatch.keyId = ind+1
+        // })
+        // console.log(this.dispatchData)
+        // console.log('this.busStationDispatchPointId '+this.busStationDispatchPointId)
         if(this.busStationDispatchPointId){
             this.dispatchEl.id = this.busStationDispatchPointId
             this.dispatchEl.name = this.dispatchData.filter(point => {
@@ -451,7 +419,7 @@ export default{
             this.arrivalText = ''
             this.arrivalBlur()
             this.getArrivalData()
-            console.log('Вокзал да')
+            // console.log('Вокзал да')
         }
         if(this.dispatchEl.name && this.dispatchEl.id){
             this.getArrivalData()
@@ -484,6 +452,9 @@ export default{
 }
 .main__another__date-fix__active{
     border-bottom: 1px white dashed;
+}
+.big__font-size{
+    font-size: 20px;
 }
 @media (max-width: 992px)
 {

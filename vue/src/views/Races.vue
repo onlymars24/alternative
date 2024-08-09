@@ -43,7 +43,7 @@
                         </p>
                     </div>
                 </div>
-                <div v-else-if="!races.length && !notExistingRace && !this.$route.query.from_id || !this.$route.query.to_id">
+                <div v-else-if="!races.length && !notExistingRace && !this.$route.query.on">
                     <div class="not__found">
                         <div class="not__found-text">
                             <p class="not__found-title">
@@ -288,7 +288,9 @@ export default {
                 afterTomorrow: ''
             },
             cacheRaces: [],
-            formatedCacheRaces: []
+            formatedCacheRaces: [],
+            dispatchPoints: [],
+            arrivalPoints: []
         }
     },
     // beforeMount(){
@@ -305,7 +307,7 @@ export default {
         
         const regex = /^\d{4}-\d{2}-\d{2}$/;
         if(!regex.test(this.date)){
-            console.log('нет')
+            // console.log('нет')
             this.date = dayjs().format('YYYY-MM-DD')
         }
 
@@ -313,10 +315,11 @@ export default {
         .get('/cache/races?dispatchPointName='+this.dispatchEl.name+'&arrivalPointName='+this.arrivalEl.name+'&date='+this.date)
         .then(response => {       
             this.cacheRaces = response.data.cacheRaces
-            console.log(this.cacheRaces)
+            // console.log('this.cacheRaces')
+            // console.log(this.cacheRaces)
         })
         .catch(error => {
-            console.log(error)
+            // console.log(error)
         })
         await promise
 
@@ -333,37 +336,55 @@ export default {
         }
 
 
-        let dispatchPoints =[]
+        // let dispatchPoints = []
         
-
+        // ...response.data.kladrs, ...response.data.dispatchPoints
         const promise1 = axiosClient
-        .get('/dispatch_points')
+        .get('/dispatch/points')
         .then(response => {
-            dispatchPoints = response.data
+            this.dispatchPoints = response.data.dispatchPoints
         });
         await promise1
-        if(this.$route.query.from_id && this.$route.query.to_id && this.$route.query.on){
+        // this.dispatchPoints.forEach((dispatch, ind) => {
+        //     dispatch.keyId = ind+1
+        // })
+        // if(this.$route.query.from_id && this.$route.query.to_id && this.$route.query.on){
             window.scrollTo(0, 600);
-        }
+        // }
         
         // console.log('должен был съехать mounted')
-        let dispatchPoint = dispatchPoints.filter(point => {
-            return point.name == this.dispatchEl.name
+        let dispatchPoint = this.dispatchPoints.filter(point => {
+            return point.name == this.dispatchEl.name && !point.hasOwnProperty('details')
         })[0]
-
-        let arrivalPoints = [];
+        if(!dispatchPoint){
+            dispatchPoint = this.dispatchPoints.filter(point => {
+                return point.name == this.dispatchEl.name && point.hasOwnProperty('details')
+            })[0]
+        }
+        // console.log('dispatchPoint')
+        // console.log(dispatchPoint)
+        // let arrivalPoints = [];
         let arrivalPoint = null
 
         if(dispatchPoint){
+            let pointType = dispatchPoint.hasOwnProperty('details') ? 'e' : 'k'
             const promise2 = axiosClient
-            .get('/arrival_points/'+dispatchPoint.id)
+            .get('/arrival/points?pointType='+pointType+'&pointId='+dispatchPoint.id)
             .then(response => {
-                arrivalPoints = response.data
+                this.arrivalPoints= response.data.arrivalPoints
             });
             await promise2
-            arrivalPoint = arrivalPoints.filter(point => {
-                return point.name == this.arrivalEl.name
+            this.arrivalPoints.forEach((arrival, ind) => {
+                arrival.keyId = ind+1
+            })
+            arrivalPoint = this.arrivalPoints.filter(point => {
+                return point.name == this.arrivalEl.name && !point.hasOwnProperty('details')
             })[0]
+            if(!arrivalPoint){
+                arrivalPoint = this.arrivalPoints.filter(point => {
+                    return point.name == this.arrivalEl.name && point.hasOwnProperty('details')
+                })[0]
+            }
         }
 
         if(!arrivalPoint || !dispatchPoint){
@@ -375,26 +396,23 @@ export default {
         
         
 
-        this.dispatchEl.id = dispatchPoint.id
-        this.arrivalEl.id = arrivalPoint.arrival_point_id
+        this.dispatchEl.id = dispatchPoint.keyId
+        this.arrivalEl.id = arrivalPoint.keyId
         this.paramKey ++
-        if(!this.$route.query.from_id || !this.$route.query.to_id){
-            this.loadingRaces = false
-            // console.log('Нету query')
-        }
-        else if(this.$route.query.from_id != dispatchPoint.id || this.$route.query.to_id != arrivalPoint.arrival_point_id){
-            this.dispatchEl.id = dispatchPoint.id
-            this.arrivalEl.id = arrivalPoint.arrival_point_id
-            this.$router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: this.date } })
-            this.paramKey ++
+        if(this.date == this.$route.query.on){
+            this.changeRaces0(this.date, dispatchPoint.id, arrivalPoint.id, 
+            dispatchPoint.hasOwnProperty('details') ? 'e' : 'k', arrivalPoint.hasOwnProperty('arrival_point_id') ? 'e' : 'k',
+            dispatchPoint.name, arrivalPoint.name
+            );
         }
         else{
-            this.changeRaces0(this.date, this.dispatchEl.id, this.arrivalEl.id, dispatchPoint.name, arrivalPoint.name);
-            // this.loadingRaces = false
+            this.loadingRaces = false
         }
 
+        
         // 
         this.dateForError = dayjs(this.date).format('DD.MM.YYYY')
+
     },
     computed: {
         sortedRaces(){
@@ -420,25 +438,38 @@ export default {
         }
     },
     methods: {
-        // customScroll(){
-        //     window.scrollTo(0, 600);
-        // },
         findRacesWithDate(){
-            router.push({ name: 'Races', query: { from_id: this.dispatchEl.id, to_id: this.arrivalEl.id, on: dayjs().format('YYYY-MM-DD')}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
+            router.push({ name: 'Races', query: { on: dayjs().format('YYYY-MM-DD')}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
         },
         async findOtherDates(){
             this.loadingRaces = true
             window.scrollTo(0, 600);
             // console.log('должен был съехать findOtherDates')
             this.existingRaces.step = 2
+            // console.log('this.dispatchData, this.arrivalData')
+            // console.log(this.dispatchPoints, this.arrivalPoints)
+            let dispatchPoint = this.dispatchPoints.filter(point => {
+                return point.keyId == this.dispatchEl.id
+            })[0]
+
+            let arrivalPoint = this.arrivalPoints.filter(point => {
+                return point.keyId == this.arrivalEl.id
+            })[0]
+            // +this.$route.query.on+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
+            // +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type
+
+            // console.log('/seven/days/races?date='+this.$route.query.on+'&dispatchPointId='+dispatchPoint.id+'&arrivalPointId='+arrivalPoint.id
+            // +'&dispatchPointType='+(dispatchPoint.hasOwnProperty('details') ? 'e' : 'k')+'&arrivalPointType='+(arrivalPoint.hasOwnProperty('details') ? 'e' : 'k'))
+
             const promise1 = axiosClient
-            .get('/seven/days/races?dispatchPointId='+this.$route.query.from_id+'&arrivalPointId='+this.$route.query.to_id+'&date='+this.$route.query.on)
+            .get('/seven/days/races?date='+this.$route.query.on+'&dispatchPointId='+dispatchPoint.id+'&arrivalPointId='+arrivalPoint.id
+            +'&dispatchPointType='+(dispatchPoint.hasOwnProperty('details') ? 'e' : 'k')+'&arrivalPointType='+(arrivalPoint.hasOwnProperty('details') ? 'e' : 'k'))
             .then(response => {
-                console.log(response)
+                // console.log(response)
                 this.existingRaces.date = response.data.date
             })
             .catch(error => {
-                console.log(error)
+                // console.log(error)
             });
             await promise1
             this.loadingRaces = false
@@ -447,21 +478,21 @@ export default {
             }
             // this.openWindow = false
             // router.push({name: 'Main'})
-            console.log(this.existingRaces.date)
+            // console.log(this.existingRaces.date)
             
-            router.push({ name: 'Races', query: { from_id: this.$route.query.from_id, to_id: this.$route.query.to_id, on: this.existingRaces.date}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
+            router.push({ name: 'Races', query: { on: this.existingRaces.date}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
             this.date = this.existingRaces.date
             this.paramKey ++
             // this.$forceUpdate(); 
 
             // router.go(1)
-            console.log(this.$route)
-            console.log(window.location.origin + this.$route.fullPath)
+            // console.log(this.$route)
+            // console.log(window.location.origin + this.$route.fullPath)
             // router.replace(this.$route.path)
             // window.location.replace(window.location.origin + this.$route.fullPath);
-            this.changeRaces0(this.existingRaces.date, this.$route.query.from_id, this.$route.query.to_id, this.$route.params['dispatch_name'], this.$route.params['arrival_name'])
+            this.changeRaces0(this.existingRaces.date, dispatchPoint.id, arrivalPoint.id, dispatchPoint.hasOwnProperty('details') ? 'e' : 'k', arrivalPoint.hasOwnProperty('details') ? 'e' : 'k', this.$route.params['dispatch_name'], this.$route.params['arrival_name'])
         },
-        async changeRaces0(date, dispatch_id, arrival_id, dispatch_name, arrival_name){
+        async changeRaces0(date, dispatch_id, arrival_id, dispatch_type, arrival_type, dispatch_name, arrival_name){
             // window.scrollTo(0, 600);
             // console.log('должен был съехать changeRaces0')
             this.loadingRaces = true
@@ -471,47 +502,24 @@ export default {
             this.errorNames.dispatch = dispatch_name
             this.errorNames.arrival = arrival_name
 
-            // const promise = axiosClient
-            // .post('/races/xml/create', {dispatchName: dispatch_name, arrivalName: arrival_name})
-            // .then(response => {
-            //     console.log(response)
-            // })
-            // .catch(error => {
-            //     console.log(error)
-            // })
-            // await promise
-
-            // const promise1 = axiosClient
-            // .get('/cache/races?dispatchPointName='+dispatch_name+'&arrivalPointName='+arrival_name+'&date='+date)
-            // .then(response => {       
-            //     this.cacheRaces = response.data.cacheRaces
-            //     console.log(this.cacheRaces)
-            // })
-            // .catch(error => {
-            //     console.log(error)
-            // })
-            // await promise1
-
-            // if(this.cacheRaces.length > 0){
-            //     this.cacheRaces.forEach(race => {
-            //         race.section = 'route'
-            //         race.details_menu = false
-            //         race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
-            //         race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
-            //         race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
-            //         race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
-            //     });
-            //     this.formatedCacheRaces = this.cacheRaces
-            // }
-
-            console.log(dispatch_name, arrival_name)
-
+            //dispatchPointId
+            //dispatchPointType
+            //arrivalPointId
+            //arrivalPointType
+            //date
+            // console.log('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
+            // +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
             const promise2 = axiosClient
-            .get('/races/'+date+'/?dispatch_point_id='+dispatch_id+'&arrival_point_id='+arrival_id
-            +'&dispatch_point_name='+dispatch_name+'&arrival_point_name='+arrival_name)
-            .then(response => (
-                this.races = response.data
-            ));
+            .get('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
+            +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
+            .then(response => {
+                // console.log('response')
+                // console.log(response)
+                this.races = response.data.races
+            })
+            .catch(error => {
+                // console.log(error)
+            })
             await promise2
             if(this.races.length > 0){
                 this.races.forEach(race => {
@@ -529,7 +537,7 @@ export default {
                 this.busRoute = response.data.busRoute
             })
             .catch(error => {
-                console.log(error)
+                // console.log(error)
             })
             await promise3
             this.loadingRaces = false
@@ -545,8 +553,8 @@ export default {
                 return num;
             }
         },
-        toSeats(raceId){
-            router.push({name: 'SeatPage', params: {dispatch_point_id: this.dispatchEl.id, arrival_point_id: this.arrivalEl.id, date: this.$route.query.on, race_id: raceId}})
+        toSeats(raceId, dispatch_point_id, arrival_point_id){
+            router.push({name: 'SeatPage', params: {dispatch_point_id, arrival_point_id, date: this.$route.query.on, race_id: raceId}})
         }
     },
     // created() {

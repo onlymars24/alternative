@@ -38,7 +38,7 @@ class ArrivalPointsController extends Controller
      */
     public function show($id)
     {
-        $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $id)->with('kladr')->get();
+        $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $id)->with('kladr.dispatchPoints')->get();
         return $arrival_points;
     }
 

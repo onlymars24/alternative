@@ -66,7 +66,7 @@
          <button v-if="button_status == 'Выбрать' && race.freeSeatCount == 0" style="background-color: gray;" disabled class="buy__but">
             Мест нет
 			   </button>
-         <button v-if="button_status == 'Выбрать' && race.freeSeatCount != 0 && race.status && (race.status.name == 'Нет данных' || race.status.name == 'Продажа')" @click="$emit('toSeats', race.uid)" class="buy__but">
+         <button v-if="button_status == 'Выбрать' && race.freeSeatCount != 0 && race.status && (race.status.name == 'Нет данных' || race.status.name == 'Продажа')" @click="$emit('toSeats', race.uid, race.dispatch_point_id, race.arrival_point_id)" class="buy__but">
           Выбрать
 			   </button>
          <button v-if="button_status == 'Выбрать' && race.freeSeatCount != 0 && race.status && (race.status.name != 'Продажа' && race.status.name != 'Нет данных')" style="background-color: gray;" disabled class="buy__but">

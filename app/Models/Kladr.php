@@ -23,4 +23,8 @@ class Kladr extends Model
     public function dispatchPoints(){
         return $this->hasMany((DispatchPoint::class));
     }
+
+    public function arrivalPoints(){
+        return $this->hasMany((CacheArrivalPoint::class));
+    }
 }

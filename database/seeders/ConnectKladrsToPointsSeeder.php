@@ -19,7 +19,7 @@ class ConnectKladrsToPointsSeeder extends Seeder
      */
     public function run()
     {
-        $points = CacheArrivalPoint::where([
+        $points = DispatchPoint::where([
             ['kladr_id', '=', null]
         ])->get();
 
