@@ -17,23 +17,25 @@ class DecodeKladrRelevanceSeeder extends Seeder
      */
     public function run()
     {
+        for($i = 0; $i < 250000; $i+=49000){
+            $kladrs = Kladr::where([['id', '>', $i], ['code', 'like', '%00']])->take(50000)->get();
+            $output = new ConsoleOutput();
+            $totalItems = $kladrs->count(); // Замените на общее количество записей, которые вы собираетесь создать.
+            $progressBar = new ProgressBar($output, $totalItems);
 
-        $kladrs = Kladr::where([['code', 'like', '%00']])->get();
-        $output = new ConsoleOutput();
-        $totalItems = $kladrs->count(); // Замените на общее количество записей, которые вы собираетесь создать.
-        $progressBar = new ProgressBar($output, $totalItems);
+            $progressBar->start();
 
-        $progressBar->start();
+            foreach($kladrs as $kladr){
+                $kladr->relevance = 'Актуальный объект';
+                $kladr->save();
+                $progressBar->advance();
+            }
 
-        foreach($kladrs as $kladr){
-            $kladr->relevance = 'Актуальный объект';
-            $kladr->save();
-            $progressBar->advance();
+            $progressBar->finish();
+
+
+            $output->writeln('Seeder completed!');
         }
 
-        $progressBar->finish();
-
-
-        $output->writeln('Seeder completed!');
     }
 }
