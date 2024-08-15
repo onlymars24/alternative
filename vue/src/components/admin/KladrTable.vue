@@ -85,15 +85,16 @@
             </template>
             </el-table-column>
             <el-table-column
-            width="400">
+            width="600">
 
             <template #default="scope">
                 <el-select v-model="scope.row.new_kladr_id" filterable :loading="loading" remote :remote-method="kladrFilter" style="margin-left: 10px;">
-                    <el-option
+                    <el-option 
                         v-for="kladr in kladrs"
                         :key="kladr.id"
-                        :label="kladr.name+', '+kladr.socr+', '+kladr.code+(kladr.region ? ', '+kladr.region : '' )+(kladr.district ? ', '+kladr.district : '')+(kladr.city ? ', '+kladr.city : '')"
+                        :label="kladr.name+', '+kladr.socr+', '+kladr.code+(kladr.region ? ', '+kladr.region : '' )+(kladr.district ? ', '+kladr.district : '')+(kladr.city ? ', '+kladr.city : '')+(kladr.relevance ? ', '+kladr.relevance : '')"
                         :value="kladr.id"
+                        :style="kladr.relevance != 'Актуальный объект' ? 'color: red;' : 'color: #29bf56;'"
                     >
                     </el-option>
                 </el-select>
@@ -239,3 +240,16 @@ export default
     }
 }
 </script>
+
+<style>
+.el-select-dropdown .el-select-dropdown__item {
+    max-height: 100px; 
+    line-height: 20px;
+    height: auto;
+    white-space: normal; 
+    /* Разрешить перенос строк внутри опции */
+     word-wrap: break-word; 
+     margin-bottom: 10px;
+    /* Переносить длинные слова на новую строку при необходимости */
+}
+</style>

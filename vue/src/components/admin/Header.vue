@@ -22,7 +22,7 @@
         <el-sub-menu index="5">
             <template #title>Точки</template>
             <el-menu-item index="5-1" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
-            <el-menu-item index="5-1" @click="$router.push({name: 'Kladr'})">Kladr</el-menu-item>
+            <el-menu-item index="5-2" @click="$router.push({name: 'Kladr'})">Связки с кладром</el-menu-item>
         </el-sub-menu>
         <el-menu-item index="6" @click="$router.push({name: 'BusStations'})">Автовокзалы</el-menu-item>
         <el-sub-menu index="7">

@@ -16,11 +16,22 @@ class BusStation extends Model
         'description',
         'data',
         'dispatch_point_id',
+        'kladr_id',
         'hidden',
     ];
 
     public function events()
     {
         return $this->belongsToMany(Event::class);
+    }
+
+    public function kladr()
+    {
+        return $this->belongsTo(Kladr::class);
+    }
+
+    public function dispatchPoint()
+    {
+        return $this->belongsTo(DispatchPoint::class);
     }
 }

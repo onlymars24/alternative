@@ -16,7 +16,7 @@ class BusStationController extends Controller
         ]);
     }
     public function all(Request $request){
-        $busStations = BusStation::all();
+        $busStations = BusStation::latest('id')->get();
         return response([
             'busStations' => $busStations
         ]);
@@ -28,12 +28,20 @@ class BusStationController extends Controller
         ]);
     }
 
+    public function oneById(Request $request){
+        $busStation = BusStation::find($request->id);
+        return response([
+            'station' => $busStation
+        ]);
+    }
+
     public function create(Request $request){
         $busStation = BusStation::create([
             'title' => $request->title,
             'name' => $request->name,
             'description' => $request->description,
             'dispatch_point_id' => $request->dispatch_point_id,
+            'kladr_id' => $request->kladr_id,
             'hidden' => $request->hidden,
         ]);
 
@@ -83,6 +91,7 @@ class BusStationController extends Controller
     }
 
     public function edit(Request $request){
+        // return response(['request' => $request->all() ]);
         $busStation = BusStation::find($request->id);
         $oldLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
 
@@ -91,6 +100,7 @@ class BusStationController extends Controller
         $busStation->description = $request->description;
         $busStation->hidden = $request->hidden;
         $busStation->dispatch_point_id = $request->dispatch_point_id;
+        $busStation->kladr_id = $request->kladr_id;
         $busStation->data = json_encode(['content' => $request->content ? $request->content : '']);
         $busStation->save();
 

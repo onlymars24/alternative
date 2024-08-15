@@ -120,6 +120,8 @@ Route::post('/page/upcoming/trips', [PageUpcomingTripsController::class, 'edit']
 
 Route::get('/bus/stations', [BusStationController::class, 'all']);
 Route::get('/bus/station', [BusStationController::class, 'one']);
+
+Route::get('/bus/station/id', [BusStationController::class, 'oneById']);
 Route::post('/bus/station/create', [BusStationController::class, 'create']);
 Route::post('/bus/station/edit', [BusStationController::class, 'edit']);
 Route::post('/bus/station/delete', [BusStationController::class, 'delete']);

@@ -24,6 +24,7 @@ use App\Mail\LeaveReviewMail;
 use App\Models\DispatchPoint;
 use App\Exports\ReportsExport;
 use App\Services\FermaService;
+use App\Services\PointService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\FixUserService;
 use App\Services\GraphicService;
@@ -42,9 +43,9 @@ use App\Services\DeletePassportService;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\OrderController;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
-use Illuminate\Database\Eloquent\Builder;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,54 @@ use Illuminate\Database\Eloquent\Builder;
 
 
 Route::get('/spread', function (Request $request) {
+  $busStations = BusStation::with('kladr')->get();
+  $busStationsSetting = [];
+  foreach($busStations as $station){
+    if($station->kladr){
+      $kladr = $station->kladr->toArray();
+      $busStationsSetting[$kladr['region']][] = $kladr;
+    }
+  }
+  // dd($busStationsSetting);
+
+  foreach($busStationsSetting as $key => $region){
+    usort($region, function($a, $b) {
+      return strcmp($a['name'], $b['name']);
+    });
+    $busStationsSetting[$key] = $region;
+  }
+
+  ksort($busStationsSetting);
+
+  $busStationsMain = Setting::where('name', 'busStationsMain')->first();
+  $busStationsMain->data = json_encode(json_decode(json_encode($busStationsSetting)));
+  $busStationsMain->save();
+  
+  dd($busStationsSetting);
+
+
+//   $dispatchPoints = PointService::dispatchKandE();
+
+//   $busStationsSetting[$dispatchPoint['region']][] = $dispatchPoint->toArray();
+// FtpLoadingService::put();
+
+
+// foreach($busStationsSetting as $key => $region){
+//   usort($region, function($a, $b) {
+//     return strcmp($a['name'], $b['name']);
+//   });
+//   $busStationsSetting[$key] = $region;
+// }
+// ksort($busStationsSetting);
+
+
+
+
+
+  dd($dispatchPoints);
+
+  dd(Kladr::where([['code', 'like', '%00']])->take(10)->get());
+  dd('11' <= '11');
   $arrivalPoints = CacheArrivalPoint::where([['dispatch_point_id', '=', 5107], ['name', '=', 'Краснодар']])->whereHas('kladr', function(Builder $query){
     $query->has('arrivalPoints', '>', 1);
   })

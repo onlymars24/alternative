@@ -58,7 +58,7 @@
                         </template>
                         
                     </ul>
-                    <ul v-if="true" class="hint">
+                    <ul v-if="arrivalPointFilled" class="hint">
                         <template v-for="el in filteredArrivalPoints" :key="el.keyId">
                             <li v-if="el.hasOwnProperty('details')" @mousedown="fillArrival" :data-id="el.keyId" :data-name="el.name">
                                 <strong :data-id="el.keyId" :data-name="el.name">{{el.name}}{{el.region || el.details ? ', ' : '' }}</strong>
@@ -408,11 +408,24 @@ export default{
         // })
         // console.log(this.dispatchData)
         // console.log('this.busStationDispatchPointId '+this.busStationDispatchPointId)
-        if(this.busStationDispatchPointId){
-            this.dispatchEl.id = this.busStationDispatchPointId
-            this.dispatchEl.name = this.dispatchData.filter(point => {
-                return point.id ==this.busStationDispatchPointId
-            })[0].name
+        if(this.station){
+            let tempDispatch = null
+            console.log(this.station)
+            if(this.station.kladr_id){
+                console.log('kladr_id')
+                console.log(this.dispatchData)
+                tempDispatch = this.dispatchData.filter(point => {
+                    return !point.hasOwnProperty('details') && point.id == this.station.kladr_id 
+                })[0]                
+            }
+            else{
+                tempDispatch = this.dispatchData.filter(point => {
+                    return point.hasOwnProperty('details') && point.id == this.station.dispatch_point_id 
+                })[0]
+            }
+            console.log(tempDispatch)
+            this.dispatchEl.id = tempDispatch.keyId
+            this.dispatchEl.name = tempDispatch.name
             this.dispatchText = this.dispatchEl.name
             this.arrivalEl.id = null
             this.arrivalEl.name = null
