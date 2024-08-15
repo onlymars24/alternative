@@ -66,7 +66,10 @@ Route::get('/spread', function (Request $request) {
   foreach($busStations as $station){
     if($station->kladr){
       $kladr = $station->kladr->toArray();
-      $busStationsSetting[$kladr['region']][] = $kladr;
+      if($kladr['region']){
+        $busStationsSetting[$kladr['region']][] = $kladr;
+      }
+      
     }
   }
   // dd($busStationsSetting);
@@ -83,7 +86,7 @@ Route::get('/spread', function (Request $request) {
   $busStationsMain = Setting::where('name', 'busStationsMain')->first();
   $busStationsMain->data = json_encode(json_decode(json_encode($busStationsSetting)));
   $busStationsMain->save();
-  
+
   dd($busStationsSetting);
 
 

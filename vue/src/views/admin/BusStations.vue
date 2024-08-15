@@ -76,9 +76,6 @@
                 <!-- <template v-for="station in busStations"> -->
 
                     <template v-if="station">
-                        <pre>
-                            {{ station }}
-                        </pre>
                         <div class="" style="width: 25%; margin-bottom: 10px;">
                             <label for="">Название автовокзала</label>
                             <el-input v-model="station.name" />
