@@ -136,6 +136,9 @@ Route::get('/bus/stations/main', [KladrStationPageController::class, 'main']);
 Route::get('/kladr/station/pages/kladr', [KladrStationPageController::class, 'kladrPages']);
 Route::get('/kladr/station/pages/station', [KladrStationPageController::class, 'stationPages']);
 
+Route::get('/kladr/station/page/station/old', [KladrStationPageController::class, 'oneOld']);
+
+
 Route::get('/stations', [StationController::class, 'all']);
 Route::post('/station/create', [StationController::class, 'create']);
 Route::post('/station/edit', [StationController::class, 'edit']);

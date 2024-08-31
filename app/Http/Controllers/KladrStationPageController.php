@@ -27,6 +27,14 @@ class KladrStationPageController extends Controller
         ]);
     }
 
+    public function oneOld(Request $request){
+        return response([ 'page' => KladrStationPage::where([
+            ['url_settlement_name', $request->url_settlement_name],
+            ['hidden', false],
+            ['station_id', '<>', null]
+        ])->first()]);
+    }
+
     public function one(Request $request){
         $arrayPageType = [];
         if($request->pageType == 's'){
