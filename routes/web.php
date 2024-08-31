@@ -65,8 +65,8 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-$busStation = BusStation::find(103);
-$page = KladrStationPage::find(6);
+$busStation = BusStation::find(6);
+$page = KladrStationPage::find(103);
 $page->content = json_decode($busStation->data)->content;
   
   dd('');
