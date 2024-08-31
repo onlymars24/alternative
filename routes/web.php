@@ -68,8 +68,8 @@ Route::get('/spread', function (Request $request) {
 $busStation = BusStation::find(6);
 $page = KladrStationPage::find(103);
 $page->content = json_decode($busStation->data)->content;
-  
-  dd('');
+$page->save();
+  dd($busStation->data, json_decode($busStation->data)->content);
   $dispatchPoints = DispatchPoint::all();
   $kladrs = Kladr::has('dispatchPoints')->get();
 
