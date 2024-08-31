@@ -13,14 +13,14 @@ class SitemapService
     public static function add($newLoc, $changefreq){
         Log::info('sitemap2');
         $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
-        for($i = 0; $i < count($xml->url); $i++){
-            Log::info($xml->url[$i]->loc.' '.$newLoc);
-            if($xml->url[$i]->loc == $newLoc){
-                return [
-                    'existing' => true
-                ];
-            }
-        }
+        // for($i = 0; $i < count($xml->url); $i++){
+        //     Log::info($xml->url[$i]->loc.' '.$newLoc);
+        //     if($xml->url[$i]->loc == $newLoc){
+        //         return [
+        //             'existing' => true
+        //         ];
+        //     }
+        // }
         $newNode = $xml->addChild('url');
         $newNode->addChild('loc', $newLoc);
         $newNode->addChild('lastmod', date('Y-m-d'));
