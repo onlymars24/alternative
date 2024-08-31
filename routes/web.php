@@ -69,8 +69,8 @@ Route::get('/spread', function (Request $request) {
   foreach($busStations as $busStation){
     $content = json_decode($busStation->data)->content;
     if($content){
-      if($busStation->dispatchPoint && $busStation->dispatchPoint->station && $busStation->dispatchPoint->station->klardStationPage){
-        $kladrStationPage = KladrStationPage::find($busStation->dispatchPoint->station->klardStationPage->id);
+      if($busStation->dispatchPoint && $busStation->dispatchPoint->station && $busStation->dispatchPoint->station->kladrStationPage){
+        $kladrStationPage = KladrStationPage::find($busStation->dispatchPoint->station->kladrStationPage->id);
         $kladrStationPage->content = $content;
         $kladrStationPage->save();
       }
