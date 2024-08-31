@@ -65,6 +65,7 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
   $dispatchPoints = DispatchPoint::all();
   $kladrs = Kladr::has('dispatchPoints')->get();
 
