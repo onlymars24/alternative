@@ -23,8 +23,11 @@ import Debugging from '../views/admin/Debugging.vue'
 import EditMain from '../views/admin/EditMain.vue'
 import EditUpcomingTrips from '../views/admin/EditUpcomingTrips.vue'
 import EditPoints from '../views/admin/EditPoints.vue'
-import BusStations from '../views/admin/BusStations.vue'
-import BusStation from '../views/BusStation.vue'
+import KladrStationPage from '../views/admin/KladrStationPage.vue'
+import StationPage from '../views/StationPage.vue'
+
+import KladrPage from '../views/KladrPage.vue'
+
 import ReturnRace from '../views/ReturnRace.vue'
 import New from '../views/New.vue'
 import News from '../views/News.vue'
@@ -40,6 +43,7 @@ import WhatsAppSms from '../views/admin/WhatsAppSms.vue'
 import Settings from '../views/admin/Settings.vue'
 import EditRobotsTxt from '../views/admin/EditRobotsTxt.vue'
 import Kladr from '../views/admin/Kladr.vue'
+import Stations from '../views/admin/Stations.vue'
 
 
 
@@ -55,9 +59,14 @@ const routes = [
     component: Main
   },
   {
-    path: '/'+encodeURI('автовокзал')+'/:title',
-    name: 'BusStation',
-    component: BusStation
+    path: '/'+encodeURI('расписание')+'/:region_code/:settlement_name',
+    name: 'KladrPage',
+    component: KladrPage
+  },
+  {
+    path: '/'+encodeURI('автовокзал')+'/:region_code/:settlement_name',
+    name: 'StationPage',
+    component: StationPage
   },
   {
     path: '/'+encodeURI('автобус')+'/:dispatch_name/:arrival_name',
@@ -175,9 +184,14 @@ const routes = [
         name: 'EditPoints'
       },
       {
-        path: 'bus/stations',
-        component: BusStations,
-        name: 'BusStations'
+        path: 'kladr/station/page',
+        component: KladrStationPage,
+        name: 'KladrStationPage'
+      },
+      {
+        path: 'stations',
+        component: Stations,
+        name: 'Stations'
       },
 
       {

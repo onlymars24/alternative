@@ -18,8 +18,10 @@ use App\Http\Controllers\ArrivalController;
 use App\Http\Controllers\BonusesController;
 use App\Http\Controllers\FixUserController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StationController;
 use App\Http\Controllers\Api\DateController;
 use App\Http\Controllers\BusRouteController;
+use App\Http\Controllers\DispatchController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PageMainController;
@@ -37,11 +39,11 @@ use App\Http\Controllers\Api\SendSmsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\PopularPointsController;
+use App\Http\Controllers\KladrStationPageController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
-use App\Http\Controllers\DispatchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,14 +120,32 @@ Route::get('/page/upcoming/trips', [PageUpcomingTripsController::class, 'get']);
 Route::post('/page/upcoming/trips', [PageUpcomingTripsController::class, 'edit']);
 
 
-Route::get('/bus/stations', [BusStationController::class, 'all']);
-Route::get('/bus/station', [BusStationController::class, 'one']);
+Route::post('/kladrs/connected', [KladrController::class, 'allConnected']);
 
-Route::get('/bus/station/id', [BusStationController::class, 'oneById']);
-Route::post('/bus/station/create', [BusStationController::class, 'create']);
-Route::post('/bus/station/edit', [BusStationController::class, 'edit']);
-Route::post('/bus/station/delete', [BusStationController::class, 'delete']);
-Route::get('/bus/stations/main', [BusStationController::class, 'main']);
+Route::get('/kladr/station/pages', [KladrStationPageController::class, 'all']);
+Route::get('/kladr/station/page', [KladrStationPageController::class, 'one']);
+
+Route::get('/kladr/station/page/id', [KladrStationPageController::class, 'oneById']);
+Route::post('/kladr/station/page/create', [KladrStationPageController::class, 'create']);
+Route::post('/kladr/station/page/edit', [KladrStationPageController::class, 'edit']);
+Route::post('/kladr/station/page/delete', [KladrStationPageController::class, 'delete']);
+
+
+Route::get('/bus/stations/main', [KladrStationPageController::class, 'main']);
+
+Route::get('/kladr/station/pages/kladr', [KladrStationPageController::class, 'kladrPages']);
+Route::get('/kladr/station/pages/station', [KladrStationPageController::class, 'stationPages']);
+
+Route::get('/stations', [StationController::class, 'all']);
+Route::post('/station/create', [StationController::class, 'create']);
+Route::post('/station/edit', [StationController::class, 'edit']);
+Route::post('/station/delete', [StationController::class, 'delete']);
+Route::get('/station/id', [StationController::class, 'oneById']);
+
+Route::post('/station/add/to/dispatch/point', [StationController::class, 'addToDispatchPoint']);
+Route::post('/station/add/to/arrival/point', [StationController::class, 'addToArrivalPoint']);
+
+
 
 Route::get('/bus/route', [BusRouteController::class, 'one']);
 Route::get('/bus/routes', [BusRouteController::class, 'all']);
@@ -190,14 +210,15 @@ Route::post('/races/xml/create', [RacesXmlController::class, 'create']);
 Route::get('/cache/races', [RacesCacheController::class, 'get']);
 
 
-Route::get('/events', [EventController::class, 'all']);
-Route::get('/station/events', [EventController::class, 'stationOnes']);
-Route::get('/event', [EventController::class, 'one']);
-Route::post('/event/create', [EventController::class, 'create']);
-Route::post('/event/edit', [EventController::class, 'edit']);
-Route::post('/event/delete', [EventController::class, 'delete']);
-Route::post('/event/add/station', [EventController::class, 'addStation']);
-Route::post('/event/delete/station', [EventController::class, 'deleteStation']);
+// НОВОСТИ В РАЗРАБОТКЕ!!!! НЕ ТРОГАТЬ!!!!!!!
+// Route::get('/events', [EventController::class, 'all']);
+// Route::get('/station/events', [EventController::class, 'stationOnes']);
+// Route::get('/event', [EventController::class, 'one']);
+// Route::post('/event/create', [EventController::class, 'create']);
+// Route::post('/event/edit', [EventController::class, 'edit']);
+// Route::post('/event/delete', [EventController::class, 'delete']);
+// Route::post('/event/add/station', [EventController::class, 'addStation']);
+// Route::post('/event/delete/station', [EventController::class, 'deleteStation']);
 
 Route::get('/bonuses/transactions', [BonusesController::class, 'transactions']);
 Route::post('/bonuses/plus', [BonusesController::class, 'plus']);
@@ -211,6 +232,7 @@ Route::get('/races', [RaceController::class, 'races']);
 
 
 Route::get('/kladrs', [KladrController::class, 'all']);
+Route::get('/kladrs/connected', [KladrController::class, 'allConnected']);
 
 
 
@@ -221,7 +243,6 @@ Route::post('/arrival/points/paginate', [ArrivalController::class, 'paginate']);
 
 Route::get('/dispatch/points', [DispatchController::class, 'all']);
 Route::post('/dispatch/points/paginate', [DispatchController::class, 'paginate']);
-
 
 
 

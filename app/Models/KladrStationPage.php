@@ -5,30 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DispatchPoint extends Model
+class KladrStationPage extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'name',
-        'region',
-        'details',
-        'address',
-        'latitude',
-        'longitude',
-        'okato',
-        'place',
+        'description',
+        'url_settlement_name',
+        'url_region_code',
+        'content',
+        'hidden',
         'kladr_id',
-        'station_id'
+        'station_id',
     ];
+
+    public function kladr()
+    {
+        return $this->belongsTo(Kladr::class);
+    }
 
     public function station()
     {
         return $this->belongsTo(Station::class);
     }
 
-    public function kladr(){
-        return $this->belongsTo(Kladr::class);
-    }
 }

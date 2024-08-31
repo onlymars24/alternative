@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Enums\FermaEnum;
 use App\Models\CacheRace;
 use App\Models\DispatchPoint;
+use App\Services\PointService;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
@@ -17,6 +18,7 @@ class RaceService
 {
 
     public static function all($request, $date){
+        // Log::info($request->dispatchPointId);
         $races = [];
         $dispatchEPoints = [];
         $arrivalEPoints = [];
@@ -25,11 +27,13 @@ class RaceService
         $arrivalPointName = null;
 
         if($request->dispatchPointType == 'e'){
+            // Log::info('etraffic');
             $dispatchEPoint = DispatchPoint::find($request->dispatchPointId);
             $dispatchPointName = $dispatchEPoint->name;
             $dispatchEPoints[] = $dispatchEPoint;
         }
         elseif($request->dispatchPointType == 'k'){
+            // Log::info('kladr');
             $dispatchKladr = Kladr::find($request->dispatchPointId);
             $dispatchPointName = $dispatchKladr->name;
             $dispatchEPoints = $dispatchKladr->dispatchPoints;
@@ -91,7 +95,33 @@ class RaceService
                 'dispatchPointName' => $dispatchPointName,
                 'arrivalPointName' => $arrivalPointName,
                 'list' => json_encode($races)
-            ]);            
+            ]);
+        }
+
+        foreach($races as $race){
+            $dispatchPointRegion = DispatchPoint::find($dispatchEPoints[0]->id);
+            $region = null;
+            Log::info(json_encode($dispatchPointRegion));
+            Log::info('Повод для новых рейсов???');
+            if(!$dispatchPointRegion || !$dispatchPointRegion->kladr){
+                continue;
+            }
+            $region = $dispatchPointRegion->region;
+            $kladrDispatch = $dispatchPointRegion->kladr;
+            if(!DispatchPoint::where([['region', '=', $region], ['name', '=', $race->dispatchStationName]])->first()
+               && !DispatchPoint::find($race->dispatchPointId)
+            ){
+                // Log::info('Повод для новых рейсов');
+                $dispatchPoint = DispatchPoint::create([
+                    'id' => $race->dispatchPointId,
+                    'name' => $race->dispatchStationName,
+                    'region' => $region,
+                    'okato' => 1,
+                    'place' => 1,
+                    'kladr_id' => $kladrDispatch->id
+                ]);
+                PointService::addNewDispatchPoint($dispatchPoint);
+            }
         }
 
         return $races;

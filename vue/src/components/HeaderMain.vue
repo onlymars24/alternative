@@ -1,5 +1,4 @@
 <template>
-    
 <div class="main__header">
         <div class="container">
             <Header :blackText="false"/>
@@ -8,8 +7,8 @@
                 <h1 style="text-shadow: 1px 1px 5px black" v-if="isRaces" class="main__main">
                     Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}}
                 </h1>
-                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="station" class="main__main">
-                    {{ station.name }}
+                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="page" class="main__main">
+                    {{ page.name }}
                 </h1>
                 <h1 style="text-shadow: 1px 1px 5px black" v-else class="main__main">
                     Автовокзалы России
@@ -99,10 +98,6 @@
             </div>
         </div>
     </div>
-    <!-- <pre>
-        {{ dispatchEl }}
-        {{ arrivalEl }}
-    </pre> -->
 </template>
 
 <script>
@@ -145,11 +140,7 @@ export default{
             isRaces: {
 
             },
-            station: {},
-            busStationDispatchPointId: {
-                type: Number,
-                default: null
-            }
+            page: {},
         },
         emits: ['changeRaces'],
         data() {
@@ -225,7 +216,7 @@ export default{
             const promise = axiosClient
             .get('/arrival/points?pointType='+pointType+'&pointId='+pointId)
             .then(response => {
-                // console.log(response)
+                console.log(response)
                 this.arrivalData = response.data.arrivalPoints
                 // console.log(this.arrivalData)
                 // // let tempPopularPoints = JSON.parse(tempPoint.popular_arrival_points)
@@ -236,7 +227,7 @@ export default{
                 // console.log(this.popularPoints)
             })
             .catch(error => {
-                // console.log(error)
+                console.log(error)
             })
             await promise
 
@@ -408,31 +399,34 @@ export default{
         // })
         // console.log(this.dispatchData)
         // console.log('this.busStationDispatchPointId '+this.busStationDispatchPointId)
-        if(this.station){
+        console.log(this.station)
+        console.log(this.page)
+        if(this.page){
             let tempDispatch = null
-            console.log(this.station)
-            if(this.station.kladr_id){
-                console.log('kladr_id')
-                console.log(this.dispatchData)
+            console.log(this.page)
+
+            if(this.page.kladr){
                 tempDispatch = this.dispatchData.filter(point => {
-                    return !point.hasOwnProperty('details') && point.id == this.station.kladr_id 
-                })[0]                
+                    return point.name == this.page.kladr.name
+                })[0] 
             }
-            else{
+            else if(this.page.station && this.page.station.dispatch_point){
                 tempDispatch = this.dispatchData.filter(point => {
-                    return point.hasOwnProperty('details') && point.id == this.station.dispatch_point_id 
-                })[0]
+                    return point.name == this.page.station.dispatch_point.name
+                })[0]            
             }
-            console.log(tempDispatch)
-            this.dispatchEl.id = tempDispatch.keyId
-            this.dispatchEl.name = tempDispatch.name
-            this.dispatchText = this.dispatchEl.name
-            this.arrivalEl.id = null
-            this.arrivalEl.name = null
-            this.arrivalText = ''
-            this.arrivalBlur()
-            this.getArrivalData()
-            // console.log('Вокзал да')
+
+            if(tempDispatch){
+                this.dispatchEl.id = tempDispatch.keyId
+                this.dispatchEl.name = tempDispatch.name
+                this.dispatchText = this.dispatchEl.name
+                this.arrivalEl.id = null
+                this.arrivalEl.name = null
+                this.arrivalText = ''
+                this.arrivalBlur()
+                this.getArrivalData()                
+            }
+
         }
         if(this.dispatchEl.name && this.dispatchEl.id){
             this.getArrivalData()

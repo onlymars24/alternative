@@ -11,10 +11,12 @@ class BusStation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
         'name',
         'description',
-        'data',
+        'url_settlement_name',
+        'url_region_code',
+        'content',
+        'contacts',
         'dispatch_point_id',
         'kladr_id',
         'hidden',

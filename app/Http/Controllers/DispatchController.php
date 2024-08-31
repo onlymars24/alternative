@@ -22,9 +22,15 @@ class DispatchController extends Controller
         if($request->noKladr){
             $whereArr[] = ['kladr_id', '=', null];
         }
+        if($request->stationId){
+            $whereArr[] = ['station_id', '=', $request->stationId];
+        }
 
+        if($request->noStation){
+            $whereArr[] = ['station_id', '=', null];
+        }
         return response([
-            'points' => DispatchPoint::with('kladr')->where($whereArr)->paginate(13)
+            'points' => DispatchPoint::with('kladr', 'station')->where($whereArr)->paginate(13)
         ]);
     }
 

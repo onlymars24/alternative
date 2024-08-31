@@ -33,7 +33,7 @@ export default
 
 
             // kladrFilterValue: '',
-            
+            stations: [],
             kladrs: [],
             loading: false,
             page: 1
@@ -60,6 +60,17 @@ export default
             })
             await promise
             this.loading = false
+        },
+        async getStations(){
+            const promise = axiosAdmin
+            .get('/stations')
+            .then(response => {
+                this.stations = response.data.stations
+            })
+            .catch(error => {
+
+            })
+            await promise
         },
         async pointsUpdate(page){
             this.dispatchPoints = []
@@ -123,7 +134,8 @@ export default
                 console.log(error)
             })
             await promise
-        }
+        },
+        // async
     },
     watch: {
         // async dispatchPointId(newDispatchPointId){
@@ -147,7 +159,6 @@ export default
         //     console.log(this.kladrname)
         //     this.pointsUpdate()
         //     // this.kladrname =
-
         // }
     }
 }

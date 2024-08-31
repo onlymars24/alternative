@@ -18,13 +18,15 @@
             <el-menu-item index="4-2" @click="$router.push({name: 'EditUpcomingTrips'})">Список заказов</el-menu-item>
             <el-menu-item index="4-3" @click="$router.push({name: 'BusRoutes'})">Страница с маршрутом</el-menu-item>
             <el-menu-item index="4-4" @click="$router.push({name: 'EditRobotsTxt'})">robots.txt</el-menu-item>
+            <el-menu-item index="4-5" @click="$router.push({name: 'KladrStationPage'})">Страницы населённых пунктов и автовокзалов</el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="5">
             <template #title>Точки</template>
             <el-menu-item index="5-1" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
-            <el-menu-item index="5-2" @click="$router.push({name: 'Kladr'})">Связки с кладром</el-menu-item>
+            <el-menu-item index="5-2" @click="$router.push({name: 'Kladr'})">Связки с кладром и автовокзалом</el-menu-item>
+            <el-menu-item index="5-3" @click="$router.push({name: 'Stations'})">Автовокзалы</el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="6" @click="$router.push({name: 'BusStations'})">Автовокзалы</el-menu-item>
+        
         <el-sub-menu index="7">
             <template #title>Новости</template>
             <el-menu-item index="7-1" @click="$router.push({name: 'EventCreate'})">Добавить новость</el-menu-item>

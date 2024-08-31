@@ -9,6 +9,8 @@ use Nette\Utils\DateTime;
 use App\Models\WhatsAppSms;
 use App\Services\SmsService;
 use App\Mail\LeaveReviewMail;
+use App\Services\KladrService;
+use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
 use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
@@ -109,8 +111,17 @@ class Kernel extends ConsoleKernel
             for($i = 0; $i < count($xml->url); $i++){
                 $xml->url[$i]->lastmod = date('Y-m-d');
             }
+
+
             File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
             FtpLoadingService::put();
+
+            $arrivalPoints = CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+            foreach($arrivalPoints as $arrivalPoint){
+                $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);
+                $arrivalPoint->save();
+            }
+
         })->daily();
     }
 

@@ -518,7 +518,7 @@ export default {
                 this.races = response.data.races
             })
             .catch(error => {
-                // console.log(error)
+                console.log(error)
             })
             await promise2
             if(this.races.length > 0){

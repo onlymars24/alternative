@@ -21,7 +21,8 @@ class CacheArrivalPoint extends Model
         'longitude',
         'okato',
         'place',
-        'kladr_id'
+        'kladr_id',
+        'station_id'
     ];
 
     public function kladr(){
@@ -30,5 +31,10 @@ class CacheArrivalPoint extends Model
 
     public function dispatchPoint(){
         return $this->belongsTo(DispatchPoint::class);
+    }
+
+    public function station()
+    {
+        return $this->belongsTo(Station::class);
     }
 }

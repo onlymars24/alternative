@@ -62,7 +62,7 @@ export default{
             },
             groupID: 223652237,
             content: '',
-            station: null,
+            stationPage: null,
             navigation: {
                 nextEl: '.station__slides-button-next',
                 prevEl: '.station__slides-button-prev',
@@ -104,20 +104,25 @@ export default{
 
     },
     async mounted() {
-        console.log(this.$route.params['title'])
+        console.log('/kladr/station/page?url_settlement_name='+(this.$route.params['settlement_name'].replace(/\s/g, '_').replace('/', '-'))
+        +'&url_region_code='+this.$route.params['region_code']
+        +'&pageType=s')
         const promise1 = axiosClient
-        .get('/bus/station?title='+this.$route.params['title'])
+        .get('/kladr/station/page?url_settlement_name='+(this.$route.params['settlement_name'].replace(/\s/g, '_').replace('/', '-'))
+        +'&url_region_code='+this.$route.params['region_code']
+        +'&pageType=s'
+    )
         .then(response => {
             console.log(response)
-            this.station = response.data.station
-            this.content = JSON.parse(this.station.data).content
+            this.stationPage = response.data.page
+            // this.content = JSON.parse(this.station.data).content
         })
         .catch(error => {
             console.log(error)
         })
         await promise1
-        
-        if(!this.station){
+        return
+        if(!this.stationPage){
             router.push({ name: 'Main'})
             return
         }
@@ -129,31 +134,30 @@ export default{
         // const linkCan = document.querySelector('head link[rel="canonical"]');
         // linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.station.title);
 
-        const promise2 = axiosClient
-        .get('/station/events?id='+this.station.id)
-        .then(response => {
-            console.log(response)
-            this.events = response.data.events
-            console.log()
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        await promise2
+        // const promise2 = axiosClient
+        // .get('/station/events?id='+this.station.id)
+        // .then(response => {
+        //     console.log(response)
+        //     this.events = response.data.events
+        //     console.log()
+        // })
+        // .catch(error => {
+        //     console.log(error)
+        // })
+        // await promise2
     },
 }
 </script>
 
 <template>
-    <HeaderMain v-if="station" :isRaces="false" :busStationDispatchPointId="station.dispatch_point_id" :station="station"/>
+    <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
-
 
     <div class="about" style="margin-top: 50px;">
         <div class="container">
-            <div v-if="events.length > 0" class="station__slides">
-            <h2 class="station__slides-title">{{ station.name }}</h2>
-                <swiper
+            <!-- <div v-if="events.length > 0" class="station__slides"> -->
+            <!-- <h2 class="station__slides-title">{{ station.name }}</h2> -->
+                <!-- <swiper
                 :modules="modules"
                 :allowTouchMove="false"
                 :slides-per-view="3"
@@ -169,7 +173,6 @@ export default{
                     <swiper-slide v-for="event in events">
                         <router-link :to="{ name: 'New', params: { id: event.id }}" target="_blank">
                             <div class="card station__slide" style="height: 250px; text-decoration: none; color: black;">
-                                <!-- <img src="../img/media-img.webp" class="card-img-top" alt="..."> -->
                                 <div class="card-body">
                                     <h5 class="card-title">{{event.title}}</h5>
                                     <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
@@ -180,19 +183,31 @@ export default{
                             </div>    
                         </router-link>  
                     </swiper-slide>
+            
+                </swiper> -->
                 
-                    <!-- <div class="station__slides-buttons">
-
-                    </div>                     -->
-                </swiper>
-                
-                <div v-if="events.length > 3" class="station__slides-button station__slides-button-prev">&#9668;</div>
+                <!-- <div v-if="events.length > 3" class="station__slides-button station__slides-button-prev">&#9668;</div>
                 <div v-if="events.length > 3" class="station__slides-button station__slides-button-next">&#9658;</div>   
-                <div class="station__slides-link"><router-link :to="{ name: 'News'}" target="_blank">Все новости</router-link></div>           
-            </div>
-        
-            <div class="about__inner">
-                <div v-html="content"></div>
+                <div class="station__slides-link"><router-link :to="{ name: 'News'}" target="_blank">Все новости</router-link></div>            -->
+            <!-- </div> -->
+            <!-- <pre>
+                {{ station }}
+            </pre> -->
+            <div v-if="stationPage" class="about__inner" style="display: block;">
+                <h2 style="margin-bottom: 13px;">{{ stationPage.name }}</h2>
+                <h3 v-if="stationPage.station.address || stationPage.contacts" class="card-title" style="font-weight: 400; margin-bottom: 13px;">
+                    Справочная информация
+                </h3>
+                <h4 v-if="stationPage.station.address">
+                    <strong>Адрес {{ stationPage.name }}:</strong>
+                </h4> 
+                <p v-if="stationPage.station.address" style="margin-bottom: 13px;" class="card-text">{{ stationPage.station.address }}</p>                            
+                <h4  v-if="stationPage.contacts">
+                    <strong>Телефоны {{ stationPage.name }}:</strong>
+                </h4>                            
+                <div v-if="stationPage.contacts" style="margin-bottom: 13px;" v-html="stationPage.contacts"></div>
+
+                <div v-if="stationPage.content" v-html="stationPage.content"></div>
 
             <!-- <div class="about__info">
                 <div class="about__info-main">

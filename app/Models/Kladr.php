@@ -27,4 +27,14 @@ class Kladr extends Model
     public function arrivalPoints(){
         return $this->hasMany((CacheArrivalPoint::class));
     }
+
+    public function busStation()
+    {
+        return $this->hasOne(BusStation::class);
+    }
+
+    public function kladrStationPage()
+    {
+        return $this->hasOne(KladrStationPage::class);
+    }
 }

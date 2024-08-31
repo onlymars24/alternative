@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use XBase\TableReader;
 use App\Mail\OrderMail;
 use App\Models\Setting;
+use App\Models\Station;
 use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
 use App\Models\CacheRace;
@@ -26,10 +27,13 @@ use App\Exports\ReportsExport;
 use App\Services\FermaService;
 use App\Services\PointService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\KladrStationPage;
 use App\Services\FixUserService;
 use App\Services\GraphicService;
+use App\Services\SitemapService;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
+use App\Services\BusStationService;
 use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -61,6 +65,93 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  $dispatchPoints = DispatchPoint::all();
+  $kladrs = Kladr::has('dispatchPoints')->get();
+
+  foreach($kladrs as $kladr){
+      if(!$kladr->kladrStationPage){
+          $pageArray = ['hidden' => false];
+          $pageArray['url_settlement_name'] = str_replace([' ', '/'], ['_', '-'], $kladr->name);
+          $pageArray['name'] = $kladr->name.' Автовокзалы и автостанции';
+          $pageArray['description'] = $kladr->name.' Автовокзалы и автостанции: расписание, справочная, билеты на автобус';
+          $pageArray['kladr_id'] = $kladr->id;
+          $newLocType = 'расписание';
+          $pageArray['url_region_code'] = mb_strcut($kladr->code, 0, 2);
+          $page = KladrStationPage::create($pageArray);
+          SitemapService::add(env('FRONTEND_URL').'/'.$newLocType.'/'.$page->url_region_code.'/'.$page->url_settlement_name, 'weekly');
+      }
+  }
+
+  foreach($dispatchPoints as $dispatchPoint){
+      $pageArray = ['hidden' => false];
+      if(!$dispatchPoint->station){
+          $station = Station::create([
+              'name' => $dispatchPoint->name,
+              'address' => $dispatchPoint->address,
+              'longitude' => $dispatchPoint->longitude,
+              'latitude' => $dispatchPoint->latitude,
+              'kladr_id' => $dispatchPoint->kladr_id
+          ]);    
+          $dispatchPoint->station_id = $station->id;
+          $dispatchPoint->save();       
+      }
+      else{
+          $station = $dispatchPoint->station;
+      }
+      if(!$station->kladrStationPage){
+          $kladr = $station->kladr;
+          if(!$kladr){
+              continue;
+          }
+          $pageArray['url_settlement_name'] = str_replace([' ', '/'], ['_', '-'], $station->name);
+          $pageArray['name'] = 'Автовокзал '.$station->name;
+          $pageArray['description'] = 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус';
+          $pageArray['station_id'] = $station->id;
+          $pageArray['url_region_code'] = mb_strcut($kladr->code, 0, 2);
+          $page = KladrStationPage::create($pageArray);
+          $newLocType = 'автовокзал';
+          Log::info('sitemap1');
+          SitemapService::add(env('FRONTEND_URL').'/'.$newLocType.'/'.$page->url_region_code.'/'.$page->url_settlement_name, 'weekly');
+  
+          
+      }
+  }
+
+
+
+  dd(simplexml_load_file(public_path(env('XML_FILE_NAME'))));
+  dd(CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get());
+  dd(date('Y-m-d'));
+  dd(DispatchPoint::with('kladr.arrivalPoints', 'station')->get()->toArray());
+  dd(Kladr::has('dispatchPoints')->orHas('arrivalPoints')->where('name', 'like', '%'.$request->kladrFilter.'%')->take(10)->get());
+  dd(Kladr::has('arrivalPoints')
+  ->orHas('dispatchPoints')
+  ->get());
+
+
+  BusStationService::createByDispatchPoint(80153);
+  dd('');
+  dd(BusStation::whereHas('dispatchPoint', function($query){
+    $query->where('kladr_id', '=', 241805);
+  })->get());
+
+  $string = 'Емельяново а/п';
+
+  $string = str_replace([' ', '/'], ['_', '-'], $string);
+
+  dd($string);
+  // dd(
+  //   BusStation::where([['kladr_id', '<>', null], ['dispatch_point_id', '=', null]])->with('kladr.dispatchPoints')->get(),
+  //   BusStation::where([['kladr_id', '=', null], ['dispatch_point_id', '<>', null]])->with('dispatchPoint.kladr')->get()
+  // );
+  $busStations = BusStation::all();
+  foreach($busStations as $busStation){
+    // $busStation->content = json_decode($busStation->data)->content;
+    
+    $busStation->save();
+  }
+  dd('ok');
+  
   $busStations = BusStation::with('kladr')->get();
   $busStationsSetting = [];
   foreach($busStations as $station){

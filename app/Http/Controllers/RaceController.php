@@ -20,35 +20,6 @@ class RaceController extends Controller
     //arrivalPointType
     //date
     public function races(Request $request){
-        // $races = [];
-        // $dispatchEPoints = [];
-        // $arrivalEPoints = [];
-
-        // if($request->dispatchPointType == 'e'){
-        //     $dispatchEPoints[] = DispatchPoint::find($request->dispatchPointId);
-        // }
-        // elseif($request->dispatchPointType == 'k'){
-        //     $dispatchEPoints = Kladr::find($request->dispatchPointId)->dispatchPoints;
-        // }
-
-        // if($request->arrivalPointType == 'e'){
-        //     $arrivalEPoints[] = CacheArrivalPoint::find($request->arrivalPointId);
-        // }
-        // elseif($request->arrivalPointType == 'k'){
-        //     $arrivalEPoints = Kladr::find($request->arrivalPointId)->arrivalPoints;
-        // }
-
-        // foreach($dispatchEPoints as $dispatchPoint){
-        //     foreach($arrivalEPoints as $arrivalPoint){
-        //         if($arrivalPoint->dispatch_point_id == $dispatchPoint->id){
-        //             $tempRaces = Http::withHeaders([
-        //                 'Authorization' => env('AVTO_SERVICE_KEY'),
-        //             ])->get(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$request->date)->object();
-        //             $races = array_merge($tempRaces, $races);
-        //         }
-        //     }
-        // }
-
         return response([
             'races' => RaceService::all($request, $request->date)
         ]);

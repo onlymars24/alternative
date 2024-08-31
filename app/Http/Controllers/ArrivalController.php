@@ -25,8 +25,15 @@ class ArrivalController extends Controller
         if($request->noKladr){
             $whereArr[] = ['kladr_id', '=', null];
         }
+        if($request->stationId){
+            $whereArr[] = ['station_id', '=', $request->stationId];
+        }
+
+        if($request->noStation){
+            $whereArr[] = ['station_id', '=', null];
+        }
         return response([
-            'points' => CacheArrivalPoint::with('dispatchPoint', 'kladr')->where($whereArr)->paginate(13)
+            'points' => CacheArrivalPoint::with('dispatchPoint', 'kladr', 'station')->where($whereArr)->paginate(13)
         ]);
     }
 
@@ -80,7 +87,21 @@ class ArrivalController extends Controller
                 //     $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
                 // })->with('arrivalPoints')->get());
                 // $arrivalPoints = $arrivalPoints->concat($arrivalPoints1->concat($arrivalPoints2));
-                $result = array_merge($result, PointService::kAndE($dispatchPoint->id));
+                $x = PointService::kAndE($dispatchPoint->id);
+                $name_a = array_column($result, 'name');
+                $region_a = array_column($result, 'region');
+
+
+
+                // Удаляем элементы с повторяющимися name и region
+                $x = array_filter($x, function($item) use ($name_a, $region_a) {
+                    return !in_array($item['name'], $name_a) && !in_array($item['region'], $region_a);
+                });
+
+                // Объединяем два массива
+                $result = array_merge($result, $x);                
+
+                // $result = array_merge($result, PointService::kAndE($dispatchPoint->id));
             }
             return response([
                 'arrivalPoints' => $result,

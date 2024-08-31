@@ -17,7 +17,7 @@ class PointService
 {
     public static function dispatchKandE(){
         $dispatchPoints = DispatchPoint::with('kladr.arrivalPoints')->get()->toArray();
-        $kladrs = Kladr::has('dispatchPoints')->get()->toArray();
+        $kladrs = Kladr::has('dispatchPoints')->with('busStation')->get()->toArray();
         $result = array_reduce($dispatchPoints, function ($carry, $item) {
             if (!in_array($item['name'], array_column($carry, 'name'))
                 || !in_array($item['region'], array_column($carry, 'region'))
@@ -54,5 +54,27 @@ class PointService
             $result[$i]['keyId'] = $i+1;
         }
         return $result;
+    }
+
+    public static function addNewDispatchPoint($dispatchPoint){
+        $arrivalPointsRemoted = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
+        foreach($arrivalPointsRemoted as $arrivalPointRemoted){
+            $arrivalPoint = CacheArrivalPoint::create([
+                'arrival_point_id' => $arrivalPointRemoted->id,
+                'name' => $arrivalPointRemoted->name,
+                'region' => $arrivalPointRemoted->region,
+                'details' => $arrivalPointRemoted->details,
+                'address' => $arrivalPointRemoted->address,
+                'latitude' => $arrivalPointRemoted->latitude,
+                'longitude' => $arrivalPointRemoted->longitude,
+                'okato' => $arrivalPointRemoted->okato,
+                'place' => $arrivalPointRemoted->place ? $arrivalPointRemoted->place : 1,
+                'dispatch_point_id' => $dispatchPoint->id,
+            ]);
+            // $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);
+            $arrivalPoint->save();
+        }
     }
 }

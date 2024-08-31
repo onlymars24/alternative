@@ -54,4 +54,10 @@ class KladrController extends Controller
             'arrivalPoint' => $arrivalPoint
         ]);
     }
+
+    public function allConnected(Request $request){
+        return response([
+            'kladrs' => Kladr::has('dispatchPoints')->orHas('arrivalPoints')->with('kladrStationPage')->where('name', 'like', '%'.$request->kladrFilter.'%')->get()
+        ]);
+    }
 }
