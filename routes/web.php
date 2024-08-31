@@ -65,6 +65,18 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  $busStations = BusStation::all();
+  foreach($busStations as $busStation){
+    $content = json_decode($busStation->data)->content;
+    if($content){
+      if($busStation->dispatchPoint && $busStation->dispatchPoint->station && $busStation->dispatchPoint->station->klardStationPage){
+        $kladrStationPage = KladrStationPage::find($busStation->dispatchPoint->station->klardStationPage->id);
+        $kladrStationPage->content = $content;
+        $kladrStationPage->save();
+      }
+    }
+  }
+  
   dd('');
   $dispatchPoints = DispatchPoint::all();
   $kladrs = Kladr::has('dispatchPoints')->get();
