@@ -166,42 +166,8 @@ export default{
     <HeaderMain v-else :isRaces="false"/>
 
 
-    <div class="about" style="margin-top: 50px;">
+    <!-- <div class="about" style="margin-top: 50px;">
         <div class="container">
-            <!-- <div v-if="events.length > 0" class="station__slides">
-            <h2 class="station__slides-title">{{ station.name }}</h2>
-                <swiper
-                :modules="modules"
-                :allowTouchMove="false"
-                :slides-per-view="3"
-                :space-between="8"
-                :navigation="navigation"
-                :oSwipingSelector="'station__slides-button-disabled'"
-                :breakpoints="breakpoints"
-                navigation
-                @swiper="onSwiper"
-                @slideChange="onSlideChange"
-                :class="{'station__slides-wrapper': events.length > 3}"
-                >
-                    <swiper-slide v-for="event in events">
-                        <router-link :to="{ name: 'New', params: { id: event.id }}" target="_blank">
-                            <div class="card station__slide" style="height: 250px; text-decoration: none; color: black;">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{event.title}}</h5>
-                                    <p class="card-text">{{event.descr.length > 130 ? event.descr.slice(0,129)+'......' : event.descr}}</p>
-                                </div>
-                                <div class="card-footer">
-                                    {{event.date}}
-                                </div>
-                            </div>    
-                        </router-link>  
-                    </swiper-slide>
-                </swiper>
-                
-                <div v-if="events.length > 3" class="station__slides-button station__slides-button-prev">&#9668;</div>
-                <div v-if="events.length > 3" class="station__slides-button station__slides-button-next">&#9658;</div>   
-                <div class="station__slides-link"><router-link :to="{ name: 'News'}" target="_blank">Все новости</router-link></div>           
-            </div> -->
                 <div class="about__inner" v-if="kladrPage" style="width: 100%; display: block;">
                     <h2 style="margin-bottom: 20px;">{{ kladrPage.name }}</h2>
                     <div v-for="stationPage in stationPages" class="card" style="width: 100%; display: block; margin-bottom: 20px;">
@@ -227,7 +193,7 @@ export default{
                 </div>
 
         </div>
-    </div>
+    </div> -->
     
     <!-- <hr class="bef__footer"> -->
     <!-- <Footer/> -->

@@ -192,12 +192,12 @@ class KladrStationPageController extends Controller
         // }
     }
 
-    //busStationsKladrs
+    // busStationsKladrs
     public function kladrPages(){
         return response(['pages' => KladrStationPage::with('kladr')->where([['kladr_id', '<>', null]])->orderByDesc('id')->get()]);
     }
 
-    //busStationsDispatchPoints
+    // busStationsDispatchPoints
     public function stationPages(Request $request){
         // return response(['kladr_id' => $request->kladrId]);
         return response(['pages' => KladrStationPage::with('station.kladr')->whereHas('station', function($query) use($request){

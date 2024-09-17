@@ -108,6 +108,8 @@ Route::post('/admin/login', [AdminController::class, 'login']);
 Route::post('/send/feedback', [FeedbackController::class, 'send']);
 Route::get('/get/feedback', [FeedbackController::class, 'get']);
 
+
+Route::get('/main/pages', [PageMainController::class, 'mainPages']);
 Route::get('/page/main', [PageMainController::class, 'get']);
 Route::post('/page/main', [PageMainController::class, 'edit']);
 

@@ -25,4 +25,12 @@ class PageMainController extends Controller
             'pageMain' => $pageMain
         ]);
     }
+
+    public function mainPages(){
+        $pagesOnMain = Setting::where('name', 'pagesOnMain')->first();
+        $pagesOnMain = json_decode($pagesOnMain->data);
+        return response([
+            'pagesOnMain' => $pagesOnMain
+        ]);
+    }    
 }

@@ -50,6 +50,7 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
+use App\Services\PagesOnMainService;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +66,15 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  $pages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
+  foreach($pages as $page){
+    $page->name = 'Автовокзалы и автостанции '.$page->kladr->name;
+    $page->save();
+  }
+
+  PagesOnMainService::recreate();
+  dd('');
+
 $busStation = BusStation::find(11);
 $page = KladrStationPage::find(131);
 $page->content = json_decode($busStation->data)->content;
