@@ -101,8 +101,6 @@ class RaceService
         foreach($races as $race){
             $dispatchPointRegion = DispatchPoint::find($dispatchEPoints[0]->id);
             $region = null;
-            Log::info(json_encode($dispatchPointRegion));
-            Log::info('Повод для новых рейсов???');
             if(!$dispatchPointRegion || !$dispatchPointRegion->kladr){
                 continue;
             }
