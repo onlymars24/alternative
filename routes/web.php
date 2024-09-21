@@ -66,6 +66,126 @@ use App\Services\PagesOnMainService;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
+
+  $ordersIDs = [];
+  foreach($ordersIDs as $id){
+    $order = Order::find($id);
+    $data = [
+        'userName' => config('services.payment.userName'),
+        'password' => config('services.payment.password'),
+        'orderId' => $request->mdOrder
+    ];
+    $curl = curl_init(); // Инициализируем запрос
+    curl_setopt_array($curl, array(
+        // CURLOPT_URL => route('order.confirm', ['order_id' => $order->id]), // Полный адрес метода
+        CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/getOrderStatus.do', 
+        CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+        CURLOPT_POST => true, // Метод POST
+        CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+    ));
+    $orderFromBank = curl_exec($curl); // Выполняем запрос
+    curl_close($curl); // Закрываем соединение
+
+    $orderFromBank = json_decode($orderFromBank);
+
+    $order->ip = isset($orderFromBank->Ip) ? $orderFromBank->Ip : null;
+    $order->pan = isset($orderFromBank->Pan) ? $orderFromBank->Pan : null;
+    $order->save();
+    
+
+    if($order->user->email){
+        Mail::to($order->user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
+        Log::info('sent!');
+    }
+    else{
+        Log::info('not sent!');
+    }
+
+    // $user = User::find($order->user_id);
+    if($order->bonusesPrice > 0){
+        $user->bonuses_balance = $user->bonuses_balance - $order->bonusesPrice;
+        Bonus::create([
+            'amount' => $order->bonusesPrice,
+            'transaction' => 'minus',
+            'user_id' => $user->id,
+            'order_id' => $order->id,
+            'user_phone' => $user->phone,
+            'descr' => 'Оформлен заказ с ID: '.$order->id
+        ]);
+    }
+    
+    $user->save();
+
+    $acqDuePercent = null;
+    $setting = Setting::where('name', 'dues')->first();
+    $dues = (array)json_decode($setting->data);
+    Log::info(json_encode($dues));
+
+    if($order->pan){
+        $acqDuePercent = $dues['acqCardDue'];
+    }
+    else{
+        $acqDuePercent = $dues['acqSbpDue'];
+    }
+
+
+    foreach($order->tickets as $ticket){
+        $ticket->acqPercent = $acqDuePercent;
+        $tempDuePrice = $ticket->price + $ticket->duePrice - $ticket->bonusesPrice;
+        if($ticket->insurance){
+            $tempInsurance = json_decode($ticket->insurance);
+            if(isset($tempInsurance->rate[0]->value) && $tempInsurance->rate[0]->value){
+                $tempDuePrice += $tempInsurance->rate[0]->value;
+            }
+        }
+        $resultAcqPrice = $tempDuePrice * $acqDuePercent / 100;
+        if($resultAcqPrice < 5){
+            $resultAcqPrice = 5;
+        }
+        $ticket->acqPrice = $resultAcqPrice;
+        $ticket->save();
+    }
+    $phoneWithoutMask = SmsService::removeMask($user->phone);
+    $checkWhatsApp = Http::
+    post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));
+    $checkWhatsApp = json_decode($checkWhatsApp);
+  
+    if(isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
+        $message = '💳 *Получите Кэшбэк!*
+
+*Благодарим за оформление электронного билета!*
+
+Рекомендуем сразу посмотреть билеты на обратный рейс (при его наличии) на сайте
+Росвокзалы.рф
+
+🎫🚍 Также для вас доступна возможность *компенсировать до 50% стоимости поездки.* Если хотите получить частичную компенсацию, напишите в ответ слово *"кэшбэк"*.💰
+
+Мы вышлем, что нужно для этого сделать.';
+        $whatsAppService = Http::
+        post(env('WAPICO_URL').'/task_add.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&message='.$message
+        .'&instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');
+        $whatsAppService = json_decode($whatsAppService);
+        Log::info('whatsAppService: '.json_encode($whatsAppService));
+        if(isset($whatsAppService->data->task_id)){
+            $whatsAppSms = WhatsAppSms::create([
+                'id' => $whatsAppService->data->task_id,
+                'phone' => $user->phone,
+                'type' => 'Подтверждение заказа',
+                'status' => 0,
+                'message' => $message
+            ]);            
+        }
+    }
+
+    
+
+    
+    Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
+  }
+
+
+
   $pages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
   foreach($pages as $page){
     $page->name = 'Автовокзалы и автостанции '.$page->kladr->name;

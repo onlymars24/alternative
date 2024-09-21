@@ -403,19 +403,21 @@ class OrderController extends Controller
         Log::info('Receipt: '.$ReceiptId);
         $ReceiptId = json_decode($ReceiptId);
 
-        if(isset($ReceiptId->Data) && isset($ReceiptId->Data->ReceiptId)){
+        if(isset($ReceiptId->Data->ReceiptId) && isset($receipt->Data->StatusCode)){
             $ReceiptId = $ReceiptId->Data->ReceiptId;
             $receipt = FermaService::getStatus($ReceiptId);
             Log::info('Receipt: '.$receipt);
             $receipt = json_decode($receipt);
-
-            $transaction->StatusCode = $receipt->Data->StatusCode;
-            $transaction->ReceiptId = $receipt->Data->ReceiptId;
+            if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+                $transaction->StatusCode = $receipt->Data->StatusCode;
+                $transaction->ReceiptId = $receipt->Data->ReceiptId;                
+            }
+            if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+                $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+            }            
         }
 
-        if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-            $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
-        }
+
         $transaction->save();
         $data = [
             'userName' => config('services.payment.userName'),
@@ -731,13 +733,17 @@ class OrderController extends Controller
         }
         $ReceiptId = FermaService::receipt($body);
         $ReceiptId = json_decode($ReceiptId);
-        $ReceiptId = $ReceiptId->Data->ReceiptId;
-        $receipt = FermaService::getStatus($ReceiptId);
-        $receipt = json_decode($receipt);
-        $transaction->StatusCode = $receipt->Data->StatusCode;
-        $transaction->ReceiptId = $receipt->Data->ReceiptId;
-        if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-            $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+        if(isset($ReceiptId->Data->ReceiptId)){
+            $ReceiptId = $ReceiptId->Data->ReceiptId;
+            $receipt = FermaService::getStatus($ReceiptId);
+            $receipt = json_decode($receipt);            
+            if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+                $transaction->StatusCode = $receipt->Data->StatusCode;
+                $transaction->ReceiptId = $receipt->Data->ReceiptId;
+            }
+            if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+                $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+            }            
         }
         $transaction->save();
 
