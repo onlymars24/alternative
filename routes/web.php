@@ -75,6 +75,7 @@ Route::get('/spread', function (Request $request) {
       'Authorization' => env('AVTO_SERVICE_KEY'),
     ])->post(env('AVTO_SERVICE_URL').'/order/'.$id);
     $order_obj = json_decode($order_json);
+    Log::info('New order: '.$order_json);
     if(!isset($order_obj->id)){
         return;
     }
