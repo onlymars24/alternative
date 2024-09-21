@@ -66,15 +66,14 @@ use App\Services\PagesOnMainService;
 
 
 Route::get('/spread', function (Request $request) {
-  dd('');
 
-  $ordersIDs = [];
+  $ordersIDs = [143723259, 143723099];
   foreach($ordersIDs as $id){
     $order = Order::find($id);
     $data = [
         'userName' => config('services.payment.userName'),
         'password' => config('services.payment.password'),
-        'orderId' => $request->mdOrder
+        'orderId' => $request->bankOrderId
     ];
     $curl = curl_init(); // Инициализируем запрос
     curl_setopt_array($curl, array(
@@ -183,6 +182,7 @@ Route::get('/spread', function (Request $request) {
     
     Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
   }
+  dd('ok!');
 
 
 
