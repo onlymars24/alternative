@@ -70,6 +70,17 @@ Route::get('/spread', function (Request $request) {
   $ordersIDs = [143723259, 143723099];
   foreach($ordersIDs as $id){
     $order = Order::find($id);
+
+    $order_json = Http::withHeaders([
+      'Authorization' => env('AVTO_SERVICE_KEY'),
+    ])->post(env('AVTO_SERVICE_URL').'/order/'.$id);
+    $order_obj = json_decode($order_json);
+    if(!isset($order_obj->id)){
+        return;
+    }
+    $order_json = DeletePassportService::order($order_json);
+
+    $order->order_info = $order_json;
     $data = [
         'userName' => config('services.payment.userName'),
         'password' => config('services.payment.password'),
