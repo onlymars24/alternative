@@ -73,7 +73,7 @@ Route::get('/spread', function (Request $request) {
     $data = [
         'userName' => config('services.payment.userName'),
         'password' => config('services.payment.password'),
-        'orderId' => $request->bankOrderId
+        'orderId' => $order->bankOrderId
     ];
     $curl = curl_init(); // Инициализируем запрос
     curl_setopt_array($curl, array(
