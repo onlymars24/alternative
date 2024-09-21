@@ -395,15 +395,19 @@ class TicketController extends Controller
         $ReceiptId = FermaService::receipt($body);
         Log::info('Receipt: '.$ReceiptId);
         $ReceiptId = json_decode($ReceiptId);
-        $ReceiptId = $ReceiptId->Data->ReceiptId;
-        $receipt = FermaService::getStatus($ReceiptId);
-        Log::info('Receipt: '.$receipt);
-        $receipt = json_decode($receipt);
 
-        $transaction->StatusCode = $receipt->Data->StatusCode;
-        $transaction->ReceiptId = $receipt->Data->ReceiptId;
-        if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-            $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+        if(isset($ReceiptId->Data->ReceiptId)){
+            $ReceiptId = $ReceiptId->Data->ReceiptId;
+            $receipt = FermaService::getStatus($ReceiptId);
+            Log::info('Receipt: '.$receipt);
+            $receipt = json_decode($receipt);
+            if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+                $transaction->StatusCode = $receipt->Data->StatusCode;
+                $transaction->ReceiptId = $receipt->Data->ReceiptId;                
+            }
+            if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+                $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+            }            
         }
         $transaction->save();
         if($orderFromDb->user->email){
