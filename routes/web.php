@@ -102,19 +102,19 @@ Route::get('/spread', function (Request $request) {
     }
 
     // $user = User::find($order->user_id);
-    if($order->bonusesPrice > 0){
-        $user->bonuses_balance = $user->bonuses_balance - $order->bonusesPrice;
-        Bonus::create([
-            'amount' => $order->bonusesPrice,
-            'transaction' => 'minus',
-            'user_id' => $user->id,
-            'order_id' => $order->id,
-            'user_phone' => $user->phone,
-            'descr' => 'Оформлен заказ с ID: '.$order->id
-        ]);
-    }
+    // if($order->bonusesPrice > 0){
+    //     $user->bonuses_balance = $user->bonuses_balance - $order->bonusesPrice;
+    //     Bonus::create([
+    //         'amount' => $order->bonusesPrice,
+    //         'transaction' => 'minus',
+    //         'user_id' => $user->id,
+    //         'order_id' => $order->id,
+    //         'user_phone' => $user->phone,
+    //         'descr' => 'Оформлен заказ с ID: '.$order->id
+    //     ]);
+    // }
     
-    $user->save();
+    // $user->save();
 
     $acqDuePercent = null;
     $setting = Setting::where('name', 'dues')->first();
@@ -145,7 +145,7 @@ Route::get('/spread', function (Request $request) {
         $ticket->acqPrice = $resultAcqPrice;
         $ticket->save();
     }
-    $phoneWithoutMask = SmsService::removeMask($user->phone);
+    $phoneWithoutMask = SmsService::removeMask($order->user->phone);
     $checkWhatsApp = Http::
     post(env('WAPICO_URL').'/send.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&instance_id='.env('WAPICO_INSTANCE_ID'));
     $checkWhatsApp = json_decode($checkWhatsApp);
@@ -169,18 +169,13 @@ Route::get('/spread', function (Request $request) {
         if(isset($whatsAppService->data->task_id)){
             $whatsAppSms = WhatsAppSms::create([
                 'id' => $whatsAppService->data->task_id,
-                'phone' => $user->phone,
+                'phone' => $order->user->phone,
                 'type' => 'Подтверждение заказа',
                 'status' => 0,
                 'message' => $message
             ]);            
         }
     }
-
-    
-
-    
-    Log::info('Order\'s confirmed'.$request->orderNumber.' '.$request->mdOrder);
   }
   dd('ok!');
 
