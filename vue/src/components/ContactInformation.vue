@@ -28,7 +28,7 @@
   </div>
 </div>
 </template>
-<style>
+<style scoped>
 .filled-email
 {
     display: flex;

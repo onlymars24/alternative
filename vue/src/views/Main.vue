@@ -215,26 +215,11 @@ export default{
         </div>
     </div> -->
 
-    <div class="about">
+    <!-- <div class="about">
         <div class="container">
             <div style="margin-bottom: 20px;" v-html="content"></div>
-            <!-- <div class="about__inner">
-            
-                
-
-                <div class="about__info">
-                    <div class="about__info-main">
-                        <a href="">Внутренние</a>
-                    </div>
-                    <div id='vk_community_messages'></div>
-                    <div class="about__info-text">
-                        <div id="vk_groups"></div> 
-                    </div>
-                </div>
-            </div> -->
-            <BusStationsMain/>
         </div>
-    </div>
+    </div> -->
     
     
     <!-- <hr class="bef__footer">

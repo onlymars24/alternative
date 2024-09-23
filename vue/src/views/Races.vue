@@ -135,37 +135,6 @@
 .not__found{
     box-shadow: rgb(0 0 0 / 15%) 0px 2px 17px;
 }
-.loader__outside{
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #F8F8F8;
-    padding: 30px 0;
-    box-shadow: rgb(0 0 0 / 15%) 0px 2px 17px;
-    border-radius: 6px;
-}
-.loader__outside p {
-    margin-left: 8px;
-    color: grey;
-}
-.loader__outside img {
-    transform-origin: top center;
-    animation-name: sale;
-    animation-duration: 1s;
-    animation-fill-mode: both;
-}
-
-.loader {
-    border: 5px solid #C8C8C8; /* Light grey */
-    border-top: 5px solid grey; /* Blue */
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 2s linear infinite;
-    text-align: center;
-    margin-top: 10px;
-}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

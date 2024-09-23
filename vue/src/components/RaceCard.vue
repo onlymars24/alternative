@@ -243,7 +243,7 @@
  
  /* Верхний блок */
  
- .menu__ticket {
+ /* .menu__ticket {
    margin-top: 15px;
    background-color: #fff;
    position: relative;
@@ -258,7 +258,7 @@
    justify-content: space-between;
    position: relative;
    align-items: stretch;
- }
+ } */
  
  .ticket-up__left-ins {
    display: flex;
@@ -955,9 +955,9 @@
    }
  }
  @media (max-width: 550px) {
-   .menu__ticket-up {
+   /* .menu__ticket-up {
 	 display: block;
-   }
+   } */
    .buy__but {
 	 padding: 20px 40px !important;
    }

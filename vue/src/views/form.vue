@@ -988,6 +988,10 @@ export default
 
 <style>
 
+.form-label{
+  margin-bottom: 0;
+}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
   transition-delay: 10s;
@@ -1046,10 +1050,10 @@ body
   display: flex;
   justify-content: start;
 }
-.block__check label
+/* .block__check label
 {
   font-size: 13px !important;
-}
+} */
 .information-race__price
 {
   display: flex;
@@ -1162,13 +1166,13 @@ label
   flex: 1;
   max-width: 49%;
 }
-.form-control
+/* .form-control
 {
   height: 40px;
   border-radius: 5px;
   border: 1px solid black;
   margin: 10px 0px;
-}
+} */
 .form-description
 {
   display: flex;
@@ -1235,7 +1239,7 @@ label
   margin-top: 0px;
 }
 
-.checkmark {
+/* .checkmark {
   position: absolute;
   top: 4px;
   left: 0;
@@ -1285,7 +1289,7 @@ label
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
   border-radius: 2px;
-}
+} */
 
 .pay-but
 {

@@ -147,7 +147,10 @@ export default
     font-weight: 500;
     color: var(--gray);
     overflow: auto;
+    list-style-type: none;
+    padding-left: 0;
 }
+
 .header-menu__all::-webkit-scrollbar {
   width: 0;
 }

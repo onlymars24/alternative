@@ -170,7 +170,12 @@
     }
   }
 </script>
-<style>
+<style scoped>
+
+ul, ol{
+  list-style-type: none;
+  padding-left: 0;
+}
 
 /* Accordion */
 .input-accord {

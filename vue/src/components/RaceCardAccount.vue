@@ -350,6 +350,11 @@
 </script>
 <style scoped>
 
+ul{
+	list-style-type: none;
+	padding-left: 0;
+}
+
 strong{
 	margin: 0;
 }
@@ -387,6 +392,10 @@ strong{
 	justify-content: space-between;
 	margin-top: 15px;
 }
+
+.order__card-buttons a{
+	text-decoration: none;
+}
 .order__card-buttons div{
 	margin-right: 10px;
 }
@@ -405,6 +414,7 @@ strong{
 	background-color: #0275fe;
 	padding: 4px 5px;
 	border-radius: 4px;
+	text-decoration: none;
 }
 .order__card-tickets ul li span{
 	/* margin: 0 6px; */

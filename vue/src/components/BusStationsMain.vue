@@ -58,6 +58,7 @@ import axiosClient from '../axios';
     }
     .bus__stations-main__region-list{
         display: block;
+        list-style-type: none;
     }
 
     .bus__stations-main__region-list h3{

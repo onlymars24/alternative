@@ -286,6 +286,11 @@ export default
 .spinner-border-sm{
   margin-right: 0;
 }
+
+ul{
+  list-style-type: none;
+}
+
 @media (max-width:500px){
   .person-btn
 {
