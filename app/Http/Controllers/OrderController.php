@@ -403,7 +403,7 @@ class OrderController extends Controller
         Log::info('Receipt: '.$ReceiptId);
         $ReceiptId = json_decode($ReceiptId);
 
-        if(isset($ReceiptId->Data->ReceiptId) && isset($receipt->Data->StatusCode)){
+        if(isset($ReceiptId->Data->ReceiptId)){
             $ReceiptId = $ReceiptId->Data->ReceiptId;
             $receipt = FermaService::getStatus($ReceiptId);
             Log::info('Receipt: '.$receipt);

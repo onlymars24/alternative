@@ -407,7 +407,7 @@ class TicketController extends Controller
             }
             if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
                 $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
-            }            
+            }
         }
         $transaction->save();
         if($orderFromDb->user->email){

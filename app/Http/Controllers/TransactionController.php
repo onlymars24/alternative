@@ -16,8 +16,9 @@ class TransactionController extends Controller
             if($transaction->StatusCode != 2){
                 $receipt = FermaService::getStatus($transaction->ReceiptId);
                 $receipt = json_decode($receipt);
-        
-                $transaction->StatusCode = $receipt->Data->StatusCode;
+                if(isset($receipt->Data->StatusCode)){
+                    $transaction->StatusCode = $receipt->Data->StatusCode;
+                }
                 if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
                     $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
                 }

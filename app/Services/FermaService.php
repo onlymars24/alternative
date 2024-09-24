@@ -13,7 +13,8 @@ class FermaService
         $body = json_encode($body);
         $response = Http::withBody($body, 'application/json')->post(env('FERMA_SERVICE_URL').'/Authorization/CreateAuthToken');
         Log::info('response: '.$response);
-        return json_decode($response)->Data->AuthToken;
+        $response = json_decode($response);
+        return isset($response->Data->AuthToken) ? $response->Data->AuthToken : '';
     }
 
     public static function receipt($body){
