@@ -66,7 +66,153 @@ use App\Services\PagesOnMainService;
 
 
 Route::get('/spread', function (Request $request) {
+  $orders = Order::where([['created_at', '>=', '2024-09-21 00:00:00'], ['created_at', '<=', '2024-09-24 18:19:00']])->get();
+  dd($orders);
+  foreach($orders as $order){
+    $order_obj = json_decode($order->order_info);
+    if(!isset($order_obj->status) || $order_obj->status == 'B'){
+      continue;
+    }
+    $transaction = Transaction::create([
+      'StatusCode' => 0,
+      'type' => 'Income',
+      'order_id' => $order->id
+  ]);
+  $body = FermaEnum::$body;
+  $item = FermaEnum::$item;
+  $percent = FermaEnum::$percent;
+  // $bonuses = FermaEnum::$bonuses;
+  $body['Request']['Type'] = 'Income';
+  $body['Request']['InvoiceId'] = $transaction->id;
   
+  foreach($order->tickets as $ticket){
+      $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
+      $item['Price'] = $item['Amount'] = $ticket->price - $ticket->bonusesPrice;
+      if($ticket->bonusesPrice > 0){
+          $item['AdditionalRequisite'] = 'Цена без скидки: '.$ticket->price.'.00';
+      }
+      $body['Request']['CustomerReceipt']['Items'][] = $item;
+  }
+
+  
+  $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice;
+  $user = $order->user;
+  if($user->email){
+      $body['Request']['CustomerReceipt']['Email'] = $user->email;
+  }
+
+
+  //insurance check
+  if($order->insured){
+      $policiesTotalRate = 0;
+      foreach($order->tickets as $ticket){
+          if($ticket->ticketType != 'Багажный'){
+              $policy = json_decode($ticket->insurance);
+              $policiesTotalRate += $policy->rate[0]->value;
+          }
+      }
+      $insuranceReceivePosition = FermaEnum::$insurance;
+      $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
+      $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+      $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice + $policiesTotalRate;
+  }
+  
+
+  $percent['Price'] = $percent['Amount'] = $order->duePrice;
+  // $bonuses['Price'] = $bonuses['Amount'] = 0;
+  // $bonuses['Label'] = 'Скидка '.$order->bonusesPrice.' бонусов';
+  // $body['Request']['CustomerReceipt']['Items'][] = $bonuses;
+  $body['Request']['CustomerReceipt']['Items'][] = $percent;
+  // if($ticketFromDB->bonusesPrice > 0){
+  //     $body['CustomUserProperty']['Name'] = 'Скидка';
+  //     $body['CustomUserProperty']['Value'] = $order->bonusesPrice;
+  // }
+
+
+  Log::info('Body: '.json_encode($body));
+  $ReceiptId = FermaService::receipt($body);
+  Log::info('Receipt: '.$ReceiptId);
+  $ReceiptId = json_decode($ReceiptId);
+
+  if(isset($ReceiptId->Data->ReceiptId)){
+      $ReceiptId = $ReceiptId->Data->ReceiptId;
+      $receipt = FermaService::getStatus($ReceiptId);
+      Log::info('Receipt: '.$receipt);
+      $receipt = json_decode($receipt);
+      if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+          $transaction->StatusCode = $receipt->Data->StatusCode;
+          $transaction->ReceiptId = $receipt->Data->ReceiptId;                
+      }
+      if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+          $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+      }
+  }
+
+
+  $transaction->save();
+    
+    foreach($order->tickets as $ticket){
+            if($ticket->status != 'R'){
+              continue;
+            }
+
+            //пробитие чека
+            $transaction = Transaction::create([
+              'StatusCode' => 0,
+              'type' => 'IncomeReturn',
+              'order_id' => $order->id
+            ]);
+            $body = FermaEnum::$body;
+            $item = FermaEnum::$item;
+            $percent = FermaEnum::$percent;
+            $body['Request']['Type'] = 'IncomeReturn';
+            $body['Request']['InvoiceId'] = $transaction->id;
+    
+            $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticket->customerItem);
+            $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticket->repayment - $ticket->bonusesPrice;
+            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = ($ticket->repayment - $ticket->bonusesPrice);
+            // if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
+            //     $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment;
+            //     $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
+            // }
+    
+            
+    
+    
+            if($ticket->insurance){
+                $policy = json_decode($ticket->insurance);
+
+                $insuranceReceivePosition = FermaEnum::$insurance;
+                $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policy->rate[0]->value;
+                $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+                $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policy->rate[0]->value;
+            }
+    
+            $user = $order->user;
+            if($user->email){
+                $body['Request']['CustomerReceipt']['Email'] = $user->email;
+            }
+            Log::info('Body: '.json_encode($body));
+            $ReceiptId = FermaService::receipt($body);
+            Log::info('Receipt: '.$ReceiptId);
+            $ReceiptId = json_decode($ReceiptId);
+    
+            if(isset($ReceiptId->Data->ReceiptId)){
+                $ReceiptId = $ReceiptId->Data->ReceiptId;
+                $receipt = FermaService::getStatus($ReceiptId);
+                Log::info('Receipt: '.$receipt);
+                $receipt = json_decode($receipt);
+                if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+                    $transaction->StatusCode = $receipt->Data->StatusCode;
+                    $transaction->ReceiptId = $receipt->Data->ReceiptId;                
+                }
+                if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+                    $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+                }
+            }
+            $transaction->save();
+    }
+  }
 });
 
 

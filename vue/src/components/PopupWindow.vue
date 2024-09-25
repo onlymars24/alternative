@@ -50,7 +50,7 @@
       </div>
       <div v-else>
         <h6>История операций</h6>
-        <ul>
+        <ul style="padding-left: 0;">
           <template v-for="transaction in returnTransactionsInfo.response">
             <p v-if="transaction.StatusCode != 2">Чек {{transaction.type == 'Income' ? ' платежа' : ' возврата'}} ещё не готов</p>
             <p v-if="transaction.StatusCode == 2"><a :href="transaction.OfdReceiptUrl" target="_blank">Чек</a>{{transaction.type == 'Income' ? ' платежа' : ' возврата'}}</p>
