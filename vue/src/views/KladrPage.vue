@@ -164,7 +164,7 @@ export default{
 <template>
     <HeaderMain v-if="kladrPage" :isRaces="false" :page="kladrPage"/>
     <HeaderMain v-else :isRaces="false"/>
-
+    <div></div>
 
     <!-- <div class="about" style="margin-top: 50px;">
         <div class="container">

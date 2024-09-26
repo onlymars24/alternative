@@ -66,7 +66,7 @@ use App\Services\PagesOnMainService;
 
 
 Route::get('/spread', function (Request $request) {
-  $orders = Order::where([['created_at', '>=', '2024-09-21 00:00:00'], ['created_at', '<=', '2024-09-24 18:19:00']])->get();
+  $orders = Order::where(['created_at', '>=', '2024-09-21 00:00:00'], ['created_at', '<=', '2024-09-24 18:19:00'])->get();
   dd($orders);
 
   foreach($orders as $order){

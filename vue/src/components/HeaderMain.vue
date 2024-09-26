@@ -2,7 +2,6 @@
 <div class="main__header">
         <div class="container">
             <Header :blackText="false"/>
-
             <div class="main">
                 <h1 style="text-shadow: 1px 1px 5px black" v-if="isRaces" class="main__main">
                     Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}}
@@ -81,7 +80,7 @@
                         Найти билет
                     </button>
                     <div class="main__button-link" v-else>
-                        <a style="width:100%;" href="" @click="otherDay(date)" type="button" class="main__button" disabled>
+                        <a style="width:100%;" :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+(date ? '?on='+date : '')" type="button" class="main__button" disabled>
                             <div style="display: flex; align-items: center; justify-content: center;">
                                 <p>Найти билет</p>
                             </div>
@@ -92,9 +91,9 @@
                 </div>
             </div>
             <div v-if="dispatchEl.id && arrivalEl.id" class="main__another__date">
-                <a href="" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.today)">Сегодня</a>
-                <a href="" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.tomorrow)">Завтра</a>
-                <a href="" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix" @click="otherDay(dates.afterTomorrow)">Послезавтра</a>
+                <a :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+'?on='+dates.today" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</a>
+                <a :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+'?on='+dates.tomorrow" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</a>
+                <a :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+'?on='+dates.afterTomorrow" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</a>
             </div>
         </div>
     </div>
@@ -437,7 +436,7 @@ export default{
     }
 }
 </script>
-<style>
+<style scoped>
 .main__button{
     text-align: center;
 }
@@ -478,6 +477,77 @@ export default{
         margin-top: 70px;
     }
 }
+
+
+.hint{
+        z-index: 2;
+        list-style-type: none;
+        max-height: 242px;
+        /* width: 400px; */
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: #fff;
+        position: absolute;
+        top: 115%;
+        -webkit-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+     -moz-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+      -ms-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+       -o-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+      box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+    }
+    /* 
+Firefox */
+   .hint {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(223, 223, 223) rgb(255, 255, 255);
+  padding: 0px;
+}
+
+
+.hint::-webkit-scrollbar {
+  height: 12px;
+  width: 6px;
+
+}
+.hint::-webkit-scrollbar-track {
+  background: rgb(255, 255, 255);
+
+}
+.hint::-webkit-scrollbar-thumb {
+  background-color: rgb(223, 223, 223) ;
+  border-radius: 5px;
+  border: 3px solid rgb(223, 223, 223);
+}
+
+    li, ul{
+        padding: 0;
+        margin: 0;
+    }
+    .hint li{
+        padding: 5px;
+        font-size: 17px;
+        cursor: pointer;
+    }
+    .hint li:hover{
+        background-color: #DCDCDC;
+    }
+    .hint__title:hover{
+        background-color: #fff;
+    }
+    .hint li span{
+        font-size: 14px;
+        color: grey;
+    }
+    .main__table{
+        position: relative;
+    }
+    @media (max-width: 993px){
+        .hint{
+            top: 150px;
+            /* min-width: 100%; */
+            max-width: 100%;
+        }
+    }
 
 
 </style>

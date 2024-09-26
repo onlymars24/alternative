@@ -152,7 +152,7 @@ export default{
 <template>
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
-
+    <div></div>
     <!-- <div class="about" style="margin-top: 50px;">
         <div class="container">
             <div v-if="stationPage" class="about__inner" style="display: block;">
