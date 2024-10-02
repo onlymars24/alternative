@@ -174,7 +174,6 @@ export default{
     methods: {
         logout(){
             localStorage.removeItem('authToken')
-            router.push({ name: 'Login'})
         },
         dispatchFocus(){
             if(!this.dispatchText){

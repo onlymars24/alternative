@@ -11,6 +11,7 @@ use App\Mail\ReturnMail;
 use Nette\Utils\DateTime;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Services\MailService;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -290,16 +291,11 @@ class TicketController extends Controller
         $repayment = json_decode($repayment);
         
         //пробитие чека
-        $transaction = Transaction::create([
-            'StatusCode' => 0,
-            'type' => 'IncomeReturn',
-            'order_id' => $request->orderId
-        ]);
+
         $body = FermaEnum::$body;
         $item = FermaEnum::$item;
         $percent = FermaEnum::$percent;
         $body['Request']['Type'] = 'IncomeReturn';
-        $body['Request']['InvoiceId'] = $transaction->id;
 
         $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticketFromDB->customerItem);
         $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment - $ticketFromDB->bonusesPrice;
@@ -312,7 +308,7 @@ class TicketController extends Controller
         
 
 
-        if($ticketFromDB->insurance){
+        if($ticketFromDB->insurance && isset(json_decode($ticketFromDB->insurance)->rate[0]->value)){
             $policy = json_decode($ticketFromDB->insurance);
 
             $data = [
@@ -341,12 +337,16 @@ class TicketController extends Controller
             ])->withBody(json_encode($alfastrahBody), 'application/json')->delete(env('ALFASTRAH_SERVICE_URL').'/policies/'.$policy_id.'/refund');
             Log::info('alfaStrahResponse '.$alfaStrahResponse);
             $alfaStrahResponse = json_decode($alfaStrahResponse);
+            if(!isset($alfaStrahResponse->value)){
+                MailService::sendError(env('ALFASTRAH_SERVICE_URL').'/policies/refund', $alfaStrahResponse);
+            }
             $insuranceReceivePosition = FermaEnum::$insurance;
             $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policy->rate[0]->value;
             $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
             $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policy->rate[0]->value;
         }
-
+        
+        $user = $ticketFromDB->order->user;
         //проверка на отмену рейса
         if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
             $data = [
@@ -371,7 +371,7 @@ class TicketController extends Controller
             $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum']  += $ticketFromDB->duePrice;
             $ticketFromDB->raceCanceled = true;
             $ticketFromDB->save();
-            $user = $ticketFromDB->order->user;
+            
             if($ticketFromDB->bonusesPrice > 0){
                 Bonus::create([
                     'amount' => $ticketFromDB->bonusesPrice,
@@ -387,29 +387,36 @@ class TicketController extends Controller
 
         }
 
-        $user = $orderFromDb->user;
-        if($user->email){
-            $body['Request']['CustomerReceipt']['Email'] = $user->email;
-        }
-        Log::info('Body: '.json_encode($body));
-        $ReceiptId = FermaService::receipt($body);
-        Log::info('Receipt: '.$ReceiptId);
-        $ReceiptId = json_decode($ReceiptId);
+        FermaService::create($request->orderId, $user, $body);
+        // $transaction = Transaction::create([
+        //     'StatusCode' => 0,
+        //     'type' => 'IncomeReturn',
+        //     'order_id' => $request->orderId
+        // ]);        
+        // $body['Request']['InvoiceId'] = $transaction->id;
+        // $user = $orderFromDb->user;
+        // if($user->email){
+        //     $body['Request']['CustomerReceipt']['Email'] = $user->email;
+        // }
+        // Log::info('Body: '.json_encode($body));
+        // $ReceiptId = FermaService::receipt($body);
+        // Log::info('Receipt: '.$ReceiptId);
+        // $ReceiptId = json_decode($ReceiptId);
 
-        if(isset($ReceiptId->Data->ReceiptId)){
-            $ReceiptId = $ReceiptId->Data->ReceiptId;
-            $receipt = FermaService::getStatus($ReceiptId);
-            Log::info('Receipt: '.$receipt);
-            $receipt = json_decode($receipt);
-            if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
-                $transaction->StatusCode = $receipt->Data->StatusCode;
-                $transaction->ReceiptId = $receipt->Data->ReceiptId;                
-            }
-            if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-                $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
-            }
-        }
-        $transaction->save();
+        // if(isset($ReceiptId->Data->ReceiptId)){
+        //     $ReceiptId = $ReceiptId->Data->ReceiptId;
+        //     $receipt = FermaService::getStatus($ReceiptId);
+        //     Log::info('Receipt: '.$receipt);
+        //     $receipt = json_decode($receipt);
+        //     if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+        //         $transaction->StatusCode = $receipt->Data->StatusCode;
+        //         $transaction->ReceiptId = $receipt->Data->ReceiptId;                
+        //     }
+        //     if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+        //         $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+        //     }
+        // }
+        // $transaction->save();
         if($orderFromDb->user->email){
             Mail::to($orderFromDb->user->email)->bcc(env('TICKETS_MAIL'))->send(new ReturnMail([$ticketFromDB]));
         }

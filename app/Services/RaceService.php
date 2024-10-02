@@ -70,6 +70,9 @@ class RaceService
                         }
                         $races = array_merge($tempRaces, $races);
                     }
+                    else{
+                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/', $tempRaces);
+                    }
 
 
 

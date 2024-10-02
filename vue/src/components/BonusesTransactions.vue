@@ -1,7 +1,7 @@
 <template>
   <BusLoading v-if="loading"/>
   <div v-else>
-    <h2>Операции с бонусами</h2>
+    <h2 style="margin-bottom: 20px;">Операции с бонусами</h2>
     <div v-if="bonuses.length != 0">
       
       <div style="padding: 15px; margin-bottom: 15px;" class="menu__ticket menu__ticket menu__ticket-bonuses">Мои бонусы: {{user.bonuses_balance}} руб</div>
@@ -96,3 +96,42 @@ export default
 
 };
 </script>
+
+<style scoped>
+
+.not__found{
+    box-shadow: rgb(0 0 0 / 15%) 0px 2px 17px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.not__found{
+    display: flex;
+    align-items: center;
+    padding: 30px;
+}
+.not__found img{
+    width: 200px;
+}
+.not__found-text{
+    margin-left: 60px;
+}
+.not__found-title{
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.not__found-descr{
+    font-size: 30px;
+}
+@media(max-width: 425px){
+  .not__found{
+    flex-direction: column;
+  }
+  .not__found-text{
+    margin-left: 0;
+    margin-top: 20px;
+  }
+}
+</style>

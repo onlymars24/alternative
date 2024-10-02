@@ -9,6 +9,7 @@ use App\Mail\CustomMail;
 use App\Models\WhatsAppSms;
 use App\Services\SmsService;
 use Illuminate\Http\Request;
+use App\Services\MailService;
 use App\Services\FixUserService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -75,12 +76,12 @@ class AuthController extends Controller
         $checkWhatsApp = json_decode($checkWhatsApp);
         
         if($request->whatsAppChosen && isset($checkWhatsApp->data) && $checkWhatsApp->data == 1){
-            
             $whatsAppService1 = Http::
             post(env('WAPICO_URL').'/task_add.php?access_token='.env('WAPICO_KEY').'&number='.$phoneWithoutMask.'&type=check&message=Ваш код для входа на Росвокзалы.рф:
             &instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');
             $whatsAppService1 = json_decode($whatsAppService1);
             if(!isset($whatsAppService1->data->task_id)){
+                MailService::sendError(env('WAPICO_URL').'/task_add.php', $whatsAppService1);
                 Log::info('whatsAppService: '.json_encode($whatsAppService1));
                 return response([
                     'errors' => ['phone' => ['Произошла непредвиденная ошибка! Повторите позднее!']]
@@ -92,6 +93,7 @@ class AuthController extends Controller
             &instance_id='.env('WAPICO_INSTANCE_ID').'&timeout=0');
             $whatsAppService2 = json_decode($whatsAppService2);
             if(!isset($whatsAppService2->data->task_id)){
+                MailService::sendError(env('WAPICO_URL').'/task_add.php', $whatsAppService2);
                 Log::info('whatsAppService: '.json_encode($whatsAppService2));
                 return response([
                     'errors' => ['phone' => ['Произошла непредвиденная ошибка! Повторите позднее!']]
@@ -116,13 +118,18 @@ class AuthController extends Controller
             $whatsAppSent = true;
         }
         else{
+            if($request->whatsAppChosen){
+                MailService::sendError(env('WAPICO_URL').'/send.php', $checkWhatsApp);
+            }
             $message = 'Код на росвокзалы.рф: '.$code.'
 Поддержка в ВК-группе: vk.com/rosvokzaly';
             $smsService = Http::withHeaders([
                 'Authorization' => env('SMS_SERVICE_KEY'),
             ])->get('https://email:api_key@gate.smsaero.ru/v2/sms/send?number='.$user['phone'].'&sign=BIZNES&text='.$message);
+            Log::info($smsService);
             $smsService = json_decode($smsService);
             if(!isset($smsService->data->id)){
+                MailService::sendError('https://email:api_key@gate.smsaero.ru/v2/sms/send', $smsService);
                 return response([
                     'errors' => ['phone' => ['Прошло слишком мало времени после предыдущего смс!']]
                 ], 422);
@@ -200,92 +207,6 @@ class AuthController extends Controller
         ]);
     }
 
-
-    // public function register(Request $request){
-    //     $validator = Validator::make($request->all(), [
-    //         'phone' => 'required|size:17',
-    //         'password' => 'required|between:6,30|confirmed'
-    //     ]);
-
-    //     if($validator->fails()){
-    //         return response(
-    //             [
-    //                 'errors' => $validator->errors()
-    //             ], 422
-    //         );
-    //     }
-    //     $user = User::create([
-    //         'phone' => $request->phone,
-    //         'password' => Hash::make($request->password)
-    //     ]);
-        
-    //     if(!$user){
-    //         return response()->json(['success' => false, 'message' => 'Registration is failed'], 500);
-    //     }
-        
-    //     FixUserService::auth($request->phone);
-    //     Auth::loginUsingId($user->id);
-    //     $token = Auth::user()->createToken('authToken')->accessToken;
-    //     Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail($request->phone, 'Регистрация', true));
-    //     return response([
-    //         'token' => $token
-    //     ]);
-    //     // return response()->json(['success' => true, 'message' => 'Registration is succeeded'], 200);
-    // }
-
-    // public function login(Request $request){
-    //     if(!Auth::attempt(['phone' => $request->phone, 'password' => $request->password, 'confirmed' => true])){
-    //         return response(['message' => 'Неверный номер или пароль!'], 422);
-    //     }
-
-    //     FixUserService::auth($request->phone);
-        
-    //     $token = Auth::user()->createToken('authToken')->accessToken;
-
-    //     return response([
-    //         'token' => $token
-    //     ]);
-    // }
-
-    // public function reset(Request $request){
-    //     $user = User::where([['phone', $request->phone], ['confirmed', true]])->first();
-    //     if(!$user){
-    //         return response([
-    //             'error' => 'Пользователя с таким номером не существует!'
-    //         ], 422);
-    //     }
-
-    //     $validator = Validator::make($request->all(), [
-    //         'password' => 'required|between:6,30|confirmed'
-    //     ]);
-
-    //     if($validator->fails()){
-    //         return response(
-    //             [
-    //                 'errors' => $validator->errors()
-    //             ], 422
-    //         );
-    //     }
-    //     // $user = User::where('phone', $request->phone)->first();
-    //     foreach($user->tokens as $token) {
-    //         $token->revoke();
-    //     }
-    //     $user->password = Hash::make($request->password);
-    //     $user->save();
-        
-    //     Auth::loginUsingId($user->id);
-    //     FixUserService::auth($request->phone);
-    //     $token = Auth::user()->createToken('authToken')->accessToken;
-    //     Mail::to(env('MAIL_FEEDBACK'))->send(new CodeStatusMail($request->phone, 'Смена пароля', true));
-    //     return response([
-    //         'token' => $token
-    //     ]);
-
-    //     // return response([
-    //     //     'sms' => $sms
-    //     // ]);
-    // }
-
     public function user(){
         return response([
             'user' => Auth::user()
@@ -301,7 +222,8 @@ class AuthController extends Controller
 
         $order = $user->orders->last();
 
-        if($user->email && json_decode($order->order_info)->status == 'S'){
+        $order_info = json_decode($order->order_info);
+        if($user->email && $order_info && $order_info->status == 'S'){
             Mail::to($user->email)->bcc(env('TICKETS_MAIL'))->send(new OrderMail($order->tickets));
         }
 

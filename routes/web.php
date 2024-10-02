@@ -14,6 +14,7 @@ use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
 use App\Models\CacheRace;
 use Nette\Utils\DateTime;
+use App\Mail\ErrorApiMail;
 use App\Models\BusStation;
 use App\Models\Transaction;
 use App\Models\WhatsAppSms;
@@ -36,6 +37,7 @@ use App\Services\ScheduleService;
 use App\Services\BusStationService;
 use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
+use App\Services\PagesOnMainService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -50,7 +52,7 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
-use App\Services\PagesOnMainService;
+use App\Services\MailService;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +68,19 @@ use App\Services\PagesOnMainService;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
+    $order = Http::withHeaders([
+      'Authorization' => env('AVTO_SERVICE_KEY'),
+    ])->get(env('AVTO_SERVICE_URL').'/order/2085678');
+    $order = json_decode($order);
+    // dd($order);
+    // Mail::to('marsel.galimov.241@gmail.com')->send(new ErrorApiMail($order));
+    // MailService::sendError(env('WAPICO_URL').'/send.php', $order);
+    dd($order);
+    
+
+
+
   // $orders = Order::where([['created_at', '>=', '2024-09-21 00:00:00'], ['created_at', '<=', '2024-09-24 18:19:00']])->get();
   dd('');
 

@@ -6,6 +6,7 @@ use App\Models\Kladr;
 use Nette\Utils\DateTime;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
+use App\Services\MailService;
 use App\Services\RaceService;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
@@ -36,6 +37,9 @@ class RaceController extends Controller
                     $raceSummary = Http::withHeaders([
                         'Authorization' => env('AVTO_SERVICE_KEY'),
                     ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid)->object();
+                    if(!isset($raceSummary->race->uid)){
+                        MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/', $raceSummary);
+                    }
                     return json_encode($raceSummary);
                 }
             }

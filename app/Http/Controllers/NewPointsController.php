@@ -101,55 +101,55 @@ class NewPointsController extends Controller
         }
 
 
-        $busStationsMain = Setting::where('name', 'busStationsMain')->first();
+        // $busStationsMain = Setting::where('name', 'busStationsMain')->first();
 
 
-        // $dispatchPoints = DispatchPoint::all();
-        // $dispatchPoint = DispatchPoint::find(73707);
-        // dd(!$dispatchPoint->bus_stations->count());
-        $busStationsSetting = [];
-        foreach($request->newPoints as $dispatchPoint){
-          if(!$dispatchPoint->bus_stations->count()){
-            $busStation = BusStation::create([
-                'title' => $dispatchPoint->name,
-                'name' => 'Автовокзал '.$dispatchPoint->name,
-                'dispatch_point_id' => $dispatchPoint->id,
-                'hidden' => false,
-            ]);
+        // // $dispatchPoints = DispatchPoint::all();
+        // // $dispatchPoint = DispatchPoint::find(73707);
+        // // dd(!$dispatchPoint->bus_stations->count());
+        // $busStationsSetting = [];
+        // foreach($request->newPoints as $dispatchPoint){
+        //   if(!$dispatchPoint->bus_stations->count()){
+        //     $busStation = BusStation::create([
+        //         'title' => $dispatchPoint->name,
+        //         'name' => 'Автовокзал '.$dispatchPoint->name,
+        //         'dispatch_point_id' => $dispatchPoint->id,
+        //         'hidden' => false,
+        //     ]);
       
-            $newLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
-            $xml = simplexml_load_file(env('XML_FILE_NAME'));
-            $xmlExist = false;
-            for($i = 0; $i < count($xml->url); $i++){
-                if($xml->url[$i]->loc == $newLoc){
-                    $xmlExist = true;
-                    break;
-                }
-            }
-            if(!$xmlExist){
-              $newNode = $xml->addChild('url');
-              $newNode->addChild('loc', $newLoc);
-              $newNode->addChild('lastmod', date('Y-m-d'));
-              $newNode->addChild('changefreq', 'weekly');
-              $newNode->addChild('priority', '1.0');
-              File::put(env('XML_FILE_NAME'), $xml->asXML());
-            }
-          }
-          $busStationsSetting[$dispatchPoint['region']][] = $dispatchPoint->toArray();
-        }
-        FtpLoadingService::put();
+        //     $newLoc = env('FRONTEND_URL').'/автовокзал/'.$busStation->title;
+        //     $xml = simplexml_load_file(env('XML_FILE_NAME'));
+        //     $xmlExist = false;
+        //     for($i = 0; $i < count($xml->url); $i++){
+        //         if($xml->url[$i]->loc == $newLoc){
+        //             $xmlExist = true;
+        //             break;
+        //         }
+        //     }
+        //     if(!$xmlExist){
+        //       $newNode = $xml->addChild('url');
+        //       $newNode->addChild('loc', $newLoc);
+        //       $newNode->addChild('lastmod', date('Y-m-d'));
+        //       $newNode->addChild('changefreq', 'weekly');
+        //       $newNode->addChild('priority', '1.0');
+        //       File::put(env('XML_FILE_NAME'), $xml->asXML());
+        //     }
+        //   }
+        //   $busStationsSetting[$dispatchPoint['region']][] = $dispatchPoint->toArray();
+        // }
+        // FtpLoadingService::put();
       
       
-        foreach($busStationsSetting as $key => $region){
-          usort($region, function($a, $b) {
-            return strcmp($a['name'], $b['name']);
-          });
-          $busStationsSetting[$key] = $region;
-        }
-        ksort($busStationsSetting);
-      
-        $busStationsMain = Setting::where('name', 'busStationsMain')->first();
-        $busStationsMain->data = json_encode(json_decode(json_encode($busStationsSetting)));
-        $busStationsMain->save();
+        // foreach($busStationsSetting as $key => $region){
+        //   usort($region, function($a, $b) {
+        //     return strcmp($a['name'], $b['name']);
+        //   });
+        //   $busStationsSetting[$key] = $region;
+        // }
+        // ksort($busStationsSetting);
+        
+        // $busStationsMain = Setting::where('name', 'busStationsMain')->first();
+        // $busStationsMain->data = json_encode(json_decode(json_encode($busStationsSetting)));
+        // $busStationsMain->save();
     }
 }

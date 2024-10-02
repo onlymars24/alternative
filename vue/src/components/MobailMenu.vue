@@ -58,7 +58,7 @@
         </div> -->
 
         <li v-if="auth" class="mobail-menu__link mobail-menu__ticket">
-          <router-link to="/account">Мои поездки</router-link>
+          <a href="/account">Мои поездки</a>
         </li>
       </ul>
     </nav>

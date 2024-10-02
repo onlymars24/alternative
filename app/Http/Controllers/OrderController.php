@@ -19,6 +19,7 @@ use App\Enums\InsuranceEnum;
 use App\Services\SmsService;
 use App\Services\UtmService;
 use Illuminate\Http\Request;
+use App\Services\MailService;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -61,6 +62,7 @@ class OrderController extends Controller
         ])->withBody($body, 'application/json')->post(env('AVTO_SERVICE_URL').'/order/book/'.$request->uid);
         $order = json_decode($order_json);
         if(!isset($order->id)){
+            MailService::sendError(env('AVTO_SERVICE_URL').'/order/book/', $order);
             if(!$request->auth){
                 $user->delete();
             }
@@ -76,7 +78,13 @@ class OrderController extends Controller
         Log::info('race_json: '.$race_json);
         $race = json_decode($race_json);
         // timezone saving
-        $timezone = $race->depot->timezone;
+        if(!isset($race->depot->timezone)){
+            MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/', $race);
+        }
+        else{
+            $timezone = $race->depot->timezone;
+        }
+        
 
 
         $orderFromDB = Order::create([
@@ -203,7 +211,8 @@ class OrderController extends Controller
         $payment = curl_exec($curl); // Выполняем запрос
         Log::info('payment: '.$payment);
         $payment = json_decode($payment);
-        if(!isset($payment->orderId)){
+        if(!isset($payment->orderId) || !isset($payment->formUrl)){
+            MailService::sendError(env('PAYMENT_SERVICE_URL').'/register.do', $payment);
             foreach($orderFromDB->tickets as $ticket){
                 $ticket->delete();
             }
@@ -267,6 +276,12 @@ class OrderController extends Controller
                     'message' => $message
                 ]);
             }
+            else{
+                MailService::sendError(env('WAPICO_URL').'/task_add.php', $whatsAppService);
+            }
+        }
+        else{
+            MailService::sendError(env('WAPICO_URL').'/send.php', $checkWhatsApp);
         }
 
         if($request->auth){
@@ -293,22 +308,19 @@ class OrderController extends Controller
         Log::info('order_id: '.$request->orderNumber.'; obj_json: '.$order_json);
         $order_obj = json_decode($order_json);
         if(!isset($order_obj->id)){
+            MailService::sendError(env('AVTO_SERVICE_URL').'/order/confirm/', $order_obj);
             return;
         }
         $order_json = DeletePassportService::order($order_json);
         $order_obj = json_decode($order_json);
 
-        $transaction = Transaction::create([
-            'StatusCode' => 0,
-            'type' => 'Income',
-            'order_id' => $request->orderNumber
-        ]);
+
         $body = FermaEnum::$body;
         $item = FermaEnum::$item;
         $percent = FermaEnum::$percent;
         // $bonuses = FermaEnum::$bonuses;
         $body['Request']['Type'] = 'Income';
-        $body['Request']['InvoiceId'] = $transaction->id;
+
         foreach($order_obj->tickets as $ticket){
             $ticketFromDB = Ticket::find($ticket->id);
             $ticketFromDB->update((array)$ticket);
@@ -369,21 +381,27 @@ class OrderController extends Controller
                     ])->withBody(json_encode($insuranceBody), 'application/json')->post(env('ALFASTRAH_SERVICE_URL').'/policies?confirm=true');
                     Log::info($alfaStrahResponse);
                     $alfaStrahResponse = json_decode($alfaStrahResponse);
-                    $policies = $alfaStrahResponse->policies;
-                    $policy = $policies[0];
-
-                    
-                    $policiesTotalRate += $policy->rate[0]->value;
-                    $ticketFromDB->insurance = json_encode($policy);
-                    $ticketFromDB->save();
+                    if(!isset($alfaStrahResponse->policies[0]->rate[0]->value)){
+                        MailService::sendError(env('ALFASTRAH_SERVICE_URL').'/policies?confirm=true', $alfaStrahResponse);
+                    }
+                    else{
+                        $policies = $alfaStrahResponse->policies;
+                        $policy = $policies[0];
+                        $policiesTotalRate += $policy->rate[0]->value;
+                        $ticketFromDB->insurance = json_encode($policy);
+                        $ticketFromDB->save();                        
+                    }
                 }
             }
-            $insuranceReceivePosition = FermaEnum::$insurance;
-            $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
-            $order->insurancePrice = $policiesTotalRate;
-            $order->save();
-            $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
-            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice + $policiesTotalRate;
+            if($policiesTotalRate){
+                $insuranceReceivePosition = FermaEnum::$insurance;
+                $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
+                $order->insurancePrice = $policiesTotalRate;
+                $order->save();
+                $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+                $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice + $policiesTotalRate;                
+            }
+
         }
         
 
@@ -397,28 +415,43 @@ class OrderController extends Controller
         //     $body['CustomUserProperty']['Value'] = $order->bonusesPrice;
         // }
 
+        FermaService::create($request->orderNumber, $user, $body);
+        // $transaction = Transaction::create([
+        //     'StatusCode' => 0,
+        //     'type' => 'Income',
+        //     'order_id' => $request->orderNumber
+        // ]);        
 
-        Log::info('Body: '.json_encode($body));
-        $ReceiptId = FermaService::receipt($body);
-        Log::info('Receipt: '.$ReceiptId);
-        $ReceiptId = json_decode($ReceiptId);
+        // $body['Request']['InvoiceId'] = $transaction->id;
 
-        if(isset($ReceiptId->Data->ReceiptId)){
-            $ReceiptId = $ReceiptId->Data->ReceiptId;
-            $receipt = FermaService::getStatus($ReceiptId);
-            Log::info('Receipt: '.$receipt);
-            $receipt = json_decode($receipt);
-            if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
-                $transaction->StatusCode = $receipt->Data->StatusCode;
-                $transaction->ReceiptId = $receipt->Data->ReceiptId;                
-            }
-            if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-                $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
-            }            
-        }
+        // Log::info('Body: '.json_encode($body));
+        // $ReceiptId = FermaService::receipt($body);
+        // Log::info('Receipt: '.$ReceiptId);
+        // $ReceiptId = json_decode($ReceiptId);
+
+        // if(isset($ReceiptId->Data->ReceiptId)){
+        //     $ReceiptId = $ReceiptId->Data->ReceiptId;
+        //     $receipt = FermaService::getStatus($ReceiptId);
+        //     Log::info('Receipt: '.$receipt);
+        //     $receipt = json_decode($receipt);
+        //     if(!isset($receipt->Data->StatusCode) || !isset($receipt->Data->ReceiptId) 
+        //     || !isset($receipt->Data->Device->OfdReceiptUrl) || empty($receipt->Data->Device->OfdReceiptUrl)){
+        //         MailService::sendError(env('FERMA_SERVICE_URL').'/kkt/cloud/receipt', $receipt);
+        //     }
+        //     if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+        //         $transaction->StatusCode = $receipt->Data->StatusCode;
+        //         $transaction->ReceiptId = $receipt->Data->ReceiptId;
+        //     }
+        //     if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+        //         $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+        //     }
+        // }
+        // else{
+        //     MailService::sendError(env('FERMA_SERVICE_URL').'/kkt/cloud/receipt', $ReceiptId);
+        // }
 
 
-        $transaction->save();
+        // $transaction->save();
         $data = [
             'userName' => config('services.payment.userName'),
             'password' => config('services.payment.password'),
@@ -524,6 +557,12 @@ class OrderController extends Controller
                     'message' => $message
                 ]);            
             }
+            else{
+                MailService::sendError(env('WAPICO_URL').'/task_add.php', $whatsAppService);
+            }
+        }
+        else{
+            MailService::sendError(env('WAPICO_URL').'/send.php', $checkWhatsApp);
         }
 
         
@@ -558,6 +597,7 @@ class OrderController extends Controller
             
             $ticket_obj = json_decode($ticket_json);
             if(!isset($ticket_obj->hash)){
+                MailService::sendError(env('AVTO_SERVICE_URL').'/ticket/return/', $ticket_obj);
                 continue;
             }
             $ticket_json = DeletePassportService::ticket($ticket_json);
@@ -603,6 +643,7 @@ class OrderController extends Controller
             $repayment = curl_exec($curl); // Выполняем запрос
             $repayment = json_decode($repayment);
             if($repayment->errorCode != 0){
+                MailService::sendError(env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do', $repayment);
                 continue;
             }
             $item = FermaEnum::$item;
@@ -621,11 +662,14 @@ class OrderController extends Controller
         if($orderFromDB->insured){
             $policyTotalRate = 0;
             foreach($tickets as $ticket){
-                if($ticket->ticketType != 'Багажный'){
+                if($ticket->ticketType != 'Багажный' && $ticket->insurance && isset(json_decode($ticket->insurance)->rate[0]->value)){
                     $policy = json_decode($ticket->insurance);
-                    $policyTotalRate += $policy->rate[0]->value;
 
-                    $policy_id = $policy->policy_id;
+                    $policyTotalRate += isset($policy->rate[0]->value) ? $policy->rate[0]->value : 0;
+
+                    $policy_id = isset($policy->policy_id) ? $policy->policy_id : null;
+                    
+
 
                     $alfastrahBody = [
                         'number' => $ticket->ticketNum,
@@ -635,47 +679,60 @@ class OrderController extends Controller
                         'X-API-Key' => env('ALFASTRAH_SERVICE_KEY'),
                     ])->withBody(json_encode($alfastrahBody), 'application/json')->delete(env('ALFASTRAH_SERVICE_URL').'/policies/'.$policy_id.'/refund');
                     Log::info('alfaStrahResponse '.$alfaStrahResponse);
+                    $alfaStrahResponse = json_decode($alfaStrahResponse);
+                    if(!isset($alfaStrahResponse->value)){
+                        MailService::sendError(env('ALFASTRAH_SERVICE_URL').'/policies/refund', $alfaStrahResponse);
+                    }
                 }
             }
+            if($policyTotalRate){
+                $data = [
+                    'userName' => config('services.payment.userName'),
+                    'password' => config('services.payment.password'),
+                    'orderId' => $orderFromDB->bankOrderId,
+                    'amount' => $policyTotalRate * 100,
+                    'positionId' => $orderFromDB->tickets->count()+1
+                ];
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
+                    CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
+                    CURLOPT_POST => true, // Метод POST
+                    CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
+                ));
+                $repayment = curl_exec($curl); // Выполняем запрос
+                Log::info('repayment: '.$repayment);
+                $repayment = json_decode($repayment);
+                if($repayment->errorCode != 0){
+                    MailService::sendError(env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do', $repayment);
+                }
+                $insuranceReceivePosition = FermaEnum::$insurance;
+                $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policyTotalRate;
+                $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
+                $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policyTotalRate;                
+            }
 
-            $data = [
-                'userName' => config('services.payment.userName'),
-                'password' => config('services.payment.password'),
-                'orderId' => $orderFromDB->bankOrderId,
-                'amount' => $policyTotalRate * 100,
-                'positionId' => $orderFromDB->tickets->count()+1
-            ];
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => env('PAYMENT_SERVICE_URL').'/processRawPositionRefund.do',
-                CURLOPT_RETURNTRANSFER => true, // Возвращать ответ
-                CURLOPT_POST => true, // Метод POST
-                CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
-            ));
-            $repayment = curl_exec($curl); // Выполняем запрос            
-
-            $insuranceReceivePosition = FermaEnum::$insurance;
-            $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policyTotalRate;
-            $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
-            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policyTotalRate;            
         }
 
 
+        $user = $orderFromDB->user;
         //проверить рейс на отмену и если что добавить комиссию
         $race_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
         // Log::info('race_json: '.$race_json);
         $race = json_decode($race_json);
-        if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
+        if(!isset($race->race->status->name)){
+            MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/', $race);
+        }
+        elseif($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
             $duePrice = 0;
             $bonusesPrice = 0;
             foreach($tickets as $ticket){
                 $duePrice += $ticket->duePrice;
                 $bonusesPrice += $ticket->bonusesPrice;
             }
-            $user = $orderFromDB->user;
-
+            
             if($bonusesPrice > 0){
                 Bonus::create([
                     'amount' => $bonusesPrice,
@@ -686,7 +743,7 @@ class OrderController extends Controller
                     'descr' => 'Оформлен возврат заказа с ID: '.$orderFromDB->id
                 ]);
                 $user->bonuses = $user->bonuses + $bonusesPrice;
-                $user->save();                
+                $user->save();
             }
 
             $data = [
@@ -704,6 +761,7 @@ class OrderController extends Controller
                 CURLOPT_POSTFIELDS => http_build_query($data) // Данные в запросе
             ));
             $repayment = curl_exec($curl); // Выполняем запрос
+            Log::info('$repayment: '.$repayment);
             $repayment = json_decode($repayment);
             $percent = FermaEnum::$percent;
             $percent['Price'] = $percent['Amount'] = $duePrice;
@@ -721,31 +779,34 @@ class OrderController extends Controller
 
 
         //распечатать чек
-        $transaction = Transaction::create([
-            'StatusCode' => 0,
-            'type' => 'IncomeReturn',
-            'order_id' => $request->orderId
-        ]);
-        $body['Request']['InvoiceId'] = $transaction->id;
-        $user = $orderFromDB->user;
-        if($user->email){
-            $body['Request']['CustomerReceipt']['Email'] = $user->email;
-        }
-        $ReceiptId = FermaService::receipt($body);
-        $ReceiptId = json_decode($ReceiptId);
-        if(isset($ReceiptId->Data->ReceiptId)){
-            $ReceiptId = $ReceiptId->Data->ReceiptId;
-            $receipt = FermaService::getStatus($ReceiptId);
-            $receipt = json_decode($receipt);            
-            if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
-                $transaction->StatusCode = $receipt->Data->StatusCode;
-                $transaction->ReceiptId = $receipt->Data->ReceiptId;
-            }
-            if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-                $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
-            }            
-        }
-        $transaction->save();
+
+        FermaService::create($request->orderId, $user, $body);
+
+        // $transaction = Transaction::create([
+        //     'StatusCode' => 0,
+        //     'type' => 'IncomeReturn',
+        //     'order_id' => $request->orderId
+        // ]);
+        // $body['Request']['InvoiceId'] = $transaction->id;
+        // 
+        // if($user->email){
+        //     $body['Request']['CustomerReceipt']['Email'] = $user->email;
+        // }
+        // $ReceiptId = FermaService::receipt($body);
+        // $ReceiptId = json_decode($ReceiptId);
+        // if(isset($ReceiptId->Data->ReceiptId)){
+        //     $ReceiptId = $ReceiptId->Data->ReceiptId;
+        //     $receipt = FermaService::getStatus($ReceiptId);
+        //     $receipt = json_decode($receipt);
+        //     if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
+        //         $transaction->StatusCode = $receipt->Data->StatusCode;
+        //         $transaction->ReceiptId = $receipt->Data->ReceiptId;
+        //     }
+        //     if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
+        //         $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+        //     }
+        // }
+        // $transaction->save();
 
         if($orderFromDB->user->email){
             Mail::to($orderFromDB->user->email)->bcc(env('TICKETS_MAIL'))->send(new ReturnMail($mailTickets));

@@ -15,7 +15,7 @@
     <div v-if="this.content==4" style="min-height: 200px;">
       <div v-if="returnInfo.step==1">
         <h6>Выберите билет, который хотите вернуть</h6>
-        <ul>
+        <ul style="padding-left: 0;">
           <li v-if="order.status != 'R'"><span><a href="" @click.prevent="$emit('returnOrder', order.id)">Вернуть весь заказ</a></span></li>
           <template v-for="ticket in order.tickets">
             <li v-if="ticket.status == 'S'"><span>Вернуть билет - <a href="" @click.prevent="$emit('returnTicket', ticket.id, order.id)">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></span></li>
@@ -71,8 +71,13 @@
         <h6>Список полисов</h6>
         <ul style="padding-left:0;">
           <template v-for="ticket in insurancesInfo.response">
-            <p v-if="ticket.status == 'S' && ticket.ticketType != 'Багажный'"><a :href="ticket.insurance.resources[0]" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></p>
-            <p v-if="ticket.status == 'R' && ticket.ticketType != 'Багажный'">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - полис возвращён</p>
+            <div v-if="ticket.insurance && ticket.insurance.resources && ticket.insurance.resources[0]">
+              <p v-if="ticket.status == 'S' && ticket.ticketType != 'Багажный'"><a :href="ticket.insurance.resources[0]" target="_blank">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}}</a></p>
+              <p v-if="ticket.status == 'R' && ticket.ticketType != 'Багажный'">{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - полис возвращён</p>
+            </div>
+            <div v-else-if="ticket.ticketType != 'Багажный'">
+              <p>{{ticket.lastName}} {{ticket.firstName}} {{ticket.middleName}} Место {{ticket.seat}} - полис временно недоступен</p>
+            </div>
           </template>
         </ul>
       </div> 
