@@ -69,15 +69,15 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  FtpLoadingService::put();
-  dd('');
+  // FtpLoadingService::put();
+  // dd('');
   // dd();
-  $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
-  date_default_timezone_set('Europe/Moscow');
+  // $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
+  // date_default_timezone_set('Europe/Moscow');
   
 
-  $sitemap[0]->sitemap->lastmod = date('c');
-  dd($sitemap);
+  // $sitemap[0]->sitemap->lastmod = date('c');
+  // dd($sitemap);
   // dd(Kladr::find(1770206));
 
   // for($i = 0; $i < count($xml->url); $i++){
@@ -95,7 +95,7 @@ Route::get('/spread', function (Request $request) {
   // $newNode->addChild('priority', '1.0');
   
   // File::put(env('XML_FILE_NAME'), $xml->asXML());
-
+    $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
 
     $dispatchData = PointService::dispatchKandE();
     foreach($dispatchData as $dispatch){
