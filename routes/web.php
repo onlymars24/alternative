@@ -72,11 +72,12 @@ Route::get('/spread', function (Request $request) {
   // FtpLoadingService::put();
   // dd('');
   // dd();
-  // $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
   date_default_timezone_set('Europe/Moscow');
-  
+  $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
+  $sitemap[0]->sitemap->lastmod = date('c');
+  Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', $sitemap);
+  dd('');
 
-  // $sitemap[0]->sitemap->lastmod = date('c');
   // dd($sitemap);
   // dd(Kladr::find(1770206));
 
