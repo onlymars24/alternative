@@ -73,7 +73,7 @@ Route::get('/spread', function (Request $request) {
   // dd('');
   // dd();
   // $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
-  // date_default_timezone_set('Europe/Moscow');
+  date_default_timezone_set('Europe/Moscow');
   
 
   // $sitemap[0]->sitemap->lastmod = date('c');
