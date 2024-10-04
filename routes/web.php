@@ -69,15 +69,25 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
   // FtpLoadingService::put();
   // dd('');
   // dd();
   date_default_timezone_set('Europe/Moscow');
   $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
+  
   $sitemap[0]->sitemap->lastmod = date('c');
-  Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', $sitemap);
+  Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', $sitemap->asXML());
   dd('');
-
+//   Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', '<sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">
+// <script/>
+// <sitemap>
+// <loc>https://xn--80adplhnbnk0i.xn--p1ai/sitemaps/directions.xml.gz</loc>
+// <lastmod>2024-10-04T22:28:51+03:00</lastmod>
+// <changefreq>daily</changefreq>
+// </sitemap>
+// </sitemapindex>');
+dd('');
   // dd($sitemap);
   // dd(Kladr::find(1770206));
 

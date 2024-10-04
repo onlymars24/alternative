@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -115,6 +116,12 @@ class Kernel extends ConsoleKernel
 
             File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
             FtpLoadingService::put();
+            
+            date_default_timezone_set('Europe/Moscow');
+            $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
+            
+            $sitemap[0]->sitemap->lastmod = date('c');
+            Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', $sitemap->asXML());
 
             $arrivalPoints = CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
             foreach($arrivalPoints as $arrivalPoint){
