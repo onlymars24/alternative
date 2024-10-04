@@ -71,7 +71,7 @@ class RaceService
                         $races = array_merge($tempRaces, $races);
                     }
                     else{
-                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/', $tempRaces);
+                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date, $tempRaces);
                     }
 
 

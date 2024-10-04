@@ -221,16 +221,18 @@ export default {
         return{
             arrivalEl: {
                 id: null,
-                name: this.$route.params['arrival_name']
+                slug: this.$route.params['arrival_name'],
+                name: null,
             },
             dispatchEl: {
                 id: null,
-                name: this.$route.params['dispatch_name']
+                slug: this.$route.params['dispatch_name'],
+                name: null,
             },
             date: this.$route.query.on,
             errorNames: {
-                dispatch: this.$route.params['dispatch_name'],
-                arrival: this.$route.params['arrival_name']
+                dispatch: this.$route.params['dispatch_name'].replace(/[_]/g, ' '),
+                arrival: this.$route.params['arrival_name'].replace(/[_]/g, ' ')
             },
             dateForError: this.$route.query.on,
             races: [],
@@ -323,11 +325,11 @@ export default {
         
         // console.log('должен был съехать mounted')
         let dispatchPoint = this.dispatchPoints.filter(point => {
-            return point.name == this.dispatchEl.name && !point.hasOwnProperty('details')
+            return point.slug == this.dispatchEl.slug && !point.hasOwnProperty('details')
         })[0]
         if(!dispatchPoint){
             dispatchPoint = this.dispatchPoints.filter(point => {
-                return point.name == this.dispatchEl.name && point.hasOwnProperty('details')
+                return point.slug == this.dispatchEl.slug && point.hasOwnProperty('details')
             })[0]
         }
         // console.log('dispatchPoint')
@@ -347,11 +349,11 @@ export default {
                 arrival.keyId = ind+1
             })
             arrivalPoint = this.arrivalPoints.filter(point => {
-                return point.name == this.arrivalEl.name && !point.hasOwnProperty('details')
+                return point.slug == this.arrivalEl.slug && !point.hasOwnProperty('details')
             })[0]
             if(!arrivalPoint){
                 arrivalPoint = this.arrivalPoints.filter(point => {
-                    return point.name == this.arrivalEl.name && point.hasOwnProperty('details')
+                    return point.slug == this.arrivalEl.slug && point.hasOwnProperty('details')
                 })[0]
             }
         }
@@ -367,6 +369,8 @@ export default {
 
         this.dispatchEl.id = dispatchPoint.keyId
         this.arrivalEl.id = arrivalPoint.keyId
+        this.dispatchEl.name = dispatchPoint.name
+        this.arrivalEl.name = arrivalPoint.name
         this.paramKey ++
         if(this.date == this.$route.query.on){
             this.changeRaces0(this.date, dispatchPoint.id, arrivalPoint.id, 
@@ -475,7 +479,7 @@ export default {
             //dispatchPointType
             //arrivalPointId
             //arrivalPointType
-            //date
+            // date
             // console.log('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
             // +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
             const promise2 = axiosClient

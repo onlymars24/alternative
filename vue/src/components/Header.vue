@@ -13,9 +13,9 @@
                                 <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path> 
                             </g>
                         </svg>                    
-                        <span v-if="$route.params['dispatch_name'] || $route.params['title']" style="line-height: 14px;">
+                        <span v-if="dispatchName || $route.params['dispatch_name'] || $route.params['title'] || $route.params['settlement_name']" style="line-height: 14px;">
                             <div style="font-size: 13px;">Росвокзалы.рф</div>
-                            <div style="font-size: 18px;">{{ $route.params['dispatch_name'] || $route.params['title'] }}</div>
+                            <div style="font-size: 18px;">{{ dispatchName || $route.params['title'] || $route.params['settlement_name'] }}</div>
                         </span>
                         <span v-else :class="{'black__text': blackText}">Росвокзалы.рф</span>
                     </a>
@@ -28,7 +28,7 @@
         </div>
 
         <ul class="header__links header__links__place" @mouseleave="$store.commit('windowHeader', 0)">
-            <li >
+            <li>
                 <a @click="" @click.prevent="$store.commit('windowHeader', 1)" href="">
                     <img :src="blackText ? '/img/headphones.png': '/img/headphones-white.png'" alt="">
                     <span :class="{'black__text': blackText}">Служба поддержки</span>
@@ -58,7 +58,7 @@
                     <span :class="{'black__text': blackText}">Личный кабинет</span>
                 </a>
                 <transition name="anim-window">
-                    <nav  class="header__links__window" v-show="$store.state.windowHeader == 2" @mouseenter="$store.commit('windowHeader', 2)">
+                    <nav class="header__links__window" v-show="$store.state.windowHeader == 2" @mouseenter="$store.commit('windowHeader', 2)">
                         <a href="/account" class="header__links__window__myRace-link">Мои поездки</a>
                         <a @click.prevent="logout" href="" class="header__links__window__exit-link" >Выйти из аккаунта</a>
                     </nav>
@@ -98,7 +98,11 @@ export default
     authForForm: {
         type: Boolean,
         default: false
-    }
+    },
+    dispatchName: {
+        type: String,
+        default: ''
+    },
   },
   emits: ['authenticateForForm'],
   data()

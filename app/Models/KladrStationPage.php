@@ -12,6 +12,7 @@ class KladrStationPage extends Model
     protected $fillable = [
         'name',
         'description',
+        'settlement_name',
         'url_settlement_name',
         'url_region_code',
         'content',

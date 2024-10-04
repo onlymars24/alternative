@@ -72,21 +72,8 @@ class ArrivalController extends Controller
         }
         elseif($request->pointType == 'k'){
             $dispatchPoints = Kladr::find($request->pointId)->dispatchPoints;
-            // return response(['dispatchPoints' => $dispatchPoints]);
-            // $kladrs = collect([]);
-            // $arrivalPoints = collect([]);
             $result = [];
             foreach($dispatchPoints as $dispatchPoint){
-                // $arrivalPoints1 = CacheArrivalPoint::doesntHave('kladr')->where('dispatch_point_id', $dispatchPoint->id)->get();
-                // $arrivalPoints2 = CacheArrivalPoint::where('dispatch_point_id', $dispatchPoint->id)->whereHas('kladr', function(Builder $query){
-                //     $query->has('arrivalPoints', '>', 1);
-                // })
-                // ->with('kladr.arrivalPoints')
-                // ->get();
-                // $kladrs = $kladrs->concat(Kladr::has('arrivalPoints', '>', 1)->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
-                //     $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
-                // })->with('arrivalPoints')->get());
-                // $arrivalPoints = $arrivalPoints->concat($arrivalPoints1->concat($arrivalPoints2));
                 $x = PointService::kAndE($dispatchPoint->id);
                 $name_a = array_column($result, 'name');
                 $region_a = array_column($result, 'region');

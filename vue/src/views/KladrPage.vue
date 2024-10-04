@@ -107,10 +107,8 @@ export default{
 
     },
     async mounted() {
-        console.log(this.testStr.replace(/\s/g, '_').replace('/', '-'))
-        console.log(this.$route.params['title'])
         const promise1 = axiosClient
-        .get('/kladr/station/page?url_settlement_name='+(this.$route.params['settlement_name'].replace(/\s/g, '_').replace('/', '-'))
+        .get('/kladr/station/page?url_settlement_name='+(this.$route.params['settlement_name'])
         +'&url_region_code='+this.$route.params['region_code']
         +'&pageType=k'
         )

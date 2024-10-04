@@ -7,9 +7,10 @@ use App\Models\Setting;
 use App\Models\Station;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
+use App\Services\SlugService;
 use App\Models\KladrStationPage;
-use App\Services\FtpLoadingService;
 use App\Services\SitemapService;
+use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\File;
 
 class KladrStationPageController extends Controller
@@ -79,7 +80,8 @@ class KladrStationPageController extends Controller
                     'error' => 'Нет связки'
                 ]);
             }
-            $pageArray['url_settlement_name'] = str_replace([' ', '/'], ['_', '-'], $station->name);
+            $pageArray['url_settlement_name'] = SlugService::create($station->name); 
+            $pageArray['settlement_name'] = $station->name;
             $pageArray['name'] = 'Автовокзал '.$station->name;
             $pageArray['description'] = 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус';
             $pageArray['station_id'] = $request->station_id;
@@ -87,7 +89,8 @@ class KladrStationPageController extends Controller
         }
         elseif($request->kladr_id){
             $kladr = Kladr::find($request->kladr_id);
-            $pageArray['url_settlement_name'] = str_replace([' ', '/'], ['_', '-'], $kladr->name);
+            $pageArray['url_settlement_name'] = SlugService::create($kladr->name);
+            $pageArray['settlement_name'] = $kladr->name;
             $pageArray['name'] = $kladr->name.' Автовокзалы и автостанции';
             $pageArray['description'] = $kladr->name.' Автовокзалы и автостанции: расписание, справочная, билеты на автобус';
             $pageArray['kladr_id'] = $request->kladr_id;

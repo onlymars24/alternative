@@ -1,10 +1,10 @@
 <template>
 <div class="main__header">
         <div class="container">
-            <Header :blackText="false"/>
+            <Header :key="dispatchEl.name" :dispatchName="dispatchEl.name" :blackText="false"/>
             <div class="main">
-                <h1 style="text-shadow: 1px 1px 5px black" v-if="isRaces" class="main__main">
-                    Автобус {{this.$route.params['dispatch_name']}} - {{this.$route.params['arrival_name']}}
+                <h1 style="text-shadow: 1px 1px 5px black" v-if="isRaces && dispatchEl.name && arrivalEl.name" class="main__main">
+                    Автобус {{dispatchEl.name}} - {{arrivalEl.name}}
                 </h1>
                 <h1 style="text-shadow: 1px 1px 5px black" v-else-if="page" class="main__main">
                     {{ page.name }}
@@ -80,7 +80,7 @@
                         Найти билет
                     </button>
                     <div class="main__button-link" v-else>
-                        <a style="width:100%;" :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+(date ? '?on='+date : '')" type="button" class="main__button" disabled>
+                        <a style="width:100%;" :href="'/автобус/'+createSlug(dispatchEl.name)+'/'+createSlug(arrivalEl.name)+(date ? '?on='+date : '')" type="button" class="main__button" disabled>
                             <div style="display: flex; align-items: center; justify-content: center;">
                                 <p>Найти билет</p>
                             </div>
@@ -91,9 +91,9 @@
                 </div>
             </div>
             <div v-if="dispatchEl.id && arrivalEl.id" class="main__another__date">
-                <a :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+'?on='+dates.today" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</a>
-                <a :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+'?on='+dates.tomorrow" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</a>
-                <a :href="'/автобус/'+dispatchEl.name+'/'+arrivalEl.name+'?on='+dates.afterTomorrow" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</a>
+                <a :href="'/автобус/'+createSlug(dispatchEl.name)+'/'+createSlug(arrivalEl.name)+'?on='+dates.today" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</a>
+                <a :href="'/автобус/'+createSlug(dispatchEl.name)+'/'+createSlug(arrivalEl.name)+'?on='+dates.tomorrow" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</a>
+                <a :href="'/автобус/'+createSlug(dispatchEl.name)+'/'+createSlug(arrivalEl.name)+'?on='+dates.afterTomorrow" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</a>
             </div>
         </div>
     </div>
@@ -119,7 +119,8 @@ export default{
                 default: function () {
                     return {
                         id: null,
-                        name: null
+                        name: null,
+                        slug: null
                     }
                 }
             },
@@ -128,7 +129,8 @@ export default{
                 default: function () {
                     return {
                         id: null,
-                        name: null
+                        name: null,
+                        slug: null
                     }
                 }
             },
@@ -172,6 +174,9 @@ export default{
         }
     },
     methods: {
+        createSlug(text){
+            return text.replace(/ /g, '_').replace(/['",.]/g, '').replace(/\//g, '-') 
+        },
         logout(){
             localStorage.removeItem('authToken')
         },
@@ -376,6 +381,7 @@ export default{
         },
     },
     async mounted(){
+        console.log(this.createSlug('No,vosib.ir\'sk\" AB/'))
         this.dates.today = dayjs().format('YYYY-MM-DD')
         if(this.date == ''){
             this.date = this.dates.today
@@ -405,12 +411,12 @@ export default{
 
             if(this.page.kladr){
                 tempDispatch = this.dispatchData.filter(point => {
-                    return point.name == this.page.kladr.name
+                    return point.slug == this.page.kladr.slug
                 })[0] 
             }
             else if(this.page.station && this.page.station.dispatch_point){
                 tempDispatch = this.dispatchData.filter(point => {
-                    return point.name == this.page.station.dispatch_point.name
+                    return point.slug == this.page.station.dispatch_point.slug
                 })[0]            
             }
 
@@ -422,7 +428,7 @@ export default{
                 this.arrivalEl.name = null
                 this.arrivalText = ''
                 this.arrivalBlur()
-                this.getArrivalData()                
+                this.getArrivalData()
             }
 
         }

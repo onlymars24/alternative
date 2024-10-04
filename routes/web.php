@@ -24,6 +24,8 @@ use Illuminate\Http\Request;
 use App\Exports\WrongsExport;
 use App\Mail\LeaveReviewMail;
 use App\Models\DispatchPoint;
+use App\Services\MailService;
+use App\Services\SlugService;
 use App\Exports\ReportsExport;
 use App\Services\FermaService;
 use App\Services\PointService;
@@ -52,7 +54,6 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
-use App\Services\MailService;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,167 +69,81 @@ use App\Services\MailService;
 
 
 Route::get('/spread', function (Request $request) {
+  FtpLoadingService::put();
   dd('');
-    $order = Http::withHeaders([
-      'Authorization' => env('AVTO_SERVICE_KEY'),
-    ])->get(env('AVTO_SERVICE_URL').'/order/2085678');
-    $order = json_decode($order);
-    // dd($order);
-    // Mail::to('marsel.galimov.241@gmail.com')->send(new ErrorApiMail($order));
-    // MailService::sendError(env('WAPICO_URL').'/send.php', $order);
-    dd($order);
-    
-
-
-
-  // $orders = Order::where([['created_at', '>=', '2024-09-21 00:00:00'], ['created_at', '<=', '2024-09-24 18:19:00']])->get();
-  dd('');
-
-  foreach($orders as $order){
-    $order_obj = json_decode($order->order_info);
-    if(!isset($order_obj->status) || $order_obj->status == 'B'){
-      continue;
-    }
-    $transaction = Transaction::create([
-      'StatusCode' => 0,
-      'type' => 'Income',
-      'order_id' => $order->id
-  ]);
-  $body = FermaEnum::$body;
-  $item = FermaEnum::$item;
-  $percent = FermaEnum::$percent;
-  // $bonuses = FermaEnum::$bonuses;
-  $body['Request']['Type'] = 'Income';
-  $body['Request']['InvoiceId'] = $transaction->id;
-  
-  foreach($order->tickets as $ticket){
-      $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
-      $item['Price'] = $item['Amount'] = $ticket->price - $ticket->bonusesPrice;
-      if($ticket->bonusesPrice > 0){
-          $item['AdditionalRequisite'] = 'Цена без скидки: '.$ticket->price.'.00';
-      }
-      $body['Request']['CustomerReceipt']['Items'][] = $item;
-  }
-
-  
-  $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice;
-  $user = $order->user;
-  if($user->email){
-      $body['Request']['CustomerReceipt']['Email'] = $user->email;
-  }
-
-
-  //insurance check
-  if($order->insured){
-      $policiesTotalRate = 0;
-      foreach($order->tickets as $ticket){
-          if($ticket->ticketType != 'Багажный'){
-              $policy = json_decode($ticket->insurance);
-              $policiesTotalRate += $policy->rate[0]->value;
-          }
-      }
-      $insuranceReceivePosition = FermaEnum::$insurance;
-      $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policiesTotalRate;
-      $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
-      $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $order_obj->total - $order->bonusesPrice + $order->duePrice + $policiesTotalRate;
-  }
+  // dd();
+  $sitemap = simplexml_load_string(Storage::disk('sftp')->get('/var/www/rosvokzaly/data/public/sitemap.xml'));
+  date_default_timezone_set('Europe/Moscow');
   
 
-  $percent['Price'] = $percent['Amount'] = $order->duePrice;
-  // $bonuses['Price'] = $bonuses['Amount'] = 0;
-  // $bonuses['Label'] = 'Скидка '.$order->bonusesPrice.' бонусов';
-  // $body['Request']['CustomerReceipt']['Items'][] = $bonuses;
-  $body['Request']['CustomerReceipt']['Items'][] = $percent;
-  // if($ticketFromDB->bonusesPrice > 0){
-  //     $body['CustomUserProperty']['Name'] = 'Скидка';
-  //     $body['CustomUserProperty']['Value'] = $order->bonusesPrice;
+  $sitemap[0]->sitemap->lastmod = date('c');
+  dd($sitemap);
+  // dd(Kladr::find(1770206));
+
+  // for($i = 0; $i < count($xml->url); $i++){
+  //     Log::info($xml->url[$i]->loc.' '.$newLoc);
+  //     if($xml->url[$i]->loc == $newLoc){
+  //         return [
+  //             'existing' => true
+  //         ];
+  //     }
   // }
+  // $newNode = $xml->addChild('url');
+  // $newNode->addChild('loc', $newLoc);
+  // $newNode->addChild('lastmod', date('Y-m-d'));
+  // $newNode->addChild('changefreq', $changefreq); //weekly
+  // $newNode->addChild('priority', '1.0');
+  
+  // File::put(env('XML_FILE_NAME'), $xml->asXML());
 
 
-  Log::info('Body: '.json_encode($body));
-  $ReceiptId = FermaService::receipt($body);
-  Log::info('Receipt: '.$ReceiptId);
-  $ReceiptId = json_decode($ReceiptId);
-
-  if(isset($ReceiptId->Data->ReceiptId)){
-      $ReceiptId = $ReceiptId->Data->ReceiptId;
-      $receipt = FermaService::getStatus($ReceiptId);
-      Log::info('Receipt: '.$receipt);
-      $receipt = json_decode($receipt);
-      if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
-          $transaction->StatusCode = $receipt->Data->StatusCode;
-          $transaction->ReceiptId = $receipt->Data->ReceiptId;                
+    $dispatchData = PointService::dispatchKandE();
+    foreach($dispatchData as $dispatch){
+      if(array_key_exists('details', $dispatch)){
+        $arrivalData = PointService::kAndE($dispatch['id']);
       }
-      if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-          $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
+      else{
+        // dd($dispatch);
+        // dd(Kladr::find($dispatch['id'])->dispatchPoints);
+        // if(!Kladr::find($dispatch['id'])){
+        //   dd($dispatch);
+        // }
+        $dispatchPoints = Kladr::find($dispatch['id'])->dispatchPoints;
+        // dd(Kladr::find($dispatchPoints));
+        $arrivalData = [];
+        foreach($dispatchPoints as $dispatchPoint){
+            $x = PointService::kAndE($dispatchPoint['id']);
+            $name_a = array_column($arrivalData, 'name');
+            $region_a = array_column($arrivalData, 'region');
+
+
+
+            // Удаляем элементы с повторяющимися name и region
+            $x = array_filter($x, function($item) use ($name_a, $region_a) {
+                return !in_array($item['name'], $name_a) && !in_array($item['region'], $region_a);
+            });
+
+            // Объединяем два массива
+            $arrivalData = array_merge($arrivalData, $x);                
+
+            // $result = array_merge($result, PointService::kAndE($dispatchPoint->id));
+        }
       }
-  }
+      if($arrivalData){
+        foreach($arrivalData as $arrival){
+          // SitemapService::add(env('FRONTEND_URL').'/автобус/'.$dispatch->slug.'/'.$arrival->slug, 'dayly');
 
-
-  $transaction->save();
-    
-    foreach($order->tickets as $ticket){
-            if($ticket->status != 'R'){
-              continue;
-            }
-
-            //пробитие чека
-            $transaction = Transaction::create([
-              'StatusCode' => 0,
-              'type' => 'IncomeReturn',
-              'order_id' => $order->id
-            ]);
-            $body = FermaEnum::$body;
-            $item = FermaEnum::$item;
-            $percent = FermaEnum::$percent;
-            $body['Request']['Type'] = 'IncomeReturn';
-            $body['Request']['InvoiceId'] = $transaction->id;
-    
-            $body['Request']['CustomerReceipt']['Items'][] = (array)json_decode($ticket->customerItem);
-            $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticket->repayment - $ticket->bonusesPrice;
-            $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = ($ticket->repayment - $ticket->bonusesPrice);
-            // if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт'){
-            //     $body['Request']['CustomerReceipt']['Items'][0]['Price'] = $body['Request']['CustomerReceipt']['Items'][0]['Amount'] = $ticketFromDB->repayment;
-            //     $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] = $ticketFromDB->repayment;
-            // }
-    
-            
-    
-    
-            if($ticket->insurance){
-                $policy = json_decode($ticket->insurance);
-
-                $insuranceReceivePosition = FermaEnum::$insurance;
-                $insuranceReceivePosition['Price'] = $insuranceReceivePosition['Amount'] = $policy->rate[0]->value;
-                $body['Request']['CustomerReceipt']['Items'][] = $insuranceReceivePosition;
-                $body['Request']['CustomerReceipt']['PaymentItems'][0]['Sum'] += $policy->rate[0]->value;
-            }
-    
-            $user = $order->user;
-            if($user->email){
-                $body['Request']['CustomerReceipt']['Email'] = $user->email;
-            }
-            Log::info('Body: '.json_encode($body));
-            $ReceiptId = FermaService::receipt($body);
-            Log::info('Receipt: '.$ReceiptId);
-            $ReceiptId = json_decode($ReceiptId);
-    
-            if(isset($ReceiptId->Data->ReceiptId)){
-                $ReceiptId = $ReceiptId->Data->ReceiptId;
-                $receipt = FermaService::getStatus($ReceiptId);
-                Log::info('Receipt: '.$receipt);
-                $receipt = json_decode($receipt);
-                if(isset($receipt->Data->StatusCode) && isset($receipt->Data->ReceiptId)){
-                    $transaction->StatusCode = $receipt->Data->StatusCode;
-                    $transaction->ReceiptId = $receipt->Data->ReceiptId;                
-                }
-                if(isset($receipt->Data->Device->OfdReceiptUrl) && !empty($receipt->Data->Device->OfdReceiptUrl)){
-                    $transaction->OfdReceiptUrl = $receipt->Data->Device->OfdReceiptUrl;
-                }
-            }
-            $transaction->save();
+          $newNode = $xml->addChild('url');
+          $newNode->addChild('loc', env('FRONTEND_URL').'/автобус/'.$dispatch['slug'].'/'.$arrival['slug']);
+          $newNode->addChild('lastmod', date('c'));
+          $newNode->addChild('changefreq', 'daily'); //weekly
+          $newNode->addChild('priority', '1.0');
+        }          
+      }
     }
-  }
+    File::put(env('XML_FILE_NAME'), $xml->asXML());
+    FtpLoadingService::put();
+    dd("");
 });
 
 

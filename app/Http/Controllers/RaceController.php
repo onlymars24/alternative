@@ -38,7 +38,7 @@ class RaceController extends Controller
                         'Authorization' => env('AVTO_SERVICE_KEY'),
                     ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid)->object();
                     if(!isset($raceSummary->race->uid)){
-                        MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/', $raceSummary);
+                        MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid, $raceSummary);
                     }
                     return json_encode($raceSummary);
                 }

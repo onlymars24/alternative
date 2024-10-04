@@ -192,7 +192,7 @@ export default
     })
     await promise6
     //send mail
-    router.push({ name: 'Races', params: { dispatch_name: newKladrDispatch.name, arrival_name: newKladrArrival.name } })
+    router.push({ name: 'Races', params: { dispatch_name: newKladrDispatch.slug, arrival_name: newKladrArrival.slug } })
   },
 };
 </script>
