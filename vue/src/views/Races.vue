@@ -109,7 +109,7 @@
                         </button>
                     </div>
                     </div>
-                    <pre>{{ races }}</pre>
+                    <!-- <pre>{{ races }}</pre> -->
                     <template v-for="race in sortedRaces">
                         <!-- <pre>{{ race }}</pre> -->
                         <RaceCard @toSeats="toSeats" :race="race" :button_status="'Выбрать'"/> 

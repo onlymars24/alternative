@@ -61,4 +61,18 @@ class StationController extends Controller
         $arrivalPoint->station_id = $request->stationId;
         $arrivalPoint->save();
     }
+
+    public function races(Request $request){
+        $xml = simplexml_load_file(env('XML_FILE_NAME'));
+
+        // Указываем правильный пространственный идентификатор
+        $namespaces = $xml->getNamespaces(true);
+        $xml->registerXPathNamespace('sm', $namespaces['']);
+        
+        
+        // Используем XPath для выборки всех <loc> элементов
+        $races = $xml->xpath('//sm:url[starts-with(sm:loc, "'.env('FRONTEND_URL').'/автобус/'.$request->stationName.'")]/sm:loc');
+        
+        return response(['races' => $races]);
+    }
 }

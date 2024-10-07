@@ -83,7 +83,8 @@ export default{
                     // spaceBetween: 10     
                 }, 
             },
-            loading: false
+            loading: false,
+            races: []
         }
     },
     methods: {
@@ -118,11 +119,20 @@ export default{
             console.log(error)
         })
         await promise1
-        return
+        // return
         if(!this.stationPage){
             router.push({ name: 'Main'})
             return
         }
+        await axiosClient
+        .get('/station/races?stationName='+this.stationPage.station.name)
+        .then(response => {
+            this.races = response.data.races
+            console.log(response)
+        })
+        .catch(error => {
+            console.log(error)
+        })
         // document.title = this.station.name;
         
         // const descEl = document.querySelector('head meta[name="description"]');
@@ -149,7 +159,16 @@ export default{
 <template>
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
-    <div></div>
+    <div class="container" v-if="stationPage">
+        <h2 style="margin: 25px 0;">{{ stationPage.name }} направления</h2>
+        <div class="station__races">
+            <!-- {{ races }} -->
+            <p v-for="race in races"><a :href="race[0]">{{ race[0].split('/')[4]+' — '+race[0].split('/')[5] }}</a></p>
+
+        </div>        
+    </div>
+
+
     <!-- <div class="about" style="margin-top: 50px;">
         <div class="container">
             <div v-if="stationPage" class="about__inner" style="display: block;">
@@ -236,9 +255,22 @@ export default{
     .station__slides-link{
         margin-top: 15px;
     }
+    .station__races{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .station__races p{
+        width: 50%;
+    }
     @media(max-width: 790px){
         .station__slides-button{
             display: none;
+        }
+        .station__races{
+            display: block;
+        }
+        .station__races p{
+            width: 100%;
         }
     }
 </style>

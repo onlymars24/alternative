@@ -70,6 +70,29 @@ use App\Http\Controllers\UsersExportController;
 
 Route::get('/spread', function (Request $request) {
   dd('');
+  
+  $xml = simplexml_load_file(env('XML_FILE_NAME'));
+
+// Указываем правильный пространственный идентификатор
+$namespaces = $xml->getNamespaces(true);
+$xml->registerXPathNamespace('sm', $namespaces['']);
+
+
+// Используем XPath для выборки всех <loc> элементов
+$urls = $xml->xpath('//sm:url[starts-with(sm:loc, "https://xn--80adplhnbnk0i.xn--p1ai/автобус/Томск")]/sm:loc');
+
+  dd($urls);
+  // $result = $xml->xpath('/xml/urlset/url/loc');
+  // dd($result);
+  $arr = [];
+  for($i = 0; $i < count($xml->url); $i++){
+    if(str_starts_with((string)$xml->url[$i]->loc, 'https://xn--80adplhnbnk0i.xn--p1ai/автобус/Томск')){
+      $locArr = explode('/', (string)$xml->url[$i]->loc);
+      // dd($locArr);
+      $arr[] = [(string)$xml->url[$i]->loc, $locArr[4], $locArr[5]];
+    }
+  }
+  dd($arr);
   // FtpLoadingService::put();
   // dd('');
   // dd();
