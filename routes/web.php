@@ -81,7 +81,7 @@ Route::get('/spread', function (Request $request) {
       if(!$station){
           $station = Station::create([
               'name' => $dispatchPoint->name,
-              'kladr_id' => $kladr
+              'kladr_id' => $kladr->id
           ]);
       }
   
