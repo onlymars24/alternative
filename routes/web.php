@@ -71,17 +71,17 @@ use App\Http\Controllers\UsersExportController;
 Route::get('/spread', function (Request $request) {
 
   $dispatchPoints = DispatchPoint::where([['station_id', '=', null]])->get();
-  dd($dispatchPoints);
+  // dd($dispatchPoints);
   foreach($dispatchPoints as $dispatchPoint){
       if(!$dispatchPoint->kladr){
           continue;
       }
       $kladr = $dispatchPoint->kladr;
-      $station = Station::where([['kladr_id', '=', $dispatchPoint->kladr->id], ['name', '=', $dispatchPoint->name]])->first();
+      $station = Station::where([['kladr_id', '=', $kladr->id], ['name', '=', $dispatchPoint->name]])->first();
       if(!$station){
           $station = Station::create([
               'name' => $dispatchPoint->name,
-              'kladr_id' => $dispatchPoint->kladr_id
+              'kladr_id' => $kladr
           ]);
       }
   
@@ -94,9 +94,9 @@ Route::get('/spread', function (Request $request) {
               'url_settlement_name' => SlugService::create($kladr->name),
               'url_region_code' => mb_strcut($kladr->code, 0, 2),
               'hidden' => false,
-              'kladr_id' => $dispatchPoint->kladr_id,
+              'kladr_id' => $kladr->id,
           ]);
-          SitemapService::add(env('FRONTEND_URL').'/расписание/'.$kladrPage->url_region_code.'/'.$kladrPage->url_settlement_name, 'weekly');
+          // SitemapService::add(env('FRONTEND_URL').'/расписание/'.$kladrPage->url_region_code.'/'.$kladrPage->url_settlement_name, 'weekly');
       }
       if(!$station->kladrStationPage){
           $stationPage = KladrStationPage::create([
@@ -107,12 +107,9 @@ Route::get('/spread', function (Request $request) {
               'hidden' => false,
               'station_id' => $station->id,
           ]);
-          SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly');
+          // SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly');
       }
   }
-
-
-  SitemapService::delete('http://localhost:8000/автовокзал/Томск');
   dd('');
   
   $xml = simplexml_load_file(env('XML_FILE_NAME'));
