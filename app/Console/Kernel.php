@@ -3,16 +3,23 @@
 namespace App\Console;
 
 use DateTimeZone;
+use App\Models\Kladr;
 use App\Models\Order;
+use App\Models\Station;
 use App\Models\CacheRace;
 use Nette\Utils\DateTime;
 use App\Models\WhatsAppSms;
 use App\Services\SmsService;
 use App\Mail\LeaveReviewMail;
+use App\Models\DispatchPoint;
+use App\Services\MailService;
+use App\Services\SlugService;
 use App\Services\KladrService;
+use App\Models\KladrStationPage;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
 use App\Services\FtpLoadingService;
+use App\Services\SitemapService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -128,7 +135,46 @@ class Kernel extends ConsoleKernel
                 $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);
                 $arrivalPoint->save();
             }
-
+            // СОЗДАНИЕ НОВЫХ СТРАНИЦ
+            $dispatchPoints = DispatchPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+            foreach($dispatchPoints as $dispatchPoint){
+                if(!$dispatchPoint->kladr){
+                    continue;
+                }
+                $kladr = $dispatchPoint->kladr;
+                $station = Station::where([['kladr_id', '=', $dispatchPoint->kladr->id], ['name', '=', $dispatchPoint->name]])->first();
+                if(!$station){
+                    $station = Station::create([
+                        'name' => $dispatchPoint->name,
+                        'kladr_id' => $dispatchPoint->kladr_id
+                    ]);
+                }
+            
+                $kladrPage = $kladr->kladrStationPage;
+                
+                if(!$kladrPage){
+                    $kladrPage = KladrStationPage::create([
+                        'name' => 'Автовокзалы и автостанции '.$kladr->name,
+                        'description' => $kladr->name.' Автовокзалы и автостанции: расписание, справочная, билеты на автобус',
+                        'url_settlement_name' => SlugService::create($kladr->name),
+                        'url_region_code' => mb_strcut($kladr->code, 0, 2),
+                        'hidden' => false,
+                        'kladr_id' => $dispatchPoint->kladr_id,
+                    ]);
+                    SitemapService::add(env('FRONTEND_URL').'/расписание/'.$kladrPage->url_region_code.'/'.$kladrPage->url_settlement_name, 'weekly');
+                }
+                if(!$station->kladrStationPage){
+                    $stationPage = KladrStationPage::create([
+                        'name' => 'Автовокзал '.$station->name,
+                        'description' => 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус',
+                        'url_settlement_name' => SlugService::create($station->name),
+                        'url_region_code' => mb_strcut($kladr->code, 0, 2),
+                        'hidden' => false,
+                        'station_id' => $station->id,
+                    ]);
+                    SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly');
+                }
+            }
         })->daily();
     }
 

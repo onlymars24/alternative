@@ -125,16 +125,16 @@ export default{
             router.push({ name: 'Main'})
             return
         }
-        console.log(this.stationPage)
-        await axiosClient
-        .get('/station/arrival/kladrs?dispatchPointId='+this.stationPage.station.dispatch_point.id)
-        .then(response => {
-            this.arrivalKladrs = response.data.arrivalKladrs
-            console.log(response)
-        })
-        .catch(error => {
-            console.log(error)
-        })
+        // console.log(this.stationPage)
+        // await axiosClient
+        // .get('/station/arrival/kladrs?dispatchPointId='+this.stationPage.station.dispatch_point.id)
+        // .then(response => {
+        //     this.arrivalKladrs = response.data.arrivalKladrs
+        //     console.log(response)
+        // })
+        // .catch(error => {
+        //     console.log(error)
+        // })
         // document.title = this.station.name;
         
         // const descEl = document.querySelector('head meta[name="description"]');
@@ -161,12 +161,13 @@ export default{
 <template>
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
-    <div class="container" v-if="stationPage && arrivalKladrs">
+    <div></div>
+    <!-- <div class="container" v-if="stationPage && arrivalKladrs">
         <h2 style="margin: 25px 0;">{{ stationPage.name }} направления</h2>
         <div class="station__races">
             <p v-for="arrivalKladr in arrivalKladrs"><a :href="'/автобус/'+stationPage.station.dispatch_point.name+'/'+arrivalKladr.name">{{ stationPage.station.dispatch_point.name+' — '+arrivalKladr.name }}</a></p>
         </div>        
-    </div>
+    </div> -->
 
 
     <!-- <div class="about" style="margin-top: 50px;">
@@ -255,7 +256,7 @@ export default{
     .station__slides-link{
         margin-top: 15px;
     }
-    .station__races{
+    /* .station__races{
         display: flex;
         flex-wrap: wrap;
     }
@@ -272,5 +273,5 @@ export default{
         .station__races p{
             width: 100%;
         }
-    }
+    } */
 </style>

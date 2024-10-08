@@ -1520,3 +1520,22 @@ a{
    display: block;
   }
 }
+
+.station__races{
+  display: flex;
+  flex-wrap: wrap;
+}
+.station__races p{
+  width: 50%;
+}
+@media(max-width: 790px){
+  .station__slides-button{
+      display: none;
+  }
+  .station__races{
+      display: block;
+  }
+  .station__races p{
+      width: 100%;
+  }
+}
