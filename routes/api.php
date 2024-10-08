@@ -147,7 +147,7 @@ Route::post('/station/edit', [StationController::class, 'edit']);
 Route::post('/station/delete', [StationController::class, 'delete']);
 Route::get('/station/id', [StationController::class, 'oneById']);
 
-Route::get('/station/races', [StationController::class, 'races']);
+Route::get('/station/arrival/kladrs', [StationController::class, 'races']);
 
 Route::post('/station/add/to/dispatch/point', [StationController::class, 'addToDispatchPoint']);
 Route::post('/station/add/to/arrival/point', [StationController::class, 'addToArrivalPoint']);
