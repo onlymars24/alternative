@@ -70,11 +70,7 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  $pages = KladrStationPage::all();
 
-  foreach($pages as $page){
-    SitemapService::add(env('FRONTEND_URL').'/'.($page->kladr_id ? 'расписание' : 'автовокзал').'/'.$page->url_region_code.'/'.$page->url_settlement_name, 'weekly');
-  }
   dd('');
   $dispatchPoints = DispatchPoint::where([['station_id', '=', null]])->get();
   // dd($dispatchPoints);
