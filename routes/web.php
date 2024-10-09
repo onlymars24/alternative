@@ -77,8 +77,11 @@ Route::get('/spread', function (Request $request) {
       continue;
     }
     $station = Station::where([['name', '=', $dispatchPoint->name]])->first();
-    $dispatchPoint->station_id = $station->id;
-    $dispatchPoint->save();
+    if($station){
+      $dispatchPoint->station_id = $station->id;
+      $dispatchPoint->save();      
+    }
+
   }
   dd();
 
