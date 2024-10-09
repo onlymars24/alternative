@@ -13,9 +13,9 @@
                                 <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path> 
                             </g>
                         </svg>                    
-                        <span v-if="dispatchName || $route.params['dispatch_name'] || $route.params['title'] || $route.params['settlement_name']" style="line-height: 14px;">
+                        <span v-if="dispatchName" style="line-height: 14px;">
                             <div style="font-size: 13px;">Росвокзалы.рф</div>
-                            <div style="font-size: 18px;">{{ dispatchName || $route.params['title'] || $route.params['settlement_name'] }}</div>
+                            <div style="font-size: 18px;">{{ dispatchName }}</div>
                         </span>
                         <span v-else :class="{'black__text': blackText}">Росвокзалы.рф</span>
                     </a>

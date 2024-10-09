@@ -70,6 +70,18 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  $dispatchPoints = DispatchPoint::all();
+
+  foreach($dispatchPoints as $dispatchPoint){
+    if($dispatchPoint->station){
+      continue;
+    }
+    $station = Station::where([['name', '=', $dispatchPoint->name]])->first();
+    $dispatchPoint->station_id = $station->id;
+    $dispatchPoint->save();
+  }
+  dd();
+
   PagesOnMainService::recreate();
   dd('');
   $dispatchPoints = DispatchPoint::where([['station_id', '=', null]])->get();
