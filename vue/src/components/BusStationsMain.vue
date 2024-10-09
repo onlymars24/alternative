@@ -43,12 +43,12 @@ import axiosClient from '../axios';
 </script>
 <style>
     .bus__stations-main{
-        display: flex;
-        flex-wrap: wrap;
+        /* display: flex;
+        flex-wrap: wrap; */
     }
 
     .bus__stations-main__region{
-        width: 50%;
+        /* width: 50%; */
     }
 
     .bus__stations-main__region-name{
