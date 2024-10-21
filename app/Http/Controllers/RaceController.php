@@ -22,7 +22,7 @@ class RaceController extends Controller
     //date
     public function races(Request $request){
         return response([
-            'races' => RaceService::all($request, $request->date)
+            'racesInfo' => RaceService::all($request, $request->date)
         ]);
     }
 

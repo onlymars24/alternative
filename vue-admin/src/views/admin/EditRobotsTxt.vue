@@ -21,7 +21,7 @@
 <script>
 
 // import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 
 
@@ -34,7 +34,7 @@ export default {
     }
   },
   async mounted(){
-    const promise = axiosClient
+    const promise = axiosAdmin
     .get('/robots/txt')
     .then(response => {
         this.robotsTxt = response.data.robotsTxt
@@ -48,7 +48,7 @@ export default {
   methods: {
     async editRobotsTxt(){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/robots/txt', {robotsTxt: this.robotsTxt})
         .then(response => {
             // this.robotsTxt = response.data.robotsTxt

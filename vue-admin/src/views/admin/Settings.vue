@@ -82,7 +82,7 @@
 </template>
 <script>
 import Header from '../../components/admin/Header.vue'
-import axiosClient from "../../axios";
+import axiosAdmin from '../../axiosAdmin'
 import dayjs from 'dayjs';
 import TheMask from 'vue-the-mask'
 
@@ -109,7 +109,7 @@ export default {
  },
  async mounted() {
     this.loading = true
-    const promise1 = axiosClient
+    const promise1 = axiosAdmin
     .get('/dues')
     .then(response => {
         this.dues = response.data.dues
@@ -119,7 +119,7 @@ export default {
         console.log(error)
     })
     await promise1
-    const promise2 = axiosClient
+    const promise2 = axiosAdmin
     .get('/expenses')
     .then(response => {
         this.expenses = response.data.expenses
@@ -134,7 +134,7 @@ export default {
  methods: {
     async setDue(name, percent){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/dues/set', {name, percent})
         .then(response => {
             console.log(response)
@@ -148,7 +148,7 @@ export default {
     },
     async createExpense(){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/expense/create', this.newExpense)
         .then(response => {
             console.log(response)
@@ -162,7 +162,7 @@ export default {
     },
     async deleteExpense(expense){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/expense/delete', {expenseId: expense.id})
         .then(response => {
             console.log(response)

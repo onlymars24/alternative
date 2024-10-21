@@ -42,7 +42,6 @@
 <script>
 import ru from 'element-plus/dist/locale/ru.mjs'
 import axiosAdmin from '../../axiosAdmin'
-import axiosClient from "../../axios";
 import Header from '../../components/admin/Header.vue'
 import HtmlEditor from '../../components/admin/HtmlEditor.vue'
 import KladrStationPageForm from '../../components/admin/KladrStationPageForm.vue';
@@ -79,7 +78,7 @@ export default
     },
     async mounted(){
         this.getAll()
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/kladrs/connected')
         .then(response => {
             this.kladrs = response.data.kladrs
@@ -89,7 +88,7 @@ export default
         })
         await promise
 
-        const promise1 = axiosClient
+        const promise1 = axiosAdmin
         .get('/stations')
         .then(response => {
             this.stations = response.data.stations

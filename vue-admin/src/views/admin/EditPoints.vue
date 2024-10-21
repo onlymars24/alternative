@@ -27,7 +27,7 @@
             </div>
             <el-button type="primary" @click="savePopularPoints" :loading="loading">Сохранить</el-button>
 
-            <PointsMatch/>
+            <!-- <PointsMatch/> -->
             <NewPoints/>
         </el-main>
     </el-container>
@@ -36,7 +36,6 @@
 <script>
 import ru from 'element-plus/dist/locale/ru.mjs'
 import axiosAdmin from '../../axiosAdmin'
-import axiosClient from "../../axios";
 import Header from '../../components/admin/Header.vue'
 import PointsMatch from '../../components/admin/PointsMatch.vue'
 import NewPoints from '../../components/admin/NewPoints.vue'
@@ -56,7 +55,7 @@ export default
     },
     async mounted(){
         this.loading = true
-        const promise1 = axiosClient
+        const promise1 = axiosAdmin
         .get('/dispatch_points/')
         .then(response => {
             this.dispatchPoints = response.data
@@ -86,7 +85,7 @@ export default
         async changeDispatchPoint(){
             console.log('changeDispatchPoint')
             this.loading = true
-            const promise2 = axiosClient
+            const promise2 = axiosAdmin
             .get('/arrival_points/'+this.dispatchPointId)
             .then(response => {
                 this.arrivalPoints = response.data
@@ -106,7 +105,7 @@ export default
         },
         async savePopularPoints(){
             this.loading = true
-            const promise = axiosClient
+            const promise = axiosAdmin
             .post('/popular/points/edit/', {id: this.dispatchPointId, popular_arrival_points: this.popularPoints})
             .then(response => {
                 console.log(response)

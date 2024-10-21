@@ -51,7 +51,7 @@ class RaceService
         }
 
 
-
+        $isServerError = false;
         foreach($dispatchEPoints as $dispatchPoint){
             foreach($arrivalEPoints as $arrivalPoint){
                 if($arrivalPoint->dispatch_point_id == $dispatchPoint->id){
@@ -71,6 +71,7 @@ class RaceService
                         $races = array_merge($tempRaces, $races);
                     }
                     else{
+                        $isServerError = true;
                         MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date, $tempRaces);
                     }
 
@@ -125,6 +126,6 @@ class RaceService
             }
         }
 
-        return $races;
+        return ['isServerError' => $isServerError, 'races' => $races];
     }
 }

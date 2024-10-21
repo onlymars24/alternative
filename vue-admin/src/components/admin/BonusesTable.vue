@@ -30,7 +30,7 @@
 </template>
 <script>
 import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 import router from '../../router'
 // import PopupWindow from '../../components/PopupWindow.vue';

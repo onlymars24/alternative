@@ -1,5 +1,6 @@
 <?php
 
+use App\MyApp;
 use Illuminate\Support\Facades\Facade;
 
 return [
@@ -194,6 +195,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
          Barryvdh\DomPDF\Facade::class,
+         'MyApp' => MyApp::class
     ])->toArray(),
 
 ];

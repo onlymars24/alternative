@@ -71,7 +71,7 @@
 <script>
 // import axios from 'axios';
 import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 
 
@@ -97,7 +97,7 @@ export default {
   },
   async mounted(){
     this.loading = true
-    const promise = axiosClient
+    const promise = axiosAdmin
     .get('/dispatch_points')
     .then(response => {
         this.dispatchPoints = response.data
@@ -121,7 +121,7 @@ export default {
             return point.id == this.arrivalPointId
         })[0].name
         console.log(dispatchPointName, arrivalPointName)
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/bus/route/create', {dispatchPointName: dispatchPointName, arrivalPointName: arrivalPointName})
         .then(response => {
             console.log(response.data)
@@ -139,7 +139,7 @@ export default {
         this.loading = false
     },
     async getBusRoutes(){
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/bus/routes')
         .then(response => {
             console.log(response.data)
@@ -155,7 +155,7 @@ export default {
     async dispatchPointId(id){
         this.arrivalPoints = []
         this.arrivalPointId = ''
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/arrival_points/'+this.dispatchPointId)
         .then(response => {
             this.arrivalPoints = JSON.parse(response.data.arrival_points)

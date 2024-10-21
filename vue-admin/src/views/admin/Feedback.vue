@@ -28,7 +28,7 @@
     </div>
 </template>
 <script>
-import axiosClient from '../../axios'
+import axiosAdmin from '../../axiosAdmin'
 import router from '../../router'
 import Header from '../../components/admin/Header.vue'
 import dayjs from 'dayjs'
@@ -48,7 +48,7 @@ export default
     },
     async mounted(){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/get/feedback')
         .then(response => {
             this.feedback = response.data.feedback

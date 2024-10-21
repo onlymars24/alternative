@@ -1,4 +1,5 @@
 /node_modules
+/vue-admin/node_modules
 /public/hot
 /public/storage
 /public/tickets

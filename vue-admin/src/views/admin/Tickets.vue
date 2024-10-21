@@ -113,7 +113,6 @@ import Header from '../../components/admin/Header.vue'
 import TicketCard from '../../components/admin/TicketCard.vue'
 import FilterInput from '../../components/admin/FilterInput.vue'
 import FilterSelect from '../../components/admin/FilterSelect.vue'
-import axiosClient from "../../axios";
 import axiosAdmin from "../../axiosAdmin";
 import ticketStatuses from '../../data/TicketStatuses';
 import TheMask from 'vue-the-mask'

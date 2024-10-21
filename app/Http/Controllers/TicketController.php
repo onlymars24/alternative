@@ -24,11 +24,11 @@ use Illuminate\Database\Eloquent\Builder;
 class TicketController extends Controller
 {
     public function all(){
-        if(!Auth::user()->admin){
-            return response([
-                'errorMessage' => 'Ошибка доступа!'
-            ], 401);
-        }
+        // if(!Auth::user()->admin){
+        //     return response([
+        //         'errorMessage' => 'Ошибка доступа!'
+        //     ], 401);
+        // }
         $tickets = Ticket::orderByDesc('id')->with('order.user')->get();
         return response([
             'tickets' => $tickets
@@ -40,11 +40,11 @@ class TicketController extends Controller
         //     'filterArr' => $request->filterArr
         // ]);
         
-        if(!Auth::user()->admin){
-            return response([
-                'errorMessage' => 'Ошибка доступа!'
-            ], 401);
-        }
+        // if(!Auth::user()->admin){
+        //     return response([
+        //         'errorMessage' => 'Ошибка доступа!'
+        //     ], 401);
+        // }
         $filterArr = $request->filterArr;
         $whereArr = [];                
         // firstName: {
@@ -190,11 +190,6 @@ class TicketController extends Controller
     }
 
     public function reports(Request $request){
-        if(!Auth::user()->admin){
-            return response([
-                'errorMessage' => 'Ошибка доступа!'
-            ], 401);
-        }
         $tickets = Ticket::where(function ($query) use($request) {
             $query->where('confirmed_at', '>', $request->comparingDate1)
             ->where('confirmed_at', '<', $request->comparingDate2)

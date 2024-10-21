@@ -13,7 +13,7 @@
         "hisamu/php-xbase": "^2.1",
         "laravel/framework": "^9.0",
         "laravel/passport": "^11.8",
-        "laravel/sanctum": "^2.14",
+        "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
         "league/flysystem-ftp": "3.0",

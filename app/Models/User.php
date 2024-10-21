@@ -24,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
-        'admin',
+        'role_id',
         'bonuses',
         'confirmed'
     ];
@@ -36,7 +36,8 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'remember_token',
-        'admin'
+        'role_id',
+        'password'
     ];
 
     /**
@@ -61,5 +62,15 @@ class User extends Authenticatable
     public function passengers()
     {
         return $this->hasMany(Passenger::class);
+    }
+    
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function otps()
+    {
+        return $this->hasMany(OtpMember::class);
     }
 }

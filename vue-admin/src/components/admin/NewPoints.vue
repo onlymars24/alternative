@@ -62,7 +62,7 @@
   </el-dialog>  
 </template>
 <script>
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 
 export default {
     data() {
@@ -80,7 +80,7 @@ export default {
     methods: {
       async getNewPoints() {
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/new/points')
         .then(response => {
           console.log(response)
@@ -95,7 +95,7 @@ export default {
       async addNewPoints() {
         this.loading = true
         this.step = 2
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/new/points', {newPoints: this.newPoints})
         .then(response => {
           console.log(response)

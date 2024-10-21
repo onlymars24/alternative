@@ -90,7 +90,7 @@
 </template>
 <script>
 import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 import router from '../../router'
 import dayjs from 'dayjs';
@@ -115,7 +115,7 @@ export default
     },
     async mounted(){
         this.$refs.refPhoneInput.focus()
-        const promise1 = axiosClient
+        const promise1 = axiosAdmin
         .get('/users')
         .then(response => {
             this.users = response.data.users.reverse()
@@ -140,7 +140,7 @@ export default
             this.currentPlusRow.amount = ''
         },
         async plus(row){
-            const promise = axiosClient
+            const promise = axiosAdmin
             .post('/bonuses/plus', {id: row.id, bonuses: row.amount, descr: row.descr})
             .then(response => {
                 this.users = response.data.users
@@ -158,7 +158,7 @@ export default
             this.currentMinusRow.amount = ''
         },
         async minus(row){
-            const promise = axiosClient
+            const promise = axiosAdmin
             .post('/bonuses/minus', {id: row.id, bonuses: row.amount, descr: row.descr})
             .then(response => {
                 this.users = response.data.users

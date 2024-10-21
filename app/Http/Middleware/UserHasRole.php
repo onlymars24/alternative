@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Admin
+class UserHasRole
 {
     /**
      * Handle an incoming request.
@@ -15,9 +15,9 @@ class Admin
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $role1, $role2)
     {
-        if (Auth::user() && Auth::user()->role->name == 'Администратор') {
+        if (Auth::user() && Auth::user()->role->name == $role1 || Auth::user()->role->name == $role2) {
             return $next($request);
         }
         return response([

@@ -5,7 +5,8 @@
 
 <template>
 
-  <RouterView />
+  <RouterView :key="$route.path"/>
+  
 </template>
 
 <style scoped>

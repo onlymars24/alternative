@@ -43,7 +43,7 @@
 <script>
 
 // import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 import router from '../../router';
 import CkEditor from '../../components/admin/CkEditor.vue';
@@ -60,7 +60,7 @@ export default {
   },
   async mounted(){
     console.log(this.$route.params.id)
-    const promise = axiosClient
+    const promise = axiosAdmin
     .get('/bus/route?dispatchPointName='+this.$route.params.dispatchPointName+'&arrivalPointName='+this.$route.params.arrivalPointName)
     .then(response => {
         // console.log(response)
@@ -75,7 +75,7 @@ export default {
   methods: {
     async edit(){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/bus/route/edit', {busRouteId: this.busRoute.id, content: this.busRoute.content})
         .then(response => {
             // console.log(response)
@@ -89,7 +89,7 @@ export default {
     },
     async remove(){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/bus/route/delete', {busRouteId: this.busRoute.id})
         .then(response => {
             // console.log(response)

@@ -59,7 +59,6 @@
 <script>
 import ru from 'element-plus/dist/locale/ru.mjs'
 import axiosAdmin from '../../axiosAdmin'
-import axiosClient from "../../axios"
 import Header from '../../components/admin/Header.vue'
 import CkEditor from '../../components/admin/CkEditor.vue'
 import dayjs from 'dayjs'
@@ -118,7 +117,7 @@ export default
     },
     async mounted(){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/bus/stations/')
         .then(response => {
             this.busStations = response.data.busStations

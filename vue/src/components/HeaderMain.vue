@@ -74,7 +74,7 @@
                 <div class="main__table-table">
                     <p class="">Дата поездки</p>
                     <input id="calendar" class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
-                </div>  
+                </div>
                 <div class="main__table-button">
                     <button v-if="disabledButton" @click="findRaces" type="button" class="main__button">
                         Найти билет
@@ -94,6 +94,11 @@
                 <a :href="'/автобус/'+createSlug(dispatchEl.name)+'/'+createSlug(arrivalEl.name)+'?on='+dates.today" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</a>
                 <a :href="'/автобус/'+createSlug(dispatchEl.name)+'/'+createSlug(arrivalEl.name)+'?on='+dates.tomorrow" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</a>
                 <a :href="'/автобус/'+createSlug(dispatchEl.name)+'/'+createSlug(arrivalEl.name)+'?on='+dates.afterTomorrow" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</a>
+            </div>
+            <div v-else class="main__another__date">
+                <span :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</span>
+                <span style="margin: 0 5px;" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</span>
+                <span :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</span>
             </div>
         </div>
     </div>
@@ -381,6 +386,10 @@ export default{
         },
     },
     async mounted(){
+        let dash = 'G'
+        console.log(dash)
+        
+        console.log(dash.toLowerCase())
         console.log(this.createSlug('No,vosib.ir\'sk\" AB/'))
         this.dates.today = dayjs().format('YYYY-MM-DD')
         if(this.date == ''){

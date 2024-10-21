@@ -43,6 +43,16 @@
                         </p>
                     </div>
                 </div>
+                <div v-else-if="!races.length && !notExistingRace && isServerError">
+                    <div class="not__found-text" style="margin-left: 0;">
+                        <p class="not__found-title">
+                            Нет связи с автовокзалом. Сервер автовокзала скоро восстановится, и затем можно будет купить билет. Повторите поиск через несколько минут.
+                        </p>
+                        <p class="not__found-descr">
+                            <!-- Нет связи с автовокзалом. Сервер автовокзала скоро восстановится, и затем можно будет купить билет. Повторите поиск через несколько минут. -->
+                        </p>
+                    </div>          
+                </div>
                 <div v-else-if="!races.length && !notExistingRace && !this.$route.query.on">
                     <div class="not__found">
                         <div class="not__found-text">
@@ -237,6 +247,7 @@ export default {
             },
             dateForError: this.$route.query.on,
             races: [],
+            racesInfo: null,
             loadingRaces: true,
             notExistingRace: false,
             months: [
@@ -326,11 +337,11 @@ export default {
         
         // console.log('должен был съехать mounted')
         let dispatchPoint = this.dispatchPoints.filter(point => {
-            return point.slug == this.dispatchEl.slug && !point.hasOwnProperty('details')
+            return point.slug.toLowerCase() == this.dispatchEl.slug.toLowerCase() && !point.hasOwnProperty('details')
         })[0]
         if(!dispatchPoint){
             dispatchPoint = this.dispatchPoints.filter(point => {
-                return point.slug == this.dispatchEl.slug && point.hasOwnProperty('details')
+                return point.slug.toLowerCase() == this.dispatchEl.slug.toLowerCase() && point.hasOwnProperty('details')
             })[0]
         }
         // console.log('dispatchPoint')
@@ -350,11 +361,11 @@ export default {
                 arrival.keyId = ind+1
             })
             arrivalPoint = this.arrivalPoints.filter(point => {
-                return point.slug == this.arrivalEl.slug && !point.hasOwnProperty('details')
+                return point.slug.toLowerCase() == this.arrivalEl.slug.toLowerCase() && !point.hasOwnProperty('details')
             })[0]
             if(!arrivalPoint){
                 arrivalPoint = this.arrivalPoints.filter(point => {
-                    return point.slug == this.arrivalEl.slug && point.hasOwnProperty('details')
+                    return point.slug.toLowerCase() == this.arrivalEl.slug.toLowerCase() && point.hasOwnProperty('details')
                 })[0]
             }
         }
@@ -488,8 +499,9 @@ export default {
             +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
             .then(response => {
                 // console.log('response')
-                // console.log(response)
-                this.races = response.data.races
+                console.log(response)
+                this.racesInfo = response.data.racesInfo
+                this.races = this.racesInfo.races
             })
             .catch(error => {
                 console.log(error)

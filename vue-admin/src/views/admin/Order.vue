@@ -49,7 +49,7 @@
 </template>
 <script>
 import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 import TicketCard from '../../components/admin/TicketCard.vue'
 import ticketStatuses from '../../data/TicketStatuses';
@@ -90,7 +90,7 @@ export default
     },
     async mounted(){
         this.orderLoading = true
-        const promise1 = axiosClient
+        const promise1 = axiosAdmin
         .get('/order?order_id='+this.order_id)
         .then(response => {
             this.order_outside = response.data.order
@@ -102,7 +102,7 @@ export default
         this.tickets.forEach(ticket => {
             ticket.insurance = ticket.insurance ? JSON.parse(ticket.insurance) : null
         })
-        const promise2 = axiosClient
+        const promise2 = axiosAdmin
         .post('/order/transactions', {orderId: this.order_id})
         .then(response => {
             this.transactions = response.data.transactions

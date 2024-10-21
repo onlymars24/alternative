@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import axiosClient from '../../axios'
+import axiosAdmin from '../../axiosAdmin'
 import router from '../../router'
 // import StationForm from '../../components/admin/StationForm.vue'
 // import Header from '../../components/admin/Header.vue'

@@ -16,7 +16,7 @@
 <script>
 
 // import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 
 // import CKEditor from '@ckeditor/ckeditor5-vue';
@@ -189,7 +189,7 @@ export default {
     }
   },
   async mounted(){
-    const promise = axiosClient
+    const promise = axiosAdmin
     .get('/page/upcoming/trips')
     .then(response => {
         console.log(response)
@@ -203,7 +203,7 @@ export default {
   methods: {
     async editUpcomingTrips(){
         this.loading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .post('/page/upcoming/trips', {content: this.editorData})
         .then(response => {
             console.log(response)

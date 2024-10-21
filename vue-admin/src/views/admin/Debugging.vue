@@ -69,7 +69,6 @@
 <script>
 import ru from 'element-plus/dist/locale/ru.mjs'
 import axiosAdmin from '../../axiosAdmin'
-import axiosClient from "../../axios";
 import Header from '../../components/admin/Header.vue'
 
 
@@ -103,7 +102,7 @@ export default
     methods: {
         async debugging(){
             this.loading = true
-            const promise = axiosClient
+            const promise = axiosAdmin
             .post('/debugging', {orderId: this.orderId})
             .then(response => {
                 console.log(response)

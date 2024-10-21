@@ -3,13 +3,16 @@
         <template #header>
         <div class="card-header" style="display: flex; justify-content: space-between;">
             <span>Билет c ID: {{ticket.id}}</span>
-            <el-link v-if="ticket.order_id" @click="otherPage('order/'+ticket.order_id)">
+            <el-link v-if="$route.name != 'Order'" @click="otherPage('order/'+ticket.order_id)">
                 Весь заказ<i class="el-icon-top-right el-icon--right"></i>
             </el-link>
+            <!-- <router-link :to="{name: Order, params: {order_id: ticket.order_id}}">Весь заказ<i class="el-icon-top-right el-icon--right"></i></router-link> -->
         </div>
         </template>
         <div class="text item" v-if="ticket.order_id"><strong>Заказ с ID:</strong> {{ticket.order_id}}</div>
         <div class="text item"><strong>Статус:</strong> {{ ticketStatuses[ticket.status].label }}</div>
+        <div class="text item"><strong>Дата и время покупки(мск):</strong><br/> {{ ticket.confirmed_at }}</div>
+        <div class="text item"><strong>Дата и время возврата(мск):</strong><br/> {{ ticket.returnedMoscow }}</div>
         <div class="text item"><strong style="margin-right: 5px;">Билет:</strong>
             <el-link v-if="ticket.status == 'S' || ticket.status == 'R'" type="primary" @click="otherPage(baseUrl+'/tickets/'+ticket.hash+'.pdf')" target="_blank" alt="">
                 PDF<i class="el-icon-tickets el-icon--right"></i>
@@ -55,7 +58,7 @@
 import { ref } from "vue";
 import router from '../../router'
 import dayjs from 'dayjs'
-import axiosClient from "../../axios";
+import axiosAdmin from '../../axiosAdmin'
 
 export default
 {
@@ -79,8 +82,8 @@ export default
 			}
 			this.returnLoading = true
 			// this.returnInfo.step = 2
-			const promise = axiosClient
-			.post('/ticket/return', {ticketId: ticketId, orderId: orderId})
+			const promise = axiosAdmin
+			.post('/admin/ticket/return', {ticketId: ticketId, orderId: orderId})
 			.then(response => {
 				console.log(response)
 			})

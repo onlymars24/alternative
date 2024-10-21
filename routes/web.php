@@ -1,6 +1,8 @@
 <?php
 
+use App\MyApp;
 use App\Models\Sms;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Bonus;
 use App\Models\Kladr;
@@ -13,9 +15,11 @@ use App\Models\Station;
 use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
 use App\Models\CacheRace;
+use App\Models\OtpMember;
 use Nette\Utils\DateTime;
 use App\Mail\ErrorApiMail;
 use App\Models\BusStation;
+use App\Mail\OtpMemberMail;
 use App\Models\Transaction;
 use App\Models\WhatsAppSms;
 use App\Enums\InsuranceEnum;
@@ -36,12 +40,14 @@ use App\Services\GraphicService;
 use App\Services\SitemapService;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
+use Illuminate\Support\Facades\DB;
 use App\Services\BusStationService;
 use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
 use App\Services\PagesOnMainService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -70,6 +76,22 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
+  Mail::to('marsel.galimov.241@gmail.com')->send(new OtpMemberMail('123456'));
+  dd(date('Y-m-d H:i:s'));
+  $otp = OtpMember::find(4);
+
+  // dd($otp->code);
+  dd(Hash::check(4843301, $otp->code));
+  dd(OtpMember::where('code', Hash::make(715139))->first());
+  dd(User::where([['email', '=', 'marsel.galimov.241@gmail.com']])->whereHas('role', function(Builder $query){
+    return $query->where([['name', '<>', 'Пользователь']]);
+})->first());
+  dd(User::where([['email', '=', 'marsel@mail.ru']])->whereHas('role', function(Builder $query){
+        return $query->where([['name', '<>', 'Пользователь']]);
+    })->first());
+  Auth::loginUsingId(33);
+  dd(Auth::user()->role);
   $dispatchPoints = DispatchPoint::all();
 
   foreach($dispatchPoints as $dispatchPoint){

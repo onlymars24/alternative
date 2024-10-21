@@ -17,7 +17,7 @@
 </template>
 <script>
 import axios from 'axios';
-import axiosClient from '../../axios';
+import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 import BonusesTable from '../../components/admin/BonusesTable.vue'
 import router from '../../router'
@@ -35,7 +35,7 @@ export default
         }
     },
     async mounted(){
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/bonuses/user?id='+this.$route.params['user_id'])
         .then(response => {
             console.log(response)

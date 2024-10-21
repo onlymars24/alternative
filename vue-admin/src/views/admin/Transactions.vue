@@ -136,7 +136,7 @@ import Header from '../../components/admin/Header.vue'
 import TicketCard from '../../components/admin/TicketCard.vue'
 import FilterInput from '../../components/admin/FilterInput.vue'
 import FilterSelect from '../../components/admin/FilterSelect.vue'
-import axiosClient from "../../axios";
+import axiosAdmin from '../../axiosAdmin'
 import Paginate from "vuejs-paginate-next";
 import ticketStatuses from '../../data/TicketStatuses';
 // import { Edit, View as IconView } from '@element-plus/icons-vue'
@@ -395,7 +395,7 @@ export default
     async mounted(){
         this.resetPhoneFilter()
         this.ticketsLoading = true
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/tickets')
         .then(response => {
             console.log(response.data)

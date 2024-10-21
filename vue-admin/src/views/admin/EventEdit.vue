@@ -109,7 +109,6 @@
 <script>
 import ru from 'element-plus/dist/locale/ru.mjs'
 import axiosAdmin from '../../axiosAdmin'
-import axiosClient from "../../axios";
 import Header from '../../components/admin/Header.vue'
 import CkEditor from '../../components/admin/CkEditor.vue'
 import Calendar from '../../components/admin/Calendar.vue'
@@ -159,7 +158,7 @@ export default
     async mounted(){
         this.loading = true
         this.getAll()
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/bus/stations/')
         .then(response => {
             this.busStations = response.data.busStations
@@ -176,7 +175,7 @@ export default
     methods: {
         async getAll(){
             this.events = []
-            const promise = axiosClient
+            const promise = axiosAdmin
             .get('/events/')
             .then(response => {
                 this.events = response.data.events.reverse()
@@ -262,7 +261,7 @@ export default
     watch: {
         async selectedEventId(){
             this.loading = true
-            const promise = axiosClient
+            const promise = axiosAdmin
             .get('/event?id='+this.selectedEventId)
             .then(response => {
                 this.currentEvent = response.data.event

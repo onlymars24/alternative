@@ -31,7 +31,7 @@
 </template>
 <script>
 import Header from '../../components/admin/Header.vue'
-import axiosClient from "../../axios";
+import axiosAdmin from '../../axiosAdmin'
 import dayjs from 'dayjs';
 
 export default {
@@ -52,7 +52,7 @@ export default {
         this.smsLoading = true
 
         // Запрос на получение смсок
-        const promise = axiosClient
+        const promise = axiosAdmin
         .get('/sms/all')
         .then(response => {
             console.log(response.data)
