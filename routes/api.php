@@ -110,7 +110,7 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/kladr/station/page/edit', [KladrStationPageController::class, 'edit']);
         Route::post('/kladr/station/page/delete', [KladrStationPageController::class, 'delete']);
         Route::get('/kladr/station/pages/kladr', [KladrStationPageController::class, 'kladrPages']);
-        Route::get('/kladr/station/pages/station', [KladrStationPageController::class, 'stationPages']);
+        
         Route::get('/stations', [StationController::class, 'all']);
         Route::post('/station/create', [StationController::class, 'create']);
         Route::post('/station/edit', [StationController::class, 'edit']);
@@ -222,6 +222,8 @@ Route::get('/settings/cluster/due', [SettingsController::class, 'getClusterDue']
 // Route::get('/get/feedback', [FeedbackController::class, 'get']);
 
 Route::get('/station/arrival/kladrs', [StationController::class, 'races']);
+
+Route::get('/kladr/station/pages/station', [KladrStationPageController::class, 'stationPages']);
 
 Route::get('/main/pages', [PageMainController::class, 'mainPages']);
 Route::get('/page/main', [PageMainController::class, 'get']);
