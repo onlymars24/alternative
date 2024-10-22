@@ -11,16 +11,7 @@ const routes = [
     component: () => import('../views/admin/ALogin.vue'),
     name: 'ALogin'
   },
-  {
-    path: '/kladr/station/page',
-    component: () => import('../views/admin/KladrStationPage.vue'),
-    name: 'KladrStationPage'
-  },   
-  {
-    path: '/element',
-    component: () => ElementPlusUse,
-    name: 'ElementPlusUse'
-  },   
+
   {
     name: 'App',
     // component: () => import('../App.vue'),
@@ -29,6 +20,16 @@ const routes = [
     },
    
     children: [
+      {
+        path: '/',
+        component: () => import('../views/admin/KladrStationPage.vue'),
+        name: 'KladrStationPage'
+      },   
+      {
+        path: '/element',
+        component: () => ElementPlusUse,
+        name: 'ElementPlusUse'
+      },         
       {
         path: '/roles',
         component: () => import('../views/admin/Roles.vue'),

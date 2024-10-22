@@ -117,7 +117,7 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/station/delete', [StationController::class, 'delete']);
         Route::get('/station/id', [StationController::class, 'oneById']);
 
-        Route::get('/station/arrival/kladrs', [StationController::class, 'races']);
+        
 
         Route::post('/station/add/to/dispatch/point', [StationController::class, 'addToDispatchPoint']);
         Route::post('/station/add/to/arrival/point', [StationController::class, 'addToArrivalPoint']);
@@ -221,6 +221,7 @@ Route::get('/settings/cluster/due', [SettingsController::class, 'getClusterDue']
 
 // Route::get('/get/feedback', [FeedbackController::class, 'get']);
 
+Route::get('/station/arrival/kladrs', [StationController::class, 'races']);
 
 Route::get('/main/pages', [PageMainController::class, 'mainPages']);
 Route::get('/page/main', [PageMainController::class, 'get']);

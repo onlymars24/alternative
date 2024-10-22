@@ -43,7 +43,7 @@
                         <el-card class="box-card" style="margin-top: 20px;">
                             <h4>Новый редактор</h4>
                             <div style="display: flex; width: 60%; justify-content: space-between;">
-                                <div style="width: 18%;">
+                                <div>
                                     <span class="demo-input-label">Email</span>
                                     <el-input v-model="newEmail"/>
                                 </div>
