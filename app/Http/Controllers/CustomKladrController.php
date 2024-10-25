@@ -26,11 +26,11 @@ class CustomKladrController extends Controller
             KladrService::decode($kladr);
         }
         
-        $kladr->socr = $request->socr && $request->socr != $kladr->socr ? $request->socr : null;
-        $kladr->region = $request->region && $request->region != $kladr->region ? $request->region : null;
-        $kladr->city = $request->city && $request->city != $kladr->city ? $request->city : null;
-        $kladr->district = $request->district && $request->district != $kladr->district ? $request->district : null;
-        $kladr->relevance = $request->relevance && $request->relevance != $kladr->relevance ? $request->relevance : null;
+        $kladr->socr = $request->socr && $request->socr != $kladr->socr ? $request->socr : $kladr->socr;
+        $kladr->region = $request->region && $request->region != $kladr->region ? $request->region : $kladr->region;
+        $kladr->city = $request->city && $request->city != $kladr->city ? $request->city : $kladr->city;
+        $kladr->district = $request->district && $request->district != $kladr->district ? $request->district : $kladr->district;
+        $kladr->relevance = $request->relevance && $request->relevance != $kladr->relevance ? $request->relevance : $kladr->relevance;
         $kladr->save();
 
         return response(['kladr' => $kladr]);
@@ -45,15 +45,15 @@ class CustomKladrController extends Controller
         $kladr->name = $request->name;
         $kladr->slug = SlugService::create($request->name);
         $kladr->code = $request->code;
-
+        $kladr->save();
         if($kladr->code && strlen($kladr->code) == 13){
             KladrService::decode($kladr);
         }
-        $kladr->socr = $request->socr;
-        $kladr->region = $request->region;
-        $kladr->city = $request->city;
-        $kladr->district = $request->district;
-        $kladr->relevance = $request->relevance;
+        $kladr->socr = $request->socr && $request->socr != $kladr->socr ? $request->socr : $kladr->socr;
+        $kladr->region = $request->region && $request->region != $kladr->region ? $request->region : $kladr->region;
+        $kladr->city = $request->city && $request->city != $kladr->city ? $request->city : $kladr->city;
+        $kladr->district = $request->district && $request->district != $kladr->district ? $request->district : $kladr->district;
+        $kladr->relevance = $request->relevance && $request->relevance != $kladr->relevance ? $request->relevance : $kladr->relevance;
         $kladr->save();
     }
 
