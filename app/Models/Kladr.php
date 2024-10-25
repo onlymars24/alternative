@@ -11,6 +11,9 @@ class Kladr extends Model
 
     protected $fillable = [
         'name',
+        'region',
+        'city',
+        'district',
         'slug',
         'socr',
         'code',

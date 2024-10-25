@@ -1,5 +1,5 @@
 <template>
-<div class="main__header" :style="('background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('+(page && page.header_img ? (baseUrl+'/'+page.header_img) : 'src/img/avtobus_avtovokzal_rosvokzaly.jpg' )+')')">
+<div class="main__header" :style="('background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('+(page && page.header_img ? (baseUrl+'/'+page.header_img) : '/img/avtobus_avtovokzal_rosvokzaly.jpg' )+')')">
         <div class="container">
             <Header :key="dispatchEl.name" :dispatchName="dispatchEl.name" :blackText="false"/>
             <div class="main">
