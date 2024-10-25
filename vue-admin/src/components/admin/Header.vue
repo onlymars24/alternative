@@ -26,6 +26,7 @@
             <el-menu-item index="5-1" @click="$router.push({name: 'EditPoints'})">Настройка точек</el-menu-item>
             <el-menu-item index="5-2" @click="$router.push({name: 'Kladr'})">Связки с кладром и автовокзалом</el-menu-item>
             <el-menu-item index="5-3" @click="$router.push({name: 'Stations'})">Автовокзалы</el-menu-item>
+            <el-menu-item index="5-3" @click="$router.push({name: 'CustomKladrs'})">Новые точки кладр</el-menu-item>
         </el-sub-menu>
         
         <!-- <el-sub-menu index="7">

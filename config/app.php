@@ -179,6 +179,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        GrofGraf\LaravelPDFMerger\Providers\PDFMergerServiceProvider::class
     ],
 
     /*
@@ -195,7 +196,8 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
          Barryvdh\DomPDF\Facade::class,
-         'MyApp' => MyApp::class
+         'MyApp' => MyApp::class,
+         'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class
     ])->toArray(),
 
 ];

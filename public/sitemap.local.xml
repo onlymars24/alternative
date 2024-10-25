@@ -14,4 +14,4 @@
 
 <url><loc>http://localhost:5173/автобус/Москва_(Саларьево_АВ)/Ярмолинцы1</loc><lastmod>2024-10-04</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
 
-</urlset>
+<url><loc>http://localhost:5173/расписание/02/Уфа</loc><lastmod>2024-10-25</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url></urlset>

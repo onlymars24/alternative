@@ -1,5 +1,5 @@
 <template>
-<div class="main__header">
+<div class="main__header" :style="('background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('+(page && page.header_img ? (baseUrl+'/'+page.header_img) : 'src/img/avtobus_avtovokzal_rosvokzaly.jpg' )+')')">
         <div class="container">
             <Header :key="dispatchEl.name" :dispatchName="dispatchEl.name" :blackText="false"/>
             <div class="main">
@@ -175,7 +175,8 @@ export default{
             arrivalEl: this.arrivalEl0,
             dateNew: '',
             toMonth: '',
-            popularPoints: []
+            popularPoints: [],
+            baseUrl: import.meta.env.VITE_API_BASE_URL,
         }
     },
     methods: {
@@ -315,68 +316,46 @@ export default{
     },
     computed: {
         filteredDispatchPoints(){
-            // return this.dispatchData.filter(el => {
-            //     return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-            //     || el.region && el.region.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-            //     || el.details && el.details.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-            // });
             let cities = this.dispatchData.filter(el => {
+                return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) == 0
+            });
+
+            let wholeArr = this.dispatchData.filter(el => {
                 return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
             });
 
             if(cities.length != 0){
-                let wholeArr = this.dispatchData.filter(el => {
-                    return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1 
-                    || el.region && el.region.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-                    || el.details && el.details.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-                });
+                console.log(cities, wholeArr)
                 cities.forEach(function(city, indCity) {
-                    let indWhole = wholeArr.findIndex(el => city.name === el.name && city.region === el.region && city.details === el.details);
+                    let indWhole = wholeArr.findIndex(el => city.keyId == el.keyId);
                     let temp = wholeArr[indWhole];
                     wholeArr[indWhole] = wholeArr[indCity]
                     wholeArr[indCity] = temp
                 })
                 return wholeArr
             }
-            return this.dispatchData.filter(el => {
-                return el.name && el.name.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1 
-                || el.region && el.region.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-                || el.details && el.details.toUpperCase().indexOf(this.dispatchText.toUpperCase()) !== -1
-            })
+            return wholeArr
         },
         filteredArrivalPoints(){
-            //  let temp = this.arrivalData.filter(el => {
-            //     return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase(), 0) !== -1
-            //     || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
-            //     || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
-            // });
-            
-            // console.log(temp)
-            
-            // return temp
             let cities = this.arrivalData.filter(el => {
+                return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) == 0
+            });
+
+            let wholeArr = this.arrivalData.filter(el => {
                 return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
             });
 
             if(cities.length != 0){
-                let wholeArr = this.arrivalData.filter(el => {
-                    return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1 
-                    || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
-                    || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
-                });
+                console.log(cities, wholeArr)
                 cities.forEach(function(city, indCity) {
-                    let indWhole = wholeArr.findIndex(el => city.name === el.name && city.region === el.region && city.details === el.details);
+                    let indWhole = wholeArr.findIndex(el => city.keyId == el.keyId);
                     let temp = wholeArr[indWhole];
                     wholeArr[indWhole] = wholeArr[indCity]
                     wholeArr[indCity] = temp
                 })
                 return wholeArr
             }
-            return this.arrivalData.filter(el => {
-                return el.name && el.name.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1 
-                || el.region && el.region.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
-                || el.details && el.details.toUpperCase().indexOf(this.arrivalText.toUpperCase()) !== -1
-            })
+            return wholeArr
         },
         disabledButton(){
             return !this.dispatchEl.id || !this.arrivalEl.id || !this.date;

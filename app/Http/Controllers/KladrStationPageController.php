@@ -81,7 +81,6 @@ class KladrStationPageController extends Controller
                 ]);
             }
             $pageArray['url_settlement_name'] = SlugService::create($station->name); 
-            $pageArray['settlement_name'] = $station->name;
             $pageArray['name'] = 'Автовокзал '.$station->name;
             $pageArray['description'] = 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус';
             $pageArray['station_id'] = $request->station_id;
@@ -90,7 +89,6 @@ class KladrStationPageController extends Controller
         elseif($request->kladr_id){
             $kladr = Kladr::find($request->kladr_id);
             $pageArray['url_settlement_name'] = SlugService::create($kladr->name);
-            $pageArray['settlement_name'] = $kladr->name;
             $pageArray['name'] = $kladr->name.' Автовокзалы и автостанции';
             $pageArray['description'] = $kladr->name.' Автовокзалы и автостанции: расписание, справочная, билеты на автобус';
             $pageArray['kladr_id'] = $request->kladr_id;
@@ -173,6 +171,7 @@ class KladrStationPageController extends Controller
         $page->hidden = $request->booleanHidden;
         $page->content = $request->content;
         $page->contacts = $request->contacts;
+        $page->map = $request->map;
 
         // $page->address = $request->address;
         // $page->latitude = $request->latitude;
@@ -207,5 +206,35 @@ class KladrStationPageController extends Controller
                 $query->where('kladr_id', '=', $request->kladrId);
             })->orderByDesc('id')->get()
         ]);
+    }
+
+    public function imageUpload(Request $request){
+        if(!$request->file('image')){
+            return response()->json(['error' => 'Image upload failed'], 400);
+        }
+        $page = KladrStationPage::find($request->pageId);
+        $filePath = $page->header_img;
+        if ($filePath && File::exists($filePath)) {
+            File::delete($filePath);
+            $page->header_img = null;
+            $page->save();
+        }
+        
+        $page->header_img = $request->file('image')->store('headers');
+        $page->save();
+        return response(['pageId' => $page->id]);        
+
+        
+
+    }
+
+    public function imageDelete(Request $request){
+        $page = KladrStationPage::find($request->pageId);
+        $filePath = $page->header_img;
+        if ($filePath && File::exists($filePath)) {
+            File::delete($filePath);
+            $page->header_img = null;
+            $page->save();
+        }
     }
 }

@@ -160,7 +160,7 @@ a{
 }
 .main__header{
   margin: 0 auto;
-  background-image: url(img/image.webp);
+  /* background: url(img/image.webp) linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)); */
   background-position: center center;
   background-size: cover;
   position: relative;

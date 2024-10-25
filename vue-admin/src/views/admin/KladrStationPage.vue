@@ -45,6 +45,7 @@ import axiosAdmin from '../../axiosAdmin'
 import Header from '../../components/admin/Header.vue'
 import HtmlEditor from '../../components/admin/HtmlEditor.vue'
 import KladrStationPageForm from '../../components/admin/KladrStationPageForm.vue';
+import { genFileId } from 'element-plus'
 
 
 export default
@@ -52,7 +53,7 @@ export default
     components: { Header, HtmlEditor, KladrStationPageForm },
     provide() {
         return {
-            paramK: 'hello'
+            paramK: 'hello',
         }
     },
     data() {
@@ -73,7 +74,7 @@ export default
             selectedStationPageId: '',
             page: null,
             url: window.location.origin,
-            paramKey: 0
+            paramKey: 0,
         }
     },
     async mounted(){

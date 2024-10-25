@@ -163,7 +163,10 @@ export default{
     <HeaderMain v-if="kladrPage" :isRaces="false" :page="kladrPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
-
+    <!-- <div v-if="kladrPage && kladrPage.name" class="container">
+        <h4 style="margin: 30px 0;">{{ kladrPage.name }} на карте</h4>
+        <div v-html="kladrPage.map"></div>
+    </div> -->
     <!-- <div class="about" style="margin-top: 50px;">
         <div class="container">
                 <div class="about__inner" v-if="kladrPage" style="width: 100%; display: block;">

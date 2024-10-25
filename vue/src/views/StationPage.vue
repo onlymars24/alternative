@@ -162,6 +162,10 @@ export default{
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
+    <!-- <div v-if="stationPage && stationPage.name" class="container">
+        <h4 style="margin: 30px 0;">{{ stationPage.name }} на карте</h4>
+        <div v-html="stationPage.map"></div>
+    </div> -->
     <!-- <div class="container" v-if="stationPage && arrivalKladrs">
         <h2 style="margin: 25px 0;">{{ stationPage.name }} направления</h2>
         <div class="station__races">

@@ -45,6 +45,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Http\Controllers\CustomKladrController;
 use App\Http\Controllers\MemberAuthController;
 
 /*
@@ -110,6 +111,9 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/kladr/station/page/edit', [KladrStationPageController::class, 'edit']);
         Route::post('/kladr/station/page/delete', [KladrStationPageController::class, 'delete']);
         Route::get('/kladr/station/pages/kladr', [KladrStationPageController::class, 'kladrPages']);
+
+        Route::post('/kladr/station/page/image/upload', [KladrStationPageController::class, 'imageUpload']);
+        Route::post('/kladr/station/page/image/delete', [KladrStationPageController::class, 'imageDelete']);
         
         Route::get('/stations', [StationController::class, 'all']);
         Route::post('/station/create', [StationController::class, 'create']);
@@ -165,6 +169,12 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/match/delete', [MatchController::class, 'delete']);
 
         Route::post('/match/replacement', [MatchController::class, 'replacement']);
+
+        Route::get('/custom/kladrs/filter', [CustomKladrController::class, 'filter']);
+        Route::post('/custom/kladrs/create', [CustomKladrController::class, 'create']);
+        Route::post('/custom/kladrs/edit', [CustomKladrController::class, 'edit']);
+        Route::get('/custom/kladrs/one', [CustomKladrController::class, 'one']);
+        Route::post('/custom/kladrs/delete', [CustomKladrController::class, 'delete']);
     });
     
     Route::post('/member/logout', [MemberAuthController::class, 'logout']);

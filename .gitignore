@@ -3,6 +3,7 @@
 /public/hot
 /public/storage
 /public/tickets
+/public/headers
 /public/sitemap.xml
 /public/sitemap.local.xml
 /storage/*.key

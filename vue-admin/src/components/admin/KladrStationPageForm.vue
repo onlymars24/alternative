@@ -55,12 +55,20 @@
         @updateEditorText="updateEditorTextContacts"
         />
     </div>    
-    <div v-if="formType=='edit'">
+    <div v-if="formType=='edit'" style="margin-bottom: 20px;">
         <label for="">Контент страницы автовокзала или автостанции (редактируется вручную)</label>
         <HtmlEditor
         :value="page.content"
         @updateEditorText="updateEditorTextContent"
         />
+    </div>
+    <div v-if="formType=='edit'" style="margin-bottom: 20px;">
+        <label for="">Вёрстка КАРТЫ страницы {{ page.station_id ? 'автовокзала' : 'населённого пункта' }}</label>
+        <el-input
+        type="textarea"
+        :rows="2"
+        v-model="page.map">
+        </el-input>
     </div>
     <div class="">
         <el-checkbox v-model="page.booleanHidden">Скрыть страницу от пользователя</el-checkbox>
@@ -70,9 +78,24 @@
         <el-button type="primary" @click="$emit('submitFrom', page)">Сохранить</el-button>
         <el-button v-if="formType=='edit'" type="danger" style="margin-left: 15px;" @click="$emit('deletePage', page.id)">Удалить страницу</el-button>
     </div>
+    <template v-if="formType=='edit'">
+        <hr>
+        <div>
+            <label style="margin-bottom: 10px;" for=""><strong>Изображение для шапки страницы:</strong></label><br>
+            <div style="width: 30%; display: flex; margin-bottom: 20px;">
+                <input type="file" class="form-control" style="margin: 0;" @change="onFileChange">
+                <button :disabled="!selectedFile" class="btn btn-primary" type="button" style="margin-left: 10px;" @click="uploadImage(page.id)">Загрузить</button>
+            </div>
+            <div v-if="page.header_img">
+                <div><img style="width: 50%;" :src="baseUrl+'/'+page.header_img" alt=""></div>
+                <div style="margin-top: 15px;"><el-button class="ml-3" type="danger" @click="deleteImage(page.id)">Удалить существующее изображение</el-button></div>
+            </div>
+        </div>
+    </template>
 </template>
 <script>
 import HtmlEditor from '../../components/admin/HtmlEditor.vue'
+import axiosAdmin from '../../axiosAdmin'
 
 export default
 {
@@ -81,18 +104,63 @@ export default
     emits: ['submitForm', 'deletePage'],
     data() {
         return {
-            url: window.location.origin
+            url: window.location.origin,
+            selectedFile: null,
+            baseUrl: import.meta.env.VITE_API_BASE_URL,
+            loadingImage: false
         }
     },
     async mounted(){
     },
     methods: {
+        onFileChange(event) {
+            this.selectedFile = event.target.files[0];
+        },
+        async uploadImage(pageId) {
+            this.loadingImage = true
+            const formData = new FormData();
+            formData.append('image', this.selectedFile);
+            formData.append('pageId', pageId);
+            console.log(this.selectedFile)
+            await axiosAdmin
+            // .post('/kladr/station/page/image/upload', {pageId: , image: this.selectedFile})
+            .post('/kladr/station/page/image/upload', formData)
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            this.loadingImage = false
+            location.reload(); return false
+        },
+        async deleteImage(pageId){
+            if(!confirm('Вы уверены, что хотите удалить станцию? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
+				return
+			}
+            this.loadingImage = true
+            await axiosAdmin
+            // .post('/kladr/station/page/image/upload', {pageId: , image: this.selectedFile})
+            .post('/kladr/station/page/image/delete', {pageId})
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            this.loadingImage = false
+            location.reload(); return false
+        },
         updateEditorTextContent(newContent){
             this.page.content = newContent
             // this.paramKey++
         },
         updateEditorTextContacts(newContent){
             this.page.contacts = newContent
+            // this.paramKey++
+        },
+        updateEditorTextMap(newContent){
+            this.page.map = newContent
             // this.paramKey++
         },
     },

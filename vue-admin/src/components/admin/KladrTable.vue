@@ -100,7 +100,7 @@
                         :label="kladr.name+', '+kladr.socr+', '+kladr.code+(kladr.region ? ', '+kladr.region : '' )+(kladr.district ? ', '+kladr.district : '')+(kladr.city ? ', '+kladr.city : '')+(kladr.relevance ? ', '+kladr.relevance : '')"
                         :value="kladr.id"
                         :style="kladr.relevance != 'Актуальный объект' ? 'color: red;' : 'color: #29bf56;'"
-                    >
+                    >   
                     </el-option>
                 </el-select>
                 <el-button v-if="pointType == 'dispatch'" :disabled="!scope.row.new_kladr_id" type="primary" @click="addPoint(scope.row.id, scope.row.new_kladr_id)">Привязать кладр</el-button>

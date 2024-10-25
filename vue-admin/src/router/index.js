@@ -14,7 +14,7 @@ const routes = [
 
   {
     name: 'App',
-    // component: () => import('../App.vue'),
+    path: '/',
     meta: {
       requiresAuth: true
     },
@@ -34,6 +34,11 @@ const routes = [
         path: '/roles',
         component: () => import('../views/admin/Roles.vue'),
         name: 'Roles'
+      },
+      {
+        path: '/custom/kladrs',
+        component: () => import('../views/admin/CustomKladrs.vue'),
+        name: 'CustomKladrs'
       },
       {
         path: '/tickets',

@@ -1,6 +1,7 @@
 <?php
 
 use App\MyApp;
+// use PDFMerger;
 use App\Models\Sms;
 use App\Models\Role;
 use App\Models\User;
@@ -32,6 +33,7 @@ use App\Services\MailService;
 use App\Services\SlugService;
 use App\Exports\ReportsExport;
 use App\Services\FermaService;
+use App\Services\KladrService;
 use App\Services\PointService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\KladrStationPage;
@@ -61,6 +63,7 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
+use setasign\Fpdi\Fpdi;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +79,51 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
+  $PDFFile = public_path('img/2.pdf');
+  $newName = public_path('img/2_new.pdf');
+  $command = 'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=' . $newName . ' ' . $PDFFile;
+  exec($command);
+  
+  $merger = \PDFMerger::init();
+  $merger->addPathToPDF(public_path('img/a_ticket.pdf'), 'all', 'P');
+  $merger->addPathToPDF(public_path('img/2.pdf'), 'all', 'P');
+  $merger->merge();
+  $merger->save(public_path('img/a_ticket11.pdf'));
+
+
+  // $fileArray= array('img/a_ticket.pdf', 'img/ad.pdf');
+
+  // $datadir = "img/";
+  // $outputName = public_path($datadir."merged.pdf");
+  
+  // $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
+  // //Add each pdf file to the end of the command
+  // foreach($fileArray as $file) {
+  //     $cmd .= $file." ";
+  // }
+  // $result = shell_exec($cmd);
+  dd('');
+
+  $files = ['img/a_ticket.pdf', 'img/ad.pdf'];
+  $pdf = new Fpdi();
+
+  foreach ($files as $file) {
+      // set the source file and get the number of pages in the document
+      $pageCount =  $pdf->setSourceFile($file);
+
+      for ($i=0; $i < $pageCount; $i++) { 
+          //create a page
+          $pdf->AddPage();
+          //import a page then get the id and will be used in the template
+          $tplId = $pdf->importPage($i+1);
+          //use the template of the imporated page
+          $pdf->useTemplate($tplId);
+      }
+  }
+
+  //return the generated PDF
+  return $pdf->Output();   
   dd('');
   Mail::to('marsel.galimov.241@gmail.com')->send(new OtpMemberMail('123456'));
   dd(date('Y-m-d H:i:s'));

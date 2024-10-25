@@ -11,6 +11,7 @@ class Kladr extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'socr',
         'code',
         'index',
@@ -18,6 +19,7 @@ class Kladr extends Model
         'uno',
         'ocatd',
         'status',
+        'custom',
     ];
 
     public function dispatchPoints(){

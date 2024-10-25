@@ -16,7 +16,10 @@ class KladrStationPage extends Model
         'url_settlement_name',
         'url_region_code',
         'content',
+        'contacts',
+        'map',
         'hidden',
+        'header_img',
         'kladr_id',
         'station_id',
     ];
