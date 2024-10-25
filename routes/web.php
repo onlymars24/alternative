@@ -80,16 +80,16 @@ use setasign\Fpdi\Fpdi;
 
 Route::get('/spread', function (Request $request) {
   dd('');
-  $PDFFile = public_path('img/2.pdf');
-  $newName = public_path('img/2_new.pdf');
-  $command = 'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=' . $newName . ' ' . $PDFFile;
-  exec($command);
+  // $PDFFile = public_path('img/2.pdf');
+  // $newName = public_path('img/2_new.pdf');
+  // $command = 'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=' . $newName . ' ' . $PDFFile;
+  // exec($command);
   
-  $merger = \PDFMerger::init();
-  $merger->addPathToPDF(public_path('img/a_ticket.pdf'), 'all', 'P');
-  $merger->addPathToPDF(public_path('img/2.pdf'), 'all', 'P');
-  $merger->merge();
-  $merger->save(public_path('img/a_ticket11.pdf'));
+  // $merger = \PDFMerger::init();
+  // $merger->addPathToPDF(public_path('img/a_ticket.pdf'), 'all', 'P');
+  // $merger->addPathToPDF(public_path('img/2.pdf'), 'all', 'P');
+  // $merger->merge();
+  // $merger->save(public_path('img/a_ticket11.pdf'));
 
 
   // $fileArray= array('img/a_ticket.pdf', 'img/ad.pdf');
