@@ -197,7 +197,7 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
          Barryvdh\DomPDF\Facade::class,
          'MyApp' => MyApp::class,
-         'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class
+        //  'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class
     ])->toArray(),
 
 ];
