@@ -2,6 +2,7 @@
 import Footer from '../components/Footer.vue'
 import HeaderMain from '../components/HeaderMain.vue'
 import BusStationsMain from '../components/BusStationsMain.vue'
+import MainCrumbs from '../components/MainCrumbs.vue'
 import axiosClient from '../axios';
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
@@ -10,7 +11,8 @@ export default{
     components: {
         HeaderMain,
         Footer,
-        BusStationsMain
+        BusStationsMain,
+        MainCrumbs
     },
     data() {
         return {
@@ -87,6 +89,7 @@ export default{
 <template>
     <HeaderMain/>
     <div></div>
+    <MainCrumbs :pages="[]"/>
 
 </template>
 

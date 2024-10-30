@@ -27,8 +27,9 @@
         <label for="">Актуальность</label>
         <el-input v-model="kladr.relevance" />
     </div>
+    <!-- {{ kladr.code }} -->
     <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-        <el-button type="primary" :disabled="!kladr.name || (kladr.code != '' && kladr.code.length != 13)" :loading="false" @click="$emit('submitForm', kladr)">{{loading ? 'Загрузка' : 'Сохранить' }}</el-button>
+        <el-button type="primary" :disabled="!kladr.name || (kladr.code != '' && kladr.code != null && kladr.code.length != 13)" :loading="false" @click="$emit('submitForm', kladr)">{{loading ? 'Загрузка' : 'Сохранить' }}</el-button>
         <el-button v-if="formType=='edit'" type="danger" style="margin-left: 15px;" @click="$emit('deleteKladr', kladr.id)">Удалить точку кладр</el-button>
     </div>
 </template>

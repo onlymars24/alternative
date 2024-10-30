@@ -34,19 +34,20 @@ use App\Http\Controllers\DebuggingController;
 use App\Http\Controllers\NewPointsController;
 use App\Http\Controllers\RobotsTxtController;
 use App\Http\Controllers\BusStationController;
+use App\Http\Controllers\MemberAuthController;
 use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\RacesCacheController;
 use App\Http\Controllers\Api\SendSmsController;
+use App\Http\Controllers\CustomKladrController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\PopularPointsController;
+use App\Http\Controllers\AdvertisingPdfController;
 use App\Http\Controllers\KladrStationPageController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
-use App\Http\Controllers\CustomKladrController;
-use App\Http\Controllers\MemberAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,8 +72,6 @@ Route::middleware('auth:sanctum')->group(function(){
 
         Route::post('/debugging', [DebuggingController::class, 'get']);
 
-
-
         Route::get('/roles/admins', [RoleController::class, 'admins']);
         Route::get('/roles/editors', [RoleController::class, 'editors']);
         Route::post('/roles/editors/add', [RoleController::class, 'editorsAdd']);
@@ -81,22 +80,17 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/order', [OrderController::class, 'one']);
         Route::post('/settings/cluster/due', [SettingsController::class, 'setClusterDue']);
 
-
-
-
         Route::get('/expenses', [ExpensesController::class, 'all']);
         Route::post('/expense/create', [ExpensesController::class, 'create']);
         Route::post('/expense/delete', [ExpensesController::class, 'delete']);
         Route::post('/expense', [ExpensesController::class, 'one']);
-
     
         Route::get('/dues', [SettingsController::class, 'getDues']);
         Route::post('/dues/set', [SettingsController::class, 'setDue']);
 
-        
-
-        
-
+        Route::post('/ad/pdf/upload', [AdvertisingPdfController::class, 'upload']);
+        Route::post('/ad/pdf/delete', [AdvertisingPdfController::class, 'delete']);
+        Route::get('/ad/pdf', [AdvertisingPdfController::class, 'get']);
 
         Route::post('/races/xml/create', [RacesXmlController::class, 'create']);
         Route::post('/admin/ticket/return', [TicketController::class, 'getBack']);

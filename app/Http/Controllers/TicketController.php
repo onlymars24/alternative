@@ -12,6 +12,7 @@ use Nette\Utils\DateTime;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Services\MailService;
+use App\Services\AdPdfService;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -241,8 +242,9 @@ class TicketController extends Controller
 
 
         $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket->hash.'.pdf';
-        $file_name = basename($url);
-        file_put_contents('tickets/'.$ticket->hash.'_r.pdf', file_get_contents($url));
+        $file_name = 'tickets/'.$ticket->hash.'_r.pdf';
+        file_put_contents($file_name, file_get_contents($url));
+        AdPdfService::mergePdf($file_name);
         $order_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/order/'.$request->orderId);
@@ -257,7 +259,6 @@ class TicketController extends Controller
         $race_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
-        Log::info('race_json: '.$race_json);
         $race = json_decode($race_json);
         //возврат в экваринге
                 //проверка на отмену рейса
@@ -415,7 +416,6 @@ class TicketController extends Controller
         if($orderFromDb->user->email){
             Mail::to($orderFromDb->user->email)->bcc(env('TICKETS_MAIL'))->send(new ReturnMail([$ticketFromDB]));
         }
-        Log::info('ticket: '.json_encode($ticket));
         Log::info('repayment: '.json_encode($repayment));
         return response([
             'ticket' => $ticket,
@@ -531,7 +531,6 @@ class TicketController extends Controller
         $race_json = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$ticketFromDB->raceUid);
-        Log::info('race_json: '.$race_json);
         $race = json_decode($race_json);
         if($race->race->status->name == 'Отменён' || $race->race->status->name == 'Закрыт' || $ticket->price == $ticket->repayment){
             $data = [

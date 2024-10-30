@@ -73,22 +73,26 @@
                     </div>
                     </el-card>
                 </div>
+                <AdvertisingPdf/>
                 <div style="margin-top: 20px;">
                     <el-space :fill="false" wrap :size="17"></el-space>
                 </div>
+                
             </el-main>
          </el-container>
     </div>
 </template>
 <script>
 import Header from '../../components/admin/Header.vue'
+import AdvertisingPdf from '../../components/admin/AdvertisingPdf.vue'
 import axiosAdmin from '../../axiosAdmin'
 import dayjs from 'dayjs';
 import TheMask from 'vue-the-mask'
 
 export default {
  components: {
-     Header
+    Header,
+    AdvertisingPdf
  },
  data() {
     return {

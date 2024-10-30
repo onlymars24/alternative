@@ -1,6 +1,7 @@
 <script>
 import Footer from '../components/Footer.vue'
 import HeaderMain from '../components/HeaderMain.vue'
+import MainCrumbs from '../components/MainCrumbs.vue'
 import axiosClient from '../axios';
 import router from '../router'
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
@@ -21,6 +22,7 @@ export default{
         HeaderMain,
         Footer,
         Swiper, 
+        MainCrumbs,
         SwiperSlide
     },
     data() {
@@ -163,6 +165,7 @@ export default{
     <HeaderMain v-if="kladrPage" :isRaces="false" :page="kladrPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
+    <MainCrumbs v-if="kladrPage" :pages="[{name: 'Населённый пункт', href: null}]"/>
     <!-- <div v-if="kladrPage && kladrPage.name" class="container">
         <h4 style="margin: 30px 0;">{{ kladrPage.name }} на карте</h4>
         <div v-html="kladrPage.map"></div>

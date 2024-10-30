@@ -20,6 +20,7 @@ use App\Services\SmsService;
 use App\Services\UtmService;
 use Illuminate\Http\Request;
 use App\Services\MailService;
+use App\Services\AdPdfService;
 use App\Services\FermaService;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -325,8 +326,10 @@ class OrderController extends Controller
             $ticketFromDB = Ticket::find($ticket->id);
             $ticketFromDB->update((array)$ticket);
             $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket->hash.'.pdf';
-            $file_name = basename($url);
-            file_put_contents('tickets/'.$file_name, file_get_contents($url));
+            $file_name = 'tickets/'.basename($url);
+            file_put_contents($file_name, file_get_contents($url));
+
+            AdPdfService::mergePdf($file_name);
 
             $item['Label'] = 'Бил'.(!empty($ticket->ticketNum) ? ' №' : '').$ticket->ticketNum.' '.$ticket->dispatchDate.' Мст№'.$ticket->seat.' '.$ticket->lastName.' '.mb_substr($ticket->firstName, 0, 1).'. '.mb_substr($ticket->middleName, 0, 1).'.';
             $item['Price'] = $item['Amount'] = $ticketFromDB->price - $ticketFromDB->bonusesPrice;
@@ -620,9 +623,9 @@ class OrderController extends Controller
             }
             $mailTickets[] = $ticketFromDB;
             $url = env('AVTO_SERVICE_TICKET_URL').'/'.$ticket_obj->hash.'.pdf';
-            $file_name = basename($url);
-            file_put_contents('tickets/'.$ticket_obj->hash.'_r.pdf', file_get_contents($url));
-
+            $file_name = 'tickets/'.$ticket_obj->hash.'_r.pdf';
+            file_put_contents($file_name, file_get_contents($url));
+            AdPdfService::mergePdf($file_name);
 
             //возврат позиции на эквайринге
             $orderBundle = (array)json_decode($ticketFromDB->orderBundle);

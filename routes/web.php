@@ -13,6 +13,7 @@ use XBase\TableReader;
 use App\Mail\OrderMail;
 use App\Models\Setting;
 use App\Models\Station;
+use setasign\Fpdi\Fpdi;
 use App\Enums\FermaEnum;
 use App\Mail\ReturnMail;
 use App\Models\CacheRace;
@@ -32,6 +33,7 @@ use App\Models\DispatchPoint;
 use App\Services\MailService;
 use App\Services\SlugService;
 use App\Exports\ReportsExport;
+use App\Services\AdPdfService;
 use App\Services\FermaService;
 use App\Services\KladrService;
 use App\Services\PointService;
@@ -63,7 +65,6 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
-use setasign\Fpdi\Fpdi;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,25 @@ use setasign\Fpdi\Fpdi;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
+  $ticket = Ticket::find(2095245);
+  $url = env('AVTO_SERVICE_TICKET_URL').'/'.'01a337e6cb362f26f17c77c84b2281f36243d0aa'.'.pdf';
+  $file_name = 'tickets/'.basename($url);
+  file_put_contents($file_name, file_get_contents($url));
+  
+  
+  dd(AdPdfService::mergePdf($file_name));
+  
+  // $pdf = new \Jurosh\PDFMerge\PDFMerger;
+
+  // // add as many pdfs as you want
+  // $pdf->addPDF('img/ticket.pdf', 'all', 'vertical')
+  //   //  ->addPDF('path/to/source/file1.pdf', 'all')
+  //     ->addPDF('img/HzSeYMvpAR35iVk7YJ8McMaff0LkrEbVMSno7RlV.pdf', 'all', 'vertical');
+  
+  // // call merge, output format `file`
+  // $pdf->merge('file', 'img/ad0.pdf');
+  
   dd('');
   // $PDFFile = public_path('img/2.pdf');
   // $newName = public_path('img/2_new.pdf');

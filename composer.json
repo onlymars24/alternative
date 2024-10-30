@@ -12,6 +12,7 @@
         "grofgraf/laravel-pdf-merger": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "hisamu/php-xbase": "^2.1",
+        "jurosh/pdf-merge": "^2.1",
         "laravel/framework": "^9.0",
         "laravel/passport": "^11.8",
         "laravel/sanctum": "^3.3",
@@ -20,6 +21,7 @@
         "league/flysystem-ftp": "3.0",
         "league/flysystem-sftp-v3": "3.0",
         "maatwebsite/excel": "*",
+        "mpdf/mpdf": "^8.2",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
         "smalot/pdfparser": "^2.11"

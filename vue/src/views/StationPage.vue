@@ -3,6 +3,7 @@ import Footer from '../components/Footer.vue'
 import HeaderMain from '../components/HeaderMain.vue'
 import axiosClient from '../axios';
 import router from '../router'
+import MainCrumbs from '../components/MainCrumbs.vue'
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -21,6 +22,7 @@ export default{
         HeaderMain,
         Footer,
         Swiper, 
+        MainCrumbs,
         SwiperSlide
     },
     data() {
@@ -162,6 +164,8 @@ export default{
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
+    <MainCrumbs v-if="stationPage" :pages="[{name: 'Населённый пункт', href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.url_settlement_name}, 
+    {name: 'Автовокзал', href: null}]"/>
     <!-- <div v-if="stationPage && stationPage.name" class="container">
         <h4 style="margin: 30px 0;">{{ stationPage.name }} на карте</h4>
         <div v-html="stationPage.map"></div>
