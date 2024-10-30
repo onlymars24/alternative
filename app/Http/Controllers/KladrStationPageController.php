@@ -44,7 +44,7 @@ class KladrStationPageController extends Controller
         elseif($request->pageType == 'k'){
             $arrayPageType = ['kladr_id', '<>', null];
         }
-        $page = KladrStationPage::with('station.dispatchPoint', 'kladr')->where([
+        $page = KladrStationPage::with('station.dispatchPoint', 'station.kladr.kladrStationPage', 'kladr')->where([
             ['url_region_code', $request->url_region_code], 
             ['url_settlement_name', $request->url_settlement_name],
             ['hidden', false],

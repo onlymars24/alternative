@@ -164,7 +164,7 @@ export default{
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
-    <MainCrumbs v-if="stationPage" :pages="[{name: 'Населённый пункт', href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.url_settlement_name}, 
+    <MainCrumbs v-if="stationPage" :pages="[{name: 'Населённый пункт', href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.station.kladr.kladr_station_page.url_settlement_name}, 
     {name: 'Автовокзал', href: null}]"/>
     <!-- <div v-if="stationPage && stationPage.name" class="container">
         <h4 style="margin: 30px 0;">{{ stationPage.name }} на карте</h4>
