@@ -87,7 +87,8 @@ export default{
             },
             loading: false,
             races: [],
-            arrivalKladrs: []
+            arrivalKladrs: [],
+            // isMap: false
         }
     },
     methods: {
@@ -127,6 +128,44 @@ export default{
             router.push({ name: 'Main'})
             return
         }
+        const station = this.stationPage.station
+        if(!station.longitude || !station.latitude){
+            return
+        }
+                    // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
+            // ymaps3 = window.ymaps3;
+        console.log('есть')
+        ymaps.ready(function () {
+            const map = new ymaps.Map('YMapsID', {
+                center: [parseFloat(station.latitude), parseFloat(station.longitude)],
+                controls: ['zoomControl'],
+                zoom: 17,
+                type: 'yandex#map',
+                // Карта будет создана без
+                // элементов управления.
+                // controls: []
+            });
+            var myPlacemark1 = new ymaps.GeoObject({
+                geometry: {
+                    type: "Point",
+                    coordinates: [parseFloat(station.latitude), parseFloat(station.longitude)]
+                }
+            });
+            map.geoObjects.add(myPlacemark1);
+            // var myPlacemark2 = new ymaps.GeoObject({
+            //     geometry: {
+            //         type: "Point",
+            //         coordinates: [56.46239283218983, 84.99424147798115]
+            //     }
+            // });
+            // map.geoObjects.add(myPlacemark2);
+            map.behaviors.disable('scrollZoom'); 
+            // map.setBounds([[56.461012536889534, 84.98992816566377], [56.46239283218983, 84.99424147798115]]);
+        });
+        // this.isMap = true
+        let YMapsID__title = document.querySelector('#YMapsID__title');
+        YMapsID__title.innerHTML = this.stationPage.name+' на карте'
+
         // console.log(this.stationPage)
         // await axiosClient
         // .get('/station/arrival/kladrs?dispatchPointId='+this.stationPage.station.dispatch_point.id)
@@ -164,8 +203,12 @@ export default{
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
-    <MainCrumbs v-if="stationPage" :pages="[{name: 'Населённый пункт', href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.station.kladr.kladr_station_page.url_settlement_name}, 
-    {name: 'Автовокзал', href: null}]"/>
+    <MainCrumbs v-if="stationPage" :pages="[{name: stationPage.station.kladr.name, href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.station.kladr.kladr_station_page.url_settlement_name}, 
+    {name: 'Автовокзал '+stationPage.station.name, href: null}]"/>
+    <!-- <div class="container">
+        <h2 id="YMapsID__title" style="margin: 15px 0;"></h2>
+        <div id="YMapsID" style="max-width:100%; height:300px"></div>
+    </div> -->
     <!-- <div v-if="stationPage && stationPage.name" class="container">
         <h4 style="margin: 30px 0;">{{ stationPage.name }} на карте</h4>
         <div v-html="stationPage.map"></div>

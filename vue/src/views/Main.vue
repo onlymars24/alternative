@@ -4,6 +4,7 @@ import HeaderMain from '../components/HeaderMain.vue'
 import BusStationsMain from '../components/BusStationsMain.vue'
 import MainCrumbs from '../components/MainCrumbs.vue'
 import axiosClient from '../axios';
+// import ymaps3 from '/api'
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
 export default{
@@ -16,6 +17,7 @@ export default{
     },
     data() {
         return {
+            map: '',
             drawer: false,
             size: 'default',
             value1: '',
@@ -59,24 +61,58 @@ export default{
 
     },
     async mounted() {
+        // ymaps3.import('@yandex/ymaps3-vuefy')
+        // await ymaps3.ready;
+
+        // const {YMap, YMapDefaultSchemeLayer} = ymaps3;
+
+        // // Иницилиазируем карту
+        // const map = new YMap(
+        //     // Передаём ссылку на HTMLElement контейнера
+        //     document.getElementById('map'),
+
+        //     // Передаём параметры инициализации карты
+        //     {
+        //         location: {
+        //             // Координаты центра карты
+        //             center: [37.588144, 55.733842],
+
+        //             // Уровень масштабирования
+        //             zoom: 10
+        //         }
+        //     }
+        // );
+
+        // // Добавляем слой для отображения схематической карты
+        // map.addChild(new YMapDefaultSchemeLayer());
+
         // document.title = "Автовокзалы России";
         // const descEl = document.querySelector('head meta[name="description"]');
         // descEl.setAttribute('content', 'Билеты на автобус онлайн');
 
         
 
-        const promise = axiosClient
-        .get('/page/main')
-        .then(response => {
-            console.log(response)
-            this.content = response.data.pageMain
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        await promise
-        console.log('this.$route.query')
-        
+        // const promise = axiosClient
+        // .get('/page/main')
+        // .then(response => {
+        //     console.log(response)
+        //     this.content = response.data.pageMain
+        // })
+        // .catch(error => {
+        //     console.log(error)
+        // })
+        // await promise
+        // console.log('this.$route.query')
+
+        // await axiosClient
+        // .get('/map')
+        // .then(response => {
+        //     console.log(response)
+        //     this.map = URL.createObjectURL(response.data.map)
+        // })
+        // .catch(error => {
+        //     console.log(error)
+        // })
         // VK.Widgets.CommunityMessages("vk_community_messages", this.groupID, {
         //     tooltipButtonText: "Есть вопрос?",
         //     expanded: "0",
@@ -90,6 +126,8 @@ export default{
     <HeaderMain/>
     <div></div>
     <MainCrumbs :pages="[]"/>
+    
+    <!-- {{ map }} -->
 
 </template>
 

@@ -4,15 +4,15 @@
         <el-input v-model="kladr.name" />
     </div>
     <div style="width: 25%; margin-bottom: 10px;">
-        <label for="">Тип(socr)</label>
+        <label for="">Тип точки(socr)</label>
         <el-input v-model="kladr.socr" />
     </div>
     <div style="width: 25%; margin-bottom: 10px;">
-        <label for="">Код</label>
+        <label for="">Код 13-значный</label>
         <el-input v-model="kladr.code" v-mask="'#############'"/>
     </div>
     <div style="width: 25%; margin-bottom: 10px;">
-        <label for="">Регион</label>
+        <label for="">Регион(строка)</label>
         <el-input v-model="kladr.region" />
     </div>
     <div style="width: 25%; margin-bottom: 10px;">

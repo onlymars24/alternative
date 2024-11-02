@@ -72,12 +72,12 @@ export default{
                 prevEl: '.station__slides-button-prev',
             },
             breakpoints: {
-                320: {       
+                320: {
                     slidesPerView: 1,
                     allowTouchMove: true
                     // spaceBetween: 10     
                 }, 
-                500: {       
+                500: {
                     slidesPerView: 2,
                     allowTouchMove: true
                     // spaceBetween: 10     
@@ -88,7 +88,8 @@ export default{
                 }, 
             },
             loading: false,
-            testStr: 'sa d / f'
+            testStr: 'sa d / f',
+            // isMap: false
         }
     },
     methods: {
@@ -138,6 +139,50 @@ export default{
             router.push({ name: 'Main'})
             return
         }
+        const coordinates = []
+
+        this.stationPages.forEach(page => {
+            const station = page.station
+            if(station.latitude && station.longitude){
+                coordinates.push([parseFloat(station.latitude), parseFloat(station.longitude)])
+            }
+        })
+        if(coordinates.length == 0){
+            return
+        }
+        console.log(coordinates)
+        ymaps.ready(function () {
+            const map = new ymaps.Map('YMapsID', {
+                center: [parseFloat(coordinates[0].latitude), parseFloat(coordinates[0].longitude)],
+                controls: ['zoomControl'],
+                zoom: 20,
+                type: 'yandex#map',
+            });
+
+            coordinates.forEach(coordinate => {
+                var myPlacemark1 = new ymaps.GeoObject({
+                    geometry: {
+                        type: "Point",
+                        coordinates: coordinate
+                    }
+                });      
+                map.geoObjects.add(myPlacemark1);          
+            })
+
+            
+            // var myPlacemark2 = new ymaps.GeoObject({
+            //     geometry: {
+            //         type: "Point",
+            //         coordinates: [56.46239283218983, 84.99424147798115]
+            //     }
+            // });
+            // map.geoObjects.add(myPlacemark2);
+            map.behaviors.disable('scrollZoom'); 
+            map.setBounds(coordinates);
+        });
+        let YMapsID__title = document.querySelector('#YMapsID__title');
+        YMapsID__title.innerHTML = this.kladrPage.name+' на карте'
+        // this.isMap = true
         // document.title = this.station.name;
         
         // const descEl = document.querySelector('head meta[name="description"]');
@@ -165,7 +210,11 @@ export default{
     <HeaderMain v-if="kladrPage" :isRaces="false" :page="kladrPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
-    <MainCrumbs v-if="kladrPage" :pages="[{name: 'Населённый пункт', href: null}]"/>
+    <MainCrumbs v-if="kladrPage" :pages="[{name: kladrPage.kladr.name, href: null}]"/>
+    <!-- <div class="container" v-if="kladrPage && isMap">
+        <h2 style="margin: 15px 0;">{{ kladrPage.name }} на карте</h2>
+        <div id="YMapsID" style="max-width:100%; height:300px"></div>
+    </div> -->
     <!-- <div v-if="kladrPage && kladrPage.name" class="container">
         <h4 style="margin: 30px 0;">{{ kladrPage.name }} на карте</h4>
         <div v-html="kladrPage.map"></div>

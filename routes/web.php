@@ -9,6 +9,7 @@ use App\Models\Bonus;
 use App\Models\Kladr;
 use App\Models\Order;
 use App\Models\Ticket;
+use GuzzleHttp\Client;
 use XBase\TableReader;
 use App\Mail\OrderMail;
 use App\Models\Setting;
@@ -80,49 +81,6 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  dd('');
-  $ticket = Ticket::find(2095245);
-  $url = env('AVTO_SERVICE_TICKET_URL').'/'.'01a337e6cb362f26f17c77c84b2281f36243d0aa'.'.pdf';
-  $file_name = 'tickets/'.basename($url);
-  file_put_contents($file_name, file_get_contents($url));
-  
-  
-  dd(AdPdfService::mergePdf($file_name));
-  
-  // $pdf = new \Jurosh\PDFMerge\PDFMerger;
-
-  // // add as many pdfs as you want
-  // $pdf->addPDF('img/ticket.pdf', 'all', 'vertical')
-  //   //  ->addPDF('path/to/source/file1.pdf', 'all')
-  //     ->addPDF('img/HzSeYMvpAR35iVk7YJ8McMaff0LkrEbVMSno7RlV.pdf', 'all', 'vertical');
-  
-  // // call merge, output format `file`
-  // $pdf->merge('file', 'img/ad0.pdf');
-  
-  dd('');
-  // $PDFFile = public_path('img/2.pdf');
-  // $newName = public_path('img/2_new.pdf');
-  // $command = 'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=' . $newName . ' ' . $PDFFile;
-  // exec($command);
-  
-  // $merger = \PDFMerger::init();
-  // $merger->addPathToPDF(public_path('img/a_ticket.pdf'), 'all', 'P');
-  // $merger->addPathToPDF(public_path('img/2.pdf'), 'all', 'P');
-  // $merger->merge();
-  // $merger->save(public_path('img/a_ticket11.pdf'));
-
-
-  // $fileArray= array('img/a_ticket.pdf', 'img/ad.pdf');
-
-  // $datadir = "img/";
-  // $outputName = public_path($datadir."merged.pdf");
-  
-  // $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
-  // //Add each pdf file to the end of the command
-  // foreach($fileArray as $file) {
-  //     $cmd .= $file." ";
-  // }
-  // $result = shell_exec($cmd);
   dd('');
 
   $files = ['img/a_ticket.pdf', 'img/ad.pdf'];

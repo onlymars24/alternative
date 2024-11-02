@@ -1,5 +1,6 @@
 <template>
 <HeaderMain :key="paramKey" @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date" :isRaces="true"/>
+<MainCrumbs :pages="[{name: 'Рейсы', href: null}]"/>
 <div>
     <!-- RACES <pre>{{ races }}</pre> -->
     <div class="menu" style="margin-top: 50px;">
@@ -219,6 +220,8 @@ import axios from 'axios';
 import axiosClient from '../axios'
 import dayjs from 'dayjs'
 import PopupWindow from '../components/PopupWindow.vue';
+import MainCrumbs from '../components/MainCrumbs.vue';
+
 
 export default {
     components: {
@@ -226,6 +229,7 @@ export default {
         Footer,
         RaceCard,
         BusLoading,
+        MainCrumbs,
         PopupWindow
     },
     data(){

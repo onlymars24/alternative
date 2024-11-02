@@ -7,7 +7,6 @@
     </div>
     <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats" :race="race" />
     <div v-if="!loadingSeats" class="container">
-      <!-- <pre>{{ race }}</pre> -->
       <div class="window-bus">
         {{ $route.params['route_id'] }}
         <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>

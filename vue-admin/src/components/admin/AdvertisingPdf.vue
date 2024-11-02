@@ -6,7 +6,7 @@
             <div style="display: flex; width: 60%; justify-content: space-between;">
                 <div style="width: 18%;">
                     <span class="demo-input-label">Новый файл</span>
-                    <input type="file" class="form-control" style="margin: 0;" @change="onFileChange">
+                    <input type="file" style="margin: 0;" @change="onFileChange">
                 </div>
             </div>
             <div>

@@ -486,8 +486,8 @@ a{
   font-weight: 300;
 }
 .about{
-  margin-top: 90px;
-  margin-bottom: 50px;
+  margin-top: 50px;
+  /* margin-bottom: 50px; */
 }
 .about__inner{
   display: flex;
