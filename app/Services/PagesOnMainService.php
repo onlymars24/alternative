@@ -17,11 +17,11 @@ class PagesOnMainService
         
         $pagesOnMainSetting = [];
 
-        $kladrStationPages = KladrStationPage::with('kladr')->where([['kladr_id', '<>', null]])->get();
+        $kladrStationPages = KladrStationPage::with('kladr')->where([['kladr_id', '<>', null], ['hidden', '=', false]])->get();
         foreach($kladrStationPages as $kladrStationPage){
             $kladrStationPageArr = $kladrStationPage->toArray();
             $kladrStationPageArr['stationPages'] = KladrStationPage::with('station.kladr')->whereHas('station', function($query) use($kladrStationPage){
-                $query->where('kladr_id', '=', $kladrStationPage->kladr_id);
+                $query->where([['kladr_id', '=', $kladrStationPage->kladr_id], ['hidden', '=', false]]);
             })->orderByDesc('id')->get();
             $pagesOnMainSetting[$kladrStationPage->kladr->region ? $kladrStationPage->kladr->region : 'Московская обл' ][] = $kladrStationPageArr;
         }
