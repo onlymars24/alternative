@@ -81,7 +81,7 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  PagesOnMainService::recreate();
+  // PagesOnMainService::recreate();
   dd('');
 
   $files = ['img/a_ticket.pdf', 'img/ad.pdf'];
