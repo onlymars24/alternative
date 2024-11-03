@@ -1,7 +1,7 @@
 <template>
     <div class="line-head">
         <div class="container">
-            <div class="race-progress">
+            <div class="race-progress breadcrumb" style="flex-wrap: wrap;">
                 <div class="page-link not-passed"><a href="/">Росвокзалы.рф</a></div>
                 <template v-for="page in pages">
                     <div><span class="arrow"></span></div>

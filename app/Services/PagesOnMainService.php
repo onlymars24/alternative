@@ -38,6 +38,6 @@ class PagesOnMainService
         $pagesOnMain->data = json_encode(json_decode(json_encode($pagesOnMainSetting)));
         $pagesOnMain->save();
 
-        dd(json_decode($pagesOnMain->data));
+        // dd(json_decode($pagesOnMain->data));
     }
 }

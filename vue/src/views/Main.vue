@@ -125,7 +125,7 @@ export default{
 <template>
     <HeaderMain/>
     <div></div>
-    <MainCrumbs :pages="[]"/>
+    <!-- <MainCrumbs :pages="[]"/> -->
     
     <!-- {{ map }} -->
 

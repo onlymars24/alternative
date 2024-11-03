@@ -152,6 +152,22 @@ export default{
                 }
             });
             map.geoObjects.add(myPlacemark1);
+
+            let geocoder = ymaps.geocode('пр-т Кирова 68 (автовокзал)');
+            console.log('geocoder')
+            console.log(geocoder)
+            geocoder.then(function (res) {
+                if (res.geoObjects.getLength()) {
+                    // Получаем первый найденный объект
+                    var firstGeoObject = res.geoObjects.get(0);
+                    console.log(firstGeoObject.geometry._coordinates); // Координаты объекта
+                    // myMap.geoObjects.add(firstGeoObject); // Добавляем объект на карту
+                } else {
+                    alert('Не удалось найти адрес');
+                }
+            }, function (err) {
+                alert('Ошибка геокодирования: ' + err.message);
+            });
             // var myPlacemark2 = new ymaps.GeoObject({
             //     geometry: {
             //         type: "Point",
@@ -160,11 +176,14 @@ export default{
             // });
             // map.geoObjects.add(myPlacemark2);
             map.behaviors.disable('scrollZoom'); 
+            
             // map.setBounds([[56.461012536889534, 84.98992816566377], [56.46239283218983, 84.99424147798115]]);
         });
         // this.isMap = true
         let YMapsID__title = document.querySelector('#YMapsID__title');
+        let YMapsID = document.querySelector('#YMapsID');
         YMapsID__title.innerHTML = this.stationPage.name+' на карте'
+        YMapsID.style.height = '300px'
 
         // console.log(this.stationPage)
         // await axiosClient

@@ -181,7 +181,9 @@ export default{
             map.setBounds(coordinates);
         });
         let YMapsID__title = document.querySelector('#YMapsID__title');
+        let YMapsID = document.querySelector('#YMapsID');
         YMapsID__title.innerHTML = this.kladrPage.name+' на карте'
+        YMapsID.style.height = '300px'
         // this.isMap = true
         // document.title = this.station.name;
         

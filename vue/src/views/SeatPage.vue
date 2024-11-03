@@ -3,6 +3,7 @@
       <div class="container"><Header/></div>
     </div>
     <div class="container"> 
+      
       <BusLoading v-if="loadingSeats"/>
     </div>
     <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats" :race="race" />
