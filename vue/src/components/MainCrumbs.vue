@@ -2,7 +2,7 @@
     <div class="line-head">
         <div class="container">
             <div class="race-progress breadcrumb" style="flex-wrap: wrap;">
-                <div class="page-link not-passed"><a href="/">Росвокзалы.рф</a></div>
+                <div class="page-link not-passed"><a href="/">Билеты на автобус</a></div>
                 <template v-for="page in pages">
                     <div><span class="arrow"></span></div>
                     <div class="page-link not-passed"><a v-if="page.href" :href="page.href">{{ page.name }}</a><span v-else>{{ page.name }}</span></div>                    

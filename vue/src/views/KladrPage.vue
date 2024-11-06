@@ -212,7 +212,7 @@ export default{
     <HeaderMain v-if="kladrPage" :isRaces="false" :page="kladrPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
-    <MainCrumbs v-if="kladrPage" :pages="[{name: kladrPage.kladr.name, href: null}]"/>
+    <MainCrumbs v-if="kladrPage" :pages="[{name: kladrPage.name, href: null}]"/>
     <!-- <div class="container" v-if="kladrPage && isMap">
         <h2 style="margin: 15px 0;">{{ kladrPage.name }} на карте</h2>
         <div id="YMapsID" style="max-width:100%; height:300px"></div>

@@ -222,8 +222,8 @@ export default{
     <HeaderMain v-if="stationPage" :isRaces="false" :page="stationPage"/>
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
-    <MainCrumbs v-if="stationPage" :pages="[{name: stationPage.station.kladr.name, href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.station.kladr.kladr_station_page.url_settlement_name}, 
-    {name: 'Автовокзал '+stationPage.station.name, href: null}]"/>
+    <MainCrumbs v-if="stationPage" :pages="[{name: 'Расписание '+stationPage.station.kladr.name, href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.station.kladr.kladr_station_page.url_settlement_name}, 
+    {name: stationPage.name, href: null}]"/>
     <!-- <div class="container">
         <h2 id="YMapsID__title" style="margin: 15px 0;"></h2>
         <div id="YMapsID" style="max-width:100%; height:300px"></div>

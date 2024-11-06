@@ -60,4 +60,8 @@ class KladrController extends Controller
             'kladrs' => Kladr::has('dispatchPoints')->orHas('arrivalPoints')->with('kladrStationPage')->where('name', 'like', '%'.$request->kladrFilter.'%')->get()
         ]);
     }
+
+    public function races(Request $request){
+        return response(['arrivalKladrs' => []]);
+    }
 }

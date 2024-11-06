@@ -12,7 +12,7 @@ class DispatchController extends Controller
 {
     public function paginate(Request $request){
 
-        $whereArr = [];                
+        $whereArr = [];
         if($request->pointNameSearch){
             $whereArr[] = ['name', 'like', '%'.$request->pointNameSearch.'%'];
         }

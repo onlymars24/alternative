@@ -3,6 +3,9 @@
       <div class="container"><Header/></div>
     </div>
     <div class="container"> 
+      <!-- <pre>
+        {{ race }}
+      </pre> -->
       
       <BusLoading v-if="loadingSeats"/>
     </div>

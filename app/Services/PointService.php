@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 class PointService
 {
     public static function dispatchKandE(){
-        $dispatchPoints = DispatchPoint::with('kladr.arrivalPoints')->get()->toArray();
-        $kladrs = Kladr::has('dispatchPoints')->with('busStation')->get()->toArray();
+        $dispatchPoints = DispatchPoint::with('kladr.arrivalPoints', 'station.kladrStationPage', 'kladr.kladrStationPage')->get()->toArray();
+        $kladrs = Kladr::has('dispatchPoints')->with('kladrStationPage')->get()->toArray();
         $result = array_reduce($dispatchPoints, function ($carry, $item) {
             if (!in_array($item['name'], array_column($carry, 'name'))
                 || !in_array($item['region'], array_column($carry, 'region'))

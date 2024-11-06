@@ -1,6 +1,6 @@
 <template>
 <HeaderMain :key="paramKey" @changeRaces="changeRaces0" :arrivalEl0="arrivalEl" :dispatchEl0="dispatchEl" :date0="date" :isRaces="true"/>
-<MainCrumbs :pages="[{name: 'Рейсы', href: null}]"/>
+<MainCrumbs :pages="crumbPages"/>
 <div>
     <!-- RACES <pre>{{ races }}</pre> -->
     <div class="menu" style="margin-top: 50px;">
@@ -277,7 +277,9 @@ export default {
             cacheRaces: [],
             formatedCacheRaces: [],
             dispatchPoints: [],
-            arrivalPoints: []
+            arrivalPoints: [],
+            crumbPages: [
+            ]
         }
     },
     // beforeMount(){
@@ -330,7 +332,10 @@ export default {
         .get('/dispatch/points')
         .then(response => {
             this.dispatchPoints = response.data.dispatchPoints
-        });
+        })
+        .catch(error => {
+            console.log(error)
+        })
         await promise1
         // this.dispatchPoints.forEach((dispatch, ind) => {
         //     dispatch.keyId = ind+1
@@ -381,7 +386,18 @@ export default {
             return
         }
         
-        
+        if(!dispatchPoint.hasOwnProperty('details') && dispatchPoint.kladr_station_page){
+            let kladrPage = dispatchPoint.kladr_station_page
+            this.crumbPages.push({name: 'Расписание '+dispatchPoint.name, href: '/расписание/'+kladrPage.url_region_code+'/'+kladrPage.url_settlement_name })
+        }
+        else if(dispatchPoint.station && dispatchPoint.station.kladr_station_page && dispatchPoint.kladr && dispatchPoint.kladr.kladr_station_page){
+            let kladr = dispatchPoint.kladr
+            let kladrPage = kladr.kladr_station_page
+            this.crumbPages.push({name: 'Расписание '+kladr.name, href: '/расписание/'+kladrPage.url_region_code+'/'+kladrPage.url_settlement_name })
+        }
+        this.crumbPages.push(
+            {name: 'Автобус '+dispatchPoint.name+' - '+arrivalPoint.name, href: null},
+        )
 
         this.dispatchEl.id = dispatchPoint.keyId
         this.arrivalEl.id = arrivalPoint.keyId

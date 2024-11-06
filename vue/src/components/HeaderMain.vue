@@ -382,9 +382,12 @@ export default{
         const promise = axiosClient
         .get('/dispatch/points')
         .then(response => {
-            // console.log(response)
+            console.log(response)
             this.dispatchData = response.data.dispatchPoints
-        });
+        })
+        .catch(error => {
+            console.log(error)
+        })
         await promise
         // this.dispatchData.forEach((dispatch, ind) => {
         //     dispatch.keyId = ind+1
