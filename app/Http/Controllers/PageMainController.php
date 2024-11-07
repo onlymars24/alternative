@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use App\Models\KladrStationPage;
 
 class PageMainController extends Controller
 {
@@ -27,10 +28,27 @@ class PageMainController extends Controller
     }
 
     public function mainPages(){
-        $pagesOnMain = Setting::where('name', 'pagesOnMain')->first();
-        $pagesOnMain = json_decode($pagesOnMain->data);
+        $pagesOnMainSetting = [];
+
+        $kladrStationPages = KladrStationPage::with('kladr')->where([['kladr_id', '<>', null], ['hidden', '=', false]])->get();
+        foreach($kladrStationPages as $kladrStationPage){
+            $kladrStationPageArr = $kladrStationPage->toArray();
+            $kladrStationPageArr['stationPages'] = KladrStationPage::with('station.kladr')->whereHas('station', function($query) use($kladrStationPage){
+                $query->where([['kladr_id', '=', $kladrStationPage->kladr_id], ['hidden', '=', false]]);
+            })->orderByDesc('id')->get();
+            $pagesOnMainSetting[$kladrStationPage->kladr->region ? $kladrStationPage->kladr->region : 'Московская обл' ][] = $kladrStationPageArr;
+        }
+
+        foreach($pagesOnMainSetting as $key => $region){
+          usort($region, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+          });
+          $pagesOnMainSetting[$key] = $region;
+        }
+        ksort($pagesOnMainSetting);
+
         return response([
-            'pagesOnMain' => $pagesOnMain
+            'pagesOnMain' => $pagesOnMainSetting
         ]);
     }    
 }

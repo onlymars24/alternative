@@ -230,14 +230,14 @@ export default{
     <div></div>
     <MainCrumbs v-if="kladrPage" :pages="[{name: kladrPage.name, href: null}]"/>
 
-    <div class="container">
+    <!-- <div class="container">
         <h3 v-if="kladrPage" style="font-weight: 400; margin: 25px 0; font-size: 20px;">{{kladrPage.name}} направления</h3>
         <div class="station__races">
             <template v-for="item in arrivalKladrs">
                 <p v-for="arrivalKladr in item[1]"><a :href="'/автобус/'+item[0].name+'/'+arrivalKladr.name">{{'Автобус '+item[0].name+' — '+arrivalKladr.name}}</a></p>
             </template>
         </div>        
-    </div>
+    </div> -->
 <!-- 
     <pre>
         {{ kladrPage }}
