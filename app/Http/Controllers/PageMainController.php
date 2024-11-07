@@ -54,7 +54,7 @@ class PageMainController extends Controller
             });
             foreach($region as $key1 => $settlement){
                 // dd($settlement);
-                if(substr($settlement['kladr']['code'], 5, 3) == '001'){
+                if(substr($settlement['kladr']['code'], 5, 3) == '001' && substr($settlement['kladr']['code'], 3, 3) == '000'){
                     $temp = $settlement;
                     $region[$key1] = $region[0];
                     $region[0] = $temp;
