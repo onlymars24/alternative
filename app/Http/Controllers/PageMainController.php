@@ -56,7 +56,7 @@ class PageMainController extends Controller
                 // dd($settlement);
                 if(substr($settlement['kladr']['code'], 5, 3) == '001'){
                     $temp = $settlement;
-                    $settlement = $region[0];
+                    $region[$key1] = $region[0];
                     $region[0] = $temp;
                 }
             }
