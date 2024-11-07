@@ -81,34 +81,7 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  $pagesOnMainSetting = [];
-
-  $kladrStationPages = KladrStationPage::with('kladr')->where([['kladr_id', '<>', null], ['hidden', '=', false]])->get();
-  foreach($kladrStationPages as $kladrStationPage){
-      $kladrStationPageArr = $kladrStationPage->toArray();
-      $kladrStationPageArr['stationPages'] = KladrStationPage::with('station.kladr')->whereHas('station', function($query) use($kladrStationPage){
-          $query->where([['kladr_id', '=', $kladrStationPage->kladr_id], ['hidden', '=', false]]);
-      })->orderByDesc('id')->get()->toArray();
-
-      // foreach($pagesOnMainSetting as $key => $region){
-          usort($kladrStationPageArr['stationPages'], function($a, $b) {
-              return strcmp($a['name'], $b['name']);
-          });
-          // $pagesOnMainSetting[$key] = $region;
-      // }
-      // ksort($pagesOnMainSetting);
-
-      $pagesOnMainSetting[$kladrStationPage->kladr->region ? $kladrStationPage->kladr->region : 'Московская обл' ][] = $kladrStationPageArr;
-  }
-
-  foreach($pagesOnMainSetting as $key => $region){
-    usort($region, function($a, $b) {
-      return strcmp($a['name'], $b['name']);
-    });
-    $pagesOnMainSetting[$key] = $region;
-  }
-  // ksort($pagesOnMainSetting);
-  dd($pagesOnMainSetting);
+  dd('');
 
   // }
   // PagesOnMainService::recreate();
