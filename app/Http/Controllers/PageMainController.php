@@ -52,10 +52,11 @@ class PageMainController extends Controller
             usort($region, function($a, $b) {
             return strcmp($a['name'], $b['name']);
             });
-            foreach($region as $key => $settlement){
-                if(substr($settlement['code'], 5, 3)){
+            foreach($region as $key1 => $settlement){
+                // dd($settlement);
+                if(substr($settlement['kladr']['code'], 5, 3) == '001'){
                     $temp = $settlement;
-                    $region[$key] = $region[0];
+                    $settlement = $region[0];
                     $region[0] = $temp;
                 }
             }
