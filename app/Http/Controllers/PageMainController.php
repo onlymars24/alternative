@@ -49,10 +49,17 @@ class PageMainController extends Controller
         }
       
         foreach($pagesOnMainSetting as $key => $region){
-          usort($region, function($a, $b) {
+            usort($region, function($a, $b) {
             return strcmp($a['name'], $b['name']);
-          });
-          $pagesOnMainSetting[$key] = $region;
+            });
+            foreach($region as $key => $settlement){
+                if(substr($settlement['code'], 5, 3)){
+                    $temp = $settlement;
+                    $region[$key] = $region[0];
+                    $region[0] = $temp;
+                }
+            }
+            $pagesOnMainSetting[$key] = $region;
         }
 
         return response([
