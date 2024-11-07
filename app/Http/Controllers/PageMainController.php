@@ -36,6 +36,15 @@ class PageMainController extends Controller
             $kladrStationPageArr['stationPages'] = KladrStationPage::with('station.kladr')->whereHas('station', function($query) use($kladrStationPage){
                 $query->where([['kladr_id', '=', $kladrStationPage->kladr_id], ['hidden', '=', false]]);
             })->orderByDesc('id')->get();
+
+            // foreach($pagesOnMainSetting as $key => $region){
+                usort($kladrStationPageArr['stationPages'], function($a, $b) {
+                    return strcmp($a['name'], $b['name']);
+                });
+                // $pagesOnMainSetting[$key] = $region;
+            // }
+            // ksort($pagesOnMainSetting);
+
             $pagesOnMainSetting[$kladrStationPage->kladr->region ? $kladrStationPage->kladr->region : 'Московская обл' ][] = $kladrStationPageArr;
         }
 
