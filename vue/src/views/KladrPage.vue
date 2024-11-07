@@ -89,6 +89,7 @@ export default{
             },
             loading: false,
             testStr: 'sa d / f',
+            arrivalKladrs: []
             // isMap: false
         }
     },
@@ -135,6 +136,21 @@ export default{
             console.log(error)
         })
         await promise2
+
+
+        await axiosClient
+        .get('/kladr/arrival/kladrs?kladrId='+this.kladrPage.kladr_id)
+        .then(response => {
+            console.log('/kladr/arrival/kladrs')
+            console.log(response)
+            this.arrivalKladrs = response.data.arrivalKladrs
+            // this.stationPages = response.data.pages
+        })
+        .catch(error => {
+            console.log(error)
+        })
+        
+        
         if(!this.kladrPage){
             router.push({ name: 'Main'})
             return
@@ -213,6 +229,22 @@ export default{
     <HeaderMain v-else :isRaces="false"/>
     <div></div>
     <MainCrumbs v-if="kladrPage" :pages="[{name: kladrPage.name, href: null}]"/>
+
+    <div class="container">
+        <h3 v-if="kladrPage" style="font-weight: 400; margin: 25px 0; font-size: 20px;">{{kladrPage.name}} направления</h3>
+        <div class="station__races">
+            <template v-for="item in arrivalKladrs">
+                <p v-for="arrivalKladr in item[1]"><a :href="'/автобус/'+item[0].name+'/'+arrivalKladr.name">{{'Автобус '+item[0].name+' — '+arrivalKladr.name}}</a></p>
+            </template>
+        </div>        
+    </div>
+<!-- 
+    <pre>
+        {{ kladrPage }}
+    </pre>
+    <pre>
+        {{ arrivalKladrs }}
+    </pre> -->
     <!-- <div class="container" v-if="kladrPage && isMap">
         <h2 style="margin: 15px 0;">{{ kladrPage.name }} на карте</h2>
         <div id="YMapsID" style="max-width:100%; height:300px"></div>

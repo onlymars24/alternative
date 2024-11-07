@@ -8,6 +8,7 @@ use App\Models\DispatchPoint;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class KladrController extends Controller
 {
@@ -62,6 +63,18 @@ class KladrController extends Controller
     }
 
     public function races(Request $request){
-        return response(['arrivalKladrs' => []]);
+        $kladr = Kladr::find($request->kladrId);
+        $dispatchPoints = $kladr->dispatchPoints;
+        $result = [];
+        foreach($dispatchPoints as $dispatchPoint){
+            $arrivalKladrs = Kladr::with('arrivalPoints.dispatchPoint')->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
+                $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
+            })->get()->toArray();     
+
+            // $result = array_merge($result, $arrivalKladrs);       
+            $result[] = [$dispatchPoint, $arrivalKladrs];
+        }
+
+        return response(['arrivalKladrs' => $result]);
     }
 }

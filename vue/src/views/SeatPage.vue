@@ -9,9 +9,15 @@
       
       <BusLoading v-if="loadingSeats"/>
     </div>
-    <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats" :race="race" />
+    <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats && !errorMessage" :race="race" />
     <div v-if="!loadingSeats" class="container">
-      <div class="window-bus">
+      <div v-if="errorMessage" style="margin-top: 20px;">        
+        <div class="alert alert-danger" role="alert">
+            <p>{{ errorMessage }}</p>
+        </div>
+        <p style="font-size: 25px;"><strong>Выберите другой рейс, время или дату.</strong></p>
+      </div>
+      <div v-else class="window-bus">
         {{ $route.params['route_id'] }}
         <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
       </div>
@@ -37,6 +43,7 @@ export default {
       seats: [12, 12],
       columnsAmount: 0,
       loadingSeats: true,
+      errorMessage: null
     }
   },
   async mounted(){
@@ -46,17 +53,19 @@ export default {
       .then(response => {
           this.race = response.data
           console.log(this.race)
+          this.seats = this.race.seats
+          this.updateSeats()
       })
       .catch(error => {
         console.log(error)
+        this.errorMessage = error.response.data.errorMessage
       });
     await promise
-    if(!this.race){
-      router.push({name: 'Main'})
-      return
-    }
-    this.seats = this.race.seats
-    this.updateSeats()
+    // if(!this.race){
+    //   router.push({name: 'Main'})
+    //   return
+    // }
+
     this.loadingSeats = false
     
   },

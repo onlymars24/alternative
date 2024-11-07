@@ -40,6 +40,7 @@ class RaceController extends Controller
                     if(!isset($raceSummary->race->uid)){
                         MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid, $raceSummary);
                     }
+                    // return response(['errorMessage' => 'Ошибка при запросе к серверу автовокзала Томск КДП. Места заняты. Тип места: Пассажирские, номер места: 25.'], 500);
                     return json_encode($raceSummary);
                 }
             }

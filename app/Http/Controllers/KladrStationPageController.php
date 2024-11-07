@@ -202,7 +202,7 @@ class KladrStationPageController extends Controller
     // busStationsDispatchPoints
     public function stationPages(Request $request){
         // return response(['kladr_id' => $request->kladrId]);
-        return response(['pages' => KladrStationPage::with('station.kladr')->whereHas('station', function($query) use($request){
+        return response(['pages' => KladrStationPage::with('station.kladr', 'station.dispatchPoint')->whereHas('station', function($query) use($request){
                 $query->where('kladr_id', '=', $request->kladrId);
             })->orderByDesc('id')->get()
         ]);
