@@ -81,22 +81,30 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  $stations = Station::where([[['created_at', '>', '2024-10-08 22:36:55']]]);
-  foreach($stations as $station){
-    if(!$station->kladrStationPage){
-      $stationPage = KladrStationPage::create([
-          'name' => 'Автовокзал '.$station->name,
-          'description' => 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус',
-          'url_settlement_name' => SlugService::create($station->name),
-          'url_region_code' => mb_strcut($station->kladr->code, 0, 2),
-          'hidden' => false,
-          'station_id' => $station->id,
-      ]);
-      SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly');
-    }    
+  
+  // $stations = Station::where([[['created_at', '>', '2024-10-08 22:36:55']]]);
+  // foreach($stations as $station){
+  //   if(!$station->kladrStationPage){
+  //     $stationPage = KladrStationPage::create([
+  //         'name' => 'Автовокзал '.$station->name,
+  //         'description' => 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус',
+  //         'url_settlement_name' => SlugService::create($station->name),
+  //         'url_region_code' => mb_strcut($station->kladr->code, 0, 2),
+  //         'hidden' => false,
+  //         'station_id' => $station->id,
+  //     ]);
+  //     SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly');
+  //   }    
+  // }
+  $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
+  foreach($kladrs as $kladr){
+    if(!$kladr->slug){
+      $kladr->slug = SlugService::create($kladr->name); 
+      $kladr->save();
+    }
   }
 
-  dd('');
+  dd($kladrs);
   // $dispatchPoint = DispatchPoint::find(66690);
   // $dispatchPoint->kladr_id = 193127;
   // $dispatchPoint->save();
