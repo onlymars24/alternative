@@ -72,7 +72,7 @@ class KladrController extends Controller
             })->get()->toArray();     
 
             // $result = array_merge($result, $arrivalKladrs);       
-            $result[] = [$dispatchPoint, $arrivalKladrs];
+            $result[] = [$dispatchPoint, $arrivalKladrs, $dispatchPoint->station->kladrStationPage];
         }
 
         return response(['arrivalKladrs' => $result]);
