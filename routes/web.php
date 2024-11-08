@@ -81,6 +81,7 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
   $arrivalPoints = CacheArrivalPoint::with('dispatchPoint')->where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
   
   $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
