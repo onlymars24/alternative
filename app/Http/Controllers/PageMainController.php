@@ -64,7 +64,7 @@ class PageMainController extends Controller
         }
 
         return response([
-            'pagesOnMain' => $pagesOnMainSetting
+            'pagesOnMain' => ksort($pagesOnMainSetting)
         ]);
     }    
 }
