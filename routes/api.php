@@ -1,7 +1,15 @@
 <?php
 
+use App\Models\Station;
 use FontLib\Table\Type\post;
 use Illuminate\Http\Request;
+use App\Models\DispatchPoint;
+use App\Services\SlugService;
+use App\Services\KladrService;
+use App\Models\KladrStationPage;
+use App\Services\SitemapService;
+use App\Models\CacheArrivalPoint;
+// use App\Http\Controllers\Api\RaceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\AuthController;
@@ -9,7 +17,6 @@ use App\Http\Controllers\RaceController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EventController;
-// use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\KladrController;
 use App\Http\Controllers\MatchController;
@@ -60,7 +67,55 @@ use App\Http\Controllers\Api\DispatchPointsController;
 |
 */
 
-
+    Route::post('/spread', function(Request $request){
+        $arrivalPoints = CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+        foreach($arrivalPoints as $arrivalPoint){
+            $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);
+            $arrivalPoint->save();
+        }
+        // СОЗДАНИЕ НОВЫХ СТРАНИЦ
+        $dispatchPoints = DispatchPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+        foreach($dispatchPoints as $dispatchPoint){
+            $dispatchPoint->kladr_id = KladrService::connectPointIntoKladr($dispatchPoint);
+            $dispatchPoint->save();
+            if(!$dispatchPoint->kladr){
+                continue;
+            }
+            $kladr = $dispatchPoint->kladr;
+            $station = Station::where([['kladr_id', '=', $dispatchPoint->kladr->id], ['name', '=', $dispatchPoint->name]])->first();
+            if(!$station){
+                $station = Station::create([
+                    'name' => $dispatchPoint->name,
+                    'kladr_id' => $dispatchPoint->kladr_id
+                ]);
+            }
+        
+            $kladrPage = $kladr->kladrStationPage;
+            
+            if(!$kladrPage){
+                $kladrPage = KladrStationPage::create([
+                    'name' => 'Автовокзалы и автостанции '.$kladr->name,
+                    'description' => $kladr->name.' Автовокзалы и автостанции: расписание, справочная, билеты на автобус',
+                    'url_settlement_name' => SlugService::create($kladr->name),
+                    'url_region_code' => mb_strcut($kladr->code, 0, 2),
+                    'hidden' => false,
+                    'kladr_id' => $dispatchPoint->kladr_id,
+                ]);
+                SitemapService::add(env('FRONTEND_URL').'/расписание/'.$kladrPage->url_region_code.'/'.$kladrPage->url_settlement_name, 'weekly');
+            }
+            if(!$station->kladrStationPage){
+                $stationPage = KladrStationPage::create([
+                    'name' => 'Автовокзал '.$station->name,
+                    'description' => 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус',
+                    'url_settlement_name' => SlugService::create($station->name),
+                    'url_region_code' => mb_strcut($kladr->code, 0, 2),
+                    'hidden' => false,
+                    'station_id' => $station->id,
+                ]);
+                SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly');
+            }
+        }
+    });
 Route::middleware('auth:sanctum')->group(function(){
 
     
