@@ -62,9 +62,9 @@ class PageMainController extends Controller
             }
             $pagesOnMainSetting[$key] = $region;
         }
-
+        ksort($pagesOnMainSetting);
         return response([
-            'pagesOnMain' => ksort($pagesOnMainSetting)
+            'pagesOnMain' => $pagesOnMainSetting
         ]);
     }    
 }
