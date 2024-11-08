@@ -53,7 +53,7 @@
           <div v-else-if="error">
             <el-alert title="Непредвиденная ошибка" type="error" :closable="false" />            
           </div>
-          <div v-elseЯ>
+          <div v-else>
             <el-alert title="Точки успешно загружены, а sitemap дополнен рейсами 
             из новых точек." type="success" :closable="false" />
           </div>

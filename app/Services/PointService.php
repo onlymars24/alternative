@@ -57,7 +57,7 @@ class PointService
     }
 
     public static function addNewDispatchPoint($dispatchPoint){
-        $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+        // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
         $arrivalPointsRemoted = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
@@ -77,16 +77,16 @@ class PointService
             ]);
             $arrivalPoint->save();
             
-            $newLoc = env('FRONTEND_URL').'/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
-            $newNode = $xml->addChild('url');
-            $newNode->addChild('loc', $newLoc);
-            $newNode->addChild('lastmod', date('Y-m-d'));
-            $newNode->addChild('changefreq', 'daily');
-            $newNode->addChild('priority', '1.0');     
+            // $newLoc = env('FRONTEND_URL').'/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
+            // $newNode = $xml->addChild('url');
+            // $newNode->addChild('loc', $newLoc);
+            // $newNode->addChild('lastmod', date('Y-m-d'));
+            // $newNode->addChild('changefreq', 'daily');
+            // $newNode->addChild('priority', '1.0');     
             
             
-            File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
-            FtpLoadingService::put();
+            // File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+            // FtpLoadingService::put();
             
             // $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);      
         }
