@@ -71,8 +71,11 @@ class KladrController extends Controller
                 $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
             })->get()->toArray();     
 
-            // $result = array_merge($result, $arrivalKladrs);       
-            $result[] = [$dispatchPoint, $arrivalKladrs, $dispatchPoint->station->kladrStationPage];
+            // $result = array_merge($result, $arrivalKladrs);    
+            if(!$dispatchPoint->station->kladrStationPage->hidden){
+                $result[] = [$dispatchPoint, $arrivalKladrs, $dispatchPoint->station->kladrStationPage];
+            }   
+            
         }
 
         return response(['arrivalKladrs' => $result]);
