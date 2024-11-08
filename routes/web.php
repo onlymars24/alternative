@@ -81,6 +81,7 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  dd('');
   $pagesOnMainSetting = [];
 
   $kladrStationPages = KladrStationPage::with('kladr')->where([['kladr_id', '<>', null], ['hidden', '=', false]])->get();
@@ -109,7 +110,7 @@ Route::get('/spread', function (Request $request) {
           // dd($settlement);
           if(substr($settlement['kladr']['code'], 5, 3) == '001'){
               $temp = $settlement;
-              $settlement = $region[0];
+              $region[$key1] = $region[0];
               $region[0] = $temp;
           }
       }
@@ -166,7 +167,7 @@ Route::get('/spread', function (Request $request) {
     $station = Station::where([['name', '=', $dispatchPoint->name]])->first();
     if($station){
       $dispatchPoint->station_id = $station->id;
-      $dispatchPoint->save();      
+      $dispatchPoint->save();
     }
 
   }

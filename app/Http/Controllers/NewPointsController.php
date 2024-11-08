@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Models\BusStation;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
+use App\Services\PointService;
 use App\Models\CacheArrivalPoint;
 use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\File;
@@ -77,27 +78,28 @@ class NewPointsController extends Controller
                 'okato' => $point->okato ? $point->okato : '1',
                 'place' => $point->place ? $point->place : 1
             ]);
-            $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $dispatchPoint->id)->first();
-            if(!$arrival_points){
-                $arrival_points_remoted = Http::withHeaders([
-                    'Authorization' => env('AVTO_SERVICE_KEY'),
-                ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
-                $arrival_points = CacheArrivalPoint::create([
-                    'dispatch_point_id' => $dispatchPoint->id,
-                    'arrival_points' => json_encode($arrival_points_remoted)
-                ]);
-            }
-            $arrival_points = json_decode($arrival_points->arrival_points);
-            foreach($arrival_points as $arrivalPoint){
-                $newLoc = env('FRONTEND_URL').'/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
-                $newNode = $xml->addChild('url');
-                $newNode->addChild('loc', $newLoc);
-                $newNode->addChild('lastmod', date('Y-m-d'));
-                $newNode->addChild('changefreq', 'daily');
-                $newNode->addChild('priority', '1.0');
-            }  
-            File::put(env('XML_FILE_NAME'), $xml->asXML());
-            FtpLoadingService::put();
+            // $arrival_points = CacheArrivalPoint::where('dispatch_point_id', $dispatchPoint->id)->first();
+            // if(!$arrival_points){
+            //     $arrival_points_remoted = Http::withHeaders([
+            //         'Authorization' => env('AVTO_SERVICE_KEY'),
+            //     ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
+            //     $arrival_points = CacheArrivalPoint::create([
+            //         'dispatch_point_id' => $dispatchPoint->id,
+            //         'arrival_points' => json_encode($arrival_points_remoted)
+            //     ]);
+            // }
+            // $arrival_points = json_decode($arrival_points->arrival_points);
+            PointService::addNewDispatchPoint($dispatchPoint);
+            // foreach($arrival_points as $arrivalPoint){
+            //     // $newLoc = env('FRONTEND_URL').'/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
+            //     // $newNode = $xml->addChild('url');
+            //     // $newNode->addChild('loc', $newLoc);
+            //     // $newNode->addChild('lastmod', date('Y-m-d'));
+            //     // $newNode->addChild('changefreq', 'daily');
+            //     // $newNode->addChild('priority', '1.0');
+            // }  
+            // File::put(env('XML_FILE_NAME'), $xml->asXML());
+            // FtpLoadingService::put();
         }
 
 
