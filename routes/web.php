@@ -82,6 +82,10 @@ use App\Http\Controllers\UsersExportController;
 
 Route::get('/spread', function (Request $request) {
   dd('');
+  // $dispatchPoint = DispatchPoint::find(66690);
+  // $dispatchPoint->kladr_id = 193127;
+  // $dispatchPoint->save();
+  // dd($arrivalPoints = CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get(););
   $pagesOnMainSetting = [];
 
   $kladrStationPages = KladrStationPage::with('kladr')->where([['kladr_id', '<>', null], ['hidden', '=', false]])->get();
