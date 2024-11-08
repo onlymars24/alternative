@@ -82,6 +82,29 @@ use App\Http\Controllers\UsersExportController;
 
 Route::get('/spread', function (Request $request) {
   $arrivalPoints = CacheArrivalPoint::with('dispatchPoint')->where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+  
+  $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+  // for($i = 0; $i < count($xml->url); $i++){
+  //     Log::info($xml->url[$i]->loc.' '.$newLoc);
+  //     if($xml->url[$i]->loc == $newLoc){
+  //         return [
+  //             'existing' => true
+  //         ];
+  //     }
+  // }
+  foreach($arrivalPoints as $arrivalPoint){
+    $newNode = $xml->addChild('url');
+    $newNode->addChild('loc', env('FRONTEND_URL').'/автобус/'.$arrivalPoint->dispatchPoint->slug.'/'.$arrivalPoint->slug);
+    $newNode->addChild('lastmod', date('Y-m-d'));
+    $newNode->addChild('changefreq', 'daily'); //weekly
+    $newNode->addChild('priority', '1.0');    
+  }
+
+  
+  File::put(env('XML_FILE_NAME'), $xml->asXML());
+  // Log::info('sitemap3');
+  FtpLoadingService::put();
+
   dd($arrivalPoints);
   // $stations = Station::where([[['created_at', '>', '2024-10-08 22:36:55']]]);
   // foreach($stations as $station){
