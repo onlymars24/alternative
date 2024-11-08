@@ -159,7 +159,7 @@ export default{
 
         this.stationPages.forEach(page => {
             const station = page.station
-            if(station.latitude && station.longitude){
+            if(station.latitude && station.longitude && !page.hidden){
                 coordinates.push([parseFloat(station.latitude), parseFloat(station.longitude)])
             }
         })
@@ -169,7 +169,7 @@ export default{
         console.log(coordinates)
         ymaps.ready(function () {
             const map = new ymaps.Map('YMapsID', {
-                center: [parseFloat(coordinates[0].latitude), parseFloat(coordinates[0].longitude)],
+                center: [parseFloat(coordinates[0][0]), parseFloat(coordinates[0][1])],
                 controls: ['zoomControl'],
                 zoom: 20,
                 type: 'yandex#map',

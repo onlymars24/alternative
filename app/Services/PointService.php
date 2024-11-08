@@ -65,6 +65,7 @@ class PointService
             $arrivalPoint = CacheArrivalPoint::create([
                 'arrival_point_id' => $arrivalPointRemoted->id,
                 'name' => $arrivalPointRemoted->name,
+                'slug' => SlugService::create($arrivalPointRemoted->name),// название очищенное от небуквенных символов
                 'region' => $arrivalPointRemoted->region,
                 'details' => $arrivalPointRemoted->details,
                 'address' => $arrivalPointRemoted->address,

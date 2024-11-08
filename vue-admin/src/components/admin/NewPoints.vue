@@ -6,8 +6,8 @@
       </div>
     </template>
     <div>
-        <!-- <el-button @click="opened = true; getNewPoints()" type="primary">Проверить</el-button> -->
-        <el-button type="danger" disabled>На доработке</el-button>
+        <el-button @click="opened = true; getNewPoints()" type="primary">Проверить</el-button>
+        <!-- <el-button type="danger" disabled>На доработке</el-button> -->
     </div>
   </el-card>
   <el-dialog v-model="opened"  width="550">

@@ -9,6 +9,7 @@ use App\Models\DispatchPoint;
 use App\Services\PointService;
 use App\Models\CacheArrivalPoint;
 use App\Services\FtpLoadingService;
+use App\Services\SlugService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
@@ -70,6 +71,7 @@ class NewPointsController extends Controller
             $dispatchPoint = DispatchPoint::create([
                 'id' => $point->id,
                 'name' => $point->name,
+                'slug' => SlugService::create($point->name),
                 'region' => $point->region,
                 'details' => $point->details,
                 'address' => $point->address,
