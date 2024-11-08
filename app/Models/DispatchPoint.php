@@ -12,6 +12,7 @@ class DispatchPoint extends Model
     protected $fillable = [
         'id',
         'name',
+        'slug',
         'region',
         'details',
         'address',

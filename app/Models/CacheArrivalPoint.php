@@ -14,6 +14,7 @@ class CacheArrivalPoint extends Model
         'arrival_point_id',
         'id',
         'name',
+        'slug',
         'region',
         'details',
         'address',
