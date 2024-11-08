@@ -521,7 +521,8 @@ export default {
                 // console.log('response')
                 console.log(response)
                 this.racesInfo = response.data.racesInfo
-                this.races = this.racesInfo.races
+                this.races = Object.values(this.racesInfo.races)
+                console.log(this.races)
             })
             .catch(error => {
                 console.log(error)

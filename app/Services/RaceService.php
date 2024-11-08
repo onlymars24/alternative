@@ -67,8 +67,9 @@ class RaceService
                         foreach($tempRaces as $race){
                             $race->dispatch_point_id = $dispatchPoint->id;
                             $race->arrival_point_id = $arrivalPoint->arrival_point_id;
+                            $races[$race->uid] = $race;
                         }
-                        $races = array_merge($tempRaces, $races);
+                        // $races = array_merge($tempRaces, $races);
                     }
                     else{
                         $isServerError = true;
