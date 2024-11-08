@@ -81,7 +81,8 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  
+  $arrivalPoints = CacheArrivalPoint::with('dispatchPoint')->where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+  dd($arrivalPoints);
   // $stations = Station::where([[['created_at', '>', '2024-10-08 22:36:55']]]);
   // foreach($stations as $station){
   //   if(!$station->kladrStationPage){

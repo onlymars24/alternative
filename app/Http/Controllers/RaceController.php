@@ -60,7 +60,7 @@ class RaceController extends Controller
         for($i = 1; $i <= 7; $i++){
             $datetime = new DateTime($request->date);
             $datetime->modify('+'.$i.' day');
-            $date = $datetime->format('Y-m-d');    
+            $date = $datetime->format('Y-m-d');
 
 
             $races = RaceService::all($request, $date);
