@@ -129,15 +129,43 @@ export default{
             return
         }
         const station = this.stationPage.station
-        if(!station.longitude || !station.latitude){
+        let coordinate
+        if(station.latitude && station.longitude){
+            coordinate =  [station.latitude, station.longitude]
+        }
+        else if(station.address){
+            let address
+            if(station.address.includes(station.kladr.name)){
+                address = station.address
+            }
+            else{
+                address = station.kladr.name+' '+station.address
+            }
+            console.log('address')
+            console.log(address)
+            
+            await ymaps.geocode(address).then(function (res) {
+                if (res.geoObjects.getLength()) {
+                    // Если геокодирование прошло успешно, получаем координаты
+                    coordinate = res.geoObjects.get(0).geometry.getCoordinates();
+                }
+            });
+            console.log(coordinate) 
+        }
+        else{
             return
         }
+
+
+
+        
+
                     // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
             // ymaps3 = window.ymaps3;
         console.log('есть')
         ymaps.ready(function () {
             const map = new ymaps.Map('YMapsID', {
-                center: [parseFloat(station.latitude), parseFloat(station.longitude)],
+                center: [parseFloat(coordinate[0]), parseFloat(coordinate[1])],
                 controls: ['zoomControl'],
                 zoom: 17,
                 type: 'yandex#map',
@@ -148,7 +176,7 @@ export default{
             var myPlacemark1 = new ymaps.GeoObject({
                 geometry: {
                     type: "Point",
-                    coordinates: [parseFloat(station.latitude), parseFloat(station.longitude)]
+                    coordinates: [parseFloat(coordinate[0]), parseFloat(coordinate[1])]
                 }
             });
             map.geoObjects.add(myPlacemark1);

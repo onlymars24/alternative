@@ -155,14 +155,41 @@ export default{
             router.push({ name: 'Main'})
             return
         }
-        const coordinates = []
-
-        this.stationPages.forEach(page => {
+        // let coordinates = [[55.0411, 83.0275], [55.03573, 82.896184]]
+        let coordinates = []
+        this.stationPages.forEach(async (page) => {
             const station = page.station
+            console.log('page.hidden')
+            console.log(page.hidden)
             if(station.latitude && station.longitude && !page.hidden){
                 coordinates.push([parseFloat(station.latitude), parseFloat(station.longitude)])
             }
+            else if(station.address && !page.hidden){
+                let address
+                if(station.address.includes(station.kladr.name)){
+                    address = station.address
+                }
+                else{
+                    address = station.kladr.name+' '+station.address
+                }
+                console.log('address')
+                console.log(address)
+                let coordinate
+                await ymaps.geocode(address).then(function (res) {
+                    if (res.geoObjects.getLength()) {
+                        // Если геокодирование прошло успешно, получаем координаты
+                        coordinate = res.geoObjects.get(0).geometry.getCoordinates();
+                        console.log('coordinate')
+                        console.log(coordinate)
+                        coordinates.push([parseFloat(coordinate[0]), parseFloat(coordinate[1])])
+                    }
+                });
+            }
         })
+        console.log('coordinates')
+        console.log(coordinates)
+        // console.log('coordinates1')
+        // console.log(coordinates1)
         if(coordinates.length == 0){
             return
         }
@@ -182,7 +209,7 @@ export default{
                         coordinates: coordinate
                     }
                 });      
-                map.geoObjects.add(myPlacemark1);          
+                map.geoObjects.add(myPlacemark1);
             })
 
             
@@ -194,7 +221,12 @@ export default{
             // });
             // map.geoObjects.add(myPlacemark2);
             map.behaviors.disable('scrollZoom'); 
-            map.setBounds(coordinates);
+            console.log('coordinates2')
+            console.log(coordinates)
+            if(coordinates.length > 1){
+                map.setBounds(coordinates);
+            }
+            
         });
         let YMapsID__title = document.querySelector('#YMapsID__title');
         let YMapsID = document.querySelector('#YMapsID');

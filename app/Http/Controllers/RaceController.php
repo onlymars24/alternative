@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kladr;
 use Nette\Utils\DateTime;
+use App\Mail\ErrorApiMail;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
 use App\Services\MailService;
@@ -11,6 +12,7 @@ use App\Services\RaceService;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class RaceController extends Controller
 {
@@ -39,6 +41,21 @@ class RaceController extends Controller
                     ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid)->object();
                     if(!isset($raceSummary->race->uid)){
                         MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid, $raceSummary);
+                    }
+                    elseif(isset($raceSummary->depot)){
+                        $dispatchPoint = DispatchPoint::find($raceSummary->race->dispatchPointId);
+                        if($dispatchPoint && $dispatchPoint->station){
+                            $station = $dispatchPoint->station;
+                            $depot = $raceSummary->depot;
+                            if(!$station->latitude && !$station->longitude && !$station->address){
+                                $station->latitude = $depot->latitude;
+                                $station->longitude = $depot->longitude;
+                                $station->address = $depot->address;
+                                $station->save();
+                                Mail::to(env('ERROR_MAIL_MARSEL'))->send(new ErrorApiMail('Новое местоположение для '.$station->name, $station->toArray()));
+                            }
+                        }
+
                     }
                     // return response(['errorMessage' => 'Ошибка при запросе к серверу автовокзала Томск КДП. Места заняты. Тип места: Пассажирские, номер места: 25.'], 500);
                     return json_encode($raceSummary);
