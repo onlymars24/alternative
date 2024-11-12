@@ -118,6 +118,7 @@ class RaceService
                 $dispatchPoint = DispatchPoint::create([
                     'id' => $race->dispatchPointId,
                     'name' => $race->dispatchStationName,
+                    'slug' => SlugService::create($race->dispatchStationName),
                     'region' => $region,
                     'okato' => 1,
                     'place' => 1,
