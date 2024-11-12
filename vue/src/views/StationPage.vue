@@ -169,9 +169,6 @@ export default{
                 controls: ['zoomControl'],
                 zoom: 17,
                 type: 'yandex#map',
-                // Карта будет создана без
-                // элементов управления.
-                // controls: []
             });
             var myPlacemark1 = new ymaps.GeoObject({
                 geometry: {
@@ -186,23 +183,14 @@ export default{
             console.log(geocoder)
             geocoder.then(function (res) {
                 if (res.geoObjects.getLength()) {
-                    // Получаем первый найденный объект
                     var firstGeoObject = res.geoObjects.get(0);
                     console.log(firstGeoObject.geometry._coordinates); // Координаты объекта
-                    // myMap.geoObjects.add(firstGeoObject); // Добавляем объект на карту
                 } else {
                     alert('Не удалось найти адрес');
                 }
             }, function (err) {
                 alert('Ошибка геокодирования: ' + err.message);
             });
-            // var myPlacemark2 = new ymaps.GeoObject({
-            //     geometry: {
-            //         type: "Point",
-            //         coordinates: [56.46239283218983, 84.99424147798115]
-            //     }
-            // });
-            // map.geoObjects.add(myPlacemark2);
             map.behaviors.disable('scrollZoom'); 
             
             // map.setBounds([[56.461012536889534, 84.98992816566377], [56.46239283218983, 84.99424147798115]]);

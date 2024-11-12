@@ -155,7 +155,13 @@ export default{
             router.push({ name: 'Main'})
             return
         }
-        // let coordinates = [[55.0411, 83.0275], [55.03573, 82.896184]]
+        // let coordinates = [
+        //     // [55.0411, 83.0275],
+        //     // [55.03573, 82.896184]
+        //     [55.008149, 82.935881], 
+        //     [55.041111, 83.02737],
+        //     [54.971596, 82.872504]
+        // ]
         let coordinates = []
         this.stationPages.forEach(async (page) => {
             const station = page.station
@@ -208,7 +214,7 @@ export default{
                         type: "Point",
                         coordinates: coordinate
                     }
-                });      
+                });
                 map.geoObjects.add(myPlacemark1);
             })
 

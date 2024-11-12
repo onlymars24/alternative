@@ -19,11 +19,11 @@ class KladrController extends Controller
     }
 
     public function addDispatch(Request $request){
-        if(!Auth::user()->admin){
-            return response([
-                'errorMessage' => 'Ошибка доступа!'
-            ], 401);
-        }
+        // if(!Auth::user()->admin){
+        //     return response([
+        //         'errorMessage' => 'Ошибка доступа!'
+        //     ], 401);
+        // }
         Log::info($request->dispatchPointId);
         $dispatchPoint = DispatchPoint::find($request->dispatchPointId);
         $dispatchPoint->kladr_id = $request->kladrId;
@@ -35,11 +35,11 @@ class KladrController extends Controller
     }
 
     public function addArrival(Request $request){
-        if(!Auth::user()->admin){
-            return response([
-                'errorMessage' => 'Ошибка доступа!'
-            ], 401);
-        }
+        // if(!Auth::user()->admin){
+        //     return response([
+        //         'errorMessage' => 'Ошибка доступа!'
+        //     ], 401);
+        // }
         // return response([
         //     'arrivalPoint' => $request->all()
         // ]);

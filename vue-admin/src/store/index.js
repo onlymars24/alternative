@@ -9,6 +9,7 @@ export default createStore({
     member: null
   },
   getters: {
+    
   },
   mutations: {
     windowHeader(state, e) {
