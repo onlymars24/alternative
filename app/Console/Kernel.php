@@ -200,7 +200,8 @@ class Kernel extends ConsoleKernel
                         'kladr_id' => $dispatchPoint->kladr_id
                     ]);
                 }
-            
+                $dispatchPoint->station_id = $station->id;
+                $dispatchPoint->save();
                 $kladrPage = $kladr->kladrStationPage;
                 
                 if(!$kladrPage){
