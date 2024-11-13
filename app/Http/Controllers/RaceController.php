@@ -62,7 +62,7 @@ class RaceController extends Controller
                                     $station->save();
                                 }
                                 elseif($depot->address){
-                                    $geoCode = Http::get('https://geocode-maps.yandex.ru/1.x/?apikey=e40ec27a-8117-4ad6-9b72-649510a74f02&geocode='.($depot->address).'&format=json')->object();
+                                    $geoCode = Http::get('https://geocode-maps.yandex.ru/1.x/?apikey=e40ec27a-8117-4ad6-9b72-649510a74f02&geocode='.($station->address).'&format=json')->object();
                                     if(isset($geoCode->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos)){
                                         $pos = $geoCode->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos;
                                         $coordinates = explode(' ', $pos);
