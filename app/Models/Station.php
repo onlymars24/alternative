@@ -16,7 +16,8 @@ class Station extends Model
         'longitude',
         'latitude',
         'contacts',
-        'kladr_id'
+        'kladr_id',
+        'depotId'
     ];
 
     public function kladr()

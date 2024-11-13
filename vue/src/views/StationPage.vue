@@ -133,25 +133,6 @@ export default{
         if(station.latitude && station.longitude){
             coordinate =  [station.latitude, station.longitude]
         }
-        else if(station.address){
-            let address
-            if(station.address.includes(station.kladr.name)){
-                address = station.address
-            }
-            else{
-                address = station.kladr.name+' '+station.address
-            }
-            console.log('address')
-            console.log(address)
-            
-            await ymaps.geocode(address).then(function (res) {
-                if (res.geoObjects.getLength()) {
-                    // Если геокодирование прошло успешно, получаем координаты
-                    coordinate = res.geoObjects.get(0).geometry.getCoordinates();
-                }
-            });
-            console.log(coordinate) 
-        }
         else{
             return
         }
@@ -177,20 +158,6 @@ export default{
                 }
             });
             map.geoObjects.add(myPlacemark1);
-
-            let geocoder = ymaps.geocode('пр-т Кирова 68 (автовокзал)');
-            console.log('geocoder')
-            console.log(geocoder)
-            geocoder.then(function (res) {
-                if (res.geoObjects.getLength()) {
-                    var firstGeoObject = res.geoObjects.get(0);
-                    console.log(firstGeoObject.geometry._coordinates); // Координаты объекта
-                } else {
-                    alert('Не удалось найти адрес');
-                }
-            }, function (err) {
-                alert('Ошибка геокодирования: ' + err.message);
-            });
             map.behaviors.disable('scrollZoom'); 
             
             // map.setBounds([[56.461012536889534, 84.98992816566377], [56.46239283218983, 84.99424147798115]]);

@@ -47,15 +47,33 @@ class RaceController extends Controller
                         if($dispatchPoint && $dispatchPoint->station){
                             $station = $dispatchPoint->station;
                             $depot = $raceSummary->depot;
-                            if(!$station->latitude && !$station->longitude && !$station->address){
-                                $station->latitude = $depot->latitude;
-                                $station->longitude = $depot->longitude;
-                                $station->address = $depot->address;
-                                $station->save();
+                            if(!$station->depotId){
+                                $station->depotId = $depot->id;
+                                $station->save();    
+                            }
+                            if(!$station->address){
+                                if($depot->address){
+                                    $station->address = stripos($depot->address, $station->kladr->name) ? $depot->address : ($station->kladr->name.', '.$depot->address);
+                                    $station->save(); 
+                                }
+                                if($depot->latitude && $depot->longitude && $depot->address){
+                                    $station->latitude = $depot->latitude;
+                                    $station->longitude = $depot->longitude;
+                                    $station->save();
+                                }
+                                elseif($depot->address){
+                                    $geoCode = Http::get('https://geocode-maps.yandex.ru/1.x/?apikey=e40ec27a-8117-4ad6-9b72-649510a74f02&geocode='.($depot->address).'&format=json')->object();
+                                    if(isset($geoCode->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos)){
+                                        $pos = $geoCode->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos;
+                                        $coordinates = explode(' ', $pos);
+                                        $station->latitude = $coordinates[1];
+                                        $station->longitude = $coordinates[0];
+                                        $station->save();                                            
+                                    }
+                                }
                                 Mail::to(env('ERROR_MAIL_MARSEL'))->send(new ErrorApiMail('Новое местоположение для '.$station->name, $station->toArray()));
                             }
                         }
-
                     }
                     // return response(['errorMessage' => 'Ошибка при запросе к серверу автовокзала Томск КДП. Места заняты. Тип места: Пассажирские, номер места: 25.'], 500);
                     return json_encode($raceSummary);

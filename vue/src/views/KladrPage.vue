@@ -170,27 +170,6 @@ export default{
             if(station.latitude && station.longitude && !page.hidden){
                 coordinates.push([parseFloat(station.latitude), parseFloat(station.longitude)])
             }
-            else if(station.address && !page.hidden){
-                let address
-                if(station.address.includes(station.kladr.name)){
-                    address = station.address
-                }
-                else{
-                    address = station.kladr.name+' '+station.address
-                }
-                console.log('address')
-                console.log(address)
-                let coordinate
-                await ymaps.geocode(address).then(function (res) {
-                    if (res.geoObjects.getLength()) {
-                        // Если геокодирование прошло успешно, получаем координаты
-                        coordinate = res.geoObjects.get(0).geometry.getCoordinates();
-                        console.log('coordinate')
-                        console.log(coordinate)
-                        coordinates.push([parseFloat(coordinate[0]), parseFloat(coordinate[1])])
-                    }
-                });
-            }
         })
         console.log('coordinates')
         console.log(coordinates)
@@ -227,8 +206,6 @@ export default{
             // });
             // map.geoObjects.add(myPlacemark2);
             map.behaviors.disable('scrollZoom'); 
-            console.log('coordinates2')
-            console.log(coordinates)
             if(coordinates.length > 1){
                 map.setBounds(coordinates);
             }

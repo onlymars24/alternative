@@ -81,7 +81,33 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  dd('');
+  // $station = Station::find(10);
+  // dd($station->address, $station->kladr->name, stripos($station->address, $station->kladr->name));
+
+  $stations = Station::where([['address', '<>', null]])->get();
+  // dd($stations);
+  foreach($stations as $station){
+    if(stripos($station->address, $station->kladr->name) === false){
+      $station->address = $station->kladr->name.', '.$station->address;
+      $station->save();
+    }
+    if(!$station->latitude || !$station->longitude){
+      $geoCode = Http::get('https://geocode-maps.yandex.ru/1.x/?apikey=e40ec27a-8117-4ad6-9b72-649510a74f02&geocode='.($station->address).'&format=json')->object();
+      if(isset($geoCode->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos)){
+          $pos = $geoCode->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos;
+          $coordinates = explode(' ', $pos);
+          $station->latitude = $coordinates[1];
+          $station->longitude = $coordinates[0];
+          $station->save();
+      }
+    }
+  }
+  dd($stations);
+  dd(stripos('фываыновфывафыва', 'ноф'));
+  $geoCode = Http::get('https://geocode-maps.yandex.ru/1.x/?apikey=e40ec27a-8117-4ad6-9b72-649510a74f02&geocode=Новосибирск, Гусинобродское шоссе, 37/2&format=json')->object();
+  $pos = $geoCode->response->GeoObjectCollection->featureMember[0]->GeoObject->Point->pos;
+  $coordinates = explode(' ', $pos);
+  dd($coordinates);
   $arrivalPoints = CacheArrivalPoint::with('dispatchPoint')->where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
   
   $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
