@@ -162,7 +162,11 @@ export default{
         //     [55.041111, 83.02737],
         //     [54.971596, 82.872504]
         // ]
-        let coordinates = []
+        let coordinates =  [] 
+        let bounds = []
+        // coordinates.forEach(coordinate => {
+
+        // })
         this.stationPages.forEach(async (page) => {
             const station = page.station
             console.log('page.hidden')
@@ -171,6 +175,7 @@ export default{
                 coordinates.push([parseFloat(station.latitude), parseFloat(station.longitude)])
             }
         })
+        
         console.log('coordinates')
         console.log(coordinates)
         // console.log('coordinates1')
@@ -195,21 +200,25 @@ export default{
                     }
                 });
                 map.geoObjects.add(myPlacemark1);
-            })
+                bounds.push(myPlacemark1.geometry.getBounds());
 
-            
-            // var myPlacemark2 = new ymaps.GeoObject({
-            //     geometry: {
-            //         type: "Point",
-            //         coordinates: [56.46239283218983, 84.99424147798115]
-            //     }
-            // });
-            // map.geoObjects.add(myPlacemark2);
+            })
             map.behaviors.disable('scrollZoom'); 
             if(coordinates.length > 1){
-                map.setBounds(coordinates);
+                var mapBounds = bounds.reduce(function (result, currentBounds) {
+                    result[0][0] = Math.min(result[0][0], currentBounds[0][0]);
+                    result[0][1] = Math.min(result[0][1], currentBounds[0][1]);
+                    result[1][0] = Math.max(result[1][0], currentBounds[1][0]);
+                    result[1][1] = Math.max(result[1][1], currentBounds[1][1]);
+                    return result;
+                }, [[180, 90], [-180, -90]]); // Начальные значения (полные границы карты)
+
+                // Устанавливаем границы с небольшой поправкой, чтобы не растягивалась карта слишком сильно
+                map.setBounds(mapBounds, {
+                    checkZoomRange: true, // Проверка диапазона масштаба
+                    zoomMargin: 50 // Отступ для предотвращения слишком сильного увеличения масштаба
+                });
             }
-            
         });
         let YMapsID__title = document.querySelector('#YMapsID__title');
         let YMapsID = document.querySelector('#YMapsID');
