@@ -81,7 +81,15 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
-  dd('');
+  $result = [];
+  $dispatchData = PointService::dispatchKandE();
+  foreach($dispatchData as $dispatchItem){
+    $arrivalData = PointService::kAndE($dispatchItem['id']);
+    foreach($arrivalData as $arrivalItem){
+      $result[] = '/автобусы/'.$dispatchItem['name'].'/'.$arrivalItem['name'];
+    }
+  }
+  dd($result);
   // $station = Station::find(10);
   // dd($station->address, $station->kladr->name, stripos($station->address, $station->kladr->name));
 
