@@ -108,16 +108,16 @@ const routes = [
     name: 'Contacts',
     component: () => import('../views/Contacts.vue')
   },
-  {
-    path: '/'+encodeURI('новости'),
-    name: 'News',
-    component: () => import('../views/News.vue')
-  },  
-  {
-    path: '/'+encodeURI('новости')+'/:id',
-    name: 'New',
-    component: () => import('../views/New.vue')
-  },
+  // {
+  //   path: '/'+encodeURI('новости'),
+  //   name: 'News',
+  //   component: () => import('../views/News.vue')
+  // },  
+  // {
+  //   path: '/'+encodeURI('новости')+'/:id',
+  //   name: 'New',
+  //   component: () => import('../views/New.vue')
+  // },
 
   // {
   //   path: '/fj239f3j984jsdiaisja',

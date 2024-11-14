@@ -46,6 +46,7 @@ use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\RacesCacheController;
 use App\Http\Controllers\Api\SendSmsController;
 use App\Http\Controllers\CustomKladrController;
+use App\Http\Controllers\PageSitemapController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\PopularPointsController;
@@ -179,6 +180,8 @@ Route::middleware('auth:sanctum')->group(function(){
     
     Route::post('/member/logout', [MemberAuthController::class, 'logout']);
 });
+
+Route::get('/sitemap/page/check', [PageSitemapController::class, 'checkUrl']);
 
 Route::post('/member/send/code', [MemberAuthController::class, 'sendCode'])->middleware('throttle:2,1');
 Route::post('/member/confirm/code', [MemberAuthController::class, 'confirmCode']);

@@ -66,6 +66,7 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
+use App\Models\SitemapPage;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,13 +82,51 @@ use App\Http\Controllers\UsersExportController;
 
 
 Route::get('/spread', function (Request $request) {
+  DB::table('sitemap_pages')->delete();
+  // dd('');
   $result = [];
+
+  $pages = KladrStationPage::all();
+  foreach($pages as $page){
+    $result[] = env('FRONTEND_URL').'/'.($page->kladr_id ? 'расписание' : 'автовокзал').'/'.$page->url_region_code.'/'.$page->url_settlement_name;
+  }
+  // dd($res);
+  // $result = [];
   $dispatchData = PointService::dispatchKandE();
+  // dd($dispatchData);
   foreach($dispatchData as $dispatchItem){
-    $arrivalData = PointService::kAndE($dispatchItem['id']);
-    foreach($arrivalData as $arrivalItem){
-      $result[] = '/автобусы/'.$dispatchItem['name'].'/'.$arrivalItem['name'];
+    $arrivalData = null;
+    if(array_key_exists('details', $dispatchItem)){
+      $arrivalData = PointService::kAndE($dispatchItem['id']);
+      foreach($arrivalData as $arrivalItem){
+        $result[env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug']] = env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug'];
+      }
     }
+    else{
+      // dd(Kladr::find($dispatchItem['id']));
+      $kladr = Kladr::find($dispatchItem['id']);
+      // if(!$kladr){
+      //   dd($kladr, $dispatchItem, $dispatchItem['id']);
+      // }
+      $dispatchPoints = $kladr->dispatchPoints;
+      
+      foreach($dispatchPoints as $dispatchPoint){
+        $arrivalData = PointService::kAndE($dispatchPoint->id);
+        foreach($arrivalData as $arrivalItem){
+          $result[env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug']] = env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug'];
+        }
+      }
+    }
+    
+    // foreach($arrivalData as $arrivalItem){
+    //   
+    // }
+  }
+  foreach($result as $item){
+    $sitemapPage = SitemapPage::create([
+      'url' => $item,
+      'changefreq' => stripos($item, 'автобус') === false ? 'weekly' : 'daily'
+    ]);
   }
   dd($result);
   // $station = Station::find(10);
@@ -95,7 +134,7 @@ Route::get('/spread', function (Request $request) {
 
   $stations = Station::where([['address', '<>', null]])->get();
   // dd($stations);
-  foreach($stations as $station){
+  foreach($stations as $station){ 
     if(stripos($station->address, $station->kladr->name) === false){
       $station->address = $station->kladr->name.', '.$station->address;
       $station->save();
