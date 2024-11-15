@@ -124,7 +124,7 @@ class RaceService
                     'place' => 1,
                     'kladr_id' => $kladrDispatch->id
                 ]);
-                PointService::addNewDispatchPoint($dispatchPoint);
+                PointService::addNewArrivalPoints($dispatchPoint);
             }
         }
 

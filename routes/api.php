@@ -1,17 +1,23 @@
 <?php
 
 use App\Models\Station;
+use App\Models\CacheRace;
 use FontLib\Table\Type\post;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
 use App\Services\SlugService;
 use App\Services\KladrService;
+use App\Services\PointService;
 use App\Models\KladrStationPage;
+// use App\Http\Controllers\Api\RaceController;
 use App\Services\SitemapService;
 use App\Models\CacheArrivalPoint;
-// use App\Http\Controllers\Api\RaceController;
+use App\Services\FtpLoadingService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SmsController;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RaceController;
 use App\Http\Controllers\RoleController;
@@ -68,6 +74,11 @@ use App\Http\Controllers\Api\DispatchPointsController;
 |
 */
 
+Route::get('/test/schedule', function (Request $request) {
+            
+});
+
+Route::get('/new/points', [NewPointsController::class, 'get']);
 Route::middleware('auth:sanctum')->group(function(){
 
     
@@ -151,7 +162,7 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/bus/route/delete', [BusRouteController::class, 'delete']);
         Route::post('/popular/points/edit', [PopularPointsController::class, 'edit']);
 
-        Route::get('/new/points', [NewPointsController::class, 'get']);
+        
         Route::post('/new/points', [NewPointsController::class, 'add']);
 
         Route::get('/bonuses/transactions', [BonusesController::class, 'transactions']);

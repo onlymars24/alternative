@@ -6,6 +6,7 @@ use App\Models\Kladr;
 use App\Models\Order;
 use App\Enums\FermaEnum;
 use App\Models\DispatchPoint;
+use App\Services\MailService;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
@@ -33,6 +34,7 @@ class PointService
         }
         return $result;
     }
+
     public static function kAndE($pointId){
         $kladrs = Kladr::has('arrivalPoints')->whereHas('arrivalPoints', function(Builder $query) use ($pointId){
             $query->where([['dispatch_point_id', '=', $pointId]]);
@@ -56,8 +58,7 @@ class PointService
         return $result;
     }
 
-    public static function addNewDispatchPoint($dispatchPoint){
-        // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+    public static function addNewArrivalPoints($dispatchPoint){
         $arrivalPointsRemoted = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
@@ -75,20 +76,51 @@ class PointService
                 'place' => $arrivalPointRemoted->place ? $arrivalPointRemoted->place : 1,
                 'dispatch_point_id' => $dispatchPoint->id,
             ]);
-            $arrivalPoint->save();
-            
-            // $newLoc = env('FRONTEND_URL').'/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
-            // $newNode = $xml->addChild('url');
-            // $newNode->addChild('loc', $newLoc);
-            // $newNode->addChild('lastmod', date('Y-m-d'));
-            // $newNode->addChild('changefreq', 'daily');
-            // $newNode->addChild('priority', '1.0');     
-            
-            
-            // File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
-            // FtpLoadingService::put();
-            
-            // $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);      
+            $arrivalPoint->save();   
         }
+    }
+
+    public static function checkNewPoints(){
+        // ini_set('max_execution_time', 600);
+        $regions = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/regions/643')->object();
+        $points = [];
+        foreach($regions as $region){
+            $pointsTemp = Http::withHeaders([
+                'Authorization' => env('AVTO_SERVICE_KEY'),
+            ])->get(env('AVTO_SERVICE_URL').'/dispatch_points/'.$region->id)->object();
+            if($pointsTemp){
+                foreach($pointsTemp as $point){
+                    if(!DispatchPoint::where('name', $point->name)->first()){
+                        $points[] = $point;
+                    }
+                }
+            }
+        }
+        return $points;
+    }
+
+    public static function addNewPoints($newPoints){
+        foreach($newPoints as $point){
+            $point = (object)$point;
+            if(DispatchPoint::where('name', $point->name)->first()){
+                continue;
+            }
+            $dispatchPoint = DispatchPoint::create([
+                'id' => $point->id,
+                'name' => $point->name,
+                'slug' => SlugService::create($point->name),
+                'region' => $point->region,
+                'details' => $point->details,
+                'address' => $point->address,
+                'latitude' => $point->latitude,
+                'longitude' => $point->longitude,
+                'okato' => $point->okato ? $point->okato : '1',
+                'place' => $point->place ? $point->place : 1
+            ]);
+            self::addNewArrivalPoints($dispatchPoint);
+        }
+        MailService::sendDump('Новые точки от e-traffic', $newPoints);
     }
 }

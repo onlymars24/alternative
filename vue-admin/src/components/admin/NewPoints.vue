@@ -6,8 +6,8 @@
       </div>
     </template>
     <div>
-        <!-- <el-button disabled @click="opened = true; getNewPoints()" type="primary">Проверить</el-button> -->
-        <el-button type="danger" disabled>На доработке</el-button>
+        <el-button @click="opened = true; getNewPoints()" type="primary">Проверить</el-button>
+        <!-- <el-button type="danger" disabled>На доработке</el-button> -->
     </div>
   </el-card>
   <el-dialog v-model="opened"  width="550">
@@ -36,7 +36,8 @@
                 <el-table-column label="Регион" prop="region" />
                 <el-table-column label="Детали" prop="details" />
               </el-table>
-              <el-button @click="addNewPoints()" type="primary">Добавить</el-button>            
+              <el-button @click="addNewPoints()" type="primary">Добавить</el-button>   
+              <!-- <el-button type="danger" disabled>Добавление на доработке</el-button>          -->
             </div>
             <div v-else>
               <h4>Новых точек в e-traffic нет</h4>

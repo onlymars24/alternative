@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ErrorApiMail extends Mailable
+class DumpMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,13 +19,16 @@ class ErrorApiMail extends Mailable
      * @return void
      */
     
+    
     private $info;
     private $body;
-
-    public function __construct($info, $body)
+    public $subject;
+    
+    public function __construct($info, $body, $subject)
     {
         $this->info = $info;
         $this->body = $body;
+        $this->subject = $subject;
     }
 
     /**
@@ -36,7 +39,7 @@ class ErrorApiMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Error Api Mail',
+            subject: $this->subject,
         );
     }
 

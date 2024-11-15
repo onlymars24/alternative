@@ -61,6 +61,7 @@ export default{
 
     },
     async mounted() {
+        // console.log(window.location.href)
         // ymaps3.import('@yandex/ymaps3-vuefy')
         // await ymaps3.ready;
 

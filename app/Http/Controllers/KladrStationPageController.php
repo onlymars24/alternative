@@ -137,9 +137,9 @@ class KladrStationPageController extends Controller
 
 
         $locType = $page->station_id ? 'автовокзал' : 'расписание';
-        SitemapService::delete(
-            env('FRONTEND_URL').'/'.$locType.'/'.$page->url_region_code.'/'.$page->url_settlement_name
-        );
+        // SitemapService::delete(
+        //     env('FRONTEND_URL').'/'.$locType.'/'.$page->url_region_code.'/'.$page->url_settlement_name
+        // );
 
         $page->delete();
         // $xml = simplexml_load_file(env('XML_FILE_NAME'));
@@ -163,9 +163,9 @@ class KladrStationPageController extends Controller
 
         // $busStation->title = $request->title;
         $locType = $page->station_id ? 'автовокзал' : 'расписание';
-        SitemapService::edit(
-            env('FRONTEND_URL').'/'.$locType.'/'.$page->url_region_code.'/'.$page->url_settlement_name
-        );
+        // SitemapService::edit(
+        //     env('FRONTEND_URL').'/'.$locType.'/'.$page->url_region_code.'/'.$page->url_settlement_name
+        // );
         $page->name = $request->name;
         $page->description = $request->description;
         $page->hidden = $request->booleanHidden;

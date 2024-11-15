@@ -1,10 +1,11 @@
 <template>
-    
+    <div></div>
     <div style="height: 50vh; display: flex; justify-content: center; align-items: center;">
         <div class="container-center">
             <h1>Запрашиваемая страница не найдена</h1>
             <p>Возможно вы ошиблись адресом или страница перенесена. Чтобы найти подходящий рейс, воспользуйтесь формой поиска на главной странице.</p>
-            <button @click="toMain" class="but-go">Перейти на главную</button>
+            <div style="margin-top: 40px;"><a href="/" class="but-go" style="padding: 20px;">Перейти на главную</a></div>
+            <!-- <button @click="toMain" class="but-go">Перейти на главную</button> -->
             <div class="background"><h2>404</h2> </div>
         </div>
     </div>
@@ -55,6 +56,9 @@ body
 .background h2
 {
     font-size: 400px;
+}
+.but-go:hover{
+    color: white;
 }
 @media (max-width: 740px)
 {

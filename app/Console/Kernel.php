@@ -15,11 +15,12 @@ use App\Models\DispatchPoint;
 use App\Services\MailService;
 use App\Services\SlugService;
 use App\Services\KladrService;
+use App\Services\PointService;
 use App\Models\KladrStationPage;
+use App\Services\SitemapService;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
 use App\Services\FtpLoadingService;
-use App\Services\SitemapService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -161,6 +162,8 @@ class Kernel extends ConsoleKernel
         // })->everyTenMinutes();
 
         $schedule->call(function () {
+
+            // обновление дат
             $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
             $cacheRaces = CacheRace::where([
                 ['date', '<', date('Y-m-d')]
@@ -180,16 +183,32 @@ class Kernel extends ConsoleKernel
             
             $sitemap[0]->sitemap->lastmod = date('c');
             Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', $sitemap->asXML());
-
-            $arrivalPoints = CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+            $newPoints = PointService::checkNewPoints();
+            if(count($newPoints) > 0){
+                PointService::addNewPoints($newPoints);
+                Log::info('Новые точки добавлены!');
+            }
+            $arrivalPoints = CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))], 
+            ['kladr_id', '=', null]])->get();
             foreach($arrivalPoints as $arrivalPoint){
                 $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);
                 $arrivalPoint->save();
             }
+
             // СОЗДАНИЕ НОВЫХ СТРАНИЦ
             $dispatchPoints = DispatchPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get();
+            Log::info('СОЗДАНИЕ НОВЫХ СТРАНИЦ');
+            Log::info(json_encode($dispatchPoints));
             foreach($dispatchPoints as $dispatchPoint){
+                Log::info(json_encode($dispatchPoint));
+                $dispatchPoint->kladr_id = KladrService::connectPointIntoKladr($dispatchPoint);
+                $dispatchPoint->save();
+                $arrivalData = PointService::kAndE($dispatchPoint->id);
+                foreach($arrivalData as $arrivalItem){
+                  $xml = SitemapService::add(env('FRONTEND_URL').'/автобус/'.$dispatchPoint->slug.'/'.$arrivalItem['slug'], 'daily', $xml);
+                }
                 if(!$dispatchPoint->kladr){
+                    Log::info('skip');
                     continue;
                 }
                 $kladr = $dispatchPoint->kladr;
@@ -213,7 +232,7 @@ class Kernel extends ConsoleKernel
                         'hidden' => false,
                         'kladr_id' => $dispatchPoint->kladr_id,
                     ]);
-                    SitemapService::add(env('FRONTEND_URL').'/расписание/'.$kladrPage->url_region_code.'/'.$kladrPage->url_settlement_name, 'weekly');
+                    $xml = SitemapService::add(env('FRONTEND_URL').'/расписание/'.$kladrPage->url_region_code.'/'.$kladrPage->url_settlement_name, 'weekly', $xml);
                 }
                 if(!$station->kladrStationPage){
                     $stationPage = KladrStationPage::create([
@@ -224,9 +243,12 @@ class Kernel extends ConsoleKernel
                         'hidden' => false,
                         'station_id' => $station->id,
                     ]);
-                    SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly');
+                    $xml = SitemapService::add(env('FRONTEND_URL').'/автовокзал/'.$stationPage->url_region_code.'/'.$stationPage->url_settlement_name, 'weekly', $xml);
                 }
             }
+            File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+            FtpLoadingService::put();
+            
         })->daily();
     }
 

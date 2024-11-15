@@ -80,12 +80,9 @@ use App\Models\SitemapPage;
 */
 
 
-
-Route::get('/spread', function (Request $request) {
+Route::get('/sitemap/reload', function (Request $request) {
+  dd('');
   DB::table('sitemap_pages')->delete();
-  // dd('');
-  $result = [];
-
   $pages = KladrStationPage::all();
   foreach($pages as $page){
     $result[] = env('FRONTEND_URL').'/'.($page->kladr_id ? 'расписание' : 'автовокзал').'/'.$page->url_region_code.'/'.$page->url_settlement_name;
@@ -93,7 +90,6 @@ Route::get('/spread', function (Request $request) {
   // dd($res);
   // $result = [];
   $dispatchData = PointService::dispatchKandE();
-  // dd($dispatchData);
   foreach($dispatchData as $dispatchItem){
     $arrivalData = null;
     if(array_key_exists('details', $dispatchItem)){
@@ -122,13 +118,56 @@ Route::get('/spread', function (Request $request) {
     //   
     // }
   }
+  $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
   foreach($result as $item){
-    $sitemapPage = SitemapPage::create([
-      'url' => $item,
-      'changefreq' => stripos($item, 'автобус') === false ? 'weekly' : 'daily'
-    ]);
+    $xml = SitemapService::add($item, stripos($item, 'автобус') === false ? 'weekly' : 'daily', $xml);
   }
-  dd($result);
+  File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+  FtpLoadingService::put();
+  dd($result);  
+});
+
+
+Route::get('/spread', function (Request $request) {
+  dd('');
+  $dispatchPoint = DispatchPoint::find(66690);
+  // dd($dispatchPoint->kladr->id);
+  // MailService::sendDump('Byaj', ['qwe']);
+  // $xml = SitemapService::addOne('http://localhost:5173/расписание/123124/Майами1', 'daily');
+  
+  
+  // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+        // Получаем пространство имен
+
+
+  // dd($url);
+  $sitemapPages = SitemapPage::all();
+  $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+  foreach($sitemapPages as $page){
+    $namespaces = $xml->getNamespaces(true);
+    
+    // Если пространство имен существует, добавляем его в XPath запрос
+    if (isset($namespaces[''])) {
+        // Добавляем пространство имен в XPath запрос
+        $xml->registerXPathNamespace('sm', $namespaces['']);
+        $url = $xml->xpath("//sm:url[sm:loc='$page->url']");
+    } else {
+        // Если пространства имен нет, просто выполняем запрос без него
+        $url = $xml->xpath("//url[loc='$page->url']");
+    }    
+    if(!$url){
+      $xml = SitemapService::add($page->url, $page->changefreq, $xml);
+    }
+  }
+  
+  
+  File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+  FtpLoadingService::put();
+  dd('');
+  // dd('');
+  $result = [];
+
+
   // $station = Station::find(10);
   // dd($station->address, $station->kladr->name, stripos($station->address, $station->kladr->name));
 
