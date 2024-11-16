@@ -145,9 +145,9 @@ Route::get('/spread', function (Request $request) {
   // FtpLoadingService::put();
 
 
-  // $dispatchPoints = DispatchPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get()->ToArray();
-  // MailService::sendDump('Новые точки от e-traffic', 'Hello world!');
-  // dd($dispatchPoints);
+  $dispatchPoints = DispatchPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get()->ToArray();
+  MailService::sendDump('Новые точки от e-traffic', $dispatchPoints);
+  dd($dispatchPoints);
   // // ini_set('max_execution_time', 600);
 
   $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
