@@ -81,6 +81,7 @@ use App\Models\SitemapPage;
 
 
 Route::get('/sitemap/reload', function (Request $request) {
+  ini_set('max_execution_time', 600);
   $xml = simplexml_load_file(public_path('sitemap.local.xml'));
 
   DB::table('sitemap_pages')->delete();
