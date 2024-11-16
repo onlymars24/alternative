@@ -78,7 +78,7 @@ use App\Models\SitemapPage;
 */
 
 Route::get('/sitemap/reload', function (Request $request) {
-
+    dd('');
     ini_set('max_execution_time', 600);
     $xml = simplexml_load_file(public_path('sitemap.local.xml'));
     $sitemapPages = SitemapPage::all();
