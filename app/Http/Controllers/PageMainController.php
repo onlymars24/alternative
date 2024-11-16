@@ -44,8 +44,16 @@ class PageMainController extends Controller
                 // $pagesOnMainSetting[$key] = $region;
             // }
             // ksort($pagesOnMainSetting);
-      
-            $pagesOnMainSetting[$kladrStationPage->kladr->region ? $kladrStationPage->kladr->region : 'Московская обл' ][] = $kladrStationPageArr;
+            if($kladrStationPage->kladr->name == 'Москва'){
+                $pagesOnMainSetting['Московская обл'][] = $kladrStationPageArr;
+            }
+            elseif($kladrStationPage->kladr->name == 'Севастополь'){
+                $pagesOnMainSetting['Крым Респ'][] = $kladrStationPageArr;
+            }
+            else{
+                $pagesOnMainSetting[$kladrStationPage->kladr->region][] = $kladrStationPageArr;
+            }
+            
         }
       
         foreach($pagesOnMainSetting as $key => $region){

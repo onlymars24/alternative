@@ -134,8 +134,19 @@ use Maatwebsite\Excel\Concerns\ToArray;
 
 
 Route::get('/spread', function (Request $request) {
+
+  $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+
+  $xml = SitemapService::add('https://xn--80adplhnbnk0i.xn--p1ai/автовокзал/77/Москва', 'weekly', $xml);
+  $xml = SitemapService::add('https://xn--80adplhnbnk0i.xn--p1ai/расписание/92/Севастополь', 'weekly', $xml);
+  $xml = SitemapService::add('https://xn--80adplhnbnk0i.xn--p1ai/автовокзал/92/Севастополь', 'weekly', $xml);
+  $xml = SitemapService::add('https://xn--80adplhnbnk0i.xn--p1ai/расписание/92/Севастополь', 'weekly', $xml);
+  File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+  FtpLoadingService::put();
+
+
   $dispatchPoints = DispatchPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get()->ToArray();
-  MailService::sendDump('Новые точки от e-traffic', $dispatchPoints);
+  MailService::sendDump('Новые точки от e-traffic', 'Hello world!');
   dd($dispatchPoints);
   // ini_set('max_execution_time', 600);
 
