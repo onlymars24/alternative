@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <p>@dump($info)</p>
-    <div>@dump($body)</div>
+    <p>Инфо</p>
+    <div>Body</div>
 </body>
 </html>
