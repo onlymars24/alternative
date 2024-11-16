@@ -81,8 +81,11 @@ use App\Models\SitemapPage;
 
 
 Route::get('/sitemap/reload', function (Request $request) {
-  dd('');
+  $xml = simplexml_load_file(public_path('sitemap.local.xml'));
+
   DB::table('sitemap_pages')->delete();
+
+
   $pages = KladrStationPage::all();
   foreach($pages as $page){
     $result[] = env('FRONTEND_URL').'/'.($page->kladr_id ? 'расписание' : 'автовокзал').'/'.$page->url_region_code.'/'.$page->url_settlement_name;
@@ -118,18 +121,19 @@ Route::get('/sitemap/reload', function (Request $request) {
     //   
     // }
   }
-  $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+  // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
   foreach($result as $item){
     $xml = SitemapService::add($item, stripos($item, 'автобус') === false ? 'weekly' : 'daily', $xml);
   }
   File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
   FtpLoadingService::put();
-  dd($result);  
+  dd($xml);  
 });
 
 
 Route::get('/spread', function (Request $request) {
   ini_set('max_execution_time', 600);
+
   $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
   foreach($kladrs as $kladr){
     $kladr->slug = SlugService::create($kladr->name);
