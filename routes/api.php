@@ -64,6 +64,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
+use App\Models\SitemapPage;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +78,17 @@ use App\Http\Controllers\Api\DispatchPointsController;
 */
 
 Route::get('/sitemap/reload', function (Request $request) {
+
     ini_set('max_execution_time', 600);
+    $xml = simplexml_load_file(public_path('sitemap.local.xml'));
+    $sitemapPages = SitemapPage::all();
+    foreach($sitemapPages as $item){
+        $xml = SitemapService::add($item, stripos($item, 'автобус') === false ? 'weekly' : 'daily', $xml);
+    }
+    File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+    FtpLoadingService::put();
+    dd('');
+    
     $xml = simplexml_load_file(public_path('sitemap.local.xml'));
   
     DB::table('sitemap_pages')->delete();
