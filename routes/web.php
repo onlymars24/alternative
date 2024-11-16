@@ -67,6 +67,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
 use App\Models\SitemapPage;
+use Maatwebsite\Excel\Concerns\ToArray;
 
 /*
 |--------------------------------------------------------------------------
@@ -133,7 +134,10 @@ use App\Models\SitemapPage;
 
 
 Route::get('/spread', function (Request $request) {
-  ini_set('max_execution_time', 600);
+  $dispatchPoints = DispatchPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))]])->get()->ToArray();
+  MailService::sendDump('Новые точки от e-traffic', $dispatchPoints);
+  dd($dispatchPoints);
+  // ini_set('max_execution_time', 600);
 
   $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
   foreach($kladrs as $kladr){
