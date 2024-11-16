@@ -129,7 +129,13 @@ Route::get('/sitemap/reload', function (Request $request) {
 
 
 Route::get('/spread', function (Request $request) {
-  dd('');
+  ini_set('max_execution_time', 600);
+  $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
+  foreach($kladrs as $kladr){
+    $kladr->slug = SlugService::create($kladr->name);
+    $kladr->save();
+  }
+  dd($kladrs);
   $dispatchPoint = DispatchPoint::find(66690);
   // dd($dispatchPoint->kladr->id);
   // MailService::sendDump('Byaj', ['qwe']);
