@@ -134,19 +134,7 @@ use Maatwebsite\Excel\Concerns\ToArray;
 
 
 Route::get('/spread', function (Request $request) {
-  SitemapService::addOne('https://xn--80adplhnbnk0i.xn--p1ai/автовокзал/77/Москва_(САЛАРЬЕВО__МАВ)', 'weekly');
-          $xml = simplexml_load_file(env('XML_FILE_NAME'));
-        for($i = 0; $i < count($xml->url); $i++){
-            // dd($xml->url[$i]['id']);
-            if((string)$xml->url[$i]->loc == 'https://abcd.xn--80adplhnbnk0i.xn--p1ai/автовокзал/77/Москва_(САЛАРЬЕВО__МАВ)'){
-                unset($xml->url[$i]);
-                File::put(env('XML_FILE_NAME'), $xml->asXML());
-                FtpLoadingService::put();
-                return [
-                    'existing' => true
-                ];
-            }
-        }
+  // MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' || '.$url, ['testArray'])
   // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
 
   // $xml = SitemapService::add('https://xn--80adplhnbnk0i.xn--p1ai/автовокзал/77/Москва', 'weekly', $xml);

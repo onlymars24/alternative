@@ -96,8 +96,6 @@ class RaceController extends Controller
             $datetime = new DateTime($request->date);
             $datetime->modify('+'.$i.' day');
             $date = $datetime->format('Y-m-d');
-
-
             $races = RaceService::all($request, $date);
 
 
@@ -108,7 +106,8 @@ class RaceController extends Controller
             // ])->get(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$date);
             // Log::info($races);
             // $races = json_decode($races);
-            if($races){
+            if(!$races['isServerError'] && count($races['races']) > 0){
+                log::info(json_encode($races));
                 return response([
                     'date' => $date
                 ]);
