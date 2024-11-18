@@ -279,7 +279,8 @@ export default {
             dispatchPoints: [],
             arrivalPoints: [],
             crumbPages: [
-            ]
+            ],
+            userData: ''
         }
     },
     // beforeMount(){
@@ -299,10 +300,13 @@ export default {
             // console.log('нет')
             this.date = dayjs().format('YYYY-MM-DD')
         }
+        if(this.date < dayjs().format('YYYY-MM-DD')){
+            // router.push({ name: 'Races', query: { on: dayjs().format('YYYY-MM-DD')}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
+        }
 
         const promise = axiosClient
         .get('/cache/races?dispatchPointName='+this.dispatchEl.name+'&arrivalPointName='+this.arrivalEl.name+'&date='+this.date)
-        .then(response => {       
+        .then(response => {
             this.cacheRaces = response.data.cacheRaces
             // console.log('this.cacheRaces')
             // console.log(this.cacheRaces)
@@ -514,9 +518,20 @@ export default {
             // date
             // console.log('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
             // +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
+            await axios("https://api.ipify.org?format=json") 
+            .then(response => {
+                console.log(response)
+                console.log(response.data.ip)
+                this.userData = response.data.ip
+                
+            })
+            .catch(error => {
+                console.log( error);
+            });
+            console.log(this.userData)
             const promise2 = axiosClient
             .get('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
-            +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type+'&url='+decodeURIComponent(document.URL))
+            +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type+'&url='+decodeURIComponent(document.URL)+'&userData='+this.userData)
             .then(response => {
                 // console.log('response')
                 console.log(response)

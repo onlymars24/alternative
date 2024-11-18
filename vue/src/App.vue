@@ -31,6 +31,9 @@ export default
   },
   async mounted(){
 
+    console.log('$route')
+    console.log(this.$route)
+
     let token = localStorage.getItem('authToken')
     let user = []
     
@@ -62,7 +65,7 @@ export default
 
 <template>
   
-  <router-view @click.prevent="$store.commit('windowHeader', 0)"></router-view>
+  <router-view @click.prevent="$store.commit('windowHeader', 0)" :key="this.$route.path"></router-view>
 
   <PopupWindow v-if="unfixedUser" :content="10" :unfixedUserData="unfixedUserData" @makeFixed="makeFixed"/>
 </template>
