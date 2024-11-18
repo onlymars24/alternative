@@ -18,6 +18,7 @@ class RaceService
 {
 
     public static function all($request, $date){
+        Log::info($request->url);
         // Log::info($request->dispatchPointId);
         $races = [];
         $dispatchEPoints = [];
@@ -73,7 +74,7 @@ class RaceService
                     }
                     else{
                         $isServerError = true;
-                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' '.$request->url, $tempRaces);
+                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' || '.$request->url, $tempRaces);
                     }
 
 
