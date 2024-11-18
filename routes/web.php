@@ -134,7 +134,7 @@ use Maatwebsite\Excel\Concerns\ToArray;
 
 
 Route::get('/spread', function (Request $request) {
-
+  SitemapService::addOne('https://abcd.xn--80adplhnbnk0i.xn--p1ai/автовокзал/77/Москва_(САЛАРЬЕВО__МАВ)', 'weekly');
   // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
 
   // $xml = SitemapService::add('https://xn--80adplhnbnk0i.xn--p1ai/автовокзал/77/Москва', 'weekly', $xml);

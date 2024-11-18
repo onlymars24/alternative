@@ -102,8 +102,7 @@ class KladrStationPageController extends Controller
 
         $pageArray['url_region_code'] = mb_strcut($kladr->code, 0, 2);
         $page = KladrStationPage::create($pageArray);
-        SitemapService::add(
-            env('FRONTEND_URL').'/'.$newLocType.'/'.$page->url_region_code.'/'.$page->url_settlement_name, 'weekly');
+        SitemapService::addOne(env('FRONTEND_URL').'/'.$newLocType.'/'.$page->url_region_code.'/'.$page->url_settlement_name, 'weekly');
         // $newLoc = env('FRONTEND_URL').'/'.$newLocType.'/'.$busStation->title;
         // $xml = simplexml_load_file(env('XML_FILE_NAME'));
         // for($i = 0; $i < count($xml->url); $i++){
