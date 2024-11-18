@@ -22,10 +22,10 @@
         <el-select style="width: 25%;" v-model="station.kladr_id" filterable :disabled="formType=='edit'">
             <template v-for="el in kladrsConnected" :key="el.id">
                 <el-option
-                    :label="el.name"
+                    :label="el.region+' '+((el.district && !el.region || !el.district) ? '' : ', ')+  (el.region)+((el.district && !el.region || !el.district)? '' : ', ' )+el.district+', '+el.code"
                     :value="el.id">
                     <strong class="big__font-size">{{el.name}}{{el.region || el.district ? ', ' : '' }}</strong>
-                    <span style="font-size: 16px;">{{el.region}}{{(el.district && !el.region) || !el.district? '' : ', ' }}{{el.district}}</span>
+                    <span style="font-size: 16px;">{{el.region}}{{(el.district && !el.region) || !el.district? '' : ', ' }}{{el.district}}, {{el.code}}</span>
                 </el-option>
             </template>
         </el-select>
