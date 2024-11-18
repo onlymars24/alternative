@@ -301,7 +301,7 @@ export default {
             this.date = dayjs().format('YYYY-MM-DD')
         }
         if(this.date < dayjs().format('YYYY-MM-DD')){
-            // router.push({ name: 'Races', query: { on: dayjs().format('YYYY-MM-DD')}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
+            router.push({ name: 'Races', query: { on: dayjs().format('YYYY-MM-DD')}, params: { dispatch_name: this.$route.params['dispatch_name'], arrival_name: this.$route.params['arrival_name'] }, replace: true })
         }
 
         const promise = axiosClient
@@ -518,20 +518,22 @@ export default {
             // date
             // console.log('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
             // +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
-            await axios("https://api.ipify.org?format=json") 
-            .then(response => {
-                console.log(response)
-                console.log(response.data.ip)
-                this.userData = response.data.ip
+            // await axios("https://api.ipify.org?format=json") 
+            // .then(response => {
+            //     console.log(response)
+            //     console.log(response.data.ip)
+            //     this.userData = response.data.ip
                 
-            })
-            .catch(error => {
-                console.log( error);
-            });
-            console.log(this.userData)
+            // })
+            // .catch(error => {
+            //     console.log( error);
+            // });
+            // console.log(this.userData)
             const promise2 = axiosClient
             .get('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
-            +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type+'&url='+decodeURIComponent(document.URL)+'&userData='+this.userData)
+            +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type+'&url='+decodeURIComponent(document.URL)
+            // +'&userData='+this.userData
+        )
             .then(response => {
                 // console.log('response')
                 console.log(response)
