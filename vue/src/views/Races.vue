@@ -516,7 +516,7 @@ export default {
             // +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
             const promise2 = axiosClient
             .get('/races?date='+date+'&dispatchPointId='+dispatch_id+'&arrivalPointId='+arrival_id
-            +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type)
+            +'&dispatchPointType='+dispatch_type+'&arrivalPointType='+arrival_type+'&url='+decodeURIComponent(document.URL))
             .then(response => {
                 // console.log('response')
                 console.log(response)

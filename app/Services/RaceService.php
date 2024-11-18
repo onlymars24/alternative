@@ -73,7 +73,7 @@ class RaceService
                     }
                     else{
                         $isServerError = true;
-                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date, $tempRaces);
+                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' '.$request->url, $tempRaces);
                     }
 
 
