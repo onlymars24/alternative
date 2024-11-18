@@ -23,6 +23,7 @@ class RaceService
             MailService::sendError('Для url: '.$request->url.' выполнился запрос задним числом '.$date.' Ip: '.$request->userData, $date);
             return ['isServerError' => false, 'races' => []];
         }
+        MailService::sendError('Нормальный запрос от url: '.$request->url.' Ip: '.$request->userData, $date);
         // Log::info($request->dispatchPointId);
         $races = [];
         $dispatchEPoints = [];
