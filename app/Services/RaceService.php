@@ -18,7 +18,10 @@ class RaceService
 {
 
     public static function all($request, $date){
-        Log::info($request->url);
+        if($date < date('Y-m-d')){
+            MailService::sendError('Для url: '.$request->url.' выполнился запрос задним числом '.$date, $date);
+            return ['isServerError' => false, 'races' => []];
+        }
         // Log::info($request->dispatchPointId);
         $races = [];
         $dispatchEPoints = [];
