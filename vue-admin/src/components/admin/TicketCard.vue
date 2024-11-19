@@ -40,6 +40,7 @@
         <div class="text item"><strong>Код валюты агента:</strong> {{ ticket.currencyCode }}</div>
         <div class="text item"><strong>Сбор агента:</strong> {{ ticket.dues }}₽</div>
         <div class="text item"><strong>Сборы поставщика(автовокзала):</strong> {{ ticket.supplierDues }}₽</div>
+        <div class="text item"><strong>Место:</strong> {{ ticket.seat }}</div>
 
         <div class="text item"><strong>Конечная цена билета:</strong> {{ ticket.price }}₽</div>
         <div class="text item"><strong>НДС:</strong> {{ ticket.vat }}</div>

@@ -392,6 +392,12 @@ export default
       wrongChildAge: false
     };
   },
+  // beforeRouteEnter(to, from, next) {
+  //   // здесь можно получить необходимые данные
+  //   next(vm => {
+  //     vm.refreshData();
+  //   });
+  // },
   methods: {
     randomString(length){
         let result = '';
@@ -730,7 +736,14 @@ export default
         console.log('wrongChildAge')
         this.formData[indexTicket].errors.birth_date = 'Возраст не соответствует типу билета'
       }
-    }
+    },
+    // handlePageShow(event) {
+    //   if (event.persisted) {
+    //     // Это означает, что страница была загружена из кеша
+    //     window.location.replace(window.location.origin + window.location.pathname); 
+    //   }
+    // },
+
   },
   computed: {
     totalCost(){
@@ -817,7 +830,16 @@ export default
       return JSON.stringify(this.formData)
     }
   },
+  // beforeDestroy() {
+  //   window.removeEventListener('pageshow', this.handlePageShow);
+  // },
   async mounted(){
+    // window.location.replace(window.location.origin + window.location.pathname); 
+    // window.addEventListener('popstate', (event) => {
+    //   console.log('Обновляем данные при возвращении')
+    //   // Обновляем данные при возвращении
+    // });
+    // window.addEventListener('pageshow', this.handlePageShow);
     console.log(document.referrer)
     console.log(JSON.parse(localStorage.getItem('utm_data')))
     this.utm_data = JSON.parse(localStorage.getItem('utm_data'))

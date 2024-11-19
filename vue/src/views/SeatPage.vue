@@ -11,11 +11,13 @@
     </div>
     <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats && !errorMessage" :race="race" />
     <div v-if="!loadingSeats" class="container">
-      <div v-if="errorMessage" style="margin-top: 20px;">        
+      <!-- <div v-if="errorMessage" style="margin-top: 20px;">         -->
+      <div v-if="true" style="margin-top: 20px;">    
         <div class="alert alert-danger" role="alert">
-            <p>{{ errorMessage }}</p>
+            <!-- <p>{{ errorMessage }}</p> -->
+            <p>На сайте ведутся технические работы. Попробуйте позже!</p>
         </div>
-        <p style="font-size: 25px;"><strong>Выберите другой рейс, время или дату.</strong></p>
+        <!-- <p style="font-size: 25px;"><strong>Выберите другой рейс, время или дату.</strong></p> -->
       </div>
       <div v-else class="window-bus">
         {{ $route.params['route_id'] }}
