@@ -3,7 +3,7 @@
     <Header/>
     <el-container v-loading.fullscreen.lock="loading">
         <el-main>
-            <div style="margin: 20px 0;">
+            <!-- <div style="margin: 20px 0;">
                 <div>Выберите точку отправления:</div>   
                 <el-select v-model="dispatchPointId"  @change="changeDispatchPoint">
                     <el-option
@@ -25,7 +25,7 @@
                 :data="arrivalPoints"
                 />
             </div>
-            <el-button type="primary" @click="savePopularPoints" :loading="loading">Сохранить</el-button>
+            <el-button type="primary" @click="savePopularPoints" :loading="loading">Сохранить</el-button> -->
 
             <!-- <PointsMatch/> -->
             <NewPoints/>

@@ -42,7 +42,7 @@ export default
 
   },
   async mounted() {
-
+    return
 
     const promise1 = axiosClient
     .get('/dispatch_points')

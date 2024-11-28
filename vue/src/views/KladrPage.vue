@@ -4,6 +4,7 @@ import HeaderMain from '../components/HeaderMain.vue'
 import MainCrumbs from '../components/MainCrumbs.vue'
 import axiosClient from '../axios';
 import router from '../router'
+import store from '../store'
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -111,23 +112,8 @@ export default{
 
     },
     async mounted() {
-        const promise1 = axiosClient
-        .get('/kladr/station/page?url_settlement_name='+(this.$route.params['settlement_name'])
-        +'&url_region_code='+this.$route.params['region_code']
-        +'&pageType=k'
-        )
-        .then(response => {
-            console.log(response)
-            this.kladrPage = response.data.page
-            // this.content = JSON.parse(this.station.data).content
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        await promise1
-        
-        const promise2 = axiosClient
-        .get('/kladr/station/pages/station/?kladrId='+this.kladrPage.kladr_id)
+        await axiosClient
+        .get('/kladr/station/pages/station/?kladrId='+store.state.kladrPage.kladr_id)
         .then(response => {
             console.log(response)
             this.stationPages = response.data.pages
@@ -135,26 +121,21 @@ export default{
         .catch(error => {
             console.log(error)
         })
-        await promise2
 
 
-        await axiosClient
-        .get('/kladr/arrival/kladrs?kladrId='+this.kladrPage.kladr_id)
-        .then(response => {
-            console.log('/kladr/arrival/kladrs')
-            console.log(response)
-            this.arrivalKladrs = response.data.arrivalKladrs
-            // this.stationPages = response.data.pages
-        })
-        .catch(error => {
-            console.log(error)
-        })
+        // await axiosClient
+        // .get('/kladr/arrival/kladrs?kladrId='+this.kladrPage.kladr_id)
+        // .then(response => {
+        //     console.log('/kladr/arrival/kladrs')
+        //     console.log(response)
+        //     this.arrivalKladrs = response.data.arrivalKladrs
+        //     // this.stationPages = response.data.pages
+        // })
+        // .catch(error => {
+        //     console.log(error)
+        // })
         
         
-        if(!this.kladrPage){
-            router.push({ name: 'Main'})
-            return
-        }
         // let coordinates = [
         //     // [55.0411, 83.0275],
         //     // [55.03573, 82.896184]
@@ -171,7 +152,7 @@ export default{
             const station = page.station
             console.log('page.hidden')
             console.log(page.hidden)
-            if(station.latitude && station.longitude && !page.hidden){
+            if(station.latitude && station.longitude && page.hidden != 1){
                 coordinates.push([parseFloat(station.latitude), parseFloat(station.longitude)])
             }
         })
@@ -222,7 +203,7 @@ export default{
         });
         let YMapsID__title = document.querySelector('#YMapsID__title');
         let YMapsID = document.querySelector('#YMapsID');
-        YMapsID__title.innerHTML = this.kladrPage.name+' на карте'
+        YMapsID__title.innerHTML = store.state.kladrPage.name+' на карте'
         YMapsID.style.height = '300px'
         // this.isMap = true
         // document.title = this.station.name;
@@ -249,65 +230,9 @@ export default{
 </script>
 
 <template>
-    <HeaderMain v-if="kladrPage" :isRaces="false" :page="kladrPage"/>
-    <HeaderMain v-else :isRaces="false"/>
+    <HeaderMain/>
     <div></div>
-    <MainCrumbs v-if="kladrPage" :pages="[{name: kladrPage.name, href: null}]"/>
-
-    <!-- <div class="container">
-        <h3 v-if="kladrPage" style="font-weight: 400; margin: 25px 0; font-size: 20px;">{{kladrPage.name}} направления</h3>
-        <div class="station__races">
-            <template v-for="item in arrivalKladrs">
-                <p v-for="arrivalKladr in item[1]"><a :href="'/автобус/'+item[0].name+'/'+arrivalKladr.name">{{'Автобус '+item[0].name+' — '+arrivalKladr.name}}</a></p>
-            </template>
-        </div>        
-    </div> -->
-<!-- 
-    <pre>
-        {{ kladrPage }}
-    </pre>
-    <pre>
-        {{ arrivalKladrs }}
-    </pre> -->
-    <!-- <div class="container" v-if="kladrPage && isMap">
-        <h2 style="margin: 15px 0;">{{ kladrPage.name }} на карте</h2>
-        <div id="YMapsID" style="max-width:100%; height:300px"></div>
-    </div> -->
-    <!-- <div v-if="kladrPage && kladrPage.name" class="container">
-        <h4 style="margin: 30px 0;">{{ kladrPage.name }} на карте</h4>
-        <div v-html="kladrPage.map"></div>
-    </div> -->
-    <!-- <div class="about" style="margin-top: 50px;">
-        <div class="container">
-                <div class="about__inner" v-if="kladrPage" style="width: 100%; display: block;">
-                    <h2 style="margin-bottom: 20px;">{{ kladrPage.name }}</h2>
-                    <div v-for="stationPage in stationPages" class="card" style="width: 100%; display: block; margin-bottom: 20px;">
-                        <router-link target="_blank" :to="{ name: 'StationPage', params: { region_code: stationPage.url_region_code, settlement_name: stationPage.url_settlement_name } }">
-                        <div class="card-body">
-                            <h3 class="card-title">{{ stationPage.name }}</h3>
-                            <h4 v-if="stationPage.station.address || stationPage.contacts" class="card-title" style="font-size: 19px; font-weight: 400;">
-                                Справочная информация
-                            </h4>
-                            <h5 v-if="stationPage.station.address">
-                                <strong>Адрес {{ stationPage.name }}:</strong>
-                            </h5> 
-                            <p v-if="stationPage.station.address" style="margin-bottom: 13px;" class="card-text">{{ stationPage.station.address }}</p>                            
-                            <h5 v-if="stationPage.contacts">
-                                <strong>Телефоны {{ stationPage.name }}:</strong>
-                            </h5>                            
-                            <div v-if="stationPage.contacts" style="margin-bottom: 13px;" v-html="stationPage.contacts"></div>
-                        </div>
-                        </router-link>
-                    </div>
-
-                    <div v-if="kladrPage.content" v-html="kladrPage.content"></div>
-                </div>
-
-        </div>
-    </div> -->
-    
-    <!-- <hr class="bef__footer"> -->
-    <!-- <Footer/> -->
+    <MainCrumbs :pages="[{name: $store.state.kladrPage.name, href: null}]"/>
 </template>
 
 <style scoped>

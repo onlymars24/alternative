@@ -3,13 +3,14 @@
 use App\Models\Kladr;
 use App\Models\Station;
 use App\Models\CacheRace;
+use App\Models\SitemapPage;
 use FontLib\Table\Type\post;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
 use App\Services\SlugService;
 use App\Services\KladrService;
-use App\Services\PointService;
 // use App\Http\Controllers\Api\RaceController;
+use App\Services\PointService;
 use App\Models\KladrStationPage;
 use App\Services\SitemapService;
 use App\Models\CacheArrivalPoint;
@@ -52,6 +53,7 @@ use App\Http\Controllers\BusStationController;
 use App\Http\Controllers\MemberAuthController;
 use App\Http\Controllers\PassengersController;
 use App\Http\Controllers\RacesCacheController;
+use App\Http\Controllers\ReturnRaceController;
 use App\Http\Controllers\Api\SendSmsController;
 use App\Http\Controllers\CustomKladrController;
 use App\Http\Controllers\PageSitemapController;
@@ -64,7 +66,7 @@ use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
 use App\Http\Controllers\RacesExistingMailController;
 use App\Http\Controllers\Api\DispatchPointsController;
-use App\Models\SitemapPage;
+use App\Http\Controllers\DispatchArrivalSelectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,20 +80,18 @@ use App\Models\SitemapPage;
 */
 
 Route::get('/sitemap/reload', function (Request $request) {
-    dd('');
     ini_set('max_execution_time', 600);
-    $xml = simplexml_load_file(public_path('sitemap.local.xml'));
-    $sitemapPages = SitemapPage::all();
-    foreach($sitemapPages as $item){
-        $xml = SitemapService::add($item, stripos($item, 'автобус') === false ? 'weekly' : 'daily', $xml);
-    }
-    File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
+
+    $sitemapPath = public_path(env('XML_FILE_NAME'));
+    File::put($sitemapPath, '<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    </urlset>');
     FtpLoadingService::put();
-    dd('');
-    
-    $xml = simplexml_load_file(public_path('sitemap.local.xml'));
-  
+
     DB::table('sitemap_pages')->delete();
+    $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
+  
+   
   
   
     $pages = KladrStationPage::all();
@@ -100,34 +100,12 @@ Route::get('/sitemap/reload', function (Request $request) {
     }
     // dd($res);
     // $result = [];
-    $dispatchData = PointService::dispatchKandE();
+    $dispatchData = PointService::dispatchData();
     foreach($dispatchData as $dispatchItem){
-      $arrivalData = null;
-      if(array_key_exists('details', $dispatchItem)){
-        $arrivalData = PointService::kAndE($dispatchItem['id']);
-        foreach($arrivalData as $arrivalItem){
-          $result[env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug']] = env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug'];
-        }
+      $arrivalData = PointService::arrivalDataBySourceId($dispatchItem->sourceId);
+      foreach($arrivalData as $arrivalItem){
+        $result[env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug']] = env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug'];
       }
-      else{
-        // dd(Kladr::find($dispatchItem['id']));
-        $kladr = Kladr::find($dispatchItem['id']);
-        // if(!$kladr){
-        //   dd($kladr, $dispatchItem, $dispatchItem['id']);
-        // }
-        $dispatchPoints = $kladr->dispatchPoints;
-        
-        foreach($dispatchPoints as $dispatchPoint){
-          $arrivalData = PointService::kAndE($dispatchPoint->id);
-          foreach($arrivalData as $arrivalItem){
-            $result[env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug']] = env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug'];
-          }
-        }
-      }
-      
-      // foreach($arrivalData as $arrivalItem){
-      //   
-      // }
     }
     // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
     foreach($result as $item){
@@ -296,6 +274,7 @@ Route::post('/order/transactions', [TransactionController::class, 'all']);
 Route::get('/race', [RaceController::class, 'get']);
 
 Route::post('/send/race/existing', [RacesExistingMailController::class, 'send']);
+Route::get('/check/return/race', [ReturnRaceController::class, 'checkReturnRace']);
 
 
 Route::get('/settings/bonuses/percent', [SettingsController::class, 'getBonusesPercent']);
@@ -404,8 +383,10 @@ Route::post('/arrival/points/paginate', [ArrivalController::class, 'paginate']);
 Route::get('/dispatch/points', [DispatchController::class, 'all']);
 Route::post('/dispatch/points/paginate', [DispatchController::class, 'paginate']);
 
+Route::get('/dispatch/data', [DispatchArrivalSelectController::class, 'selectDispatch']);
+Route::get('/arrival/data', [DispatchArrivalSelectController::class, 'selectArrival']);
 
-
+Route::get('/dispatch/arrival/check', [DispatchArrivalSelectController::class, 'checkUrlParams']);
 
 Route::apiResources([
     'dispatch_points' => DispatchPointsController::class,

@@ -26,6 +26,7 @@ import {createRouter, createWebHistory, createMemoryHistory} from 'vue-router'
 // import KladrStationPage from '../views/admin/KladrStationPage.vue'
 // import StationPage from '../views/StationPage.vue'
 import Error from '../views/Error.vue'
+import store from '../store'
 // import KladrPage from '../views/KladrPage.vue'
 
 // import ReturnRace from '../views/ReturnRace.vue'
@@ -60,7 +61,7 @@ const routes = [
     component: () => import('../views/Main.vue')
   },
       {
-        path: '/'+encodeURI('автобус')+'/:dispatch_name/:arrival_name',
+        path: '/'+encodeURI('автобус')+'/:dispatchSlug/:arrivalSlug',
         name: 'Races',
         component: () => import('../views/Races.vue'),
         async beforeEnter(to, from){
@@ -90,6 +91,31 @@ const routes = [
                   }
               }
           }
+
+          let selectData = null
+          await axiosClient
+          .get('/dispatch/arrival/check?dispatchSlug='+to.params.dispatchSlug+'&arrivalSlug='+to.params.arrivalSlug)
+          .then(response => {
+            selectData = response.data
+            console.log(selectData)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          if(!selectData['dispatchItem'] || !selectData['arrivalItem']){
+            // 404
+            console.log('зашел')
+            return {
+              name: 'Error',
+              params: {pathMatch: decodeURIComponent(to.path).split('/').slice(1)},
+              query: to.query,
+              hash: to.hash
+            }
+          }
+          console.log('вышел')
+          store.commit('selectDataSetBySlugs', selectData)
+          
+
     
           // } 
 
@@ -126,8 +152,31 @@ const routes = [
                   }
               }
           }
-    
-          } 
+          let kladrPage = null
+          console.log(to.params['settlement_name'], to.params['region_code'])
+          await axiosClient
+          .get('/kladr/station/page?url_settlement_name='+(to.params['settlement_name'])
+          +'&url_region_code='+to.params['region_code']
+          +'&pageType=k'
+          )
+          .then(response => {
+              console.log(response)
+              kladrPage = response.data.page
+              // this.content = JSON.parse(this.station.data).content
+          })
+          .catch(error => {
+              console.log(error)
+          })
+          if(!kladrPage || !kladrPage.kladr){
+            return {
+              name: 'Error',
+              params: {pathMatch: decodeURIComponent(to.path).split('/').slice(1)},
+              query: to.query,
+              hash: to.hash
+            }
+          }
+          store.commit('kladrPageSet', kladrPage)
+        } 
       },
       {
         path: '/'+encodeURI('автовокзал')+'/:region_code/:settlement_name',
@@ -160,15 +209,61 @@ const routes = [
                   }
               }
           }
+          let stationPage = null
+          console.log(to.params['settlement_name'], to.params['region_code'])
+          await axiosClient
+          .get('/kladr/station/page?url_settlement_name='+(to.params['settlement_name'])
+          +'&url_region_code='+to.params['region_code']
+          +'&pageType=s'
+          )
+          .then(response => {
+              console.log(response)
+              stationPage = response.data.page
+              // this.content = JSON.parse(this.station.data).content
+          })
+          .catch(error => {
+              console.log(error)
+          })
+          if(!stationPage || !stationPage.station || !stationPage.station.kladr){
+            return {
+              name: 'Error',
+              params: {pathMatch: decodeURIComponent(to.path).split('/').slice(1)},
+              query: to.query,
+              hash: to.hash
+            }
+          }
+          store.commit('stationPageSet', stationPage)
     
-          } 
+        } 
       },      
 
 
   {
-    path: '/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/:dispatch_point_id/:dispatch_station_name/:arrival_point_id/:arrival_station_name/:order_id',
+    path: '/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/:order_id',
     name: 'ReturnRace',
-    component: () => import('../views/ReturnRace.vue')
+    component: () => import('../views/ReturnRace.vue'),
+    async beforeEnter(to, from){
+      let kladrSlugs
+      await axiosClient
+      .get('/check/return/race?orderId='+to.params['order_id'])
+      .then(response => {
+        console.log(response)
+        kladrSlugs = response.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      console.log(kladrSlugs)
+      if(!kladrSlugs['dispatchKladrSlug'] || !kladrSlugs['arrivalKladrSlug']){
+        return {
+          name: 'Error',
+          params: {pathMatch: decodeURIComponent(to.path).split('/').slice(1)},
+          query: to.query,
+          hash: to.hash
+        }
+      }
+      window.location.replace(window.location.origin+'/автобус/'+kladrSlugs['arrivalKladrSlug']+'/'+kladrSlugs['dispatchKladrSlug']);
+    }
   },
   {
     path: '/seats/:dispatch_point_id/:arrival_point_id/:date/:race_id',

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Kladr;
 use App\Models\Order;
+use App\Models\Station;
 use App\Enums\FermaEnum;
 use App\Models\DispatchPoint;
 use App\Services\MailService;
@@ -56,6 +57,117 @@ class PointService
             $result[$i]['keyId'] = $i+1;
         }
         return $result;
+    }
+
+    public static function dispatchData($search = ''){
+        $dispatchData = [];
+        $stations = Station::has('dispatchPoints')->where('name', 'like', '%'.$search.'%')->get();
+        $kladrs = Kladr::has('dispatchPoints')->where('name', 'like', '%'.$search.'%')->get();
+        foreach($stations as $station){
+            if($station->kladr){
+                $dispatchData[$station->name.'_'.$station->kladr->id] = $station;
+            }
+        }
+
+        foreach($kladrs as $kladr){
+            $dispatchData[$kladr->name.'_'.$kladr->id] = $kladr;
+        }
+
+
+        return self::leftSidePrioritySort((array)$dispatchData, $search);
+        // return (array)$dispatchData;
+    }
+
+    public static function arrivalDataBySourceId($sourceId, $search = ''){
+        $sourceId = explode('-', $sourceId);
+        $stations = [];
+        $arrivalData = [];
+        if($sourceId[0] == 'kladrs'){
+            $kladr = Kladr::find($sourceId[1]);
+            $stations = $kladr->stations;
+        }
+        if($sourceId[0] == 'stations'){
+            $stations = [Station::find($sourceId[1])];
+        }
+
+        foreach($stations as $station){
+            if(!$station->dispatchPoints){
+                continue;
+            }
+            foreach($station->dispatchPoints as $dispatchPoint){
+                // $arrivalDataTemp = self::arrivalDataByPointId($dispatchPoint->id);
+                // foreach($arrivalDataTemp as $arrivalItem){
+                //     $arrivalData[$arrivaItem->name.'_'.]
+                // }
+                $arrivalPoints = CacheArrivalPoint::where([
+                    ['name', 'like', '%'.$search.'%'], 
+                    ['kladr_id', '=', null],
+                    ['station_id', '=', null],
+                    ['dispatch_point_id', '=', $dispatchPoint->id],
+                ])->get();
+                foreach($arrivalPoints as $point){
+                    $arrivalData[$point->name.'_'] = $point;
+                }
+
+                $arrivalStations = Station::where([
+                    ['name', 'like', '%'.$search.'%'],
+                ])->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
+                    $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
+                })->get();
+                foreach($arrivalStations as $station){
+                    $key = $station->name.'_'.$station->kladr_id;
+                    if(array_key_exists($key, $arrivalData) && isset($arrivalData[$key]->district)){
+                        continue;
+                    }
+                    $arrivalData[$key] = $station;
+                }
+
+                $arrivalKladrs = Kladr::where([
+                    ['name', 'like', '%'.$search.'%'],
+                ])->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
+                    $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
+                })->get();
+                foreach($arrivalKladrs as $kladr){
+                    $arrivalData[$kladr->name.'_'.$kladr->id] = $kladr;
+                }
+            }
+        }
+        // return $arrivalData;
+        return self::leftSidePrioritySort($arrivalData, $search);
+    }
+
+    public static function arrivalDataByPointId($dispatchPointId){
+
+    }
+
+    public static function leftSidePrioritySort($array, $str){
+        $str_lower = mb_strtolower($str, 'UTF-8');
+
+        // Функция для сортировки массива по ключам
+        uksort($array, function($a, $b) use ($str_lower) {
+            // Приводим ключи к нижнему регистру для регистронезависимого сравнения
+            $a_lower = mb_strtolower($a, 'UTF-8');
+            $b_lower = mb_strtolower($b, 'UTF-8');
+        
+            // Проверяем, начинается ли ключ с подстроки $str
+            $startsWithA = mb_substr($a_lower, 0, mb_strlen($str_lower, 'UTF-8')) === $str_lower;
+            $startsWithB = mb_substr($b_lower, 0, mb_strlen($str_lower, 'UTF-8')) === $str_lower;
+        
+            // Сортировка: сначала элементы, у которых ключ начинается с $str
+            if ($startsWithA && $startsWithB) {
+                return 0;
+            }
+            if ($startsWithA) {
+                return -1;
+            }
+            if ($startsWithB) {
+                return 1;
+            }
+        
+            // Если оба ключа не начинаются с $str, оставляем их на своих местах
+            return 0;
+        });
+        return $array;
     }
 
     public static function addNewArrivalPoints($dispatchPoint){

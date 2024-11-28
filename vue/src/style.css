@@ -148,7 +148,7 @@ button, input, form{
   padding: 0;
 }
 button:focus, input:focus{
-outline: none;
+  outline: none;
 }
 a{
   text-decoration: none;
@@ -181,6 +181,14 @@ a{
 .btn-code {
   width: 100%;
   padding: 12px;
+}
+
+.d-arrow-left, .d-arrow-right {
+  display: none !important; /* Убирает стрелки переключения года */
+}
+
+.el-select .el-input__inner, .el-date-editor .el-input__inner{
+  color: black; /* Задаем нужный цвет */
 }
 
 
@@ -360,7 +368,7 @@ a{
   font-weight: 400;    
 }
 .main__table-table input{
-  padding: 13px 30px 12px 16px;
+  /* padding: 13px 30px 12px 16px; */
   box-sizing: border-box;
   border: 0;
   border-radius: 5px 0 0 5px;

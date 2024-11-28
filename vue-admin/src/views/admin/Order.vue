@@ -22,7 +22,7 @@
                         <el-descriptions-item label="utm_content">{{order_outside.utm_content}}</el-descriptions-item>
                         <el-descriptions-item label="referrer_url">{{order_outside.referrer_url}}</el-descriptions-item>
                     </el-descriptions>
-                    <el-button v-if="order_outside.dispatchPointId && order_outside.arrivalPointId" type="primary" style="margin-top: 20px;" @click="toReturnRace">Обратный рейс</el-button>
+                    <!-- <el-button v-if="order_outside.dispatchPointId && order_outside.arrivalPointId" type="primary" style="margin-top: 20px;" @click="toReturnRace">Обратный рейс</el-button> -->
                     <div style="margin-top: 20px;">
                         <el-card class="box-card">
                             <template #header>
@@ -116,11 +116,11 @@ export default
 
     },
     methods: {
-        toReturnRace(){
-			router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order_outside.dispatchPointId, arrival_point_id: this.order_outside.arrivalPointId, 
-				dispatch_station_name: this.order.tickets[0].dispatchStation, arrival_station_name: this.order.tickets[0].arrivalStation },
-                query: { from_admin: true }})
-		},
+        // toReturnRace(){
+		// 	router.push({name: 'ReturnRace', params: {dispatch_point_id: this.order_outside.dispatchPointId, arrival_point_id: this.order_outside.arrivalPointId, 
+		// 		dispatch_station_name: this.order.tickets[0].dispatchStation, arrival_station_name: this.order.tickets[0].arrivalStation },
+        //         query: { from_admin: true }})
+		// },
     }
 }
 </script>

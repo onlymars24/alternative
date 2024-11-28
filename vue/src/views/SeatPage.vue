@@ -11,13 +11,11 @@
     </div>
     <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats && !errorMessage" :race="race" />
     <div v-if="!loadingSeats" class="container">
-      <!-- <div v-if="errorMessage" style="margin-top: 20px;">         -->
-      <div v-if="true" style="margin-top: 20px;">    
+      <div v-if="errorMessage" style="margin-top: 20px;">        
         <div class="alert alert-danger" role="alert">
-            <!-- <p>{{ errorMessage }}</p> -->
-            <p>На сайте ведутся технические работы. Попробуйте позже!</p>
+            <p>{{ errorMessage }}</p>
         </div>
-        <!-- <p style="font-size: 25px;"><strong>Выберите другой рейс, время или дату.</strong></p> -->
+        <p style="font-size: 25px;"><strong>Выберите другой рейс, время или дату.</strong></p>
       </div>
       <div v-else class="window-bus">
         {{ $route.params['route_id'] }}
@@ -50,19 +48,20 @@ export default {
   },
   async mounted(){
     console.log(document.referrer)
-    const promise = axiosClient
-      .get('/race?dispatchPointId='+this.$route.params['dispatch_point_id']+'&arrivalPointId='+this.$route.params['arrival_point_id']+'&date='+this.$route.params['date']+'&uid='+this.$route.params['race_id'])
-      .then(response => {
-          this.race = response.data
-          console.log(this.race)
-          this.seats = this.race.seats
-          this.updateSeats()
-      })
-      .catch(error => {
-        console.log(error)
-        this.errorMessage = error.response.data.errorMessage
-      });
-    await promise
+    await axiosClient
+    .get('/race?dispatchPointId='+this.$route.params['dispatch_point_id']+'&arrivalPointId='+this.$route.params['arrival_point_id']+'&date='+this.$route.params['date']+'&uid='+this.$route.params['race_id'])
+    .then(response => {
+      console.log('не ошибка')
+        this.race = response.data
+        console.log(this.race)
+        this.seats = this.race.seats
+        this.updateSeats()
+    })
+    .catch(error => {
+      console.log('ошибка')
+      console.log(error)
+      // this.errorMessage = error.response.data.errorMessage
+    });
     // if(!this.race){
     //   router.push({name: 'Main'})
     //   return
@@ -84,6 +83,7 @@ export default {
       })
 
       this.seats.forEach((seat) => {
+        console.log(seat.name)
         while(seat.name - lastNum != 1){
           lastNum++
           newSeats.push({code: null, name: lastNum, type: null})
@@ -91,9 +91,11 @@ export default {
         newSeats.push(seat)
         lastNum++
       })
+
       this.seats = newSeats
       newSeats = []
       let temp = []
+
       this.seats.forEach((seat) => {
         temp.push(seat)        
         if(seat.name % 4 == 0){

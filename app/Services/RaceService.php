@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Kladr;
 use App\Models\Order;
+use App\Models\Station;
 use App\Enums\FermaEnum;
 use App\Models\CacheRace;
 use App\Models\DispatchPoint;
@@ -18,42 +19,64 @@ class RaceService
 {
 
     public static function all($request, $date){
-        if($date < date('Y-m-d')){
-            // Log::info(json_encode($request->ips()));
-            // MailService::sendError('Для url: '.$request->url.' выполнился запрос задним числом '.$date.' Ip: '.$request->userData, $date);
-            return ['isServerError' => false, 'races' => []];
-        }
+        // ПОТОМ РАСКОМЕНТЬ!!!!!!!!!!
+        // if($date < date('Y-m-d')){
+        //     // Log::info(json_encode($request->ips()));
+        //     // MailService::sendError('Для url: '.$request->url.' выполнился запрос задним числом '.$date.' Ip: '.$request->userData, $date);
+        //     return ['isServerError' => false, 'races' => []];
+        // }
         // MailService::sendError('Нормальный запрос от url: '.$request->url.' Ip: '.$request->userData, $date);
         // Log::info($request->dispatchPointId);
         $races = [];
         $dispatchEPoints = [];
         $arrivalEPoints = [];
 
-        $dispatchPointName = null;
-        $arrivalPointName = null;
+        $dispatchSlug = null;
+        $arrivalSlug = null;
 
-        if($request->dispatchPointType == 'e'){
-            // Log::info('etraffic');
-            $dispatchEPoint = DispatchPoint::find($request->dispatchPointId);
-            $dispatchPointName = $dispatchEPoint->name;
-            $dispatchEPoints[] = $dispatchEPoint;
-        }
-        elseif($request->dispatchPointType == 'k'){
-            // Log::info('kladr');
-            $dispatchKladr = Kladr::find($request->dispatchPointId);
-            $dispatchPointName = $dispatchKladr->name;
-            $dispatchEPoints = $dispatchKladr->dispatchPoints;
+        $dispatchSourceId = explode('-', $request->dispatchSourceId);
+
+        if($dispatchSourceId[0] == 'kladrs'){
+            $kladr = Kladr::find($dispatchSourceId[1]);
+            $dispatchSlug = $kladr->slug;
+            $stations = $kladr->stations;
+            foreach($stations as $station){
+                foreach($station->dispatchPoints as $dispatchPoint){
+                    $dispatchEPoints[] = $dispatchPoint;
+                }
+            }
         }
 
-        if($request->arrivalPointType == 'e'){
-            $arrivalEPoint = CacheArrivalPoint::find($request->arrivalPointId);
-            $arrivalPointName = $arrivalEPoint->name;
-            $arrivalEPoints[] = $arrivalEPoint;
+        if($dispatchSourceId[0] == 'stations'){
+            $station = Station::find($dispatchSourceId[1]);
+            $dispatchSlug = $station->slug;
+            $dispatchEPoints = $station->dispatchPoints;
         }
-        elseif($request->arrivalPointType == 'k'){
-            $arrivalKladr = Kladr::find($request->arrivalPointId);
-            $arrivalPointName = $arrivalKladr->name;
-            $arrivalEPoints = $arrivalKladr->arrivalPoints;
+
+
+        $arrivalSourceId = explode('-', $request->arrivalSourceId);
+
+        if($arrivalSourceId[0] == 'kladrs'){
+            $kladr = Kladr::find($arrivalSourceId[1]);
+            $arrivalSlug = $kladr->slug;
+            $stations = $kladr->stations;
+            foreach($stations as $station){
+                foreach($station->arrivalPoints as $arrivalPoint){
+                    $arrivalEPoints[] = $arrivalPoint;
+                }
+            }
+        }
+
+        if($arrivalSourceId[0] == 'stations'){
+            $station = Station::find($arrivalSourceId[1]);
+            $arrivalSlug = $station->slug;
+            $arrivalEPoints = $station->arrivalPoints;
+        }
+
+        if($arrivalSourceId[0] == 'cache_arrival_points'){
+            $cacheArrivalPoint = CacheArrivalPoint::find($arrivalSourceId[1]);
+            $arrivalSlug = $cacheArrivalPoint->slug;
+            $arrivalEPoints[] = $cacheArrivalPoint;
         }
 
 
@@ -91,8 +114,8 @@ class RaceService
         }
 
         $cacheRace = CacheRace::where([
-            ['dispatchPointName', $dispatchPointName],
-            ['arrivalPointName', $arrivalPointName],
+            ['dispatchPointName', $dispatchSlug],
+            ['arrivalPointName', $arrivalSlug],
             ['date', $date]
         ])->first();
 
@@ -103,8 +126,8 @@ class RaceService
         else{
             $cacheRace = CacheRace::create([
                 'date' => $date,
-                'dispatchPointName' => $dispatchPointName,
-                'arrivalPointName' => $arrivalPointName,
+                'dispatchPointName' => $dispatchSlug,
+                'arrivalPointName' => $arrivalSlug,
                 'list' => json_encode($races)
             ]);
         }

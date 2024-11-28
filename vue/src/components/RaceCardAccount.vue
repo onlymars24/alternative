@@ -79,9 +79,9 @@
 		   </div>
 		   <div class="right-ins__right" v-if="!expired">
 			 <div class="right-ins__right-button">
-			   <button v-if="(race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R') && order.dispatchPointId && order.arrivalPointId" @click="toReturnRace" class="buy__but" style="background-color: #7CAE5E;">
+			   <a :href="'/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/'+order.id" v-if="(race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R') && order.dispatchPointId && order.arrivalPointId" class="buy__but" style="background-color: #7CAE5E;">
 				Обратный билет
-			   </button>
+			   </a>
 			   <button v-if="race.order.status == 'B'" @click="toPayment" class="buy__but" style="background: #dc3545;">
 				  Оплатить 
 			   </button>

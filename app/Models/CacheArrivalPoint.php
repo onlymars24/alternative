@@ -10,6 +10,7 @@ class CacheArrivalPoint extends Model
     use HasFactory;
 
     protected $fillable = [
+        'sourceId',
         'dispatch_point_id',
         'arrival_point_id',
         'id',

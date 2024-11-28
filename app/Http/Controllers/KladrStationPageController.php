@@ -44,7 +44,7 @@ class KladrStationPageController extends Controller
         elseif($request->pageType == 'k'){
             $arrayPageType = ['kladr_id', '<>', null];
         }
-        $page = KladrStationPage::with('station.dispatchPoint', 'station.kladr.kladrStationPage', 'kladr')->where([
+        $page = KladrStationPage::with('station.dispatchPoints', 'station.kladr.kladrStationPage', 'kladr')->where([
             ['url_region_code', $request->url_region_code], 
             ['url_settlement_name', $request->url_settlement_name],
             ['hidden', false],
@@ -80,7 +80,7 @@ class KladrStationPageController extends Controller
                     'error' => 'Нет связки'
                 ]);
             }
-            $pageArray['url_settlement_name'] = SlugService::create($station->name); 
+            $pageArray['url_settlement_name'] = SlugService::create($station->name);
             $pageArray['name'] = 'Автовокзал '.$station->name;
             $pageArray['description'] = 'Автовокзал '.$station->name.': расписание, справочная, билеты на автобус';
             $pageArray['station_id'] = $request->station_id;
@@ -201,7 +201,7 @@ class KladrStationPageController extends Controller
     // busStationsDispatchPoints
     public function stationPages(Request $request){
         // return response(['kladr_id' => $request->kladrId]);
-        return response(['pages' => KladrStationPage::with('station.kladr', 'station.dispatchPoint')->whereHas('station', function($query) use($request){
+        return response(['pages' => KladrStationPage::with('station.kladr', 'station.dispatchPoints')->whereHas('station', function($query) use($request){
                 $query->where('kladr_id', '=', $request->kladrId);
             })->orderByDesc('id')->get()
         ]);

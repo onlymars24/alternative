@@ -134,7 +134,70 @@ use Maatwebsite\Excel\Concerns\ToArray;
 
 
 Route::get('/spread', function (Request $request) {
-  dd('');
+  $sitemapPath = public_path('sitemap.local.xml');
+    
+  if (File::exists($sitemapPath)) {
+      // Очистить содержимое файла
+      File::put($sitemapPath, '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+</urlset>');
+      // return response('Sitemap has been cleared!', 200);
+      dd('');
+  }
+
+  // dd(stripos('kladrs-123124', 'kladrs'));
+  $arrivalData = PointService::arrivalDataBySourceId('kladrs-241805');
+  dd(array_filter($arrivalData, function($item) {
+    return $item->slug == 'Псков' 
+    // && stripos($item->sourceId, 'stations') !== false // Четные числа
+    ;
+  }));
+  // Пример массива
+  $array = [
+    'apple' => 'fruit',
+    'banana' => 'fruit',
+    'appreciate' => 'verb',
+    'апange' => 'fruit',
+    'арбуз' => 'fruit',
+    'аПельсин' => 'fruit',
+    'Апрель' => 'month',
+    'арена' => 'place'
+  ];
+
+  // Строка, с которой должны совпадать ключи
+  $str = 'ап';
+
+  // Приводим строку $str к нижнему регистру для сравнения
+  $str_lower = mb_strtolower($str, 'UTF-8');
+
+  // Функция для сортировки массива по ключам
+  uksort($array, function($a, $b) use ($str_lower) {
+    // Приводим ключи к нижнему регистру для регистронезависимого сравнения
+    $a_lower = mb_strtolower($a, 'UTF-8');
+    $b_lower = mb_strtolower($b, 'UTF-8');
+
+    // Проверяем, начинается ли ключ с подстроки $str
+    $startsWithA = mb_substr($a_lower, 0, mb_strlen($str_lower, 'UTF-8')) === $str_lower;
+    $startsWithB = mb_substr($b_lower, 0, mb_strlen($str_lower, 'UTF-8')) === $str_lower;
+
+    // Сортировка: сначала элементы, у которых ключ начинается с $str
+    if ($startsWithA && $startsWithB) {
+        return 0;
+    }
+    if ($startsWithA) {
+        return -1;
+    }
+    if ($startsWithB) {
+        return 1;
+    }
+
+    // Если оба ключа не начинаются с $str, оставляем их на своих местах
+    return 0;
+  });
+
+  // Результат
+  // print_r($sortedArray);
+  dd($array);
   // MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' || '.$url, ['testArray'])
   // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
 

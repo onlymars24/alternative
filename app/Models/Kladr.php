@@ -10,6 +10,7 @@ class Kladr extends Model
     use HasFactory;
 
     protected $fillable = [
+        'sourceId',
         'name',
         'region',
         'city',
@@ -26,11 +27,11 @@ class Kladr extends Model
     ];
 
     public function dispatchPoints(){
-        return $this->hasMany((DispatchPoint::class));
+        return $this->hasMany(DispatchPoint::class);
     }
 
     public function arrivalPoints(){
-        return $this->hasMany((CacheArrivalPoint::class));
+        return $this->hasMany(CacheArrivalPoint::class);
     }
 
     public function busStation()
@@ -41,5 +42,9 @@ class Kladr extends Model
     public function kladrStationPage()
     {
         return $this->hasOne(KladrStationPage::class);
+    }
+
+    public function stations(){
+        return $this->hasMany(Station::class);
     }
 }

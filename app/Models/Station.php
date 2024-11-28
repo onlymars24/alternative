@@ -10,7 +10,9 @@ class Station extends Model
     use HasFactory;
 
     protected $fillable = [
+        'sourceId',
         'name',
+        'slug',
         'region',
         'address',
         'longitude',
@@ -25,13 +27,18 @@ class Station extends Model
         return $this->belongsTo(Kladr::class);
     }
 
-    public function dispatchPoint()
+    public function dispatchPoints()
     {
-        return $this->hasOne(DispatchPoint::class);
+        return $this->hasMany(DispatchPoint::class);
     }
     
     public function kladrStationPage()
     {
         return $this->hasOne(KladrStationPage::class);
+    }
+
+    public function arrivalPoints()
+    {
+        return $this->hasMany(CacheArrivalPoint::class);
     }
 }

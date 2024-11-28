@@ -4,6 +4,7 @@ import HeaderMain from '../components/HeaderMain.vue'
 import axiosClient from '../axios';
 import router from '../router'
 import MainCrumbs from '../components/MainCrumbs.vue'
+import store from '../store'
 // import Captcha from 'https://smartcaptcha.yandexcloud.net/captcha.js'
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -64,7 +65,7 @@ export default{
             },
             groupID: 223652237,
             content: '',
-            stationPage: null,
+            stationPage: store.state.stationPage,
             navigation: {
                 nextEl: '.station__slides-button-next',
                 prevEl: '.station__slides-button-prev',
@@ -109,41 +110,33 @@ export default{
 
     },
     async mounted() {
-        const promise1 = axiosClient
-        .get('/kladr/station/page?url_settlement_name='+(this.$route.params['settlement_name'])
-        +'&url_region_code='+this.$route.params['region_code']
-        +'&pageType=s'
-    )
-        .then(response => {
-            console.log(response)
-            this.stationPage = response.data.page
-            // this.content = JSON.parse(this.station.data).content
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        await promise1
-        // return
-        if(!this.stationPage){
-            router.push({ name: 'Main'})
-            return
-        }
+    //     const promise1 = axiosClient
+    //     .get('/kladr/station/page?url_settlement_name='+(this.$route.params['settlement_name'])
+    //     +'&url_region_code='+this.$route.params['region_code']
+    //     +'&pageType=s'
+    // )
+    //     .then(response => {
+    //         console.log(response)
+    //         this.stationPage = response.data.page
+    //         // this.content = JSON.parse(this.station.data).content
+    //     })
+    //     .catch(error => {
+    //         console.log(error)
+    //     })
+    //     await promise1
+    //     // return
+    //     if(!this.stationPage){
+    //         router.push({ name: 'Main'})
+    //         return
+    //     }
         const station = this.stationPage.station
         let coordinate
         if(station.latitude && station.longitude){
-            coordinate =  [station.latitude, station.longitude]
+            coordinate = [station.latitude, station.longitude]
         }
         else{
             return
         }
-
-
-
-        
-
-                    // Промис `ymaps3.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
-            // ymaps3 = window.ymaps3;
-        console.log('есть')
         ymaps.ready(function () {
             const map = new ymaps.Map('YMapsID', {
                 center: [parseFloat(coordinate[0]), parseFloat(coordinate[1])],
@@ -159,44 +152,11 @@ export default{
             });
             map.geoObjects.add(myPlacemark1);
             map.behaviors.disable('scrollZoom'); 
-            
-            // map.setBounds([[56.461012536889534, 84.98992816566377], [56.46239283218983, 84.99424147798115]]);
         });
-        // this.isMap = true
         let YMapsID__title = document.querySelector('#YMapsID__title');
         let YMapsID = document.querySelector('#YMapsID');
         YMapsID__title.innerHTML = this.stationPage.name+' на карте'
         YMapsID.style.height = '300px'
-
-        // console.log(this.stationPage)
-        // await axiosClient
-        // .get('/station/arrival/kladrs?dispatchPointId='+this.stationPage.station.dispatch_point.id)
-        // .then(response => {
-        //     this.arrivalKladrs = response.data.arrivalKladrs
-        //     console.log(response)
-        // })
-        // .catch(error => {
-        //     console.log(error)
-        // })
-        // document.title = this.station.name;
-        
-        // const descEl = document.querySelector('head meta[name="description"]');
-        // descEl.setAttribute('content',this.station.description);
-
-        // const linkCan = document.querySelector('head link[rel="canonical"]');
-        // linkCan.setAttribute('href', 'https://росвокзалы.рф/автовокзал/'+this.station.title);
-
-        // const promise2 = axiosClient
-        // .get('/station/events?id='+this.station.id)
-        // .then(response => {
-        //     console.log(response)
-        //     this.events = response.data.events
-        //     console.log()
-        // })
-        // .catch(error => {
-        //     console.log(error)
-        // })
-        // await promise2
     },
 }
 </script>
@@ -207,42 +167,6 @@ export default{
     <div></div>
     <MainCrumbs v-if="stationPage" :pages="[{name: 'Расписание '+stationPage.station.kladr.name, href: '/расписание/'+stationPage.url_region_code+'/'+stationPage.station.kladr.kladr_station_page.url_settlement_name}, 
     {name: stationPage.name, href: null}]"/>
-    <!-- <div class="container">
-        <h2 id="YMapsID__title" style="margin: 15px 0;"></h2>
-        <div id="YMapsID" style="max-width:100%; height:300px"></div>
-    </div> -->
-    <!-- <div v-if="stationPage && stationPage.name" class="container">
-        <h4 style="margin: 30px 0;">{{ stationPage.name }} на карте</h4>
-        <div v-html="stationPage.map"></div>
-    </div> -->
-    <!-- <div class="container" v-if="stationPage && arrivalKladrs">
-        <h2 style="margin: 25px 0;">{{ stationPage.name }} направления</h2>
-        <div class="station__races">
-            <p v-for="arrivalKladr in arrivalKladrs"><a :href="'/автобус/'+stationPage.station.dispatch_point.name+'/'+arrivalKladr.name">{{ stationPage.station.dispatch_point.name+' — '+arrivalKladr.name }}</a></p>
-        </div>        
-    </div> -->
-
-
-    <!-- <div class="about" style="margin-top: 50px;">
-        <div class="container">
-            <div v-if="stationPage" class="about__inner" style="display: block;">
-                <h2 style="margin-bottom: 13px;">{{ stationPage.name }}</h2>
-                <h3 v-if="stationPage.station.address || stationPage.contacts" class="card-title" style="font-weight: 400; margin-bottom: 13px;">
-                    Справочная информация
-                </h3>
-                <h4 v-if="stationPage.station.address">
-                    <strong>Адрес {{ stationPage.name }}:</strong>
-                </h4> 
-                <p v-if="stationPage.station.address" style="margin-bottom: 13px;" class="card-text">{{ stationPage.station.address }}</p>                            
-                <h4  v-if="stationPage.contacts">
-                    <strong>Телефоны {{ stationPage.name }}:</strong>
-                </h4>                            
-                <div v-if="stationPage.contacts" style="margin-bottom: 13px;" v-html="stationPage.contacts"></div>
-
-                <div v-if="stationPage.content" v-html="stationPage.content"></div>
-            </div>
-        </div>
-    </div> -->
 </template>
 
 <style scoped>
