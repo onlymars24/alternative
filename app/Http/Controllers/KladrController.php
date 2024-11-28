@@ -68,7 +68,7 @@ class KladrController extends Controller
         $stations = $kladr->stations;
         $result = [];
         foreach($stations as $station){
-            if(!($station->kladrStationPage->hidden)){
+            if($station->kladrStationPage && !$station->kladrStationPage->hidden){
                 $result[] = [$station, PointService::arrivalDataBySourceId($station->sourceId), $station->kladrStationPage];
             }   
             
