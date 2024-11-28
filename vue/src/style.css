@@ -191,6 +191,11 @@ a{
   color: black; /* Задаем нужный цвет */
 }
 
+.el-select-dropdown {
+  min-width: 100% !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
 
 .checkmark {
   position: absolute;

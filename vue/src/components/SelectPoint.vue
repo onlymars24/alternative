@@ -34,8 +34,10 @@ export default
           :disabled="typeEn == 'arrival' && !$store.state.dispatchItem"
           :value-key="'sourceId'"
           :label="$store.state[typeEn+'Item'] ? $store.state[typeEn+'Item'].name : ''"
+          popper-append-to-body="false"
       >
           <el-option
+              style="width: 100%;"
               v-for="item in $store.state[typeEn+'Data']"
               :key="item.sourceId"
               :label="item.name"
