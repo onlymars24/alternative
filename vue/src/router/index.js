@@ -295,11 +295,11 @@ const routes = [
     name: 'Contacts',
     component: () => import('../views/Contacts.vue')
   },
-  {
-    path: '/qwerty',
-    name: 'Qwerty',
-    component: () => import('../views/Qwerty.vue')
-  },
+  // {
+  //   path: '/qwerty',
+  //   name: 'Qwerty',
+  //   component: () => import('../views/Qwerty.vue')
+  // },
   {
     path: '/:pathMatch(.*)*',
     name: 'Error',

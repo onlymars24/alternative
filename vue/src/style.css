@@ -208,11 +208,16 @@ a{
   color: #fff !important; /* Цвет текста */
   border: none !important; /* Убрать границу (если нужно) */
 }
-
+.multiselect__select::before, .multiselect--disabled .multiselect__select{
+  display: none;
+}
 /* Изменение цвета рамки при фокусе */
 .multiselect:focus-within {
   border-color: grey !important; /* Новый цвет рамки */
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25) !important; /* Новый цвет тени */
+  box-shadow: none;
+}
+.multiselect__placeholder{
+  margin-left: 4px;
 }
 .checkmark {
   position: absolute;
@@ -379,7 +384,7 @@ a{
 .main__table-table{
   background-color: #fff;
   border: 1px solid rgb(233, 233, 233);
-  max-width: 25%;
+  width: 25%;
 }
 
 .main__table-table p{

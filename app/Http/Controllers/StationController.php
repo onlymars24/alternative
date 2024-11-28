@@ -7,6 +7,7 @@ use App\Models\Station;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
 use App\Models\CacheArrivalPoint;
+use App\Services\PointService;
 use Illuminate\Database\Eloquent\Builder;
 
 class StationController extends Controller
@@ -64,21 +65,11 @@ class StationController extends Controller
     }
     // dispatchPointId
     public function races(Request $request){
-        // $xml = simplexml_load_file(env('XML_FILE_NAME'));
-
-        // // Указываем правильный пространственный идентификатор
-        // $namespaces = $xml->getNamespaces(true);
-        // $xml->registerXPathNamespace('sm', $namespaces['']);
-        
-        
-        // // Используем XPath для выборки всех <loc> элементов
-        // $races = $xml->xpath('//sm:url[starts-with(sm:loc, "'.env('FRONTEND_URL').'/автобус/'.$request->stationName.'")]/sm:loc');
-        
-        $arrivalKladrs = Kladr::whereHas('arrivalPoints', function(Builder $query) use ($request){
-            $query->where([['dispatch_point_id', '=', $request->dispatchPointId]]);
-        })->get();
+        // $arrivalKladrs = Kladr::whereHas('arrivalPoints', function(Builder $query) use ($request){
+        //     $query->where([['dispatch_point_id', '=', $request->dispatchPointId]]);
+        // })->get();
 
 
-        return response(['arrivalKladrs' => $arrivalKladrs]);
+        return response(['arrivalKladrs' => PointService::arrivalDataBySourceId($request->sourceId)]);
     }
 }

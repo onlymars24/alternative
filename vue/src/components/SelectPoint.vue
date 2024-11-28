@@ -31,21 +31,36 @@ export default
       :placeholder="'Заполните '+typeRu.toLowerCase()"
       @search-change="selectDataSearch"
       :disabled="typeEn == 'arrival' && !$store.state.dispatchItem"
-      selectLabel=""
-      deselectLabel=""
+      select-label=""
+      deselect-label=""
+      no-options=""
+      no-result=""
       >
     <!-- Слот для отображения каждого элемента в списке -->
     <template #option="{ option }">
-      <div>
-        <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 15px;">{{ option.name+(option.kladr.region ? ', '+option.kladr.region : '')+(option.kladr.district ? ', '+option.kladr.district : '') }}</span>
-          <span v-if="option.sourceId.includes('kladrs')" style="font-size: 18px;">{{ option.name+(option.region ? ', '+option.region : '')+(option.district ? ', '+option.district : '') }}</span>
-          <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 13px;">{{ option.name+(option.region ? ', '+option.region : '')+(option.details ? ', '+option.details : '') }}</span>
+      <div style="cursor: pointer;">
+        <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 15px;">{{ option.name}}<br v-if="option.kladr.region"/>
+          {{(option.kladr.region ? option.kladr.region : '')}}<br v-if="option.kladr.district"/>
+          {{(option.kladr.district ? option.kladr.district : '') }}</span>
+        <span v-if="option.sourceId.includes('kladrs')" style="font-size: 18px;">{{ option.name}}<br v-if="option.region"/>
+          {{(option.region ? option.region : '')}}<br v-if="option.district"/>
+          {{(option.district ? option.district : '') }}</span>
+        <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 13px;">{{ option.name}}<br v-if="option.region"/>
+          {{(option.region ? option.region : '')}}<br v-if="option.details"/>
+          {{(option.details ? option.details : '') }}</span>
+          <!-- {{ option.name }} -->
       </div>
     </template>
 
     <!-- Слот для отображения выбранного элемента -->
     <template #singleLabel="{ option }">
       {{ option.name }}
+    </template>
+    <template #noResult>
+      <span>Пункт не найден!</span>
+    </template>
+    <template #noOptions>
+      <span>Пункт не найден!</span>
     </template>
       </multiselect>
       <!-- <el-select
