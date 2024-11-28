@@ -196,7 +196,24 @@ a{
   width: auto !important;
   max-width: 100% !important;
 }
+/* Изменение цвета фокуса и выделения */
+.multiselect__option--highlight {
+  background: grey !important; /* Новый цвет фона */
+  color: #fff !important; /* Цвет текста */
+}
 
+/* Изменение цвета тега выбранного элемента */
+.multiselect__tag {
+  background: grey !important; /* Новый цвет тега */
+  color: #fff !important; /* Цвет текста */
+  border: none !important; /* Убрать границу (если нужно) */
+}
+
+/* Изменение цвета рамки при фокусе */
+.multiselect:focus-within {
+  border-color: grey !important; /* Новый цвет рамки */
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25) !important; /* Новый цвет тени */
+}
 .checkmark {
   position: absolute;
   top: 4px;

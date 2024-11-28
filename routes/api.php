@@ -80,6 +80,7 @@ use App\Http\Controllers\DispatchArrivalSelectController;
 */
 
 Route::get('/sitemap/reload', function (Request $request) {
+    dd('');
     ini_set('max_execution_time', 600);
 
     $sitemapPath = public_path(env('XML_FILE_NAME'));

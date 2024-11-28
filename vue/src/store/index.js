@@ -40,6 +40,7 @@ export default createStore({
     },
     arrivalItemDelete(state){
       state.arrivalItem = null
+      state.arrivalData = []
     },
     selectDataSetBySlugs(state, selectData){
       state.dispatchItem = selectData['dispatchItem']
@@ -83,7 +84,7 @@ export default createStore({
       await axiosClient
       .get('/'+selectItemType+'/data?search='+search+(selectItemType == 'arrival' ? '&sourceId='+store.state.dispatchItem.sourceId : ''))
       .then(response => {
-          store.commit(selectItemType+'DataSet', response.data[selectItemType+'Data'])
+          store.commit(selectItemType+'DataSet', Object.values(response.data[selectItemType+'Data']))
       })
       .catch(error => {
           console.log(error)
