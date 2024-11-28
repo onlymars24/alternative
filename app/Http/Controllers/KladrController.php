@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kladr;
 use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
+use App\Services\PointService;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -64,16 +65,11 @@ class KladrController extends Controller
 
     public function races(Request $request){
         $kladr = Kladr::find($request->kladrId);
-        $dispatchPoints = $kladr->dispatchPoints;
+        $stations = $kladr->stations;
         $result = [];
-        foreach($dispatchPoints as $dispatchPoint){
-            $arrivalKladrs = Kladr::with('arrivalPoints.dispatchPoint')->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
-                $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
-            })->get()->toArray();     
-
-            // $result = array_merge($result, $arrivalKladrs);    
-            if(!($dispatchPoint->station->kladrStationPage->hidden)){
-                $result[] = [$dispatchPoint, $arrivalKladrs, $dispatchPoint->station->kladrStationPage];
+        foreach($stations as $station){
+            if(!($station->kladrStationPage->hidden)){
+                $result[] = [$station, PointService::arrivalDataBySourceId($station->sourceId), $station->kladrStationPage];
             }   
             
         }

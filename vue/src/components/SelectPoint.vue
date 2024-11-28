@@ -57,10 +57,10 @@ export default
       {{ option.name }}
     </template>
     <template #noResult>
-      <span>Пункт не найден!</span>
+      <span></span>
     </template>
     <template #noOptions>
-      <span>Пункт не найден!</span>
+      <span></span>
     </template>
       </multiselect>
       <!-- <el-select
