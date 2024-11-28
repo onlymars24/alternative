@@ -133,41 +133,16 @@ use Maatwebsite\Excel\Concerns\ToArray;
 // });
 
 Route::get('/sitemap/reload', function (Request $request) {
-  ini_set('max_execution_time', 600);
-
-  $sitemapPath = public_path(env('XML_FILE_NAME'));
-  File::put($sitemapPath, '<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  </urlset>');
-  FtpLoadingService::put();
-
-  DB::table('sitemap_pages')->delete();
+  ini_set('max_execution_time', 600);  
   $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
-
- 
-
-
-  $pages = KladrStationPage::all();
-  foreach($pages as $page){
-    $result[] = env('FRONTEND_URL').'/'.($page->kladr_id ? 'расписание' : 'автовокзал').'/'.$page->url_region_code.'/'.$page->url_settlement_name;
-  }
-  // dd($res);
-  // $result = [];
-  $dispatchData = PointService::dispatchData();
-  foreach($dispatchData as $dispatchItem){
-    $arrivalData = PointService::arrivalDataBySourceId($dispatchItem->sourceId);
-    foreach($arrivalData as $arrivalItem){
-      $result[env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug']] = env('FRONTEND_URL').'/автобус/'.$dispatchItem['slug'].'/'.$arrivalItem['slug'];
-    }
-  }
-  // $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
-  foreach($result as $item){
-    $xml = SitemapService::add($item, stripos($item, 'автобус') === false ? 'weekly' : 'daily', $xml);
+  $sitemaps = SitemapPage::all();
+  foreach($sitemaps as $sitemap){
+    $xml = SitemapService::add($sitemap->url, stripos($sitemap, 'автобус') === false ? 'weekly' : 'daily', $xml);
   }
   File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
   FtpLoadingService::put();
-  // dd($xml);  
 });
+
 Route::get('/spread', function (Request $request) {
   $sitemapPath = public_path('sitemap.local.xml');
     
