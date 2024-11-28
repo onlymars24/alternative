@@ -133,6 +133,7 @@ use Maatwebsite\Excel\Concerns\ToArray;
 // });
 
 Route::get('/sitemap/reload', function (Request $request) {
+  dd('');
   ini_set('max_execution_time', 600);  
   $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
   $sitemaps = SitemapPage::all();

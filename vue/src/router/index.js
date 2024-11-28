@@ -296,10 +296,16 @@ const routes = [
     component: () => import('../views/Contacts.vue')
   },
   {
+    path: '/qwerty',
+    name: 'Qwerty',
+    component: () => import('../views/Qwerty.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'Error',
     component: Error
   },
+
 ]
 
 
