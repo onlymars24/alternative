@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Bonus;
 use App\Models\Kladr;
 use App\Models\Order;
+use App\Mail\DumpMail;
 use App\Models\Ticket;
 use GuzzleHttp\Client;
 use XBase\TableReader;
@@ -23,6 +24,7 @@ use Nette\Utils\DateTime;
 use App\Mail\ErrorApiMail;
 use App\Models\BusStation;
 use App\Mail\OtpMemberMail;
+use App\Models\SitemapPage;
 use App\Models\Transaction;
 use App\Models\WhatsAppSms;
 use App\Enums\InsuranceEnum;
@@ -60,14 +62,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
 use App\Services\DeletePassportService;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Concerns\ToArray;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\KladrController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
-use App\Models\SitemapPage;
-use Maatwebsite\Excel\Concerns\ToArray;
 
 /*
 |--------------------------------------------------------------------------
@@ -145,6 +146,8 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  Mail::to([env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL'), env('ERROR_MAIL_MARSEL')])->send(new DumpMail('$test', '$test', '$test'));
+  dd('');
   $sitemapPath = public_path('sitemap.local.xml');
     
   if (File::exists($sitemapPath)) {

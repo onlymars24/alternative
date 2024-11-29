@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Storage;
 class MailService
 {
     public static function sendError($info, $body){
-        Mail::to(env('ERROR_MAIL_MARSEL'))->bcc([env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL')])->send(new ErrorApiMail($info, $body));
+        Mail::to([env('ERROR_MAIL_MARSEL'), env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL')])->send(new ErrorApiMail($info, $body));
     }
 
     public static function sendDump($info, $body, $subject = 'Обновление данных'){
-        Mail::to(env('ERROR_MAIL_MARSEL'))->bcc([env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL')])->send(new DumpMail($info, $body, $subject));
+        Mail::to([env('ERROR_MAIL_MARSEL'), env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL')])->send(new DumpMail($info, $body, $subject));
     }
 }

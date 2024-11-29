@@ -6,8 +6,11 @@
                 <h1 style="text-shadow: 1px 1px 5px black" v-if="this.$route.name == 'Races'" class="main__main">
                     Автобус {{$store.state.dispatchNameConst}} - {{$store.state.arrivalNameConst}}
                 </h1>
-                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="page" class="main__main">
-                    {{ page.name }}
+                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="this.$route.name == 'KladrPage'" class="main__main">
+                    {{ $store.state.kladrPage.name }}
+                </h1>
+                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="this.$route.name == 'StationPage'" class="main__main">
+                    {{ $store.state.stationPage.name }}
                 </h1>
                 <h1 style="text-shadow: 1px 1px 5px black" v-else class="main__main">
                     Автовокзалы России
