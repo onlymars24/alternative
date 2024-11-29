@@ -316,6 +316,84 @@ export default {
             this.loadingRaces = false
             return
         }
+        let dispatchPoints = []
+
+        if(this.dispatchItem.sourceId.includes('stations')){
+            dispatchPoints = this.dispatchItem.dispatch_points
+        }
+        if(this.dispatchItem.sourceId.includes('kladrs')){
+            this.dispatchItem.stations.forEach(station => {
+                station.dispatch_points.forEach(dispatchPoint => {
+                    dispatchPoints.push(dispatchPoint)
+                })
+            })
+        }
+        console.log(dispatchPoints)
+        let arrivalPoints = []
+        if(this.arrivalItem.sourceId.includes('cache_arrival_points')){
+            arrivalPoints = [this.arrivalItem]
+        }
+        if(this.arrivalItem.sourceId.includes('stations')){
+            arrivalPoints = this.arrivalItem.arrival_points
+        }
+        if(this.arrivalItem.sourceId.includes('kladrs')){
+            this.arrivalItem.stations.forEach(station => {
+                station.arrival_points.forEach(arrivalPoint => {
+                    arrivalPoints.push(arrivalPoint)
+                })
+            })
+        }
+        console.log(arrivalPoints)
+        
+        // dispatchPoints.forEach(async(dispatchPoint) => {
+        let tempTotalRaces = []
+            for(const dispatchPoint of dispatchPoints){
+                for(const arrivalPoint of arrivalPoints){
+                    if(arrivalPoint.dispatch_point_id == dispatchPoint.id){
+                        let tempRaces = []
+                        
+                    await axiosClient
+                    .get('/races/simple?dispatchPointId='+dispatchPoint.id+'&arrivalPointId='+arrivalPoint.arrival_point_id+'&date='+this.date)
+                    .then(response => {
+                        tempRaces = response.data.races
+                        tempRaces.forEach(race => {
+                            race.section = 'route'
+                            race.details_menu = false
+                            race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
+                            race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
+                            race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
+                            race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
+                            tempTotalRaces[race.uid] = race
+                            
+                        });
+                        this.races = Object.values(tempTotalRaces)
+                        console.log('частичная партия')
+                        console.log(tempRaces, this.races)
+                        this.loadingRaces = false
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    }
+                }
+            }
+            // this.races = Object.values(this.races)
+            console.log('this.races')
+            console.log(this.races)
+
+
+        //     await arrivalPoints.forEach(async(arrivalPoint) => {
+        //         if(arrivalPoint.dispatch_point_id == dispatchPoint.id){
+                    
+
+
+        //             console.log(this.races)
+        //         }
+        //     })
+        // })
+        
+        return
+        
         await axiosClient
         .get('/races?dispatchSourceId='+store.state.dispatchItem.sourceId+'&arrivalSourceId='+store.state.arrivalItem.sourceId+'&date='+this.date)
         .then(response => {

@@ -109,7 +109,7 @@ class PointService
                     $arrivalData[$point->name.'_'] = $point;
                 }
 
-                $arrivalStations = Station::where([
+                $arrivalStations = Station::with('arrivalPoints')->where([
                     ['name', 'like', '%'.$search.'%'],
                 ])->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
                     $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
@@ -122,7 +122,7 @@ class PointService
                     $arrivalData[$key] = $station;
                 }
 
-                $arrivalKladrs = Kladr::where([
+                $arrivalKladrs = Kladr::with('stations.arrivalPoints')->where([
                     ['name', 'like', '%'.$search.'%'],
                 ])->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
                     $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);

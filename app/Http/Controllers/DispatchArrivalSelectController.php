@@ -25,12 +25,12 @@ class DispatchArrivalSelectController extends Controller
         //     'dispatchItem' => null,
         //     'arrivalItem' => null
         // ]
-        $dispatchItem = Kladr::with('kladrStationPage')->has('dispatchPoints')->where([['slug', '=', $request->dispatchSlug]])->first();
+
+        $dispatchItem = Kladr::with('kladrStationPage', 'stations.dispatchPoints')->has('dispatchPoints')->where([['slug', '=', $request->dispatchSlug]])->first();
 
         if(!$dispatchItem){
-            $dispatchItem = Station::with('kladr.kladrStationPage')->has('dispatchPoints')->where([['slug', '=', $request->dispatchSlug]])->first();
-        }
-        
+            $dispatchItem = Station::with('kladr.kladrStationPage', 'dispatchPoints')->has('dispatchPoints')->where([['slug', '=', $request->dispatchSlug]])->first();
+        }        
         $arrivalItem = null;
         if($dispatchItem){
             $arrivalData = PointService::arrivalDataBySourceId($dispatchItem->sourceId);

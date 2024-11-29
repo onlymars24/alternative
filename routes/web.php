@@ -146,10 +146,20 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  dd('');
+  ini_set('max_execution_time', 600);  
+  $newPoints = PointService::checkNewPoints();
+
+  if(count($newPoints) > 0){
+      PointService::addNewPoints($newPoints);
+      Log::info('Новые точки добавлены!');
+  }
+  dd($newPoints);  
+
   Mail::to([env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL'), env('ERROR_MAIL_MARSEL')])->send(new DumpMail('$test', '$test', '$test'));
   dd('');
   $sitemapPath = public_path('sitemap.local.xml');
-    
+
   if (File::exists($sitemapPath)) {
       // Очистить содержимое файла
       File::put($sitemapPath, '<?xml version="1.0" encoding="UTF-8"?>

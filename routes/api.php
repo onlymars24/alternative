@@ -368,6 +368,9 @@ Route::get('/cache/races', [RacesCacheController::class, 'get']);
 Route::get('/bonuses/user', [BonusesController::class, 'user']);
 
 Route::get('/seven/days/races', [RaceController::class, 'sevenDaysRaces']);
+
+Route::get('/races/simple', [RaceController::class, 'simpleRaces']);
+
 Route::get('/races', [RaceController::class, 'races']);
 
 

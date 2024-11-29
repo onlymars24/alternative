@@ -28,6 +28,16 @@ class RaceController extends Controller
         ]);
     }
 
+    public function simpleRaces(Request $request){
+        $races = Http::withHeaders([
+            'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$request->date)->object();
+        if(is_array($races)){
+            return response(['isServerError' => false, 'races' => $races]);
+        }
+        return response(['isServerError' => false, 'races' => []]);
+    }
+
     public function get(Request $request){
         $races = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
