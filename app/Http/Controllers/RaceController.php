@@ -33,6 +33,11 @@ class RaceController extends Controller
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$request->date)->object();
         if(is_array($races)){
+            foreach($races as $race){
+                $race->dispatch_point_id = $request->dispatchPointId;
+                $race->arrival_point_id = $request->arrivalPointId;                
+            }
+
             return response(['isServerError' => false, 'races' => $races]);
         }
         return response(['isServerError' => false, 'races' => []]);

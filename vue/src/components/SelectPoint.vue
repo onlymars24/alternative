@@ -14,7 +14,8 @@ export default
   },
   methods: {
     selectDataSearch(query){
-        store.dispatch('selectDataSearch', {query, selectItemType: this.typeEn})
+      this.query = query ? query : this.query
+        store.dispatch('selectDataSearch', {query: this.query, selectItemType: this.typeEn})
     },
     closeEvent(){
       console.log('blur')
