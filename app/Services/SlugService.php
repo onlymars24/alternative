@@ -20,27 +20,32 @@ class SlugService
     }
 
     public static function unifySlug(){
-        // $stations = Station::all();
-        // foreach($stations as $station){
-        //     $existingStation = Station::where([['slug', '=', $station->slug], ['id', '<', $station->id]])->first();
-        //     if(!$existingStation){
-        //         continue;
-        //     }
-        //     if(isset($station->kladr) && $station->kladr->district){
-        //         $newSlug = $station->slug.'-'.$station->kladr;
-        //         $existingStation = Station::where([['slug', '=', $newSlug], ['id', '<', $station->id]])->first();
-        //     }
-        // }
+        $stations = Station::all();
+        foreach($stations as $station){
+            $existingStation = Station::where([['slug', '=', $station->slug], ['id', '<', $station->id]])->first();
+            if(!$existingStation){
+                continue;
+            }
+            if(!isset($station->kladr) || !$station->kladr->district){
+                continue;
+            }
+            $newSlug = $station->slug.'-'.$station->kladr;
+            $existingStation = Station::where([['slug', '=', $newSlug], ['id', '<', $station->id]])->first();  
+            if(!$existingStation){
+                continue;
+            }          
+            $newSlug = $station->slug.'-'.$station->kladr;
+        }
 
-        // $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
+        $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
 
-        // $dispatchPoints = DispatchPoint::all();
+        $dispatchPoints = DispatchPoint::all();
 
-        // foreach($dispatchPoints as $dispatchPoint){
-        //     $arrivalPoints = CacheArrivalPoint::where([['dispatch_point_id', '=', $dispatchPoint->id]])->get();
-        //     foreach($arrivalPoints as $arrivalPoint){
+        foreach($dispatchPoints as $dispatchPoint){
+            $arrivalPoints = CacheArrivalPoint::where([['dispatch_point_id', '=', $dispatchPoint->id]])->get();
+            foreach($arrivalPoints as $arrivalPoint){
 
-        //     }
-        // }
+            }
+        }
     }
 }

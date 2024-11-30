@@ -70,7 +70,6 @@ export default createStore({
   },
   actions: {
     async selectDataSearch(store, playload){
-      console.log(playload)
       let query = playload.query
       let selectItemType = playload.selectItemType
       let search = query

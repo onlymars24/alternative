@@ -1,19 +1,29 @@
 <script>
 import store from '../store'
 import Multiselect from 'vue-multiselect'
+import vSelect from 'vue-select'
+
 export default
 {
   props: [ 'typeRu', 'typeEn' ],
-  components: { Multiselect },
+  components: { Multiselect, 'v-select': vSelect },
   data(){
     return {
-
+      query: ''
     }
   },
   methods: {
     selectDataSearch(query){
-        console.log(this.typeEn)
         store.dispatch('selectDataSearch', {query, selectItemType: this.typeEn})
+    },
+    closeEvent(){
+      console.log('blur')
+      if(!store.state[this.typeEn+'Item']){
+        store.commit(this.typeEn+'DataSet', [])
+      }
+      else{
+        store.commit(this.typeEn+'DataSet', [store.state[this.typeEn+'Item']])
+      }
     }
   }
 }
@@ -21,8 +31,52 @@ export default
 
 <template>
     <div class="main__table-table">
-      <p style="margin: 0; padding-left: 12px; padding-top: 12px; padding-bottom: 5px; font-size: 12px;">{{ typeRu }}</p>
-      <multiselect 
+      <p style="margin: 0; padding-left: 20px; padding-top: 12px; padding-bottom: 5px; font-size: 12px;">{{ typeRu }}</p>
+      <v-select
+      @search="selectDataSearch"
+      @search:focus="selectDataSearch"
+      @search:blur="closeEvent"
+      :options="$store.state[typeEn+'Data']"
+      label="name"
+      v-model="$store.state[typeEn+'Item']"
+      :disabled="typeEn == 'arrival' && !$store.state.dispatchItem"
+      :placeholder="'Заполните '+typeRu.toLowerCase()"
+      :loading="$store.state.selectDataLoading"
+    >
+    <template #option="option">
+      <div style="cursor: pointer;">
+        <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 17px;">{{ option.name}}<br v-if="option.kladr.region"/>
+          {{(option.kladr.region ? option.kladr.region : '')}}<br v-if="option.kladr.district"/>
+          {{(option.kladr.district ? option.kladr.district : '') }}</span>
+        <span v-if="option.sourceId.includes('kladrs')" style="font-size: 20px;">{{ option.name}}<br v-if="option.region"/>
+          {{(option.region ? option.region : '')}}<br v-if="option.district"/>
+          {{(option.district ? option.district : '') }}</span>
+        <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 15px;">{{ option.name}}<br v-if="option.region"/>
+          {{(option.region ? option.region : '')}}<br v-if="option.details"/>
+          {{(option.details ? option.details : '') }}</span>
+      </div>
+    </template>
+    <template #no-options="{ search, searching, loading }">
+    <span></span>
+    </template>
+    <template #spinner="{ loading }">
+      <div
+        v-if="loading"
+        style="border-left-color: rgba(88, 151, 251, 0.71)"
+        class="vs__spinner"
+      >
+        The .vs__spinner class will hide the text for me.
+      </div>
+    </template>
+      <!-- <template #option="{ author, title }">
+        {{ title }}
+         :get-option-label="(option) => option.title"
+        <br />
+        <cite>{{ author.firstName }} {{ author.lastName }}</cite>
+      </template> -->
+    </v-select>
+
+      <!-- <multiselect
       v-model="$store.state[typeEn+'Item']" 
       label="name"
       :searchable="true"
@@ -35,8 +89,9 @@ export default
       deselect-label=""
       no-options=""
       no-result=""
+      @Open="selectDataSearch"
+      @Close="closeEvent"
       >
-    <!-- Слот для отображения каждого элемента в списке -->
     <template #option="{ option }">
       <div style="cursor: pointer;">
         <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 15px;">{{ option.name}}<br v-if="option.kladr.region"/>
@@ -48,21 +103,18 @@ export default
         <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 13px;">{{ option.name}}<br v-if="option.region"/>
           {{(option.region ? option.region : '')}}<br v-if="option.details"/>
           {{(option.details ? option.details : '') }}</span>
-          <!-- {{ option.name }} -->
       </div>
     </template>
-
-    <!-- Слот для отображения выбранного элемента -->
     <template #singleLabel="{ option }">
       {{ option.name }}
     </template>
-    <template #noResult>
+    <template style="height: 0;" #noResult>
       <span></span>
     </template>
-    <template #noOptions>
+    <template style="height: 0;" #noOptions>
       <span></span>
     </template>
-      </multiselect>
+      </multiselect> -->
       <!-- <el-select
           size="large"
           v-model="$store.state[typeEn+'Item']"
@@ -98,6 +150,7 @@ export default
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style >
+@import 'vue-select/dist/vue-select.css';
 /* .el-select {
 
 } */

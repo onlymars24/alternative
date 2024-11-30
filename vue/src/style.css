@@ -219,6 +219,16 @@ a{
 .multiselect__placeholder{
   margin-left: 4px;
 }
+.v-select{
+  padding-left: 12px;
+  padding-bottom: 5px;
+}
+.vs__actions{
+  display: none !important;
+}
+.vs__placeholder::placeholder {
+  color: #ff6347 !important; /* Цвет для плейсхолдера (например, томатный) */
+}
 .checkmark {
   position: absolute;
   top: 4px;

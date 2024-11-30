@@ -442,6 +442,8 @@ export default {
     },
     methods: {
         findRacesWithDate(){
+            // console.log(window.location.origin+'/автобус/'+store.state.dispatchItem.slug+'/'+store.state.arrivalItem.slug+'?on='+this.date)
+            // return
             window.location.replace(window.location.origin+'/автобус/'+store.state.dispatchItem.slug+'/'+store.state.arrivalItem.slug+'?on='+this.date);
         },
         async findOtherDates(){

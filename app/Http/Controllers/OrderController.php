@@ -392,7 +392,7 @@ class OrderController extends Controller
                         $policy = $policies[0];
                         $policiesTotalRate += $policy->rate[0]->value;
                         $ticketFromDB->insurance = json_encode($policy);
-                        $ticketFromDB->save();                        
+                        $ticketFromDB->save();
                     }
                 }
             }

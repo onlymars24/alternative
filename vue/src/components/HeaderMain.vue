@@ -1,73 +1,73 @@
 <template>
 <div class="main__header" :style="('background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('+(page && page.header_img ? (baseUrl+'/'+page.header_img) : '/img/avtobus_avtovokzal_rosvokzaly.jpg' )+')')">
-        <div class="container">
-            <Header :blackText="false"/>
-            <div class="main">
-                <h1 style="text-shadow: 1px 1px 5px black" v-if="this.$route.name == 'Races'" class="main__main">
-                    Автобус {{$store.state.dispatchNameConst}} - {{$store.state.arrivalNameConst}}
-                </h1>
-                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="this.$route.name == 'KladrPage'" class="main__main">
-                    {{ $store.state.kladrPage.name }}
-                </h1>
-                <h1 style="text-shadow: 1px 1px 5px black" v-else-if="this.$route.name == 'StationPage'" class="main__main">
-                    {{ $store.state.stationPage.name }}
-                </h1>
-                <h1 style="text-shadow: 1px 1px 5px black" v-else class="main__main">
-                    Автовокзалы России
-                </h1>
-                <p style="text-shadow: 1px 1px 5px black" v-if="this.$route.name == 'Races'" class="main__main-p">
-                    Билеты на автобус онлайн
-                </p>
-            </div>
-            <div class="main__table">
-                <SelectPoint :type-en="'dispatch'" :type-ru="'Откуда'"/>
-                <SelectPoint :type-en="'arrival'" :type-ru="'Куда'"/>
-                <div class="main__table-table">
-                    <p class="" style="margin: 0; padding-left: 12px; padding-top: 12px; padding-bottom: 5px; font-size: 12px;">Дата поездки</p>
-                    <div class="block">
-                        <el-config-provider :locale="locale">
-                            <el-date-picker
-                            format="YYYY-MM-DD"
-                            value-format="YYYY-MM-DD"
-                            v-model="date"
-                            :disabled-date="disabledDate"
-                            type="date"
-                            style="max-width: 100%;"
-                            :clearable="false"
-                            @keydown.prevent
-                            >
-                            </el-date-picker>
-                        </el-config-provider>
-                    </div>
-                    <!-- <input id="calendar" class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки"> -->
+    <div class="container">
+        <Header :blackText="false"/>
+        <div class="main">
+            <h1 style="text-shadow: 1px 1px 5px black" v-if="this.$route.name == 'Races'" class="main__main">
+                Автобус {{$store.state.dispatchNameConst}} - {{$store.state.arrivalNameConst}}
+            </h1>
+            <h1 style="text-shadow: 1px 1px 5px black" v-else-if="this.$route.name == 'KladrPage'" class="main__main">
+                {{ $store.state.kladrPage.name }}
+            </h1>
+            <h1 style="text-shadow: 1px 1px 5px black" v-else-if="this.$route.name == 'StationPage'" class="main__main">
+                {{ $store.state.stationPage.name }}
+            </h1>
+            <h1 style="text-shadow: 1px 1px 5px black" v-else class="main__main">
+                Автовокзалы России
+            </h1>
+            <p style="text-shadow: 1px 1px 5px black" v-if="this.$route.name == 'Races'" class="main__main-p">
+                Билеты на автобус онлайн
+            </p>
+        </div>
+        <div class="main__table">
+            <SelectPoint :type-en="'dispatch'" :type-ru="'Откуда'"/>
+            <SelectPoint :type-en="'arrival'" :type-ru="'Куда'"/>
+            <div class="main__table-table">
+                <p class="" style="margin: 0; padding-left: 12px; padding-top: 12px; padding-bottom: 5px; font-size: 12px;">Дата поездки</p>
+                <div class="block">
+                    <el-config-provider :locale="locale">
+                        <el-date-picker
+                        format="YYYY-MM-DD"
+                        value-format="YYYY-MM-DD"
+                        v-model="date"
+                        :disabled-date="disabledDate"
+                        type="date"
+                        style="max-width: 100%;"
+                        :clearable="false"
+                        @keydown.prevent
+                        >
+                        </el-date-picker>
+                    </el-config-provider>
                 </div>
-                <div class="main__table-button">
-                    <button v-if="disabledSearch" disabled @click="findRaces" type="button" class="main__button">
-                        Найти билет
-                    </button>
-                    <div class="main__button-link" v-else>
-                        <a style="width:100%;" :href="'/автобус/'+$store.state.dispatchItem.slug+'/'+$store.state.arrivalItem.slug+(date ? '?on='+date : '')" type="button" class="main__button" disabled>
-                            <div style="display: flex; align-items: center; justify-content: center;">
-                                <p>Найти билет</p>
-                            </div>
-                        </a>
-                    </div>
+                <!-- <input id="calendar" class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки"> -->
+            </div>
+            <div class="main__table-button">
+                <button v-if="disabledSearch" disabled @click="findRaces" type="button" class="main__button">
+                    Найти билет
+                </button>
+                <div class="main__button-link" v-else>
+                    <a style="width:100%;" :href="'/автобус/'+$store.state.dispatchItem.slug+'/'+$store.state.arrivalItem.slug+(date ? '?on='+date : '')" type="button" class="main__button" disabled>
+                        <div style="display: flex; align-items: center; justify-content: center;">
+                            <p>Найти билет</p>
+                        </div>
+                    </a>
+                </div>
 
 
-                </div>
-            </div>
-            <div v-if="!disabledSearch" class="main__another__date">
-                <a :href="raceUrl+'?on='+dates.today" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</a>
-                <a :href="raceUrl+'?on='+dates.tomorrow" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</a>
-                <a :href="raceUrl+'?on='+dates.afterTomorrow" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</a>
-            </div>
-            <div v-else class="main__another__date">
-                <span :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</span>
-                <span style="margin: 0 5px;" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</span>
-                <span :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</span>
             </div>
         </div>
+        <div v-if="!disabledSearch" class="main__another__date">
+            <a :href="raceUrl+'?on='+dates.today" :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</a>
+            <a :href="raceUrl+'?on='+dates.tomorrow" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</a>
+            <a :href="raceUrl+'?on='+dates.afterTomorrow" :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</a>
+        </div>
+        <div v-else class="main__another__date">
+            <span :class="{'main__another__date-fix__active': dates.today !=  $route.query.on, 'strong': dates.today ==  $route.query.on}" class="main__another__date-fix">Сегодня</span>
+            <span style="margin: 0 5px;" :class="{'main__another__date-fix__active': dates.tomorrow !=  $route.query.on, 'strong': dates.tomorrow ==  $route.query.on}" class="main__another__date-fix">Завтра</span>
+            <span :class="{'main__another__date-fix__active': dates.afterTomorrow !=  $route.query.on, 'strong': dates.afterTomorrow ==  $route.query.on}" class="main__another__date-fix">Послезавтра</span>
+        </div>
     </div>
+</div>
 </template>
 
 <script>

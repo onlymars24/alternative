@@ -60,9 +60,9 @@
          <button v-if="button_status == 'Обновляем...'" style="background-color: gray;" class="buy__but">
           Обновляем...
 			   </button>
-         <a href="" v-if="button_status == 'Обновить'" style="display: block; background-color: gray; color: #fff;" class="buy__but" @click="this.$emit('findRacesWithDate')">
+         <button v-if="button_status == 'Обновить'" style="display: block; background-color: gray; color: #fff;" class="buy__but" @click="this.$emit('findRacesWithDate')">
           Обновить
-			   </a>
+			   </button>
          <button v-if="button_status == 'Выбрать' && race.freeSeatCount == 0" style="background-color: gray;" disabled class="buy__but">
             Мест нет
 			   </button>
