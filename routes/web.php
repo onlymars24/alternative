@@ -149,10 +149,10 @@ Route::get('/spread', function (Request $request) {
   
   $order_json = Http::withHeaders([
       'Authorization' => env('AVTO_SERVICE_KEY'),
-  ])->post(env('AVTO_SERVICE_URL').'/order/145298096');
+  ])->get(env('AVTO_SERVICE_URL').'/order/145298096');
   Log::info('; obj_json: '.$order_json);
   $order_obj = json_decode($order_json);
-  dd($order_obj);
+  // dd($order_obj);
   if(!isset($order_obj->id)){
       MailService::sendError(env('AVTO_SERVICE_URL').'/order/confirm/', $order_obj);
       return;
