@@ -25,19 +25,23 @@
             <div class="main__table-table">
                 <p class="" style="margin: 0; padding-left: 12px; padding-top: 12px; padding-bottom: 5px; font-size: 12px;">Дата поездки</p>
                 <div class="block">
-                    <el-config-provider :locale="locale">
-                        <el-date-picker
-                        format="YYYY-MM-DD"
-                        value-format="YYYY-MM-DD"
-                        v-model="date"
-                        :disabled-date="disabledDate"
-                        type="date"
-                        style="max-width: 100%;"
-                        :clearable="false"
-                        @keydown.prevent
-                        >
-                        </el-date-picker>
-                    </el-config-provider>
+                    <div class="date__picker-desktop">
+                        <el-config-provider :locale="locale">
+                            <el-date-picker
+                            format="YYYY-MM-DD"
+                            value-format="YYYY-MM-DD"
+                            v-model="date"
+                            :disabled-date="disabledDate"
+                            type="date"
+                            style="max-width: 100%;"
+                            :clearable="false"
+                            @keydown.prevent
+                            >
+                            </el-date-picker>
+                        </el-config-provider>
+                    </div>
+
+                    <input id="calendar" class="main__table-date date__picker-mobile" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки">
                 </div>
                 <!-- <input id="calendar" class="main__table-date" type="date" style="width: 100%;" :min="dateNew" :max="toMonth" v-model="date" placeholder="Дата поездки"> -->
             </div>
@@ -134,8 +138,6 @@ export default{
         },
     },
     async mounted(){
-        console.log('this.$route.name')
-        console.log(this.$route.name)
         let dash = 'G'
         this.dates.today = dayjs().format('YYYY-MM-DD')
 
@@ -147,6 +149,9 @@ export default{
         if(localStorage.getItem('authToken')){
             this.auth = true
         }
+        var dateNewGet = new Date();
+        this.dateNew = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 1 > 9? dateNewGet.getMonth() + 1 : "0" + (dateNewGet.getMonth()+ 1)) + "-" + dateNewGet.getDate();
+        this.toMonth = dateNewGet.getFullYear()+ "-" + (dateNewGet.getMonth() + 2 == 12? 1 : (dateNewGet.getMonth() + 2 > 9 ? dateNewGet.getMonth() + 2 : "0"+(dateNewGet.getMonth() + 2))) + "-" + dateNewGet.getDate();
         // if(this.page){
         //     let tempDispatch = null
         //     console.log(this.page)
@@ -203,6 +208,12 @@ export default{
 .big__font-size{
     font-size: 20px;
 }
+.date__picker-desktop{
+    display: block;
+}
+.date__picker-mobile{
+    display: none;
+}
 @media (max-width: 992px)
 {
     .main__another__date{
@@ -216,6 +227,12 @@ export default{
 {
     .main__header .main{
         margin-top: 70px;
+    }
+    .date__picker-desktop{
+        display: none !important;
+    }
+    .date__picker-mobile{
+        display: block;
     }
 }
 

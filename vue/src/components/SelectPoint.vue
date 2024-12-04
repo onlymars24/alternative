@@ -2,11 +2,12 @@
 import store from '../store'
 import Multiselect from 'vue-multiselect'
 import vSelect from 'vue-select'
+import SelectPointLabel from '../components/SelectPointLabel.vue'
 
 export default
 {
   props: [ 'typeRu', 'typeEn' ],
-  components: { Multiselect, 'v-select': vSelect },
+  components: { Multiselect, 'v-select': vSelect, SelectPointLabel },
   data(){
     return {
       query: ''
@@ -31,51 +32,58 @@ export default
 </script>
 
 <template>
-    <div class="main__table-table">
+    <div class="main__table-table" :class="$store.state[typeEn+'Data'].length == 0 ? 'empty__dropdown' : ''">
       <p style="margin: 0; padding-left: 20px; padding-top: 12px; padding-bottom: 5px; font-size: 12px;">{{ typeRu }}</p>
       <v-select
-      @search="selectDataSearch"
-      @search:focus="selectDataSearch"
-      @search:blur="closeEvent"
-      :options="$store.state[typeEn+'Data']"
-      label="name"
-      v-model="$store.state[typeEn+'Item']"
-      :disabled="typeEn == 'arrival' && !$store.state.dispatchItem"
-      :placeholder="'Заполните '+typeRu.toLowerCase()"
-      :loading="$store.state.selectDataLoading"
-    >
-    <template #option="option">
-      <div style="cursor: pointer;">
-        <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 17px;">{{ option.name}}<br v-if="option.kladr.region"/>
-          {{(option.kladr.region ? option.kladr.region : '')}}<br v-if="option.kladr.district"/>
-          {{(option.kladr.district ? option.kladr.district : '') }}</span>
-        <span v-if="option.sourceId.includes('kladrs')" style="font-size: 20px;">{{ option.name}}<br v-if="option.region"/>
-          {{(option.region ? option.region : '')}}<br v-if="option.district"/>
-          {{(option.district ? option.district : '') }}</span>
-        <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 15px;">{{ option.name}}<br v-if="option.region"/>
-          {{(option.region ? option.region : '')}}<br v-if="option.details"/>
-          {{(option.details ? option.details : '') }}</span>
-      </div>
-    </template>
-    <template #no-options="{ search, searching, loading }">
-    <span></span>
-    </template>
-    <template #spinner="{ loading }">
-      <div
-        v-if="loading"
-        style="border-left-color: rgba(88, 151, 251, 0.71)"
-        class="vs__spinner"
+        @search="selectDataSearch"
+        @search:focus="selectDataSearch"
+        @search:blur="closeEvent"
+        :options="$store.state[typeEn+'Data']"
+        label="name"
+        v-model="$store.state[typeEn+'Item']"
+        :disabled="typeEn == 'arrival' && !$store.state.dispatchItem"
+        :placeholder="'Заполните '+typeRu.toLowerCase()"
+        :loading="$store.state.selectDataLoading"
       >
-        The .vs__spinner class will hide the text for me.
-      </div>
-    </template>
-      <!-- <template #option="{ author, title }">
-        {{ title }}
-         :get-option-label="(option) => option.title"
-        <br />
-        <cite>{{ author.firstName }} {{ author.lastName }}</cite>
-      </template> -->
-    </v-select>
+      <template #option="option">
+        <div style="cursor: pointer;">
+          <!-- <div v-if="option.sourceId.includes('stations')" style="display: flex; flex-wrap: wrap; align-items: flex-end; padding: 5px 0;">
+            <span style="font-size: 17px;">{{ option.name}}{{ option.kladr.region ? ', ' : '' }}</span>
+            <span style="font-size: 15px; color: gray;">{{(option.kladr.region ? option.kladr.region : '')}}{{ option.kladr.district ? ', ' : '' }}</span>
+            <span style="font-size: 15px; color: gray;">{{(option.kladr.district ? option.kladr.district : '') }}</span>
+          </div>         -->
+          <SelectPointLabel v-if="option.sourceId.includes('kladrs')" :sourceId="option.sourceId" :name="option.name" :region="option.region" :district="option.district"/>
+          <SelectPointLabel v-if="option.sourceId.includes('stations') && option.kladr" :sourceId="option.sourceId" :name="option.name" :region="option.kladr.region" :district="option.kladr.district"/>
+          <SelectPointLabel v-if="option.sourceId.includes('cache_arrival_points')" :sourceId="option.sourceId" :name="option.name" :region="option.region" :district="option.details"/>
+
+          <!-- <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 17px;">{{ option.name}}
+            {{(option.kladr.region ? option.kladr.region : '')}}
+            {{(option.kladr.district ? option.kladr.district : '') }}</span>
+
+          <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 15px;">{{ option.name}}
+            {{(option.region ? option.region : '')}}
+            {{(option.details ? option.details : '') }}</span> -->
+        </div>
+      </template>
+      <template #no-options="{ search, searching, loading }" style="height: 0; width: 0; display: none;">
+      <span></span>
+      </template>
+      <template #spinner="{ loading }">
+        <div
+          v-if="loading"
+          style="border-left-color: rgba(88, 151, 251, 0.71)"
+          class="vs__spinner"
+        >
+          The .vs__spinner class will hide the text for me.
+        </div>
+      </template>
+        <!-- <template #option="{ author, title }">
+          {{ title }}
+          :get-option-label="(option) => option.title"
+          <br />
+          <cite>{{ author.firstName }} {{ author.lastName }}</cite>
+        </template> -->
+      </v-select>
 
       <!-- <multiselect
       v-model="$store.state[typeEn+'Item']" 

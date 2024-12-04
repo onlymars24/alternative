@@ -19,9 +19,11 @@ use App\Enums\InsuranceEnum;
 use App\Services\SmsService;
 use App\Services\UtmService;
 use Illuminate\Http\Request;
+use App\Models\DispatchPoint;
 use App\Services\MailService;
 use App\Services\AdPdfService;
 use App\Services\FermaService;
+use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -86,16 +88,39 @@ class OrderController extends Controller
             $timezone = $race->depot->timezone;
         }
         
+        $dispatchPoint = DispatchPoint::find($request->dispatch_point_id);
+        $arrivalPoint = CacheArrivalPoint::where([['arrival_point_id', '=', $request->arrival_point_id], ['dispatch_point_id', '=', $request->dispatch_point_id]])->first();
+        // return response([
+        //     'dispatchKladrSlug' => $dispatchPoint,
+        //     'arrivalKladrSlug' => $arrivalPoint
+        // ]);
+        $dispatchReturnSlug = null;
+        $arrivalReturnSlug = null;
+
+        if(isset($dispatchPoint->kladr->arrivalPoints) && count($dispatchPoint->kladr->arrivalPoints) != 0 && isset($arrivalPoint->kladr->dispatchPoints) && count($arrivalPoint->kladr->dispatchPoints) != 0){
+            $dispatchReturnSlug = $arrivalPoint->kladr->slug;
+            $arrivalReturnSlug = $dispatchPoint->kladr->slug;
+        }
 
 
         $orderFromDB = Order::create([
             'id' => $order->id,
             'order_info' => $order_json,
-            'dispatchPointId' => $request->dispatch_point_id,
-            'arrivalPointId' => $request->arrival_point_id,
+            // 'dispatchPointId' => $request->dispatch_point_id,
+            // 'arrivalPointId' => $request->arrival_point_id,
+            'dispatchReturnSlug' => $dispatchReturnSlug,
+            'arrivalReturnSlug' => $arrivalReturnSlug,
             'bonusesPrice' => $request->bonuses,
             'user_id' => $user->id,
         ]);
+
+
+
+
+
+
+
+        
         $orderBundle = [
             'agent' => ['agentType' => 7],
             'cartItems' => [

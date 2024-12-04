@@ -79,9 +79,14 @@
 		   </div>
 		   <div class="right-ins__right" v-if="!expired">
 			 <div class="right-ins__right-button">
-			   <a :href="'/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/'+order.id" v-if="(race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R') && order.dispatchPointId && order.arrivalPointId" class="buy__but" style="background-color: #7CAE5E;">
-				Обратный билет
-			   </a>
+			   <div v-if="race.order.status == 'S' || race.order.status == 'P' || race.order.status == 'R'">
+				<a :href="'/автобус/'+order.dispatchReturnSlug+'/'+order.arrivalReturnSlug+'?orderId='+order.id" v-if="order.dispatchReturnSlug && order.arrivalReturnSlug" class="buy__but" style="background-color: #7CAE5E;">
+					Обратный билет
+				</a>
+				<a v-else @click.prevent="returnRaceNonExistence = true" class="buy__but" style="background-color: #7CAE5E;">
+					Обратный билет
+				</a>
+			   </div>
 			   <button v-if="race.order.status == 'B'" @click="toPayment" class="buy__but" style="background: #dc3545;">
 				  Оплатить 
 			   </button>
@@ -130,6 +135,9 @@
 	</template>
 	<template v-if="popupInsurancesOpen">
         <PopupWindow @CloseWindow="popupInsurancesOpen = false;" :content="6" :order="race.order" :insurancesInfo="insurancesInfo"/>
+	</template>
+	<template v-if="returnRaceNonExistence">
+        <PopupWindow @CloseWindow="returnRaceNonExistence = false;" :content="13" :order="race.order" :returnRaceLoading="returnRaceLoading" @sendReturnRace="sendReturnRace"/>
 	</template>
  </template>
 <script>
@@ -217,13 +225,32 @@
 				expired: false,
 				wentOut: false,
 				baseUrl: '',
-				duePrice: this.order.duePrice
+				duePrice: this.order.duePrice,
+				returnRaceNonExistence: false,
+				returnRaceLoading: false
 			}
 		},
     computed:{
 
     },
     methods: {
+		async sendReturnRace(){
+			this.returnRaceLoading = true
+            await axiosClient
+            .post('/return/race/send', {
+                status: 'Неудачная',
+                dispatchName: this.race.order.tickets[0].arrivalStation,
+                arrivalName: this.race.order.tickets[0].dispatchStation,
+                orderId: this.race.order.id
+            })
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+			this.returnRaceLoading = false
+		},
 		toPayment(){
 			// router.push({name: 'Payment', params: {order_id: this.order.id}})
 			window.open(this.order.formUrl, '_self');

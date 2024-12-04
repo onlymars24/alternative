@@ -25,6 +25,8 @@ class Order extends Model
         'timezone',
         'dispatchPointId',
         'arrivalPointId',
+        'dispatchReturnSlug',
+        'arrivalReturnSlug',
         'bonusesPrice',
         'insurancePrice',
         'utm_source',

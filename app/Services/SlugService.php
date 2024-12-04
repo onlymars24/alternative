@@ -27,14 +27,19 @@ class SlugService
                 continue;
             }
             if(!isset($station->kladr) || !$station->kladr->district){
+                // PROBLEM
                 continue;
             }
-            $newSlug = $station->slug.'-'.$station->kladr;
-            $existingStation = Station::where([['slug', '=', $newSlug], ['id', '<', $station->id]])->first();  
+            $newSlug = $station->slug.'-'.$station->kladr->district;
+            $existingStation = Station::where([['slug', '=', $newSlug], ['id', '<', $station->id]])->first();
             if(!$existingStation){
                 continue;
-            }          
-            $newSlug = $station->slug.'-'.$station->kladr;
+            }
+            if(!$station->kladr->region){
+                // PROBLEM
+                continue;
+            }
+            $newSlug = $station->slug.'-'.$station->kladr->region;
         }
 
         $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();

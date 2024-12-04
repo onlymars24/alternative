@@ -229,6 +229,17 @@ a{
 .vs__placeholder::placeholder {
   color: #ff6347 !important; /* Цвет для плейсхолдера (например, томатный) */
 }
+.vs__dropdown-menu{
+  width: 300px !important;
+  display: block !important;
+
+  /* left: -25px !important; */
+}
+
+.empty__dropdown .vs__dropdown-menu{
+  opacity: 0;  
+}
+
 .checkmark {
   position: absolute;
   top: 4px;

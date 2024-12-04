@@ -115,7 +115,7 @@ Route::get('/sitemap/reload', function (Request $request) {
     File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
     FtpLoadingService::put();
     // dd($xml);  
-  });
+});
 
 Route::get('/new/points', [NewPointsController::class, 'get']);
 Route::middleware('auth:sanctum')->group(function(){
@@ -275,7 +275,7 @@ Route::post('/order/transactions', [TransactionController::class, 'all']);
 Route::get('/race', [RaceController::class, 'get']);
 
 Route::post('/send/race/existing', [RacesExistingMailController::class, 'send']);
-Route::get('/check/return/race', [ReturnRaceController::class, 'checkReturnRace']);
+Route::post('/return/race/send', [ReturnRaceController::class, 'sendReturnRace']);
 
 
 Route::get('/settings/bonuses/percent', [SettingsController::class, 'getBonusesPercent']);

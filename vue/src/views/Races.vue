@@ -256,6 +256,21 @@ export default {
     //     console.log('должен был съехать mounted')
     // },
     async mounted(){
+        if(this.$route.query.orderId){
+            await axiosClient
+            .post('/return/race/send', {
+                status: 'Успешная',
+                dispatchName: store.state.dispatchItem.name,
+                arrivalName: store.state.arrivalItem.name,
+                orderId: this.$route.query.orderId
+            })
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
 
         if(this.dispatchItem.sourceId.includes('kladrs') && this.dispatchItem.kladr_station_page){
             this.crumbPages.push({name: 'Расписание '+this.dispatchItem.name, href: '/расписание/'+this.dispatchItem.kladr_station_page.url_region_code+'/'+this.dispatchItem.kladr_station_page.url_settlement_name })
@@ -292,8 +307,6 @@ export default {
         await axiosClient
         .get('/cache/races?dispatchSlug='+store.state.dispatchItem.slug+'&arrivalSlug='+store.state.arrivalItem.slug+'&date='+this.date)
         .then(response => {
-            console.log('cache')
-            console.log(response)
             this.cacheRaces = Object.values(response.data.cacheRaces)
             // console.log('this.cacheRaces')
             // console.log(this.cacheRaces)
@@ -328,7 +341,6 @@ export default {
                 })
             })
         }
-        console.log(dispatchPoints)
         let arrivalPoints = []
         if(this.arrivalItem.sourceId.includes('cache_arrival_points')){
             arrivalPoints = [this.arrivalItem]
@@ -343,7 +355,6 @@ export default {
                 })
             })
         }
-        console.log(arrivalPoints)
         
         // dispatchPoints.forEach(async(dispatchPoint) => {
         let tempTotalRaces = []
@@ -367,19 +378,13 @@ export default {
                             
                         });
                         this.races = Object.values(tempTotalRaces)
-                        console.log('частичная партия')
-                        console.log(tempRaces, this.races)
                         this.loadingRaces = false
                     })
                     .catch(error => {
-                        console.log(error)
                     })
                     }
                 }
             }
-            // this.races = Object.values(this.races)
-            console.log('this.races')
-            console.log(this.races)
 
 
         //     await arrivalPoints.forEach(async(arrivalPoint) => {

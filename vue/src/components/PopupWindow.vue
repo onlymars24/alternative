@@ -153,6 +153,15 @@
           </div> 
       </div> 
     </div>
+    <div v-if="this.content==13">
+      <BusLoading v-if="returnRaceLoading"/>
+      <div v-else style="font-size: 23px;">
+          <p style="margin-bottom: 15px;">На данный момент билеты от <strong>{{ order.tickets[0].arrivalStation }}</strong> до <strong>{{ order.tickets[0].dispatchStation }}</strong> не продаются</p>
+          <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 10px;">
+            <button class="btn btn-primary btn-code" @click="$emit('CloseWindow')"><div style="font-size: 20px;">Ок</div></button>            
+          </div> 
+      </div> 
+    </div>
 </div>
 </template>
 <script scoped>
@@ -166,6 +175,8 @@ import ResetPassword from "../components/ResetPassword.vue";
 import FixUser from "../components/FixUser.vue";
 import TheMask from 'vue-the-mask';
 import Feedback from '../components/Feedback.vue';
+import BusLoading from '../components/BusLoading.vue';
+
 
 export default
 {
@@ -181,9 +192,9 @@ export default
       // unfixedUserStep: 1
     }
   },
-  props: ['content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice', 'unfixedUserData', 'existingRaces'],
+  props: ['returnRaceLoading', 'content', 'user', 'order', 'returnInfo', 'returnTransactionsInfo', 'insurancesInfo', 'feedbackInfo', 'insurancePrice', 'unfixedUserData', 'existingRaces'],
   emits: ['makeFixed', 'confirmBook', 'authSelf', 'authenticateForForm', 'returnTicket', 'CloseWindow', 'returnOrder', 'CloseFeedbackWindow', 'confirmRejection', 'changeMind', 'editEmail', 'findOtherDates'],
-  components: { Seat, Login, Registration, ResetPassword, FixUser, Feedback },
+  components: { Seat, Login, Registration, ResetPassword, FixUser, Feedback, BusLoading },
   computed: {
     UserAgreement() {
       return UserAgreement;
@@ -215,6 +226,7 @@ export default
     }
   },
   mounted(){
+    this.$emit('sendReturnRace')
     // v-on:keydown.enter="reloadPage(); $emit('CloseWindow');"
     // this.$refs.refPhoneInput.focus()
     let that = this
@@ -289,8 +301,6 @@ export default
   .rejection__popup{
     max-width: 720px;
   }
-  .rejection__buttons{
-  }  
   .rejection__buttons button{
     width: 49%;
   }
