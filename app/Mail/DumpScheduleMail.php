@@ -3,14 +3,13 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
 
-class DumpMail extends Mailable
+class DumpScheduleMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,12 +18,9 @@ class DumpMail extends Mailable
      *
      * @return void
      */
-    
-    
     private $info;
     private $body;
     public $subject;
-    
     public function __construct($info, $body, $subject)
     {
         
@@ -53,7 +49,7 @@ class DumpMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mail.dump_mail',
+            view: 'mail.dump_schedule_mail',
             with: [
                 'info' => $this->info,
                 'body' => $this->body

@@ -146,14 +146,25 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
-
-
-
-
-
-  
   dd('');
-  ini_set('max_execution_time', 600);  
+  // DB::table('cache_arrival_points')->delete();
+  // dd('');
+  // $arrivalPoints = CacheArrivalPoint::where('dispatch_point_id', 1171)->get();
+  // dd($arrivalPoints->count());
+  $dispatchPoints = DispatchPoint::all();
+  foreach($dispatchPoints as $dispatchPoint){
+    PointService::addNewArrivalPoints($dispatchPoint);
+  }
+  dd('that`s it');
+
+  ini_set('max_execution_time', 600);    
+  $newPoints = PointService::checkNewPoints();
+  if(count($newPoints) > 0){
+      PointService::addNewPoints($newPoints);
+      Log::info('Новые точки добавлены!');
+  }
+  dd('');
+  
   $newPoints = PointService::checkNewPoints();
 
   if(count($newPoints) > 0){

@@ -14,7 +14,7 @@
 					<p style="color: #dc3545;" v-if="race.order.status == 'B' && !expired">Заказ забронирован, но не оплачен!</p>
 					<p v-if="race.order.status == 'R'">Заказ возвращён</p>
 					<p v-if="race.order.status == 'P'">Заказ частично возвращён</p>
-					<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>			
+					<p style="color: #dc3545;" v-if="race.order.status == 'B' && expired">Время ожидания оплаты истекло!</p>
 				</div>				
 			</div>
 			<div class="ticket-medium__ins-left__up-date" v-if="race.order.status == 'S'" style="margin: 0;">

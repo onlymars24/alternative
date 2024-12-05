@@ -1,30 +1,3 @@
-<template>
-    <div>
-      <div class="container"><Header/></div>
-    </div>
-    <div class="container"> 
-      <!-- <pre>
-        {{ race }}
-      </pre> -->
-      
-      <BusLoading v-if="loadingSeats"/>
-    </div>
-    <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats && !errorMessage" :race="race" />
-    <div v-if="!loadingSeats" class="container">
-      <div v-if="errorMessage" style="margin-top: 20px;">        
-        <div class="alert alert-danger" role="alert">
-            <p>{{ errorMessage }}</p>
-        </div>
-        <p style="font-size: 25px;"><strong>Выберите другой рейс, время или дату.</strong></p>
-      </div>
-      <div v-else class="window-bus">
-        {{ $route.params['route_id'] }}
-        <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
-      </div>
-    </div>
-    <!-- <Footer/> -->
-  </template>
-
 <script>
 import Seat from '../components/Seat.vue';
 import HeaderСrumbsVue from '../components/HeaderСrumbs.vue';
@@ -112,3 +85,35 @@ export default {
 
 }
 </script>
+
+<template>
+  <div>
+    <div class="container"><Header/></div>
+  </div>
+  <div class="container"> 
+    <BusLoading v-if="loadingSeats"/>
+  </div>
+  <HeaderСrumbsVue :step="'first'" v-if="!loadingSeats && !errorMessage" :race="race" />
+  <div v-if="!loadingSeats" class="container">
+    <div v-if="errorMessage" class="seat__error">        
+      <div class="alert alert-danger" role="alert">
+          <p>{{ errorMessage }}</p>
+      </div>
+      <p><strong>Выберите другой рейс, время или дату.</strong></p>
+    </div>
+    <div v-else class="window-bus">
+      {{ $route.params['route_id'] }}
+      <Seat :seats="seats" :columnsAmount="columnsAmount" :race="race"/>
+    </div>
+  </div>
+  <!-- <Footer/> -->
+</template>
+
+<style scoped>
+  .seat__error{
+    margin-top: 20px;
+  }
+  .seat__error p{
+    font-size: 25px;
+  }
+</style>

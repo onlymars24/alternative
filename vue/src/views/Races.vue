@@ -2,10 +2,10 @@
 <HeaderMain :isRaces="true"/>
 <MainCrumbs :pages="crumbPages"/>
 <div>
-    <div class="menu" style="margin-top: 50px;">
+    <div class="menu menu__top">
         <div class="container">
             <div class="menu__intro">
-                <h2 style="font-size: 24px; margin: 10px 0;">Расписание автобусов {{$store.state.dispatchNameConst}} — {{$store.state.arrivalNameConst}}</h2>
+                <h2 class="menu__intro-title">Расписание автобусов {{$store.state.dispatchNameConst}} — {{$store.state.arrivalNameConst}}</h2>
                 <div class="menu__inro-sort">
                 </div>              
             </div>             
@@ -74,8 +74,7 @@
                             <!-- <p style="font-size: 24px;  line-height: 30px;">Выберите другую дату или точки отправления и прибытия.</p> -->
                             <p style="font-size: 24px; margin-top: 10px; line-height: 30px;">Найти ближайшие рейсы на другую дату?</p>
                             <div class="rejection__buttons" style="display: flex; justify-content: space-between; margin-top: 7px;">
-                            <button class="btn btn-primary btn-code" @click="findOtherDates"><div style="font-size: 20px;">Найти</div></button>    
-                            <!-- <button class="btn btn-outline-secondary btn-code" @click="$emit('CloseWindow')"><div style="font-size: 20px;">Нет</div></button> -->
+                                <button class="btn btn-primary btn-code" @click="findOtherDates"><div style="font-size: 20px;">Найти</div></button>    
                             </div>
                         </div>
                         <div v-if="this.existingRaces.step == 2">
@@ -125,7 +124,16 @@
 <!-- <Footer/> -->
 </template>
 
-<style>
+<style scoped>
+
+.menu__intro-title{
+    margin: 10px 0;
+}
+
+.menu__top{
+    margin-top: 50px;
+}
+
 .not__found{
     box-shadow: rgb(0 0 0 / 15%) 0px 2px 17px;
 }

@@ -16,7 +16,6 @@
       </div>
     </div>
     <div class="container">
-        <!-- <div style="width: 40%; padding: 15px; margin-bottom: 15px;" class="menu__ticket">Мои бонусы: 0.00 руб</div> -->
         <Transition  name="slide-pers" mode="out-in">
             <component :is="activeTab"></component>
         </Transition>

@@ -47,22 +47,9 @@ export default
       >
       <template #option="option">
         <div style="cursor: pointer;">
-          <!-- <div v-if="option.sourceId.includes('stations')" style="display: flex; flex-wrap: wrap; align-items: flex-end; padding: 5px 0;">
-            <span style="font-size: 17px;">{{ option.name}}{{ option.kladr.region ? ', ' : '' }}</span>
-            <span style="font-size: 15px; color: gray;">{{(option.kladr.region ? option.kladr.region : '')}}{{ option.kladr.district ? ', ' : '' }}</span>
-            <span style="font-size: 15px; color: gray;">{{(option.kladr.district ? option.kladr.district : '') }}</span>
-          </div>         -->
           <SelectPointLabel v-if="option.sourceId.includes('kladrs')" :sourceId="option.sourceId" :name="option.name" :region="option.region" :district="option.district"/>
           <SelectPointLabel v-if="option.sourceId.includes('stations') && option.kladr" :sourceId="option.sourceId" :name="option.name" :region="option.kladr.region" :district="option.kladr.district"/>
           <SelectPointLabel v-if="option.sourceId.includes('cache_arrival_points')" :sourceId="option.sourceId" :name="option.name" :region="option.region" :district="option.details"/>
-
-          <!-- <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 17px;">{{ option.name}}
-            {{(option.kladr.region ? option.kladr.region : '')}}
-            {{(option.kladr.district ? option.kladr.district : '') }}</span>
-
-          <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 15px;">{{ option.name}}
-            {{(option.region ? option.region : '')}}
-            {{(option.details ? option.details : '') }}</span> -->
         </div>
       </template>
       <template #no-options="{ search, searching, loading }" style="height: 0; width: 0; display: none;">
@@ -77,82 +64,7 @@ export default
           The .vs__spinner class will hide the text for me.
         </div>
       </template>
-        <!-- <template #option="{ author, title }">
-          {{ title }}
-          :get-option-label="(option) => option.title"
-          <br />
-          <cite>{{ author.firstName }} {{ author.lastName }}</cite>
-        </template> -->
       </v-select>
-
-      <!-- <multiselect
-      v-model="$store.state[typeEn+'Item']" 
-      label="name"
-      :searchable="true"
-      :options="$store.state[typeEn+'Data']"
-      :loading="$store.state.selectDataLoading"
-      :placeholder="'Заполните '+typeRu.toLowerCase()"
-      @search-change="selectDataSearch"
-      :disabled="typeEn == 'arrival' && !$store.state.dispatchItem"
-      select-label=""
-      deselect-label=""
-      no-options=""
-      no-result=""
-      @Open="selectDataSearch"
-      @Close="closeEvent"
-      >
-    <template #option="{ option }">
-      <div style="cursor: pointer;">
-        <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 15px;">{{ option.name}}<br v-if="option.kladr.region"/>
-          {{(option.kladr.region ? option.kladr.region : '')}}<br v-if="option.kladr.district"/>
-          {{(option.kladr.district ? option.kladr.district : '') }}</span>
-        <span v-if="option.sourceId.includes('kladrs')" style="font-size: 18px;">{{ option.name}}<br v-if="option.region"/>
-          {{(option.region ? option.region : '')}}<br v-if="option.district"/>
-          {{(option.district ? option.district : '') }}</span>
-        <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 13px;">{{ option.name}}<br v-if="option.region"/>
-          {{(option.region ? option.region : '')}}<br v-if="option.details"/>
-          {{(option.details ? option.details : '') }}</span>
-      </div>
-    </template>
-    <template #singleLabel="{ option }">
-      {{ option.name }}
-    </template>
-    <template style="height: 0;" #noResult>
-      <span></span>
-    </template>
-    <template style="height: 0;" #noOptions>
-      <span></span>
-    </template>
-      </multiselect> -->
-      <!-- <el-select
-          size="large"
-          v-model="$store.state[typeEn+'Item']"
-          filterable
-          remote
-          :default-first-option="true"
-          :placeholder="'Заполните '+typeRu.toLowerCase()"
-          :remote-method="selectDataSearch"
-          :loading="$store.state.selectDataLoading"
-          style="width: 100%; cursor: text;"
-          loading-text="Поиск..."
-          :disabled="typeEn == 'arrival' && !$store.state.dispatchItem"
-          :value-key="'sourceId'"
-          :label="$store.state[typeEn+'Item'] ? $store.state[typeEn+'Item'].name : ''"
-          popper-append-to-body="false"
-      >
-          <el-option
-              style="width: 100%;"
-              v-for="option in $store.state[typeEn+'Data']"
-              :key="option.sourceId"
-              :label="option.name"
-              :value="option"
-          >
-
-          <span v-if="option.sourceId.includes('stations') && option.kladr" style="font-size: 15px;">{{ option.name+(option.kladr.region ? ', '+option.kladr.region : '')+(option.kladr.district ? ', '+option.kladr.district : '') }}</span>
-          <span v-if="option.sourceId.includes('kladrs')" style="font-size: 18px;">{{ option.name+(option.region ? ', '+option.region : '')+(option.district ? ', '+option.district : '') }}</span>
-          <span v-if="option.sourceId.includes('cache_arrival_points')" style="font-size: 13px;">{{ option.name+(option.region ? ', '+option.region : '')+(option.details ? ', '+option.details : '') }}</span>
-        </el-option>
-      </el-select> -->
   </div>
 
 </template>

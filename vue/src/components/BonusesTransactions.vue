@@ -1,12 +1,12 @@
 <template>
   <BusLoading v-if="loading"/>
-  <div v-else>
-    <h2 style="margin-bottom: 20px;">Операции с бонусами</h2>
+  <div class="bonuses" v-else>
+    <h2 class="bonuses__title">Операции с бонусами</h2>
     <div v-if="bonuses.length != 0">
       
-      <div style="padding: 15px; margin-bottom: 15px;" class="menu__ticket menu__ticket menu__ticket-bonuses">Мои бонусы: {{user.bonuses_balance}} руб</div>
+      <div class="menu__ticket menu__ticket-bonuses">Мои бонусы: {{user.bonuses_balance}} руб</div>
       
-      <table style="" class="table table-bordered">
+      <table class="table table-bordered">
       <thead>
         <tr>
           <th scope="col">Дата</th>
@@ -98,11 +98,15 @@ export default
 </script>
 
 <style scoped>
-
+.bonuses__title{
+  margin-bottom: 20px;
+}
 .not__found{
     box-shadow: rgb(0 0 0 / 15%) 0px 2px 17px;
 }
-
+.menu__ticket-bonuses{
+  padding: 15px; margin-bottom: 15px;
+}
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

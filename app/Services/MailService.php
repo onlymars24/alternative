@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Mail\DumpMail;
 use App\Enums\FermaEnum;
 use App\Mail\ErrorApiMail;
+use App\Mail\DumpScheduleMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -20,5 +21,9 @@ class MailService
 
     public static function sendDump($info, $body, $subject = 'Обновление данных'){
         Mail::to([env('ERROR_MAIL_MARSEL'), env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL')])->send(new DumpMail($info, $body, $subject));
+    }
+
+    public static function sendDumpSchedule($info, $body, $subject = 'Обновление данных'){
+        Mail::to([env('ERROR_MAIL_MARSEL'), env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL')])->send(new DumpScheduleMail($info, $body, $subject));
     }
 }

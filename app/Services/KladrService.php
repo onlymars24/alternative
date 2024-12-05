@@ -26,6 +26,11 @@ class KladrService
         }
 
         $kladrs = Kladr::where($whereArr)->get();
+        foreach($kladrs as $kladr){
+            $kladr->sourceId = 'kladrs-'.$kladr->id;
+            $kladr->slug = SlugService::create($kladr->name);
+            $kladr->save();
+        }
         if($kladrs->count() == 1){
             return $kladrs[0]->id;
         }

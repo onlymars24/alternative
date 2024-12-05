@@ -2,9 +2,9 @@
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
 <BusLoading v-if="contactLoading"/>
-<div v-else>
+<div class="contacts" v-else>
   <h2>Контактная информация</h2>  
-  <div style="padding: 15px; margin-bottom: 15px;" class="menu__ticket menu__ticket menu__ticket-bonuses">Мои бонусы: {{user.bonuses_balance}} руб</div>
+  <div class="menu__ticket menu__ticket menu__ticket-bonuses contacts__balance">Мои бонусы: {{user.bonuses_balance}} руб</div>
   <div class="row g-5">
     <div class="col-sm-6 ">
         <form @submit.prevent="editEmail" class="contact-information__block">
@@ -34,6 +34,9 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+}
+.contacts__balance{
+  padding: 15px; margin-bottom: 15px;
 }
 </style>
 <script>

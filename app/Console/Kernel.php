@@ -5,6 +5,7 @@ namespace App\Console;
 use DateTimeZone;
 use App\Models\Kladr;
 use App\Models\Order;
+use App\Mail\DumpMail;
 use App\Models\Station;
 use App\Models\CacheRace;
 use Nette\Utils\DateTime;
@@ -21,10 +22,12 @@ use App\Services\SitemapService;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
 use App\Services\FtpLoadingService;
+use App\Services\StationService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -62,6 +65,7 @@ class Kernel extends ConsoleKernel
         //         }
         //     }
         // })->daily();
+
         $schedule->call(function () {
             $now = date('Y-m-d H:i:s');
             $currentOrdersTime = date_create($now);
@@ -193,6 +197,8 @@ class Kernel extends ConsoleKernel
             foreach($arrivalPoints as $arrivalPoint){
                 $arrivalPoint->kladr_id = KladrService::connectPointIntoKladr($arrivalPoint);
                 $arrivalPoint->save();
+                $arrivalPoint->station_id = StationService::connectPointIntoStation($arrivalPoint);
+                $arrivalPoint->save();
             }
 
             // СОЗДАНИЕ НОВЫХ СТРАНИЦ
@@ -203,24 +209,25 @@ class Kernel extends ConsoleKernel
                 Log::info(json_encode($dispatchPoint));
                 $dispatchPoint->kladr_id = KladrService::connectPointIntoKladr($dispatchPoint);
                 $dispatchPoint->save();
-                $arrivalData = PointService::kAndE($dispatchPoint->id);
-                foreach($arrivalData as $arrivalItem){
-                  $xml = SitemapService::add(env('FRONTEND_URL').'/автобус/'.$dispatchPoint->slug.'/'.$arrivalItem['slug'], 'daily', $xml);
-                }
+                // $arrivalData = PointService::kAndE($dispatchPoint->id);
+                // foreach($arrivalData as $arrivalItem){
+                //   $xml = SitemapService::add(env('FRONTEND_URL').'/автобус/'.$dispatchPoint->slug.'/'.$arrivalItem['slug'], 'daily', $xml);
+                // }
                 if(!$dispatchPoint->kladr){
                     Log::info('skip');
                     continue;
                 }
                 $kladr = $dispatchPoint->kladr;
-                $station = Station::where([['kladr_id', '=', $dispatchPoint->kladr->id], ['name', '=', $dispatchPoint->name]])->first();
-                if(!$station){
-                    $station = Station::create([
-                        'name' => $dispatchPoint->name,
-                        'kladr_id' => $dispatchPoint->kladr_id
-                    ]);
-                }
-                $dispatchPoint->station_id = $station->id;
+                // $station = Station::where([['kladr_id', '=', $dispatchPoint->kladr->id], ['name', '=', $dispatchPoint->name]])->first();
+                // if(!$station){
+                //     $station = Station::create([
+                //         'name' => $dispatchPoint->name,
+                //         'kladr_id' => $dispatchPoint->kladr_id
+                //     ]);
+                // }
+                $dispatchPoint->station_id = StationService::connectPointIntoStation($dispatchPoint);
                 $dispatchPoint->save();
+                $station = $dispatchPoint->station;
                 $kladrPage = $kladr->kladrStationPage;
                 
                 if(!$kladrPage){

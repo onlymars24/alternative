@@ -171,6 +171,12 @@ class PointService
     }
 
     public static function addNewArrivalPoints($dispatchPoint){
+        $arrivalPoints = CacheArrivalPoint::where('dispatch_point_id', $dispatchPoint->id)->get();
+        if($arrivalPoints->count() != 0){
+            Log::info('вышло '.$dispatchPoint->name);
+            return;
+        }
+        Log::info('вошло '.$dispatchPoint->name);
         $arrivalPointsRemoted = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/arrival_points/'.$dispatchPoint->id)->object();
@@ -188,6 +194,7 @@ class PointService
                 'place' => $arrivalPointRemoted->place ? $arrivalPointRemoted->place : 1,
                 'dispatch_point_id' => $dispatchPoint->id,
             ]);
+            $arrivalPoint->sourceId = 'cache_arrival_points-'.$arrivalPoint->id;
             $arrivalPoint->save();   
         }
     }
@@ -233,6 +240,7 @@ class PointService
             ]);
             self::addNewArrivalPoints($dispatchPoint);
         }
-        MailService::sendDump('Новые точки от e-traffic', $newPoints);
+
+        MailService::sendDumpSchedule('Новые точки от e-traffic', $newPoints);
     }
 }

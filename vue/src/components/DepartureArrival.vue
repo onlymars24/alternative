@@ -6,13 +6,13 @@
                 <p class="inf-race__date">{{dispatchDay}}</p>
             </div>
             <div class="inf-race__place punktir">
-                <h6 class="inf-race__city">{{ race.race.dispatchStationName }}</h6><p style="" class="discr"><br></p>
+                <h6 class="inf-race__city">{{ race.race.dispatchStationName }}</h6><p class="discr"><br></p>
             </div>
             </div>
       <div class="place-of-arrival"><div class="inf-race__date-and-time">
         <p class="inf-race__time">{{arrivalTime}}</p>
         <p class="inf-race__date">{{arrivalDay}}</p></div><div class="inf-race__place">
-        <h6 class="inf-race__city">{{ race.race.arrivalStationName }}</h6><p style=""><br></p>
+        <h6 class="inf-race__city">{{ race.race.arrivalStationName }}</h6><p><br></p>
         </div></div>
 </template>
 <script>

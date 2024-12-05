@@ -2,8 +2,8 @@
 <!-- eslint-disable max-len -->
 <template>
   <div class="loader__outside">
-    <img src="../assets/bus_loading.png" style="max-width: 90%;">
-    <p style="color: grey;">Загрузка.....</p>  
+    <img src="../assets/bus_loading.png">
+    <p>Загрузка.....</p>  
     <div class="loader"></div>
   </div>
 </template>
@@ -27,5 +27,11 @@ export default
 </script>
 
 <style scoped>
+.loader__outside img{
+  max-width: 90%;
+}
 
+.loader__outside p{
+  color: grey;
+}
 </style>

@@ -1188,13 +1188,7 @@ label
   flex: 1;
   max-width: 49%;
 }
-/* .form-control
-{
-  height: 40px;
-  border-radius: 5px;
-  border: 1px solid black;
-  margin: 10px 0px;
-} */
+
 .form-description
 {
   display: flex;
@@ -1260,58 +1254,6 @@ label
 {
   margin-top: 0px;
 }
-
-/* .checkmark {
-  position: absolute;
-  top: 4px;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: #eee;
-  border-radius: 5px;
-}
-.check {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.check:hover input ~ .checkmark {
-  background-color: #ccc;
-}
-.check input:checked ~ .checkmark {
-  background-color: var(--blue);
-}
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-.check input
-{
-  opacity: 0;
-}
-.check input:checked ~ .checkmark:after {
-  display: block;
-}
-.check .checkmark:after {
-  left: 5px;
-  top: 3px;
-  width: 9px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-  border-radius: 2px;
-} */
 
 .pay-but
 {
@@ -1421,9 +1363,9 @@ select
 .seat-bus__but{
     font-size: 14px;
   }
-  h3{
+  /* h3{
     font-size: 22px;
-  }
+  } */
   .total-cost
   {
     font-size: 22px;

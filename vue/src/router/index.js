@@ -236,35 +236,6 @@ const routes = [
     
         } 
       },      
-
-
-  {
-    path: '/'+encodeURI('обратный')+'/'+encodeURI('билет')+'/:order_id',
-    name: 'ReturnRace',
-    component: () => import('../views/ReturnRace.vue'),
-    async beforeEnter(to, from){
-      let kladrSlugs
-      await axiosClient
-      .get('/check/return/race?orderId='+to.params['order_id'])
-      .then(response => {
-        console.log(response)
-        kladrSlugs = response.data
-      })
-      .catch(error => {
-        console.log(error)
-      })
-      console.log(kladrSlugs)
-      if(!kladrSlugs['dispatchKladrSlug'] || !kladrSlugs['arrivalKladrSlug']){
-        return {
-          name: 'Error',
-          params: {pathMatch: decodeURIComponent(to.path).split('/').slice(1)},
-          query: to.query,
-          hash: to.hash
-        }
-      }
-      window.location.replace(window.location.origin+'/автобус/'+kladrSlugs['arrivalKladrSlug']+'/'+kladrSlugs['dispatchKladrSlug']);
-    }
-  },
   {
     path: '/seats/:dispatch_point_id/:arrival_point_id/:date/:race_id',
     name: 'SeatPage',

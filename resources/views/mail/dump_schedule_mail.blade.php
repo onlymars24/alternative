@@ -6,8 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    
-    <p>@dump($info)</p>
-    <div>@dump($body)</div>
+    <pre><?php var_dump($info); ?></pre>
+    <pre><?php var_dump($body); ?></pre>
 </body>
 </html>

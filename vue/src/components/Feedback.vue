@@ -43,11 +43,11 @@ export default
 </script>
 
 <template>
-  <div v-if="this.feedbackInfo.step==1">
+  <div class="feedback" v-if="this.feedbackInfo.step==1">
     <form @submit.prevent="sendMail">
     <h4>Задайте нам вопрос</h4>
     <!-- {{ feedbackCredentials }} -->
-    <ul style="margin-top: 15px; padding-left: 0; list-style: none;" class="feedback__list">
+    <ul class="feedback__list">
       <li>
         <!-- <label for="tel" class="form-label label-gray">Ваше имя</label> -->
         <input v-model="feedbackCredentials.name" class="form-control inp-gray phone__input" placeholder="Ваше имя" required></li>
@@ -76,7 +76,7 @@ export default
 
       <li>
         <!-- <label for="tel" class="form-label label-gray">Описание</label> -->
-        <textarea v-model="feedbackCredentials.descr" style="height: 90px;" cols="30" rows="40" resize="none" class="textarea__feedback form-control inp-gray" placeholder="Описание"></textarea>
+        <textarea v-model="feedbackCredentials.descr" cols="30" rows="40" resize="none" class="textarea__feedback form-control inp-gray" placeholder="Описание"></textarea>
       </li>
       <li>
         <div class="block__check" style="padding-top: 4px;">
@@ -107,7 +107,15 @@ export default
 </template>
 
 <style scoped>
+.feedback__list{
+  margin-top: 15px; 
+  padding-left: 0; 
+  list-style: none;
+}
 .feedback__list li{
   list-style: none;
+}
+.textarea__feedback{
+  height: 90px;
 }
 </style>
