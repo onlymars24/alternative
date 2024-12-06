@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
 use App\Services\PointService;
 use App\Models\CacheArrivalPoint;
+use App\Services\SlugService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,6 +30,12 @@ class KladrController extends Controller
         $dispatchPoint = DispatchPoint::find($request->dispatchPointId);
         $dispatchPoint->kladr_id = $request->kladrId;
         $dispatchPoint->save();
+        if($request->kladrId){
+            $kladr = Kladr::find($request->kladrId);
+            $kladr->slug = SlugService::create($kladr->name);
+            $kladr->sourceId = 'kladrs-'.$kladr->id;
+            $kladr->save();            
+        }
         return response([
             'dispatchPoint' => $dispatchPoint
         ]);
@@ -45,13 +52,19 @@ class KladrController extends Controller
         //     'arrivalPoint' => $request->all()
         // ]);
         $arrivalPoint = CacheArrivalPoint::where([
-            ['dispatch_point_id', '=', $request->dispatchPointId], 
-            ['arrival_point_id', '=', $request->arrivalPointId]])->first();
-            // return response([
-            //     'arrivalPoint' => $arrivalPoint
-            // ]);
-            $arrivalPoint->kladr_id = $request->kladrId;
+        ['dispatch_point_id', '=', $request->dispatchPointId], 
+        ['arrival_point_id', '=', $request->arrivalPointId]])->first();
+        // return response([
+        //     'arrivalPoint' => $arrivalPoint
+        // ]);
+        $arrivalPoint->kladr_id = $request->kladrId;
         $arrivalPoint->save();
+        if($request->kladrId){
+            $kladr = Kladr::find($request->kladrId);
+            $kladr->slug = SlugService::create($kladr->name);
+            $kladr->sourceId = 'kladrs-'.$kladr->id;
+            $kladr->save();            
+        }
         return response([
             'arrivalPoint' => $arrivalPoint
         ]);
