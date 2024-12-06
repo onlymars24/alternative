@@ -146,7 +146,7 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
-  dd(PointService::dispatchData());
+  dd(PointService::dispatchData()['Санкт-Петербург_242685']);
   // DB::table('cache_arrival_points')->delete();
   // dd('');
   // $arrivalPoints = CacheArrivalPoint::where('dispatch_point_id', 1171)->get();
