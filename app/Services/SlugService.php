@@ -31,12 +31,12 @@ class SlugService
             // PROBLEM
             return;
         }
-        if(!$station->kladr->region){
-            Log::info('Нет региона '.json_encode($station->kladr));
+        if(!$station->kladr->district){
+            Log::info('Нет района '.json_encode($station->kladr));
             // PROBLEM
             return;
         }
-        $newSlug = $station->slug.'-'.SlugService::create($station->kladr->region);
+        $newSlug = $station->slug.'-'.SlugService::create($station->kladr->district);
         $existingStation = Station::where([['slug', '=', $newSlug], ['id', '<', $station->id]])->first();
         if(!$existingStation){
             Log::info('Новый slug '.$newSlug.' для : '.json_encode($station));
@@ -44,12 +44,12 @@ class SlugService
             $station->save();
             return;
         }
-        if(!$station->kladr->district){
-            Log::info('Нет района '.json_encode($station->kladr));
+        if(!$station->kladr->region){
+            Log::info('Нет региона '.json_encode($station->kladr));
             // PROBLEM
             return;
         }
-        $newSlug = $newSlug.'-'.SlugService::create($station->kladr->district);
+        $newSlug = $newSlug.'-'.SlugService::create($station->kladr->region);
         $station->slug = $newSlug;
         $station->save();
         Log::info('Новый slug'.$newSlug.' для : '.json_encode($station));
@@ -63,12 +63,12 @@ class SlugService
                 continue;
             }
             Log::info('Кандидат '.json_encode($kladr));
-            if(!$kladr->region){
-                Log::info('Нет региона '.json_encode($kladr));
+            if(!$kladr->district){
+                Log::info('Нет района '.json_encode($kladr));
                 // PROBLEM
                 continue;
             }
-            $newSlug = $kladr->slug.'-'.SlugService::create($kladr->region);
+            $newSlug = $kladr->slug.'-'.SlugService::create($kladr->district);
             $existingKladr = $kladrs->where('slug', '=', $newSlug)->where('id', '<', $kladr->id)->first();
             if(!$existingKladr){
                 $kladr->slug = $newSlug;
@@ -76,12 +76,12 @@ class SlugService
                 Log::info('Новый slug1 '.$newSlug.' для : '.json_encode($kladr));
                 continue;
             }
-            if(!$kladr->district){
-                Log::info('Нет района '.json_encode($kladr));
+            if(!$kladr->region){
+                Log::info('Нет региона '.json_encode($kladr));
                 // PROBLEM
                 continue;
             }
-            $newSlug = $newSlug.'-'.SlugService::create($kladr->district);
+            $newSlug = $newSlug.'-'.SlugService::create($kladr->region);
             $kladr->slug = $newSlug;
             $kladr->save();
             Log::info('Новый slug2 '.$newSlug.' для : '.json_encode($kladr));            
@@ -99,12 +99,12 @@ class SlugService
                     continue;
                 }
                 Log::info('Кандидат '.json_encode($existingPoint));
-                if(!$existingPoint->region){
-                    Log::info('Нет региона '.json_encode($existingPoint));
+                if(!$existingPoint->details){
+                    Log::info('Нет района '.json_encode($existingPoint));
                     // PROBLEM
                     continue;
                 }
-                $newSlug = $existingPoint->slug.'-'.SlugService::create($existingPoint->region);
+                $newSlug = $existingPoint->slug.'-'.SlugService::create($existingPoint->details);
                 $existingPoint = $arrivalPoints->where('slug', '=', $newSlug)->where('id', '<', $arrivalPoint->id)->first();
                 if(!$existingPoint){
                     $arrivalPoint->slug = $newSlug;
@@ -112,12 +112,12 @@ class SlugService
                     Log::info('Новый slug1 '.$newSlug.' для : '.json_encode($arrivalPoint));
                     continue;
                 }
-                if(!$arrivalPoint->details){
-                    Log::info('Нет района '.json_encode($arrivalPoint));
+                if(!$arrivalPoint->region){
+                    Log::info('Нет региона '.json_encode($arrivalPoint));
                     // PROBLEM
                     continue;
                 }
-                $newSlug = $newSlug.'-'.SlugService::create($arrivalPoint->details);
+                $newSlug = $newSlug.'-'.SlugService::create($arrivalPoint->region);
                 $arrivalPoint->slug = $newSlug;
                 $arrivalPoint->save();
                 Log::info('Новый slug2 '.$newSlug.' для : '.json_encode($arrivalPoint)); 
