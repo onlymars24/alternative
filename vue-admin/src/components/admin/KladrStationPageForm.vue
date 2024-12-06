@@ -24,14 +24,13 @@
     </template>    
     <div v-if="(formType=='edit' && page.kladr_id) || formType=='create'" style="margin-bottom: 10px;">
         <label for="">Населённый пункт</label><br>
-        <el-select style="width: 25%;" v-model="page.kladr_id" filterable :disabled="formType=='edit'">
+        <el-select style="width: 33%;" v-model="page.kladr_id" filterable :disabled="formType=='edit'">
             <template v-for="el in kladrs" :key="el.id">
                 <el-option
                     v-if="(!el.kladr_station_page && formType=='create') || formType=='edit'"
-                    :label="el.name"
+                    :label="el.name+(el.region ? ', '+el.region : '')+(el.district ? ', '+el.district : '')+(el.code ? ', '+el.code : '')"
                     :value="el.id">
-                    <strong class="big__font-size">{{el.name}}{{el.region || el.district ? ', ' : '' }}</strong>
-                    <span style="font-size: 16px;">{{el.region}}{{(el.district && !el.region) || !el.district? '' : ', ' }}{{el.district}}</span>
+                    <span style="font-size: 16px;">{{ el.name+(el.region ? ', '+el.region : '')+(el.district ? ', '+el.district : '')+(el.code ? ', '+el.code : '') }}</span>
                 </el-option>
             </template>
         </el-select>

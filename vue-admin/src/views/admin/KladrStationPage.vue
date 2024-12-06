@@ -217,7 +217,13 @@ export default
                 console.log(response)
                 this.page = response.data.page
                 this.page.booleanHidden = this.page.hidden == 1 ? true : false
-                this.page.new_url_region_code = this.page.url_region_code+(this.page.station && this.page.station.kladr && this.page.station.kladr.region ? (' - '+this.page.station.kladr.region) : (' - '+this.page.kladr.region))
+                if(this.page.station.kladr.name == 'Москва' || 'Санкт-Петербург' || 'Севастополь'){
+                    this.page.new_url_region_code = this.page.url_region_code
+                }
+                else{
+                    this.page.new_url_region_code = this.page.url_region_code+(this.page.station && this.page.station.kladr && this.page.station.kladr.region ? (' - '+this.page.station.kladr.region) : (' - '+this.page.kladr.region))
+                }
+
             })
             .catch(error => {
                 console.log(error)

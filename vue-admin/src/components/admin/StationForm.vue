@@ -19,13 +19,12 @@
     </div>
     <div style="margin-bottom: 10px;">
         <label for="">Населённый пункт (из кладра)</label><br>
-        <el-select style="width: 25%;" v-model="station.kladr_id" filterable :disabled="formType=='edit'">
+        <el-select style="width: 33%;" v-model="station.kladr_id" filterable :disabled="formType=='edit'">
             <template v-for="el in kladrsConnected" :key="el.id">
                 <el-option
-                    :label="el.region+' '+((el.district && !el.region || !el.district) ? '' : ', ')+  (el.region)+((el.district && !el.region || !el.district)? '' : ', ' )+el.district+', '+el.code"
+                    :label="el.name+(el.region ? ', '+el.region : '')+(el.district ? ', '+el.district : '')+(el.code ? ', '+el.code : '')"
                     :value="el.id">
-                    <strong class="big__font-size">{{el.name}}{{el.region || el.district ? ', ' : '' }}</strong>
-                    <span style="font-size: 16px;">{{el.region}}{{(el.district && !el.region) || !el.district? '' : ', ' }}{{el.district}}, {{el.code}}</span>
+                    <span style="font-size: 16px;">{{el.name+(el.region ? ', '+el.region : '')+(el.district ? ', '+el.district : '')+(el.code ? ', '+el.code : '')}}</span>
                 </el-option>
             </template>
         </el-select>
