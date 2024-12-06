@@ -19,33 +19,124 @@ class SlugService
         return str_replace([' ', '/', '\'', '"', '.', ',', '<', '>', '.', ','], ['_', '-', '-', '', '', '', '', '',  '', ''], $string);
     }
 
+
+    public static function unifyStationSlug($station){
+        $existingStation = Station::where([['slug', '=', $station->slug], ['id', '<', $station->id]])->first();
+        if(!$existingStation){
+            return;
+        }
+        Log::info('Кандидат '.json_encode($station));
+        if(!isset($station->kladr)){
+            Log::info('Нет кладр '.json_encode($station));
+            // PROBLEM
+            return;
+        }
+        if(!$station->kladr->region){
+            Log::info('Нет региона '.json_encode($station->kladr));
+            // PROBLEM
+            return;
+        }
+        $newSlug = $station->slug.'-'.SlugService::create($station->kladr->region);
+        $existingStation = Station::where([['slug', '=', $newSlug], ['id', '<', $station->id]])->first();
+        if(!$existingStation){
+            Log::info('Новый slug '.$newSlug.' для : '.json_encode($station));
+            $station->slug = $newSlug;
+            $station->save();
+            return;
+        }
+        if(!$station->kladr->district){
+            Log::info('Нет района '.json_encode($station->kladr));
+            // PROBLEM
+            return;
+        }
+        $newSlug = $newSlug.'-'.SlugService::create($station->kladr->district);
+        $station->slug = $newSlug;
+        $station->save();
+        Log::info('Новый slug'.$newSlug.' для : '.json_encode($station));
+    }
+
+    public static function unifyKladrsSlugs(){
+        $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
+        foreach($kladrs as $kladr){
+            $existingKladr = $kladrs->where('slug', '=', $kladr->slug)->where('id', '<', $kladr->id)->first();
+            if(!$existingKladr){
+                continue;
+            }
+            Log::info('Кандидат '.json_encode($kladr));
+            if(!$kladr->region){
+                Log::info('Нет региона '.json_encode($kladr));
+                // PROBLEM
+                continue;
+            }
+            $newSlug = $kladr->slug.'-'.SlugService::create($kladr->region);
+            $existingKladr = $kladrs->where('slug', '=', $newSlug)->where('id', '<', $kladr->id)->first();
+            if(!$existingKladr){
+                $kladr->slug = $newSlug;
+                $kladr->save();
+                Log::info('Новый slug1 '.$newSlug.' для : '.json_encode($kladr));
+                continue;
+            }
+            if(!$kladr->district){
+                Log::info('Нет района '.json_encode($kladr));
+                // PROBLEM
+                continue;
+            }
+            $newSlug = $newSlug.'-'.SlugService::create($kladr->district);
+            $kladr->slug = $newSlug;
+            $kladr->save();
+            Log::info('Новый slug2 '.$newSlug.' для : '.json_encode($kladr));            
+        }
+    }
+
+
+    public static function unifyArrivalPointsSlugs(){
+        $dispatchPoints = DispatchPoint::all();
+        foreach($dispatchPoints as $dispatchPoint){
+            $arrivalPoints = CacheArrivalPoint::where([['dispatch_point_id', '=', $dispatchPoint->id]])->get();
+            foreach($arrivalPoints as $arrivalPoint){
+                $existingPoint = $arrivalPoints->where('slug', '=', $arrivalPoint->slug)->where('id', '<', $arrivalPoint->id)->first();
+                if(!$existingPoint){
+                    continue;
+                }
+                Log::info('Кандидат '.json_encode($existingPoint));
+                if(!$existingPoint->region){
+                    Log::info('Нет региона '.json_encode($existingPoint));
+                    // PROBLEM
+                    continue;
+                }
+                $newSlug = $existingPoint->slug.'-'.SlugService::create($existingPoint->region);
+                $existingPoint = $arrivalPoints->where('slug', '=', $newSlug)->where('id', '<', $arrivalPoint->id)->first();
+                if(!$existingPoint){
+                    $arrivalPoint->slug = $newSlug;
+                    $arrivalPoint->save();
+                    Log::info('Новый slug1 '.$newSlug.' для : '.json_encode($arrivalPoint));
+                    continue;
+                }
+                if(!$arrivalPoint->details){
+                    Log::info('Нет района '.json_encode($arrivalPoint));
+                    // PROBLEM
+                    continue;
+                }
+                $newSlug = $newSlug.'-'.SlugService::create($arrivalPoint->details);
+                $arrivalPoint->slug = $newSlug;
+                $arrivalPoint->save();
+                Log::info('Новый slug2 '.$newSlug.' для : '.json_encode($arrivalPoint)); 
+            }
+        }
+    }
+
     public static function unifySlug(){
         $stations = Station::all();
         foreach($stations as $station){
-            $existingStation = Station::where([['slug', '=', $station->slug], ['id', '<', $station->id]])->first();
-            if(!$existingStation){
-                continue;
-            }
-            if(!isset($station->kladr) || !$station->kladr->district){
-                // PROBLEM
-                continue;
-            }
-            $newSlug = $station->slug.'-'.$station->kladr->district;
-            $existingStation = Station::where([['slug', '=', $newSlug], ['id', '<', $station->id]])->first();
-            if(!$existingStation){
-                continue;
-            }
-            if(!$station->kladr->region){
-                // PROBLEM
-                continue;
-            }
-            $newSlug = $station->slug.'-'.$station->kladr->region;
+
         }
 
         $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
+        foreach($kladrs as $kladr){
+
+        }
 
         $dispatchPoints = DispatchPoint::all();
-
         foreach($dispatchPoints as $dispatchPoint){
             $arrivalPoints = CacheArrivalPoint::where([['dispatch_point_id', '=', $dispatchPoint->id]])->get();
             foreach($arrivalPoints as $arrivalPoint){

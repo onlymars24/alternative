@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Kladr;
+use App\Models\Station;
 use App\Models\DispatchPoint;
 use App\Services\SlugService;
 use Illuminate\Database\Seeder;
@@ -21,14 +22,20 @@ class InsertSlugSeeder extends Seeder
      */
     public function run()
     {
-        $pages = KladrStationPage::with('station', 'kladr')->get();
-        foreach($pages as $item){
-            $item->url_settlement_name = SlugService::create($item->url_settlement_name);
-            $item->save();
-        }
+        // $pages = KladrStationPage::with('station', 'kladr')->get();
+        // foreach($pages as $item){
+        //     $item->url_settlement_name = SlugService::create($item->url_settlement_name);
+        //     $item->save();
+        // }
 
-        $dispatchPoints = DispatchPoint::all();
-        foreach($dispatchPoints as $item){
+        // $dispatchPoints = DispatchPoint::all();
+        // foreach($dispatchPoints as $item){
+        //     $item->slug = SlugService::create($item->name);
+        //     $item->save();
+        // }
+
+        $stations = Station::all();
+        foreach($stations as $item){
             $item->slug = SlugService::create($item->name);
             $item->save();
         }

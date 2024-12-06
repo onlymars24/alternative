@@ -146,7 +146,9 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
-  dd(PointService::dispatchData()['Санкт-Петербург_242685']);
+  dd('');
+  $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
+  dd($kladrs->where('code', '=', '7700000000000')->where('name', '=', 'Москва')->first());
   // DB::table('cache_arrival_points')->delete();
   // dd('');
   // $arrivalPoints = CacheArrivalPoint::where('dispatch_point_id', 1171)->get();
@@ -157,7 +159,7 @@ Route::get('/spread', function (Request $request) {
   }
   dd('that`s it');
 
-  ini_set('max_execution_time', 600);    
+  ini_set('max_execution_time', 600);
   $newPoints = PointService::checkNewPoints();
   if(count($newPoints) > 0){
       PointService::addNewPoints($newPoints);
