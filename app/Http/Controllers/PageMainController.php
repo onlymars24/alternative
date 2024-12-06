@@ -50,6 +50,9 @@ class PageMainController extends Controller
             elseif($kladrStationPage->kladr->name == 'Севастополь'){
                 $pagesOnMainSetting['Крым Респ'][] = $kladrStationPageArr;
             }
+            elseif($kladrStationPage->kladr->name == 'Санкт-Петербург'){
+                $pagesOnMainSetting['Ленинградская обл'][] = $kladrStationPageArr;
+            }
             else{
                 $pagesOnMainSetting[$kladrStationPage->kladr->region][] = $kladrStationPageArr;
             }
