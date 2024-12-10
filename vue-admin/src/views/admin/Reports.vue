@@ -312,7 +312,6 @@ export default
             newDate: '',
             loading: false,
             value2: null,
-            date1: null,
             ticketStatuses: ticketStatuses,
             locale: ru,
             ticketsTableVar: [],
@@ -344,7 +343,6 @@ export default
     async mounted(){
         this.loading = true
         let date = new Date();
-        this.date1 = new Date()
         console.log(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59))
         this.defaultTime2 = [
             new Date(date.getFullYear(), date.getMonth(), 1, 0, 0, 0),

@@ -34,6 +34,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ArrivalController;
 use App\Http\Controllers\BonusesController;
 use App\Http\Controllers\FixUserController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StationController;
 use App\Http\Controllers\Api\DateController;
@@ -78,6 +79,7 @@ use App\Http\Controllers\DispatchArrivalSelectController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('/export/excel/messages', [MessageController::class, 'exportExcel'])->name('export.excel');
 
 Route::get('/sitemap/reload', function (Request $request) {
     dd('');
@@ -209,8 +211,10 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/bonuses/minus', [BonusesController::class, 'minus']);
         Route::get('/users', [AuthController::class, 'users']);
 
-        Route::get('/sms/all', [SmsController::class, 'getAll']);
-        Route::get('/sms/whatsapp/all', [SmsController::class, 'getWhatsAppAll']);        
+        // Route::get('/sms/all', [SmsController::class, 'getAll']);
+        // Route::get('/sms/whatsapp/all', [SmsController::class, 'getWhatsAppAll']);  
+        
+        Route::post('/messages', [MessageController::class, 'filter']);  
 
         Route::get('/points', [AllPointsController::class, 'all']);
         Route::get('/matches', [MatchController::class, 'all']);

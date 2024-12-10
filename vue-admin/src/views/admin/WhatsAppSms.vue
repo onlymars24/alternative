@@ -1,80 +1,34 @@
 <template>
     <div class="common-layout">
-     <Header/>
-     <div class="container" v-loading.fullscreen.lock="smsLoading">  
-         <el-container v-if="!smsLoading">
-             <el-main>
-                 <div style="margin-top: 20px;">
-                     <el-card class="box-card">
-                         <template #header>
-                             <div class="card-header" style="display: flex; justify-content: space-between;">
-                                 <span>Список сообщений WhatsApp</span>
-                             </div>
-                         </template>
-                         <!-- <el-table :data="smsArray" style="width: 100%"> -->
-                         <el-table style="width: 100%" :data="smsWhatsAppAll">
-                            <el-table-column prop="id" label="ID" width="135" /> 
-                            <el-table-column prop="date" label="Дата и время отправления" width="250" />
-                             <el-table-column prop="phone" label="Телефон" width="200" />
-                             <el-table-column prop="textStatus" label="Статус" width="135" />
-                             <el-table-column prop="type" label="Тип" width="170" />
-                         </el-table>
-                     </el-card>
-                 </div>
-                 <div style="margin-top: 20px;">
-                     <el-space :fill="false" wrap :size="17"></el-space>
-                 </div>
-             </el-main>
-         </el-container>
-     </div>
- </div>
+        <Header/>
+        <Messages :messagesType="'whatsapp'" :statuses="statuses"/>
+    </div>
 </template>
 <script>
 import Header from '../../components/admin/Header.vue'
+import Messages from '../../components/admin/Messages.vue'
 import axiosAdmin from '../../axiosAdmin'
 import dayjs from 'dayjs';
 
 export default {
  components: {
-     Header
+     Header,
+     Messages
  },
  data() {
      return {
-        // 0-Ошибка отправки (в т.ч. бан/мертвые proxy/etc)
-        // 1-В очереди
-        // 2-Отправлено
-        // 3-Получено
-        // 4-Прочитано
-        // 10-Аккаунт в бане
-
-         smsLoading: false,
-         smsWhatsApp: [],
-         currency: 'RUB',
-         statuses: {
-             0: 'Ошибка отправки', 1: 'В очереди', 2: 'Отправлено', 3: 'Получено', 4: 'Прочитано', 10: 'Аккаунт в бане'
-         }
+        statuses: {
+            0: {value: 0, label: 'Ошибка отправки'}, 
+            1: {value: 1, label: 'В очереди'}, 
+            2: {value: 2, label: 'Отправлено'}, 
+            3: {value: 3, label: 'Получено'}, 
+            4: {value: 4, label: 'Прочитано'}, 
+            5: {value: 5, label: 'Аккаунт в бане'}
+        },
      }
  },
  async mounted() {
-     this.smsLoading = true
 
-     // Запрос на получение смсок
-     const promise = axiosAdmin
-     .get('/sms/whatsapp/all')
-     .then(response => {
-         this.smsWhatsAppAll = response.data.smsWhatsAppAll
-     })
-     .catch( error => {
-
-     })
-     await promise
-     this.smsWhatsAppAll.forEach(sms => {
-         sms.date = dayjs(sms.created_at).format('YYYY-MM-DD HH:mm:ss')
-         if(sms.status != null){
-             sms.textStatus = this.statuses[sms.status]
-         }
-     })
-     this.smsLoading = false
  }
 }
 </script>

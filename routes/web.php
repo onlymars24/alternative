@@ -67,6 +67,7 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\KladrController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
 
