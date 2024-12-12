@@ -54,9 +54,10 @@
 			 <p>{{ race.price }}</p>
 			 <p>руб</p>
 		   </div>
+       
 		   <div class="right-ins__right">
 			 <div class="right-ins__right-button">
-			   
+         
          <button v-if="button_status == 'Обновляем...'" style="background-color: gray;" class="buy__but">
           Обновляем...
 			   </button>
@@ -76,7 +77,9 @@
 			 </div>
 			 <div v-if="button_status == 'Выбрать'" class="right-ins__right-text">Количество мест: {{ race.freeSeatCount }}</div>
 		   </div>
+        <p style="width: 100%; text-align: left;" v-if="button_status == 'stationError'">Нет связи с сервером автовокзала</p> 
 		 </div>
+     
 	   </div>
 	 </div>
 	 <div class="menu__ticket-medium">
@@ -321,6 +324,7 @@
  }
  .ticket-up__right-ins {
    display: flex;
+   flex-wrap: wrap;
    -webkit-box-align: center;
    align-items: center;
    padding: 16px;

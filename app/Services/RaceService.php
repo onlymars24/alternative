@@ -89,21 +89,16 @@ class RaceService
                     ])->get(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date)->object();
 
                     if(gettype($tempRaces) == 'array'){
-                        // $tempRaces = (array)$tempRaces;
-                        // return $tempRaces;
-                        
-                        
                         foreach($tempRaces as $race){
                             $race->dispatch_point_id = $dispatchPoint->id;
                             $race->arrival_point_id = $arrivalPoint->arrival_point_id;
                             $races[$race->uid] = $race;
                         }
-                        // $races = array_merge($tempRaces, $races);
                     }
-                    else{
-                        $isServerError = true;
-                        MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' || '.$request->url, $tempRaces);
-                    }
+                    // else{
+                    //     $isServerError = true;
+                    //     MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' || '.$request->url, $tempRaces);
+                    // }
 
 
 
@@ -132,31 +127,31 @@ class RaceService
             ]);
         }
 
-        foreach($races as $race){
-            $dispatchPointRegion = DispatchPoint::find($dispatchEPoints[0]->id);
-            $region = null;
-            if(!$dispatchPointRegion || !$dispatchPointRegion->kladr){
-                continue;
-            }
-            $region = $dispatchPointRegion->region;
-            $kladrDispatch = $dispatchPointRegion->kladr;
-            if(!DispatchPoint::where([['region', '=', $region], ['name', '=', $race->dispatchStationName]])->first()
-               && !DispatchPoint::find($race->dispatchPointId)
-            ){
-                // Log::info('Повод для новых рейсов');
-                $dispatchPoint = DispatchPoint::create([
-                    'id' => $race->dispatchPointId,
-                    'name' => $race->dispatchStationName,
-                    'slug' => SlugService::create($race->dispatchStationName),
-                    'region' => $region,
-                    'okato' => 1,
-                    'place' => 1,
-                    'kladr_id' => $kladrDispatch->id
-                ]);
-                PointService::addNewArrivalPoints($dispatchPoint);
-            }
-        }
+        // foreach($races as $race){
+        //     $dispatchPointRegion = DispatchPoint::find($dispatchEPoints[0]->id);
+        //     $region = null;
+        //     if(!$dispatchPointRegion || !$dispatchPointRegion->kladr){
+        //         continue;
+        //     }
+        //     $region = $dispatchPointRegion->region;
+        //     $kladrDispatch = $dispatchPointRegion->kladr;
+        //     if(!DispatchPoint::where([['region', '=', $region], ['name', '=', $race->dispatchStationName]])->first()
+        //        && !DispatchPoint::find($race->dispatchPointId)
+        //     ){
+        //         // Log::info('Повод для новых рейсов');
+        //         $dispatchPoint = DispatchPoint::create([
+        //             'id' => $race->dispatchPointId,
+        //             'name' => $race->dispatchStationName,
+        //             'slug' => SlugService::create($race->dispatchStationName),
+        //             'region' => $region,
+        //             'okato' => 1,
+        //             'place' => 1,
+        //             'kladr_id' => $kladrDispatch->id
+        //         ]);
+        //         PointService::addNewArrivalPoints($dispatchPoint);
+        //     }
+        // }
 
-        return ['isServerError' => $isServerError, 'races' => $races];
+        return $races;
     }
 }

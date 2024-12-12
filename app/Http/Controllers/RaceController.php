@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
 use App\Services\MailService;
 use App\Services\RaceService;
+use App\Services\SlugService;
+use App\Services\PointService;
 use App\Models\CacheArrivalPoint;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -24,23 +26,87 @@ class RaceController extends Controller
     //date
     public function races(Request $request){
         return response([
-            'racesInfo' => RaceService::all($request, $request->date)
+            'races' => RaceService::all($request, $request->date)
         ]);
     }
 
+    //dispatchPointId
+    //dispatchPointType
+    //arrivalPointId
+    //arrivalPointType
+    //date
+    public function sevenDaysRaces(Request $request){
+        $dates = [];
+        for($i = 1; $i <= 7; $i++){
+            $datetime = new DateTime($request->date);
+            $datetime->modify('+'.$i.' day');
+            $date = $datetime->format('Y-m-d');
+            $races = RaceService::all($request, $date); 
+
+
+
+
+            // $races = Http::withHeaders([
+            //     'Authorization' => env('AVTO_SERVICE_KEY'),
+            // ])->get(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$date);
+            // Log::info($races);
+            // $races = json_decode($races);
+            if(count($races) > 0){
+                log::info(json_encode($races));
+                return response([
+                    'date' => $date
+                ]);
+            }
+            sleep(2);
+        }
+        return response([
+            'date' => null
+        ]);
+    }
+    
     public function simpleRaces(Request $request){
+        $isServerError = false;
         $races = Http::withHeaders([
             'Authorization' => env('AVTO_SERVICE_KEY'),
         ])->get(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$request->date)->object();
+        // ИСКУССТВЕННАЯ ПОЛОМКА АВТОВОКЗАЛА
+        // $races = json_decode(json_encode([
+        //     "errorMessage" => "Автовокзал недоступен: Томск АВ",
+        //     "errorType" => "UNAVAILABLE"
+        // ]));
         if(is_array($races)){
             foreach($races as $race){
                 $race->dispatch_point_id = $request->dispatchPointId;
-                $race->arrival_point_id = $request->arrivalPointId;                
+                $race->arrival_point_id = $request->arrivalPointId;
+                $dispatchPointRegion = DispatchPoint::find($request->dispatchPointId);
+                $region = null;
+                if(!$dispatchPointRegion || !$dispatchPointRegion->kladr){
+                    continue;
+                }
+                $region = $dispatchPointRegion->region;
+                $kladrDispatch = $dispatchPointRegion->kladr;
+                if(!DispatchPoint::where([['region', '=', $region], ['name', '=', $race->dispatchStationName]])->first()
+                   && !DispatchPoint::find($race->dispatchPointId)
+                ){
+                    $dispatchPoint = DispatchPoint::create([
+                        'id' => $race->dispatchPointId,
+                        'name' => $race->dispatchStationName,
+                        'slug' => SlugService::create($race->dispatchStationName),
+                        'region' => $region,
+                        'okato' => 1,
+                        'place' => 1,
+                        'kladr_id' => $kladrDispatch->id
+                    ]);
+                    PointService::addNewArrivalPoints($dispatchPoint);
+                }
             }
-
-            return response(['isServerError' => false, 'races' => $races]);
+            return response(['isServerError' => $isServerError, 'races' => $races]);
         }
-        return response(['isServerError' => false, 'races' => []]);
+        elseif(is_object($races) && stripos($races->errorMessage, 'Автовокзал недоступен') !== false){
+            $isServerError = true;
+        }
+        MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$request->date.' || '.$request->url, $races);
+        return response(['isServerError' => $isServerError, 'races' => []]);
     }
 
     public function get(Request $request){
@@ -83,7 +149,7 @@ class RaceController extends Controller
                                         $coordinates = explode(' ', $pos);
                                         $station->latitude = $coordinates[1];
                                         $station->longitude = $coordinates[0];
-                                        $station->save();                                            
+                                        $station->save();
                                     }
                                 }
                                 Mail::to(env('ERROR_MAIL_MARSEL'))->send(new ErrorApiMail('Новое местоположение для '.$station->name, $station->toArray()));
@@ -96,41 +162,5 @@ class RaceController extends Controller
             }
         }
         return null;
-    }
-
-
-
-    //dispatchPointId
-    //dispatchPointType
-    //arrivalPointId
-    //arrivalPointType
-    //date
-    public function sevenDaysRaces(Request $request){
-        $dates = [];
-        for($i = 1; $i <= 7; $i++){
-            $datetime = new DateTime($request->date);
-            $datetime->modify('+'.$i.' day');
-            $date = $datetime->format('Y-m-d');
-            $races = RaceService::all($request, $date);
-
-
-
-
-            // $races = Http::withHeaders([
-            //     'Authorization' => env('AVTO_SERVICE_KEY'),
-            // ])->get(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$date);
-            // Log::info($races);
-            // $races = json_decode($races);
-            if(!$races['isServerError'] && count($races['races']) > 0){
-                log::info(json_encode($races));
-                return response([
-                    'date' => $date
-                ]);
-            }
-            sleep(2);
-        }
-        return response([
-            'date' => null
-        ]);
     }
 }

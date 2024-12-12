@@ -29,25 +29,19 @@
             </div>
             
             <div v-else>
-                <!-- <div v-if="!races.length && notExistingRace" class="not__found">
-                    <div class="not__found-text">
-                        <p class="not__found-title">
-                            Маршрута {{errorNames.dispatch}} — {{errorNames.arrival}}
-                            не существует
-                        </p>
-                        <p class="not__found-descr">
-                            Выберите другие точки отправления и прибытия.
-                        </p>
-                    </div>
-                </div> -->
-                <!-- <div v-else-if="!races.length && !notExistingRace && isServerError">
+                <div v-if="!races.length && isServerError && formatedCacheRaces.length">
+                    <template v-for="race in formatedCacheRaces">
+                        <RaceCard @toSeats="toSeats" :race="race" :button_status="'stationError'"/>
+                    </template>        
+                </div>
+                <div v-else-if="!races.length && isServerError">
                     <div class="not__found-text" style="margin-left: 0;">
                         <p class="not__found-title">
                             Нет связи с автовокзалом. Сервер автовокзала скоро восстановится, и затем можно будет купить билет. Повторите поиск через несколько минут.
                         </p>
                     </div>          
-                </div> -->
-                <div v-if="!races.length && !this.$route.query.on">
+                </div>
+                <div v-else-if="!races.length && !this.$route.query.on">
                     <div class="not__found">
                         <div class="not__found-text">
                             <p class="not__found-title">
@@ -227,9 +221,9 @@ export default {
             date: this.$route.query.on,
             dateConst: this.$route.query.on,
             races: [],
+            isServerError: false,
             racesInfo: null,
             loadingRaces: true,
-            notExistingRace: false,
             months: [
                 '', 'янв.', 'февр.', 'мар.', 'апр.', 'май.', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'ноябр.', 'дек.', 
             ],
@@ -339,6 +333,8 @@ export default {
         }
         let dispatchPoints = []
 
+
+        // генерация точек етрафика(отправления и прибытия) для асинхронного поиска рейсов
         if(this.dispatchItem.sourceId.includes('stations')){
             dispatchPoints = this.dispatchItem.dispatch_points
         }
@@ -365,34 +361,54 @@ export default {
         }
         
         // dispatchPoints.forEach(async(dispatchPoint) => {
+        let serverErrorsCount = 0
         let tempTotalRaces = []
             for(const dispatchPoint of dispatchPoints){
                 for(const arrivalPoint of arrivalPoints){
                     if(arrivalPoint.dispatch_point_id == dispatchPoint.id){
                         let tempRaces = []
-                        
-                    await axiosClient
-                    .get('/races/simple?dispatchPointId='+dispatchPoint.id+'&arrivalPointId='+arrivalPoint.arrival_point_id+'&date='+this.date)
-                    .then(response => {
-                        tempRaces = response.data.races
-                        tempRaces.forEach(race => {
-                            race.section = 'route'
-                            race.details_menu = false
-                            race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
-                            race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
-                            race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
-                            race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
-                            tempTotalRaces[race.uid] = race
+                        await axiosClient
+                        .get('/races/simple?dispatchPointId='+dispatchPoint.id+'&arrivalPointId='+arrivalPoint.arrival_point_id+'&date='+this.date)
+                        .then(response => {
+                            if(response.data.isServerError){
+                                serverErrorsCount++
+                            }
+                            tempRaces = response.data.races
+                            tempRaces.forEach(race => {
+                                race.section = 'route'
+                                race.details_menu = false
+                                race.dispatchDay = race.dispatchDate ? dayjs(race.dispatchDate).format('D')+' '+this.months[dayjs(race.dispatchDate).format('M')] : ''
+                                race.arrivalDay = race.arrivalDate ? dayjs(race.arrivalDate).format('D')+' '+this.months[dayjs(race.arrivalDate).format('M')] : ''
+                                race.dispatchTime = race.dispatchDate ? dayjs(race.dispatchDate).format('HH:mm') : ''
+                                race.arrivalTime = race.arrivalDate ? dayjs(race.arrivalDate).format('HH:mm') : ''
+                                tempTotalRaces[race.uid] = race
+                            });
+                            this.races = Object.values(tempTotalRaces)
+                            if(this.races.length > 0){
+                                this.loadingRaces = false
+                            }
                             
-                        });
-                        this.races = Object.values(tempTotalRaces)
-                        this.loadingRaces = false
-                    })
-                    .catch(error => {
-                    })
+                        })
+                        .catch(error => {
+                        })
                     }
                 }
             }
+            console.log(this.races.length, serverErrorsCount)
+            if(this.races.length == 0 && serverErrorsCount > 0){
+                this.isServerError = true
+                this.loadingRaces = false
+                return
+            }
+
+            await axiosClient
+            .get('/races?dispatchSourceId='+store.state.dispatchItem.sourceId+'&arrivalSourceId='+store.state.arrivalItem.sourceId+'&date='+this.date)
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
 
 
         //     await arrivalPoints.forEach(async(arrivalPoint) => {
