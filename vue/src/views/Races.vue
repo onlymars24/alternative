@@ -200,6 +200,7 @@ import Footer from '../components/Footer.vue';
 import RaceCard from '../components/RaceCard.vue';
 import BusLoading from '../components/BusLoading.vue';
 import router from '../router';
+import route from '../router';
 import axios from 'axios';
 import axiosClient from '../axios'
 import dayjs from 'dayjs'
@@ -368,7 +369,8 @@ export default {
                     if(arrivalPoint.dispatch_point_id == dispatchPoint.id){
                         let tempRaces = []
                         await axiosClient
-                        .get('/races/simple?dispatchPointId='+dispatchPoint.id+'&arrivalPointId='+arrivalPoint.arrival_point_id+'&date='+this.date)
+                        .get('/races/simple?dispatchPointId='+dispatchPoint.id+'&arrivalPointId='+arrivalPoint.arrival_point_id+
+                        '&date='+this.date+'&url='+decodeURIComponent(this.$route.path))
                         .then(response => {
                             if(response.data.isServerError){
                                 serverErrorsCount++
@@ -387,7 +389,6 @@ export default {
                             if(this.races.length > 0){
                                 this.loadingRaces = false
                             }
-                            
                         })
                         .catch(error => {
                         })
@@ -400,7 +401,7 @@ export default {
                 this.loadingRaces = false
                 return
             }
-
+            this.loadingRaces = false
             await axiosClient
             .get('/races?dispatchSourceId='+store.state.dispatchItem.sourceId+'&arrivalSourceId='+store.state.arrivalItem.sourceId+'&date='+this.date)
             .then(response => {

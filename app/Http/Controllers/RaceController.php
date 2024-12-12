@@ -102,7 +102,7 @@ class RaceController extends Controller
             }
             return response(['isServerError' => $isServerError, 'races' => $races]);
         }
-        elseif(is_object($races) && stripos($races->errorMessage, 'Автовокзал недоступен') !== false){
+        elseif(is_object($races) && isset($races->errorMessage) && stripos($races->errorMessage, 'Автовокзал недоступен') !== false){
             $isServerError = true;
         }
         MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$request->dispatchPointId.'/'.$request->arrivalPointId.'/'.$request->date.' || '.$request->url, $races);
