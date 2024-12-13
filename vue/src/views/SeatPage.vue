@@ -25,7 +25,7 @@ export default {
     .get('/race?dispatchPointId='+this.$route.params['dispatch_point_id']+'&arrivalPointId='+this.$route.params['arrival_point_id']+'&date='+this.$route.params['date']+'&uid='+this.$route.params['race_id'])
     .then(response => {
       console.log('не ошибка')
-        this.race = response.data
+        this.race = response.data.race
         console.log(this.race)
         this.seats = this.race.seats
         this.updateSeats()
