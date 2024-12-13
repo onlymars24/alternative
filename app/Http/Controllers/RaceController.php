@@ -122,6 +122,7 @@ class RaceController extends Controller
                     ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid)->object();
                     if(!isset($raceSummary->race->uid)){
                         MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid, $raceSummary);
+                        return response(['race' => $raceSummary], 500);
                     }
                     elseif(isset($raceSummary->depot)){
                         $dispatchPoint = DispatchPoint::find($raceSummary->race->dispatchPointId);
@@ -156,8 +157,9 @@ class RaceController extends Controller
                             }
                         }
                     }
+                    return response(['error' => $raceSummary]);
                     // return response(['errorMessage' => 'Ошибка при запросе к серверу автовокзала Томск КДП. Места заняты. Тип места: Пассажирские, номер места: 25.'], 500);
-                    return json_encode($raceSummary);
+                    // return json_encode($raceSummary);
                 }
             }
         }
