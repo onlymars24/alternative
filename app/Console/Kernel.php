@@ -188,10 +188,10 @@ class Kernel extends ConsoleKernel
             $sitemap[0]->sitemap->lastmod = date('c');
             Storage::disk('sftp')->put('/var/www/rosvokzaly/data/public/sitemap.xml', $sitemap->asXML());
             $newPoints = PointService::checkNewPoints();
-            if(count($newPoints) > 0){
+            // if(count($newPoints) > 0){
                 PointService::addNewPoints($newPoints);
-                Log::info('Новые точки добавлены!');
-            }
+                // Log::info('Новые точки добавлены!');
+            // }
             $arrivalPoints = CacheArrivalPoint::where([['created_at', '>', date('Y-m-d', strtotime('-1 day'))], 
             ['kladr_id', '=', null]])->get();
             foreach($arrivalPoints as $arrivalPoint){
@@ -255,7 +255,6 @@ class Kernel extends ConsoleKernel
             }
             File::put(public_path(env('XML_FILE_NAME')), $xml->asXML());
             FtpLoadingService::put();
-            
         })->daily();
     }
 

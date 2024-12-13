@@ -240,7 +240,13 @@ class PointService
             ]);
             self::addNewArrivalPoints($dispatchPoint);
         }
-
-        MailService::sendDumpSchedule('Новые точки от e-traffic', $newPoints);
+        $message = '';
+        if(count($newPoints) > 0){
+            $message = 'Новые точки от e-traffic';
+        }
+        else{
+            $message = 'Новых точек от e-traffic добавлено не было';
+        }
+        MailService::sendDumpSchedule($message, $newPoints);
     }
 }
