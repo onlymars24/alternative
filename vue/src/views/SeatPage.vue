@@ -33,7 +33,10 @@ export default {
     .catch(error => {
       console.log('ошибка')
       console.log(error)
-      this.errorMessage = error.response.data.errorMessage
+
+      this.errorMessage = error.response.data.error.errorMessage
+      console.log(this.errorMessage)
+      console.log(error.response.data.error.errorMessage)
     });
     // if(!this.race){
     //   router.push({name: 'Main'})

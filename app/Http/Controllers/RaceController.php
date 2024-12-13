@@ -121,7 +121,10 @@ class RaceController extends Controller
                         'Authorization' => env('AVTO_SERVICE_KEY'),
                     ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid)->object();
                     if(!isset($raceSummary->race->uid)){
-                        MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid, $raceSummary);
+                        $raceShortInfo = Http::withHeaders([
+                            'Authorization' => env('AVTO_SERVICE_KEY'),
+                        ])->get(env('AVTO_SERVICE_URL').'/race/summary/'.$request->uid)->object();
+                        MailService::sendError(env('AVTO_SERVICE_URL').'/race/summary/'.(isset($raceShortInfo->uid) ? ' от '.$raceShortInfo->dispatchStationName.' до '.$raceShortInfo->arrivalStationName : '').$request->uid, $raceSummary);
                         return response(['error' => $raceSummary], 500);
                     }
                     elseif(isset($raceSummary->depot)){

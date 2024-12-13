@@ -858,7 +858,7 @@ export default
     const promise = axiosClient
     .get('/race?dispatchPointId='+this.$route.params['dispatch_point_id']+'&arrivalPointId='+this.$route.params['arrival_point_id']+'&date='+this.$route.params['date']+'&uid='+this.$route.params['race_id'])
       .then(response => (
-          this.race = response.data
+          this.race = response.data.race
       ));
     await promise
     if(!this.race){
