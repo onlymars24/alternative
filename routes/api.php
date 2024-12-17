@@ -154,7 +154,6 @@ Route::middleware('auth:sanctum')->group(function(){
 
         Route::post('/main/page/meta/img/upload', [MainPageMetaImgController::class, 'upload']);
         Route::post('/main/page/meta/img/delete', [MainPageMetaImgController::class, 'delete']);
-        Route::get('/main/page/meta/img', [MainPageMetaImgController::class, 'get']);
 
         Route::post('/races/xml/create', [RacesXmlController::class, 'create']);
         Route::post('/admin/ticket/return', [TicketController::class, 'getBack']);
@@ -242,6 +241,8 @@ Route::middleware('auth:sanctum')->group(function(){
     
     Route::post('/member/logout', [MemberAuthController::class, 'logout']);
 });
+
+Route::get('/main/page/meta/img', [MainPageMetaImgController::class, 'get']);
 
 Route::get('/sitemap/page/check', [PageSitemapController::class, 'checkUrl']);
 
