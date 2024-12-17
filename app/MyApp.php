@@ -23,4 +23,6 @@ class MyApp
     ];
 
     const ROLE_PHONE = '+7 (777) 777 7777';
+
+    const META_IMG_DEFAULT = 'meta/default.jpg';
 }

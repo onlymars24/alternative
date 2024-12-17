@@ -79,7 +79,7 @@
     </div>
     <template v-if="formType=='edit'">
         <hr>
-        <div>
+        <div style="margin-bottom: 50px;">
             <label style="margin-bottom: 10px;" for=""><strong>Изображение для шапки страницы:</strong></label><br>
             <div style="width: 30%; display: flex; margin-bottom: 20px;">
                 <input type="file" class="form-control" style="margin: 0;" @change="onFileChange">
@@ -88,6 +88,17 @@
             <div v-if="page.header_img">
                 <div><img style="width: 50%;" :src="baseUrl+'/'+page.header_img" alt=""></div>
                 <div style="margin-top: 15px;"><el-button class="ml-3" type="danger" @click="deleteImage(page.id)">Удалить существующее изображение</el-button></div>
+            </div>
+        </div>
+        <div>
+            <label style="margin-bottom: 10px;" for=""><strong>Изображение для ссылки на страницу:</strong></label><br>
+            <div style="width: 30%; display: flex; margin-bottom: 20px;">
+                <input type="file" class="form-control" style="margin: 0;" @change="onMetaFileChange">
+                <button :disabled="!selectedMetaFile" class="btn btn-primary" type="button" style="margin-left: 10px;" @click="uploadMetaImage(page.id)">Загрузить</button>
+            </div>
+            <div v-if="page.metaImg">
+                <div><img style="width: 50%;" :src="baseUrl+'/'+page.metaImg" alt=""></div>
+                <div style="margin-top: 15px;"><el-button class="ml-3" type="danger" @click="deleteMetaImage(page.id)">Удалить существующее изображение</el-button></div>
             </div>
         </div>
     </template>
@@ -105,6 +116,7 @@ export default
         return {
             url: window.location.origin,
             selectedFile: null,
+            selectedMetaFile: null,
             baseUrl: import.meta.env.VITE_API_BASE_URL,
             loadingImage: false
         }
@@ -114,6 +126,9 @@ export default
     methods: {
         onFileChange(event) {
             this.selectedFile = event.target.files[0];
+        },
+        onMetaFileChange(event) {
+            this.selectedMetaFile = event.target.files[0];
         },
         async uploadImage(pageId) {
             this.loadingImage = true
@@ -134,7 +149,7 @@ export default
             location.reload(); return false
         },
         async deleteImage(pageId){
-            if(!confirm('Вы уверены, что хотите удалить станцию? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
+            if(!confirm('Вы уверены, что хотите удалить изображение? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
 				return
 			}
             this.loadingImage = true
@@ -150,6 +165,43 @@ export default
             this.loadingImage = false
             location.reload(); return false
         },
+
+        async uploadMetaImage(pageId) {
+            this.loadingImage = true
+            const formData = new FormData();
+            formData.append('metaImg', this.selectedMetaFile);
+            formData.append('pageId', pageId);
+            console.log(this.selectedFile)
+            await axiosAdmin
+            // .post('/kladr/station/page/image/upload', {pageId: , image: this.selectedFile})
+            .post('/kladr/station/page/meta/image/upload', formData)
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            this.loadingImage = false
+            location.reload(); return false
+        },
+        async deleteMetaImage(pageId){
+            if(!confirm('Вы уверены, что хотите удалить изображение? ОТМЕНИТЬ ДЕЙСТВИЕ БУДЕТ НЕВОЗМОЖНО!')){
+				return
+			}
+            this.loadingImage = true
+            await axiosAdmin
+            // .post('/kladr/station/page/image/upload', {pageId: , image: this.selectedFile})
+            .post('/kladr/station/page/meta/image/delete', {pageId})
+            .then(response => {
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            this.loadingImage = false
+            location.reload(); return false
+        },
+
         updateEditorTextContent(newContent){
             this.page.content = newContent
             // this.paramKey++

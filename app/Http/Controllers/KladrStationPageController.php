@@ -224,7 +224,6 @@ class KladrStationPageController extends Controller
         return response(['pageId' => $page->id]);        
 
         
-
     }
 
     public function imageDelete(Request $request){
@@ -233,6 +232,32 @@ class KladrStationPageController extends Controller
         if ($filePath && File::exists($filePath)) {
             File::delete($filePath);
             $page->header_img = null;
+            $page->save();
+        }
+    }
+
+    public function imageMetaUpload(Request $request){
+        if(!$request->file('metaImg')){
+            return response()->json(['error' => 'Image upload failed'], 400);
+        }
+        $page = KladrStationPage::find($request->pageId);
+        $filePath = $page->metaImg;
+        if ($filePath && File::exists($filePath)) {
+            File::delete($filePath);
+            $page->metaImg = null;
+            $page->save();
+        }
+        $page->metaImg = $request->file('metaImg')->store('meta');
+        $page->save();
+        return response(['pageId' => $page->id]);
+    }
+
+    public function imageMetaDelete(Request $request){
+        $page = KladrStationPage::find($request->pageId);
+        $filePath = $page->metaImg;
+        if ($filePath && File::exists($filePath)) {
+            File::delete($filePath);
+            $page->metaImg = null;
             $page->save();
         }
     }

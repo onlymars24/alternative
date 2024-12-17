@@ -62,6 +62,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Api\CountriesController;
 use App\Http\Controllers\PopularPointsController;
 use App\Http\Controllers\AdvertisingPdfController;
+use App\Http\Controllers\MainPageMetaImgController;
 use App\Http\Controllers\KladrStationPageController;
 use App\Http\Controllers\Api\ArrivalPointsController;
 use App\Http\Controllers\PageUpcomingTripsController;
@@ -151,6 +152,10 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/ad/pdf/delete', [AdvertisingPdfController::class, 'delete']);
         Route::get('/ad/pdf', [AdvertisingPdfController::class, 'get']);
 
+        Route::post('/main/page/meta/img/upload', [MainPageMetaImgController::class, 'upload']);
+        Route::post('/main/page/meta/img/delete', [MainPageMetaImgController::class, 'delete']);
+        Route::get('/main/page/meta/img', [MainPageMetaImgController::class, 'get']);
+
         Route::post('/races/xml/create', [RacesXmlController::class, 'create']);
         Route::post('/admin/ticket/return', [TicketController::class, 'getBack']);
     });
@@ -167,6 +172,9 @@ Route::middleware('auth:sanctum')->group(function(){
 
         Route::post('/kladr/station/page/image/upload', [KladrStationPageController::class, 'imageUpload']);
         Route::post('/kladr/station/page/image/delete', [KladrStationPageController::class, 'imageDelete']);
+
+        Route::post('/kladr/station/page/meta/image/upload', [KladrStationPageController::class, 'imageMetaUpload']);
+        Route::post('/kladr/station/page/meta/image/delete', [KladrStationPageController::class, 'imageMetaDelete']);
         
         Route::get('/stations', [StationController::class, 'all']);
         Route::post('/station/create', [StationController::class, 'create']);

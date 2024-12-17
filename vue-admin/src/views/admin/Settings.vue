@@ -74,6 +74,7 @@
                     </el-card>
                 </div>
                 <AdvertisingPdf/>
+                <MainPageMetaImg/>
                 <div style="margin-top: 20px;">
                     <el-space :fill="false" wrap :size="17"></el-space>
                 </div>
@@ -85,6 +86,7 @@
 <script>
 import Header from '../../components/admin/Header.vue'
 import AdvertisingPdf from '../../components/admin/AdvertisingPdf.vue'
+import MainPageMetaImg from '../../components/admin/MainPageMetaImg.vue'
 import axiosAdmin from '../../axiosAdmin'
 import dayjs from 'dayjs';
 import TheMask from 'vue-the-mask'
@@ -92,7 +94,8 @@ import TheMask from 'vue-the-mask'
 export default {
  components: {
     Header,
-    AdvertisingPdf
+    AdvertisingPdf,
+    MainPageMetaImg,
  },
  data() {
     return {

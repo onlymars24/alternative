@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
+use App\MyApp;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -21,7 +22,11 @@ class InsertPageMain extends Seeder
         }
         Setting::create([
             'name' => 'pageMain',
-            'data' => '{"content": "<p>Вы находитесь на главной странице сайта</p>"}'
+            'data' => 
+            '{
+                "content": "<p>Вы находитесь на главной странице сайта</p>",
+                "metaImg": "'.MyApp::META_IMG_DEFAULT.'"    
+            }'
         ]);
     }
 }
