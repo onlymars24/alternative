@@ -148,8 +148,33 @@ Route::get('/sitemap/reload', function (Request $request) {
 
 Route::get('/spread', function (Request $request) {
   $dispatchKladrs = Kladr::has('dispatchPoints')->where('name', 'like', '%%')->get();
+  $count = 0;
 
-  dd($dispatchKladrs);
+  foreach($dispatchKladrs as $kladr){
+    $sourceId = explode('-', $kladr->sourceId);
+    $stations = [];
+    $arrivalData = [];
+    $kladr = Kladr::find($sourceId[1]);
+    $stations = $kladr->stations;
+    foreach($stations as $station){
+      if(!$station->dispatchPoints){
+          continue;
+      }
+      foreach($station->dispatchPoints as $dispatchPoint){
+
+          $arrivalKladrs = Kladr::with('stations.arrivalPoints')->where([
+              ['name', 'like', '%%'],
+          ])->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
+              $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
+          })->get();
+          foreach($arrivalKladrs as $kladr){
+              $arrivalData[$kladr->name.'_'.$kladr->id] = $kladr;
+          }
+      }
+    }
+    $count += count($arrivalData);
+  }
+  dd($count);
 
   dd((object)[
     "errorMessage" => "Автовокзал недоступен: Томск АВ",
