@@ -147,6 +147,10 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  $dispatchKladrs = Kladr::has('dispatchPoints')->where('name', 'like', '%%')->get();
+
+  dd($dispatchKladrs);
+
   dd((object)[
     "errorMessage" => "Автовокзал недоступен: Томск АВ",
     "errorType" => "UNAVAILABLE"
