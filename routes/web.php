@@ -47,6 +47,7 @@ use App\Services\GraphicService;
 use App\Services\SitemapService;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
+use App\Services\VkMarketService;
 use Illuminate\Support\Facades\DB;
 use App\Services\BusStationService;
 use App\Services\FtpLoadingService;
@@ -135,6 +136,7 @@ use App\Http\Controllers\UsersExportController;
 // });
 
 Route::get('/sitemap/reload', function (Request $request) {
+  
   dd('');
   ini_set('max_execution_time', 600);  
   $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
@@ -147,34 +149,35 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
-  $dispatchKladrs = Kladr::has('dispatchPoints')->where('name', 'like', '%%')->get();
-  $count = 0;
+  // dd(file_get_contents(public_path('/routes/new_bus_bgc.jpg')));
 
-  foreach($dispatchKladrs as $kladr){
-    $sourceId = explode('-', $kladr->sourceId);
+  // dd(VkMarketService::marketAdd('dispatch', 'arrival'));
+  $dispatchKladrs = Kladr::has('dispatchPoints')->get();
+  // $count = 0;
+  $races = [];
+
+  foreach($dispatchKladrs as $dispatchKladr){
+    // $sourceId = explode('-', $kladr->sourceId);
     $stations = [];
-    $arrivalData = [];
-    $kladr = Kladr::find($sourceId[1]);
-    $stations = $kladr->stations;
+    
+    // $kladr = Kladr::find($sourceId[1]);
+    $stations = $dispatchKladr->stations;
     foreach($stations as $station){
       if(!$station->dispatchPoints){
           continue;
       }
       foreach($station->dispatchPoints as $dispatchPoint){
-
-          $arrivalKladrs = Kladr::with('stations.arrivalPoints')->where([
-              ['name', 'like', '%%'],
-          ])->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
+          $arrivalKladrs = Kladr::whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
               $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
           })->get();
-          foreach($arrivalKladrs as $kladr){
-              $arrivalData[$kladr->name.'_'.$kladr->id] = $kladr;
+          foreach($arrivalKladrs as $arrivalKladr){
+              $races[$dispatchKladr->name.' - '.$arrivalKladr->name] = $dispatchKladr->name.' - '.$arrivalKladr->name;
           }
       }
     }
-    $count += count($arrivalData);
+    // $count += count($races);
   }
-  dd($count);
+  dd($races);
 
   dd((object)[
     "errorMessage" => "Автовокзал недоступен: Томск АВ",
