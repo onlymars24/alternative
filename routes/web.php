@@ -71,6 +71,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
+use App\Models\KladrsCouple;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,7 +114,7 @@ use App\Http\Controllers\UsersExportController;
 //       //   dd($kladr, $dispatchItem, $dispatchItem['id']);
 //       // }
 //       $dispatchPoints = $kladr->dispatchPoints;
-      
+
 //       foreach($dispatchPoints as $dispatchPoint){
 //         $arrivalData = PointService::kAndE($dispatchPoint->id);
 //         foreach($arrivalData as $arrivalItem){
@@ -121,7 +122,7 @@ use App\Http\Controllers\UsersExportController;
 //         }
 //       }
 //     }
-    
+
 //     // foreach($arrivalData as $arrivalItem){
 //     //   
 //     // }
@@ -149,12 +150,66 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
-  // dd(file_get_contents(public_path('/routes/new_bus_bgc.jpg')));
+  ini_set('max_execution_time', 20000);  
 
-  // dd(VkMarketService::marketAdd('dispatch', 'arrival'));
+  $kladrPages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
+  $couplesData = [];
+  foreach($kladrPages as $kladrPage){
+      $dispatchKladr = $kladrPage->kladr;
+      $arrivalKladrs = PointService::arrivalKladrsBySourceId($dispatchKladr->sourceId);
+      foreach($arrivalKladrs as $arrivalKladr){
+          if(!KladrsCouple::where([['dispatch_kladr_id', '=', $dispatchKladr->id], ['arrival_kladr_id', '=', $arrivalKladr->id]])->first()){
+              // KladrsCouple::create([
+              //    'dispatch_kladr_id' => $dispatchKladr->id,
+              //    'arrival_kladr_id' => $arrivalKladr->id,
+              // ]);
+              $link = '/автобус/'.$dispatchKladr->slug.'/'.$arrivalKladr->slug;
+              $couplesData[$link] = $link;
+          }
+      }
+  }
+  dd($couplesData);
+
+
+
+  // $kladrPages = KladrStationPage::with('kladr')->where([['kladr_id', '<>', null]])->get();
+  // foreach($kladrPages as $kladrPage){
+  //   $arrivalKladrs = 
+  // }
+
+  // $kladrPages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
+  // foreach($kladrPages as $kladrPage){
+  //     $dispatchKladr = $kladrPage->kladr;
+  //     $arrivalKladrs = PointService::arrivalKladrsBySourceId($dispatchKladr->sourceId);
+  //     foreach($arrivalKladrs as $arrivalKladr){
+  //         if(!KladrsCouple::where([['dispatch_kladr_id', '=', $dispatchKladr->id], ['arrival_kladr_id', '=', $arrivalKladr->id]])->first()){
+  //             KladrsCouple::create([
+  //                'dispatch_kladr_id' => $dispatchKladr->id,
+  //                'arrival_kladr_id' => $arrivalKladr->id,
+  //             ]);
+  //         }
+  //     }
+  // }
+
+  
+  // dd($kladrPages);
+  
+  // $coupleKladr = KladrsCouple::create([
+  //   'dispatch_kladr_id' => 151370,
+  //   'arrival_kladr_id' => 33676,
+  // ]);
+  $coupleKladr = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->find(1)->toArray();
+  // dd($coupleKladr);
+
+  
+  // dd(VkMarketService::allMarketsAdd());
+  $date = date("Y-m-d");
+  // dd(file_get_contents(public_path('/routes/new_bus_bgc.jpg')));
+  // dd(gettype(-env('VK_GROUP_ID')), -env('VK_GROUP_ID'));
+  // dd(VkMarketService::marketAdd('Москва', 'Воронеж'));
   $dispatchKladrs = Kladr::has('dispatchPoints')->get();
   // $count = 0;
-  $races = [];
+  $pointsCouples = [];
 
   foreach($dispatchKladrs as $dispatchKladr){
     // $sourceId = explode('-', $kladr->sourceId);
@@ -171,13 +226,66 @@ Route::get('/spread', function (Request $request) {
               $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
           })->get();
           foreach($arrivalKladrs as $arrivalKladr){
-              $races[$dispatchKladr->name.' - '.$arrivalKladr->name] = $dispatchKladr->name.' - '.$arrivalKladr->name;
+              if($arrivalKladr->arrivalPoints->where('name', $arrivalKladr->name)->first()){
+                foreach($arrivalKladr->arrivalPoints as $arrivalPoint){
+                  if($arrivalPoint->name == $arrivalKladr->name && $dispatchPoint->name == $dispatchKladr->name){
+                    $pointsCouples[$dispatchKladr->name.' - '.$arrivalKladr->name] = [$dispatchPoint, [$arrivalPoint], $dispatchKladr, $arrivalKladr];
+                  }
+                }
+              }
+              elseif($dispatchPoint->name == $dispatchKladr->name){
+                $pointsCouples[$dispatchKladr->name.' - '.$arrivalKladr->name] = [$dispatchPoint, $arrivalKladr->arrivalPoints->where('dispatch_point_id', $dispatchPoint->id), $dispatchKladr, $arrivalKladr];
+              }
           }
       }
     }
     // $count += count($races);
   }
-  dd($races);
+  // $pointsCouples = array_slice($pointsCouples, 25, 25);
+  dd($pointsCouples);
+  Log::info('$pointsCouples '.json_encode($pointsCouples));
+  $newRaces = [];
+  
+  foreach($pointsCouples as $key => $couple){
+    $races = [];
+    for($i = 1; $i <= 7; $i++){
+      $datetime = new DateTime($date);
+      $datetime->modify('+'.$i.' day');
+      $newDate = $datetime->format('Y-m-d');
+      foreach($couple[1] as $arrivalPoint){
+        Log::info('first request '.env('AVTO_SERVICE_URL').'/races/'.$couple[0]->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate);
+        $races = Http::withHeaders([
+          'Authorization' => env('AVTO_SERVICE_KEY'),
+        ])->get(env('AVTO_SERVICE_URL').'/races/'.$couple[0]->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate)->object();
+        sleep(2);
+        if(gettype($races) == 'array' && count($races) > 0){
+          Log::info($key.' есть рейсы '.json_encode($races));
+          break;
+        }
+        elseif(gettype($races) == 'object'){
+          Log::info($key.' ошибка '.json_encode($races));
+          break;
+        }
+        Log::info($key.' '.json_encode($races));
+      }
+      if(gettype($races) == 'array' && count($races) > 0){
+        break;
+      }
+      elseif(gettype($races) == 'object'){
+        break;
+      }
+    }
+    if(gettype($races) == 'array' && count($races) > 0){
+      $minPrice = $races[0]->price;
+      foreach($races as $race){
+        if($race->price < $minPrice){
+          $minPrice = $race->price;
+        }
+      }
+      $newRaces[] = ['races' => $races, 'minPrice' => $minPrice];
+    }
+  }
+  dd($newRaces);
 
   dd((object)[
     "errorMessage" => "Автовокзал недоступен: Томск АВ",
@@ -210,7 +318,7 @@ Route::get('/spread', function (Request $request) {
       PointService::addNewPoints($newPoints);
       Log::info('Новые точки добавлены!');
   }
-  dd($newPoints);  
+  dd($newPoints);
 
   Mail::to([env('ERROR_MAIL_YOUGILE'), env('ERROR_MAIL_PAVEL'), env('ERROR_MAIL_MARSEL')])->send(new DumpMail('$test', '$test', '$test'));
   dd('');

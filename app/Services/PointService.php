@@ -136,6 +136,35 @@ class PointService
         return self::leftSidePrioritySort($arrivalData, $search);
     }
 
+    public static function arrivalKladrsBySourceId($sourceId){
+        $sourceId = explode('-', $sourceId);
+        $stations = [];
+        $arrivalData = [];
+        if($sourceId[0] != 'kladrs'){
+            return [];
+        }
+        $kladr = Kladr::find($sourceId[1]);
+        $stations = $kladr->stations;
+
+        foreach($stations as $station){
+            if(!$station->dispatchPoints){
+                continue;
+            }
+            foreach($station->dispatchPoints as $dispatchPoint){
+
+                $arrivalKladrs = Kladr::with('stations.arrivalPoints')
+                ->whereHas('arrivalPoints', function(Builder $query) use ($dispatchPoint){
+                    $query->where([['dispatch_point_id', '=', $dispatchPoint->id]]);
+                })->get();
+                foreach($arrivalKladrs as $kladr){
+                    $arrivalData[$kladr->name.'_'.$kladr->id] = $kladr;
+                }
+            }
+        }
+        // return $arrivalData;
+        return $arrivalData;
+    }
+
     public static function arrivalDataByPointId($dispatchPointId){
 
     }
