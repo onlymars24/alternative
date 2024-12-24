@@ -301,6 +301,8 @@ Route::get('/settings/cluster/due', [SettingsController::class, 'getClusterDue']
 Route::get('/station/arrival/kladrs', [StationController::class, 'races']);
 Route::get('/kladr/arrival/kladrs', [KladrController::class, 'races']);
 
+Route::get('/kladr/links', [KladrController::class, 'links']);
+
 Route::get('/kladr/station/pages/station', [KladrStationPageController::class, 'stationPages']);
 
 Route::get('/main/pages', [PageMainController::class, 'mainPages']);

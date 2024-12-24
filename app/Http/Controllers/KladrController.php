@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\DispatchPoint;
 use App\Services\PointService;
 use App\Models\CacheArrivalPoint;
+use App\Models\KladrsCouple;
 use App\Services\SlugService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -88,5 +89,9 @@ class KladrController extends Controller
         }
 
         return response(['arrivalKladrs' => $result]);
+    }
+
+    public function links(Request $request){
+        return response(['links' => KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where('dispatch_kladr_id', $request->kladrId)->get()]);
     }
 }
