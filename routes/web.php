@@ -153,8 +153,8 @@ Route::get('/spread', function (Request $request) {
 
   // dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->find(1085));
   ini_set('max_execution_time', 20000);  
-  VkMarketService::allMarketsAdd();
-  dd('');
+  // VkMarketService::allMarketsAdd();
+  dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 241805]])->get());
 
   $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['racesExistence', '=', null]])->take(10)->get();
   

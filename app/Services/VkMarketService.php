@@ -20,7 +20,7 @@ class VkMarketService
     // name
     // slug
     // price
-    public static function marketAdd($dispatchKladr, $arrivalKladr, $price){
+    public static function marketAdd($dispatchKladr, $arrivalKladr){
         GraphicService::generateImage($dispatchKladr->name, $arrivalKladr->name);
 
         $response =  Http::get(env('VK_URL').'/market.getProductPhotoUploadServer?v=5.131&group_id='
@@ -64,7 +64,6 @@ class VkMarketService
         &name=Автобус '.$dispatchKladr->name.' — '.$arrivalKladr->name.'
         &description=Автобус '.$dispatchKladr->name.' — '.$arrivalKladr->name.': расписание, отправление и прибытие по местному времени, цена билетов, маршрут.
         &main_photo_id='.$response->response->photo_id.'
-        &price='.$price.'
         &url=https://xn--80adplhnbnk0i.xn--p1ai/автобус/'.$dispatchKladr->slug.'/'.$arrivalKladr->slug.'?utm_source=vk&utm_medium=market
         &access_token='.env('VK_TOKEN'))->object();
         sleep(1);
@@ -87,12 +86,19 @@ class VkMarketService
       $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['racesExistence', '=', null]])->take(10)->get();
       // $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 169902], ['arrival_kladr_id', '=', 206690]])->get();
       // dd($kladrsCouples);
-      $date = date("Y-m-d");
-      $newCouples = [];
-      $newRaces = [];
+      // $date = date("Y-m-d");
+      // $newCouples = [];
+      // $newRaces = [];
       foreach($kladrsCouples as $couple){
         $dispatchKladr = $couple->dispatchKladr;
         $arrivalKladr = $couple->arrivalKladr;
+
+        if($dispatchKladr && $arrivalKladr){
+          // $couple->racesExistence = true;
+          $couple->market_id = self::marketAdd($dispatchKladr, $arrivalKladr);
+          $couple->save();
+        }
+
         $dispatchPoint = $dispatchKladr->dispatchPoints->where('name', $dispatchKladr->name)->first();
         $dispatchPoints = $dispatchPoint ? [$dispatchPoint] : $dispatchKladr->dispatchPoints;
 
@@ -110,63 +116,65 @@ class VkMarketService
         // $newCouples[$key] = [$dispatchPoints, $arrivalPoints];
         
         
-        $races = [];
-        for($i = 1; $i <= 7; $i++){
-          $datetime = new DateTime($date);
-          $datetime->modify('+'.$i.' day');
-          $newDate = $datetime->format('Y-m-d');
-          foreach($dispatchPoints as $dispatchPoint){
-            foreach($arrivalPoints as $arrivalPoint){
-              Log::info('first request '.$key.' '.env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate);
-              try{
-                $races = Http::withHeaders([
-                  'Authorization' => env('AVTO_SERVICE_KEY'),
-                ])->get(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate)->object();
-              }
-              catch(Exception $e){
-                $races = [];
-              }
+        // $races = [];
+        // for($i = 1; $i <= 7; $i++){
+        //   $datetime = new DateTime($date);
+        //   $datetime->modify('+'.$i.' day');
+        //   $newDate = $datetime->format('Y-m-d');
+        //   foreach($dispatchPoints as $dispatchPoint){
+        //     foreach($arrivalPoints as $arrivalPoint){
+        //       Log::info('first request '.$key.' '.env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate);
+        //       try{
+        //         $races = Http::withHeaders([
+        //           'Authorization' => env('AVTO_SERVICE_KEY'),
+        //         ])->get(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate)->object();
+        //       }
+        //       catch(Exception $e){
+        //         $races = [];
+        //       }
               
-              sleep(2);
+        //       sleep(2);
 
-              if(gettype($races) == 'array' && count($races) > 0){
-                Log::info($key.' есть рейсы '.json_encode($races));
-                break;
-              }
-              elseif(gettype($races) == 'object'){
-                Log::info($key.' ошибка '.json_encode($races));
-                break;
-              }
-              Log::info($key.' '.json_encode($races));
-            }
-            if(gettype($races) == 'array' && count($races) > 0){
-              break;
-            }
-          }
+        //       if(gettype($races) == 'array' && count($races) > 0){
+        //         Log::info($key.' есть рейсы '.json_encode($races));
+        //         break;
+        //       }
+        //       elseif(gettype($races) == 'object'){
+        //         Log::info($key.' ошибка '.json_encode($races));
+        //         break;
+        //       }
+        //       Log::info($key.' '.json_encode($races));
+        //     }
+        //     if(gettype($races) == 'array' && count($races) > 0){
+        //       break;
+        //     }
+        //   }
 
-          if(gettype($races) == 'array' && count($races) > 0){
-            break;
-          }
-          elseif(gettype($races) == 'object'){
-            break;
-          }
-        }
-        if(gettype($races) == 'array' && count($races) > 0){
-          $minPrice = $races[0]->price;
-          foreach($races as $race){
-            if($race->price < $minPrice){
-              $minPrice = $race->price;
-            }
-          }
-          $couple->racesExistence = true;
-          $couple->market_id = self::marketAdd($dispatchKladr, $arrivalKladr, $minPrice);
-          $couple->save();
-          $newRaces[] = ['races' => $races, 'minPrice' => $minPrice];
-        }
-        else{
-          $couple->racesExistence = false;
-        }
-        $couple->save();
+        //   if(gettype($races) == 'array' && count($races) > 0){
+        //     break;
+        //   }
+        //   elseif(gettype($races) == 'object'){
+        //     break;
+        //   }
+        // }
+        // if(gettype($races) == 'array' && count($races) > 0){
+        //   $minPrice = $races[0]->price;
+        //   foreach($races as $race){
+        //     if($race->price < $minPrice){
+        //       $minPrice = $race->price;
+        //     }
+        //   }
+        //   // $couple->racesExistence = true;
+        //   // $couple->market_id = self::marketAdd($dispatchKladr, $arrivalKladr, $minPrice);
+        //   // $couple->save();
+        //   $newRaces[] = ['races' => $races, 'minPrice' => $minPrice];
+
+
+        // }
+        // else{
+        //   $couple->racesExistence = false;
+        // }
+        // $couple->save();
       }
       // return $newRaces;
       // dd($newCouples, $newRaces);
