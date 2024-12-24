@@ -43,9 +43,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            VkMarketService::allMarketsAdd();
-        })->everyMinute();
+        // $schedule->call(function () {
+        //     VkMarketService::allMarketsAdd();
+        // })->everyMinute();
 
 //         $schedule->call(function () {
 //             $now = date('Y-m-d H:i:s');
