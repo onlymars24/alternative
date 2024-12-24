@@ -7,6 +7,7 @@ use App\Models\KladrsCouple;
 use App\Services\PointService;
 use Illuminate\Database\Seeder;
 use App\Models\KladrStationPage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,6 +22,7 @@ class InsertCouplesKladrsSeeder extends Seeder
     public function run()
     {
         // $kladrPages = KladrStationPage::where([['kladr_id', '=', 221627]])->get();
+        DB::table('Kladrs_stations')->delete();
         $kladrPages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
         $couplesData = [];
         foreach($kladrPages as $kladrPage){
