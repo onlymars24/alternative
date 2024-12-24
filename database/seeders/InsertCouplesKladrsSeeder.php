@@ -22,7 +22,8 @@ class InsertCouplesKladrsSeeder extends Seeder
     public function run()
     {
         // $kladrPages = KladrStationPage::where([['kladr_id', '=', 221627]])->get();
-        DB::table('Kladrs_stations')->delete();
+                    
+        DB::table('kladrs_couples')->delete();
         $kladrPages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
         $couplesData = [];
         foreach($kladrPages as $kladrPage){
