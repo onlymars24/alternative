@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class GraphicService
 {
     public static function generateImage($dispatchPointName, $arrivalPointName){
-        $imagePath = 'img/bus_bgc.jpg';
+        $imagePath = public_path('img/bus_bgc.jpg');
         $image = imagecreatefromjpeg($imagePath);
 
         $text_color = imagecolorallocate($image, 255, 255, 255); 
@@ -30,7 +30,7 @@ class GraphicService
         // dd($dispatchPointName, $arrivalPointName);
         $text = $dispatchPointName.' — 
 '.$arrivalPointName;
-        $font = 'fonts/FiraSansCondensed-Medium.ttf';
+        $font = public_path('fonts/FiraSansCondensed-Medium.ttf');
         $size = 65;
         $maxWidth = 740;
       
@@ -72,7 +72,7 @@ class GraphicService
         );
       
       
-        imagejpeg($image, 'routes/new_bus_bgc.jpg');
+        imagejpeg($image, public_path('routes/new_bus_bgc.jpg'));
     }
 
     public static function wrapText($image, $text, $fontPath, $fontSize, $startX, $startY, $maxWidth) {

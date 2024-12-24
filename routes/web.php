@@ -150,25 +150,17 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
-  ini_set('max_execution_time', 20000);  
 
-  $kladrPages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
-  $couplesData = [];
-  foreach($kladrPages as $kladrPage){
-      $dispatchKladr = $kladrPage->kladr;
-      $arrivalKladrs = PointService::arrivalKladrsBySourceId($dispatchKladr->sourceId);
-      foreach($arrivalKladrs as $arrivalKladr){
-          if(!KladrsCouple::where([['dispatch_kladr_id', '=', $dispatchKladr->id], ['arrival_kladr_id', '=', $arrivalKladr->id]])->first()){
-              // KladrsCouple::create([
-              //    'dispatch_kladr_id' => $dispatchKladr->id,
-              //    'arrival_kladr_id' => $arrivalKladr->id,
-              // ]);
-              $link = '/автобус/'.$dispatchKladr->slug.'/'.$arrivalKladr->slug;
-              $couplesData[$link] = $link;
-          }
-      }
+  // dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->find(1085));
+  ini_set('max_execution_time', 20000);  
+  VkMarketService::allMarketsAdd();
+  dd('');
+
+  $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['racesExistence', '=', null]])->take(10)->get();
+  
+  foreach($kladrsCouples as $kladrsCouple){
+
   }
-  dd($couplesData);
 
 
 
