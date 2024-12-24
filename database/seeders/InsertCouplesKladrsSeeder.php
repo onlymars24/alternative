@@ -20,8 +20,8 @@ class InsertCouplesKladrsSeeder extends Seeder
      */
     public function run()
     {
-        $kladrPages = KladrStationPage::where([['kladr_id', '=', 221627]])->get();
-        // $kladrPages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
+        // $kladrPages = KladrStationPage::where([['kladr_id', '=', 221627]])->get();
+        $kladrPages = KladrStationPage::where([['kladr_id', '<>', null]])->get();
         $couplesData = [];
         foreach($kladrPages as $kladrPage){
             $dispatchKladr = $kladrPage->kladr;
@@ -35,18 +35,18 @@ class InsertCouplesKladrsSeeder extends Seeder
                 }
             }
 
-            if($dispatchKladr->album_id){
-                continue;
-            }
-            $title = 'Автовокзалы и автостанции '.$dispatchKladr->name;
-            $response = Http::get(env('VK_URL').'/market.addAlbum?owner_id='.-env('VK_GROUP_ID').'
-            &v=5.131
-            &group_id='
-            .env('VK_GROUP_ID').'&access_token='.env('VK_TOKEN').'&title='.$title)->object();
-            if(isset($response->response->market_album_id)){
-                $dispatchKladr->album_id = $response->response->market_album_id;
-                $dispatchKladr->save();
-            }
+            // if($dispatchKladr->album_id){
+            //     continue;
+            // }
+            // $title = 'Автовокзалы и автостанции '.$dispatchKladr->name;
+            // $response = Http::get(env('VK_URL').'/market.addAlbum?owner_id='.-env('VK_GROUP_ID').'
+            // &v=5.131
+            // &group_id='
+            // .env('VK_GROUP_ID').'&access_token='.env('VK_TOKEN').'&title='.$title)->object();
+            // if(isset($response->response->market_album_id)){
+            //     $dispatchKladr->album_id = $response->response->market_album_id;
+            //     $dispatchKladr->save();
+            // }
         }
     }
 }
