@@ -199,9 +199,6 @@ class RaceService
                 }
                 Log::info($key.' '.json_encode($races));
             }
-            if(gettype($races) == 'array' && count($races) > 0){
-              break;
-            }
         }
         return $racesData;
     }
