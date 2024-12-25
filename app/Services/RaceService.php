@@ -165,7 +165,7 @@ class RaceService
         $arrivalPointWhere = [['name', '=', $arrivalKladr->name]];
         $arrivalPoint = null;
         if($dispatchPoint){
-            $arrivalPoint = $arrivalKladr->arrivalPoints->where([['name', '=', $arrivalKladr->name], ['dispatch_point_id', '=', $dispatchPoint->id]])->first();
+            $arrivalPoint = $arrivalKladr->arrivalPoints->where('name', '=', $arrivalKladr->name)->where('dispatch_point_id', '=', $dispatchPoint->id)->first();
         }
         $arrivalPoints = $arrivalPoint ? [$arrivalPoint] : $arrivalKladr->arrivalPoints;
         
