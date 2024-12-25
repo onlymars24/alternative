@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\Kladr;
 use App\Models\Order;
 use App\Models\Station;
@@ -153,5 +154,55 @@ class RaceService
         // }
 
         return $races;
+    }
+
+
+    // исключается перебор, когда pointName = kladrName
+    public static function optimizedGetByKladrs($dispatchKladr, $arrivalKladr, $date){
+        $dispatchPoint = $dispatchKladr->dispatchPoints->where('name', $dispatchKladr->name)->first();
+        $dispatchPoints = $dispatchPoint ? [$dispatchPoint] : $dispatchKladr->dispatchPoints;
+
+        $arrivalPoint = $arrivalKladr->arrivalPoints->where('name', $arrivalKladr->name)->first();
+        $arrivalPoints = $arrivalPoint ? [$arrivalPoint] : $arrivalKladr->arrivalPoints;
+        $racesData = [];
+        
+        foreach($dispatchPoints as $dispatchPoint){
+            foreach($arrivalPoints as $arrivalPoint){
+            //   Log::info('first request '.$key.' '.env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate);
+                
+                if($dispatchPoint->id != $arrivalPoint->dispatch_point_id){
+                    continue;
+                }
+                $key = '/автобус/'.$dispatchPoint->name.'/'.$arrivalPoint->name;
+                $races = [];
+                try{
+                    $races = Http::withHeaders([
+                        'Authorization' => env('AVTO_SERVICE_KEY'),
+                    ])->get(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date)->object();
+                }
+                catch(Exception $e){
+                    $races = json_decode(json_encode(['errorMessage' => 'Поиск длился больше 10 секунд']));
+                }
+                
+                sleep(1);
+
+                if(gettype($races) == 'array' && count($races) > 0){
+                    Log::info($key.' есть рейсы '.json_encode($races));
+                    foreach($races as $race){
+                        $racesData[$race->uid] = $race;
+                    }
+                    break;
+                }
+                elseif(gettype($races) == 'object'){
+                    Log::info($key.' ошибка '.json_encode($races));
+                    break;
+                }
+                Log::info($key.' '.json_encode($races));
+            }
+            if(gettype($races) == 'array' && count($races) > 0){
+              break;
+            }
+        }
+        return $racesData;
     }
 }

@@ -72,6 +72,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UsersExportController;
 use App\Models\KladrsCouple;
+use App\Services\RaceService;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,17 +151,42 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  // dd(date('w', strtotime('2024-12-29 02:15:00')));
+  // dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->find(1085)); date('Y-m-d')
+  ini_set('max_execution_time', 20000);
+  // dd($kladrsCouple = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 151370]])->get());
+  $kladrsCouple = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 151370], ['arrival_kladr_id', '=', 33676]])->first();
+  $date = '2024-12-26';
+  $routes = [];
+  for($i = 0; $i <= 4; $i++){
+    $datetime = new DateTime($date);
+    $datetime->modify('+'.$i.' day');
+    $newDate = $datetime->format('Y-m-d');
+    
+    $races = RaceService::optimizedGetByKladrs($kladrsCouple->dispatchKladr, $kladrsCouple->arrivalKladr, $newDate);
 
-  // dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->find(1085));
-  ini_set('max_execution_time', 20000);  
-  // VkMarketService::allMarketsAdd();
-  dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 241805]])->get());
+    // dd();
 
-  $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['racesExistence', '=', null]])->take(10)->get();
-  
-  foreach($kladrsCouples as $kladrsCouple){
+    
 
+    foreach($races as $race){
+      // dd($race);
+      $routes[$race->num.' '.$race->name][date('H:i', strtotime($race->dispatchDate))][] =  (integer)date('w', strtotime($race->dispatchDate));
+    }
   }
+
+
+  dd($routes);
+  // VkMarketService::allMarketsAdd();
+
+
+
+  // dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 241805], ])->get());
+
+  // $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['racesExistence', '=', null]])->take(10)->get();
+  
+  // foreach($kladrsCouples as $kladrsCouple){
+  // }
 
 
 
