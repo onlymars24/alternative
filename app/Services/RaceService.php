@@ -170,7 +170,7 @@ class RaceService
         $arrivalPoints = $arrivalPoint ? [$arrivalPoint] : $arrivalKladr->arrivalPoints;
         
         $racesData = [];
-        dd($dispatchPoints, $arrivalPoints);
+        // dd($dispatchPoints, $arrivalPoints);
         foreach($dispatchPoints as $dispatchPoint){
             foreach($arrivalPoints as $arrivalPoint){
                 // Log::info('first request '.$key.' '.env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate);
