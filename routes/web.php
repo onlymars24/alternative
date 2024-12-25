@@ -156,6 +156,7 @@ Route::get('/spread', function (Request $request) {
   ini_set('max_execution_time', 20000);
   // dd($kladrsCouple = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 151370]])->get());
   $kladrsCouple = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 151370], ['arrival_kladr_id', '=', 33676]])->first();
+  dd($kladrsCouple);
   $date = '2024-12-26';
   $routes = [];
   for($i = 0; $i <= 4; $i++){
