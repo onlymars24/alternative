@@ -162,14 +162,18 @@ class RaceService
         $dispatchPoint = $dispatchKladr->dispatchPoints->where('name', $dispatchKladr->name)->first();
         $dispatchPoints = $dispatchPoint ? [$dispatchPoint] : $dispatchKladr->dispatchPoints;
 
-        $arrivalPoint = $arrivalKladr->arrivalPoints->where('name', $arrivalKladr->name)->first();
+        $arrivalPointWhere = [['name', '=', $arrivalKladr->name]];
+        $arrivalPoint = null;
+        if($dispatchPoint){
+            $arrivalPoint = $arrivalKladr->arrivalPoints->where([['name', '=', $arrivalKladr->name], ['dispatch_point_id', '=', $dispatchPoint->id]])->first();
+        }
         $arrivalPoints = $arrivalPoint ? [$arrivalPoint] : $arrivalKladr->arrivalPoints;
+        
         $racesData = [];
         dd($dispatchPoints, $arrivalPoints);
         foreach($dispatchPoints as $dispatchPoint){
             foreach($arrivalPoints as $arrivalPoint){
-            //   Log::info('first request '.$key.' '.env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate);
-                
+                // Log::info('first request '.$key.' '.env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$newDate);
                 if($dispatchPoint->id != $arrivalPoint->dispatch_point_id){
                     continue;
                 }
