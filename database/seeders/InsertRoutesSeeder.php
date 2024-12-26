@@ -31,7 +31,7 @@ class InsertRoutesSeeder extends Seeder
         // ['dispatch_kladr_id', '=', 151370], 
           ['dispatch_kladr_id', '=', 221627]
         ])
-        ->take(15)
+        ->take(100)
         ->get()
         ;
         $output = new ConsoleOutput();
@@ -49,6 +49,7 @@ class InsertRoutesSeeder extends Seeder
         foreach($kladrsCouples as $kladrsCouple){
           $races = RaceService::optimizedGetByKladrs($kladrsCouple->dispatchKladr, $kladrsCouple->arrivalKladr, $newDate);
           // Log::info($kladrsCouple->dispatchKladr->name.' - '.$kladrsCouple->arrivalKladr->name.' рейсы: '.json_encode($races));
+          $progressBar->advance();
           if(gettype($races) == 'array' && count($races) > 0){
             foreach($races as $race){
               $routeKey = $race->num.' '.$race->name;
@@ -123,7 +124,7 @@ class InsertRoutesSeeder extends Seeder
               $routes[$routeKey]['stops'] = $raceStops;
             }
           }
-          $progressBar->advance();
+          
         }
     
       // }
