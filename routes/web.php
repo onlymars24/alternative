@@ -151,30 +151,122 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  $setting = Setting::where('name', 'routesLogs')->first();
+  dd(json_decode($setting->data));
   // dd(date('w', strtotime('2024-12-29 02:15:00')));
   // dd(KladrsCouple::with('dispatchKladr', 'arrivalKladr')->find(1085)); date('Y-m-d')
   ini_set('max_execution_time', 20000);
   // dd($kladrsCouple = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 151370]])->get());
-  $kladrsCouple = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 151370], ['arrival_kladr_id', '=', 33676]])->first();
+  // $kladrsCouple = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([['dispatch_kladr_id', '=', 151370], 
+  // ['arrival_kladr_id', '=', 33676]
+  // ])->first();
+
+  $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([
+    ['dispatch_kladr_id', '=', 151370], 
+  // ['arrival_kladr_id', '=', 33676]
+  ])
+  ->take(15)
+  ->get()
+  // ->first()
+  ;
+  // dd($kladrsCouples);
   // dd($kladrsCouple);
-  $date = '2024-12-26';
+  // $date = '2024-12-26';
   $routes = [];
-  for($i = 0; $i <= 4; $i++){
+
+  // foreach($kladrsCouples as $kladrsCouple){
+  //   $routes[] = $kladrsCouple->dispatchKladr->name.' - '.$kladrsCouple->arrivalKladr->name;
+  // }
+  // dd($routes);
+  
+  // for($i = 0; $i <= 4; $i++){
+    $date = date('Y-m-d');
     $datetime = new DateTime($date);
-    $datetime->modify('+'.$i.' day');
+    // $datetime->modify('+'.$i.' day');
+    $datetime->modify('+1 day');
     $newDate = $datetime->format('Y-m-d');
     
-    $races = RaceService::optimizedGetByKladrs($kladrsCouple->dispatchKladr, $kladrsCouple->arrivalKladr, $newDate);
+    foreach($kladrsCouples as $kladrsCouple){
+      $races = RaceService::optimizedGetByKladrs($kladrsCouple->dispatchKladr, $kladrsCouple->arrivalKladr, $newDate);
+      // Log::info($kladrsCouple->dispatchKladr->name.' - '.$kladrsCouple->arrivalKladr->name.' рейсы: '.json_encode($races));
+      if(gettype($races) == 'array' && count($races) > 0){
+        foreach($races as $race){
+          $routeKey = $race->num.' '.$race->name;
+          $routes[$routeKey]['schedule'][date('H:i', strtotime($race->dispatchDate))][] = (integer)date('w', strtotime($race->dispatchDate));
 
-    // dd();
 
-    
+          // ЕСЛИ НЕТ СТОПОВ ТО ЗАПИСЫВАЕМ ИХ И ПРОВЕРЯЕМ ПЕРВЫЙ СТОП; ЕСЛИ ПЕРВЫЙ СТОП НЕ ПЕРВЫЙ ТО СТАВИМ КАСТОМНЫЙ; СОХРАНЯЕМ STATION_ID
 
-    foreach($races as $race){
-      // dd($race);
-      $routes[$race->num.' '.$race->name][date('H:i', strtotime($race->dispatchDate))][] =  (integer)date('w', strtotime($race->dispatchDate));
+          // В ОБОИХ СЛУЧАЯХ ИЩЕМ СТОП ДЛЯ ARRIVAL_STATION И ЗАПИСЫВАЕМ ТУДА STATION_ID
+
+
+          if(array_key_exists('stops', $routes[$routeKey])){
+            $raceStops = $routes[$routeKey]['stops'];
+          }
+          else{
+            $raceStops = Http::withHeaders([
+              'Authorization' => env('AVTO_SERVICE_KEY'),
+            ])->get(env('AVTO_SERVICE_URL').'/race/stops/'.$race->uid)->object();
+            sleep(1);
+            if(gettype($raceStops) != 'array' || count($raceStops) == 0){
+              Log::info($routeKey.': stops from http is empty ');
+              continue;
+            }
+            $raceStops = (array)$raceStops;
+            $dispatchPoint = DispatchPoint::find($race->dispatchPointId);
+            if(!$dispatchPoint || !$dispatchPoint->station || !$dispatchPoint->station->kladr){
+              Log::info($routeKey.': dispatchPoint is null ');
+              continue;
+            }
+            $dispatchStation = $dispatchPoint->station;
+            $dispatchKladr = $dispatchPoint->station->kladr;
+            if($raceStops[0]->distance == 0){
+              $raceStops[0]->station_id = $dispatchStation->id;
+            }
+            else{
+              $newFirstStop = json_decode(json_encode(
+                [
+                  "code"=> null,
+                  "name" => $dispatchStation->name,
+                  "regionName"=> $dispatchKladr->region,
+                  "arrivalDate"=> null,
+                  "dispatchDate"=> null,
+                  "stopTime"=> null,
+                  "distance"=> 0,
+                  "address" => null,
+                  "station_id" => $dispatchStation->id,
+                ]
+              ));
+              array_unshift($raceStops, $newFirstStop);              
+            }
+          }
+
+          // $arrivalPoint = CacheArrivalPoint::where([
+          //   ['arrival_point_id', '=', $race->arrivalPointId],
+          //   ['station_id', '<>', null]
+          // ])->first();
+          $arrivalStation = Station::where([
+            ['name', '=', $race->arrivalStationName],
+            ['kladr_id', '=', $kladrsCouple->arrivalKladr->id],
+          ])->first();
+          if(!$arrivalStation || !$arrivalStation->kladr){
+            Log::info($routeKey.': arrivalStation for '.$race->arrivalStationName.' is null ');
+            $routes[$routeKey]['stops'] = $raceStops;
+            continue;
+          }
+          Log::info($routeKey.': arrivalStation for '.$race->arrivalStationName.'exists');
+          foreach($raceStops as $stop){
+            if($stop->name == $race->arrivalStationName){
+              $stop->station_id = $arrivalStation->id;
+              break;
+            }
+          }
+          $routes[$routeKey]['stops'] = $raceStops;
+        }
+      }
     }
-  }
+
+  // }
 
 
   dd($routes);
@@ -532,7 +624,7 @@ Route::get('/spread', function (Request $request) {
   $kladrs = Kladr::has('dispatchPoints')->orHas('arrivalPoints')->get();
   foreach($kladrs as $kladr){
     if(!$kladr->slug){
-      $kladr->slug = SlugService::create($kladr->name); 
+      $kladr->slug = SlugService::create($kladr->name);
       $kladr->save();
     }
   }

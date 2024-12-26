@@ -187,18 +187,17 @@ class RaceService
                 catch(Exception $e){
                     $races = json_decode(json_encode(['errorMessage' => 'Поиск длился больше 10 секунд']));
                 }
-                
                 sleep(1);
 
                 if(gettype($races) == 'array' && count($races) > 0){
-                    Log::info($key.' есть рейсы '.json_encode($races));
+                    Log::info($key.' есть рейсы: '.json_encode($races));
                     foreach($races as $race){
                         $racesData[$race->uid] = $race;
                     }
                     break;
                 }
                 elseif(gettype($races) == 'object'){
-                    Log::info($key.' ошибка '.json_encode($races));
+                    Log::info($key.' ошибка: '.json_encode($races));
                     break;
                 }
                 Log::info($key.' '.json_encode($races));
