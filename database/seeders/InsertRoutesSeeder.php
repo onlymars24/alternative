@@ -78,27 +78,31 @@ class InsertRoutesSeeder extends Seeder
                 }
                 $raceStops = (array)$raceStops;
                 $dispatchPoint = DispatchPoint::find($race->dispatchPointId);
-                if(!$dispatchPoint || !$dispatchPoint->station || !$dispatchPoint->station->kladr){
-                  Log::info($routeKey.': dispatchPoint is null ');
-                  continue;
+                // if(!$dispatchPoint || !$dispatchPoint->station || !$dispatchPoint->station->kladr){
+                //   Log::info($routeKey.': dispatchPoint is null ');
+                //   continue;
+                // }
+                $dispatchStationId = null;
+                if($dispatchPoint && $dispatchPoint->station){
+                  $dispatchStationId = $dispatchPoint->station->id;
                 }
-                $dispatchStation = $dispatchPoint->station;
-                $dispatchKladr = $dispatchPoint->station->kladr;
                 if($raceStops[0]->distance == 0){
-                  $raceStops[0]->station_id = $dispatchStation->id;
+                  $raceStops[0]->station_id = $dispatchStationId;
+                  $raceStops[0]->kladr_id = $kladrsCouple->dispatchKladr->id;
                 }
                 else{
                   $newFirstStop = json_decode(json_encode(
                     [
                       "code"=> null,
-                      "name" => $dispatchStation->name,
-                      "regionName"=> $dispatchKladr->region,
+                      "name" => $race->dispatchStationName,
+                      "regionName"=> $kladrsCouple->dispatchKladr->region,
                       "arrivalDate"=> null,
                       "dispatchDate"=> null,
                       "stopTime"=> null,
                       "distance"=> 0,
                       "address" => null,
-                      "station_id" => $dispatchStation->id,
+                      "station_id" => $dispatchStationId,
+                      'kladr_id' => $kladrsCouple->dispatchKladr->id
                     ]
                   ));
                   array_unshift($raceStops, $newFirstStop);              
@@ -109,15 +113,11 @@ class InsertRoutesSeeder extends Seeder
                 ['name', '=', $race->arrivalStationName],
                 ['kladr_id', '=', $kladrsCouple->arrivalKladr->id],
               ])->first();
-              if(!$arrivalStation || !$arrivalStation->kladr){
-                Log::info($routeKey.': arrivalStation for '.$race->arrivalStationName.' is null ');
-                $routes[$routeKey]['stops'] = $raceStops;
-                continue;
-              }
               Log::info($routeKey.': arrivalStation for '.$race->arrivalStationName.' exists');
               foreach($raceStops as $stop){
                 if($stop->name == $race->arrivalStationName){
-                  $stop->station_id = $arrivalStation->id;
+                  $stop->station_id = $arrivalStation ? $arrivalStation->id : null;
+                  $stop->kladr_id = $kladrsCouple->arrivalKladr->id;
                   break;
                 }
               }
