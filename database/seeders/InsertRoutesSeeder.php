@@ -31,7 +31,7 @@ class InsertRoutesSeeder extends Seeder
         // ['dispatch_kladr_id', '=', 151370], 
           ['dispatch_kladr_id', '=', 221627]
         ])
-        ->take(100)
+        // ->take(100)
         ->get()
         ;
         $output = new ConsoleOutput();
