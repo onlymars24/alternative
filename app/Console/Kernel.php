@@ -44,9 +44,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->call(function () {
-        //     VkMarketService::allMarketsAdd();
-        // })->everyMinute();
-
+        //     Log::info('начало задачи everyMinute '.date('H:i:s'));
+        //     // VkMarketService::allMarketsAdd();
+        //     sleep(80);
+        //     Log::info('конец задачи everyMinute '.date('H:i:s'));
+        // })->name('routesLoading')->everyMinute()->withoutOverlapping();
+        // /автобус/Томск/Новосибирск
         $schedule->call(function () {
             $now = date('Y-m-d H:i:s');
             $currentOrdersTime = date_create($now);
@@ -93,7 +96,7 @@ class Kernel extends ConsoleKernel
             }
 
             ScheduleService::dispatchInform();
-        })->everyThreeMinutes();
+        })->name('paymentReminder')->everyThreeMinutes()->withoutOverlapping();
 
 
         // $schedule->call(function () {

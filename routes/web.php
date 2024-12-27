@@ -151,6 +151,14 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  $routes = \App\Models\Route::all()->toArray();
+  foreach($routes as $key => $route){
+    // dd(json_decode($route['schedule']));
+    $routes[$key]['schedule'] = json_decode($route['schedule']);
+    $routes[$key]['stops'] = json_decode($route['stops']);
+    // dd($route);
+  }
+  dd($routes);
   $setting = Setting::where('name', 'routesLogs')->first();
   dd(json_decode($setting->data));
   // dd(date('w', strtotime('2024-12-29 02:15:00')));

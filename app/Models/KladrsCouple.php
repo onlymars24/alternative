@@ -24,4 +24,9 @@ class KladrsCouple extends Model
     public function arrivalKladr(){
         return $this->belongsTo(Kladr::class);
     }
+
+    public function routes()
+    {
+        return $this->belongsToMany(Route::class);
+    }
 }
