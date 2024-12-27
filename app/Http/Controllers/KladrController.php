@@ -95,7 +95,16 @@ class KladrController extends Controller
         $links = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where('dispatch_kladr_id', $request->kladrId)->get();
         $linksData = [];
         foreach($links as $link){
-            $linksData[substr($link->arrivalKladr->name, 0, 1)] = $link;
+            // return response(['$link->arrivalKladr->name' => $link->arrivalKladr->name]);
+            $key = mb_substr($link->arrivalKladr->name, 0, 1);
+            $linksData[$key][] = $link;
+            // return response(['$link->arrivalKladr->name' => $linksData]);
+        }
+        ksort($linksData);
+        foreach($linksData as $linkCharacter){
+            usort($linkCharacter, function($a, $b) {
+                return strcmp($a->dispatchKladr->name, $b->arrivalKladr->name);
+            });
         }
         return response(['links' => $linksData]);
     }
