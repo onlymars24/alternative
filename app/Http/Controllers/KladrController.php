@@ -92,7 +92,8 @@ class KladrController extends Controller
     }
 
     public function links(Request $request){
-        $links = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where('dispatch_kladr_id', $request->kladrId)->get();
+        $links = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where('dispatch_kladr_id', $request->kladrId)
+        ->orderBy(Kladr::select('name')->whereColumn('kladrs.id', 'kladrs_couples.arrival_kladr_id'), 'asc')->get();
         $linksData = [];
         foreach($links as $link){
             // return response(['$link->arrivalKladr->name' => $link->arrivalKladr->name]);
@@ -104,12 +105,12 @@ class KladrController extends Controller
             // return response(['$link->arrivalKladr->name' => $linksData]);
         }
         ksort($linksData);
-        foreach($linksData as $linkCharacter){
+        // foreach($linksData as $linkCharacter){
             
-            usort($linkCharacter, function($a, $b) {
-                return strcmp($a->arrivalKladr->name, $b->arrivalKladr->name);
-            });
-        }
+        //     usort($linkCharacter, function($a, $b) {
+        //         return strcmp($a->arrivalKladr->name, $b->arrivalKladr->name);
+        //     });
+        // }
         return response(['links' => $linksData]);
     }
 }
