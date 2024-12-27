@@ -60,7 +60,7 @@ class InsertRoutesSeeder extends Seeder
                   'minPrice' => $race->price,
                   'kladr_id' => $kladrsCouple->dispatchKladr->id
                 ]);
-                // $route->kladrs_couples()->attach($kladrsCouple->id);
+                $route->kladrs_couples()->attach($kladrsCouple->id);
               }
               else{
                 if($race->price < $route->minPrice){
