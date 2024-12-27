@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 
 class RouteController extends Controller
 {
-    public function routesByKladr(Request $request){
+    public function getByKladr(Request $request){
         return response(['routes' => Route::where('kladr_id', $request->kladrId)->get()]);
     }
 
-    public function routesByStation(Request $request){
+    public function getByStation(Request $request){
         return response(['routes' => Route::where('station_id', $request->stationId)->get()]);
     }
 }

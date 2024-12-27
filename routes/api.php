@@ -30,6 +30,7 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\KladrController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RouteController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ArrivalController;
 use App\Http\Controllers\BonusesController;
@@ -268,6 +269,9 @@ Route::middleware('auth:api')->group(function(){
 
     // Route::post('/tickets/paginate', [TicketController::class, 'paginate']);
 });
+
+Route::get('/routes/station', [RouteController::class, 'getByStation']);
+Route::get('/routes/kladr', [RouteController::class, 'getByKladr']);
 
 Route::get('/bus/route', [BusRouteController::class, 'one']);
 

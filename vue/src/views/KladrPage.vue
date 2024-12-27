@@ -233,6 +233,36 @@ export default{
     <HeaderMain/>
     <div></div>
     <MainCrumbs :pages="[{name: $store.state.kladrPage.name, href: null}]"/>
+    <div class="container">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col"><strong>№</strong></th>
+                    <th scope="col"><strong>Рейс</strong></th>
+                    <th scope="col"><strong>Время следования</strong></th>
+                    <th scope="col"><strong>Дни недели</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th rowspan="3" scope="row">543</th>
+                    <td style="width: 30%;" rowspan="3">Томск — А/П Толмачево ч/з Новосибирск ЖД Вокзал-Главный 3757 , Межобластное</td>
+                    <td>18:00</td>
+                    <td>Каждый день</td>
+                </tr>
+                <tr>
+                <td>18:00</td>
+                <td>Каждый день</td>
+                </tr>
+                <tr>
+                    <td>18:00</td>
+                    <td>Каждый день</td>
+                </tr>
+            </tbody>
+        </table>        
+    </div>
+
+
 </template>
 
 <style scoped>
