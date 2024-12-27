@@ -59,6 +59,7 @@ class Kernel extends ConsoleKernel
             $KladrsCouple = KladrsCouple::find($kladrsCouple->id);
             if($KladrsCouple->routes->count() == 0){
                 $KladrsCouple->racesExistence = false;
+                $KladrsCouple->save();
             }
         })->name('routesLoading')->everyMinute()->withoutOverlapping();
 
