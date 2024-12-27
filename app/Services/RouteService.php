@@ -67,6 +67,7 @@ class RouteService
                 // if(array_key_exists('stops', $routes[$routeKey])){
                 //   $raceStops = $routes[$routeKey]['stops'];
                 // }
+                
                 if(count((array)json_decode($route->stops)) > 0){
                   $raceStops = (array)json_decode($route->stops);
                 }
@@ -94,6 +95,8 @@ class RouteService
                   $dispatchStationId = null;
                   if($dispatchPoint && $dispatchPoint->station){
                     $dispatchStationId = $dispatchPoint->station->id;
+                    $route->station_id = $dispatchStationId;
+                    $route->save();                    
                   }
                   if($raceStops[0]->distance == 0){
                     $raceStops[0]->station_id = $dispatchStationId;
@@ -118,8 +121,7 @@ class RouteService
                   }
                 }
                 
-                $route->station_id = $dispatchStationId;
-                $route->save();
+
   
                 $arrivalStation = Station::where([
                   ['name', '=', $race->arrivalStationName],
