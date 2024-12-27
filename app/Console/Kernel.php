@@ -45,17 +45,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            // Log::info('начало задачи everyMinute '.date('H:i:s'));
-            // // VkMarketService::allMarketsAdd();
-            // sleep(80);
-            // Log::info('конец задачи everyMinute '.date('H:i:s'));
-            $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
-                ['dispatch_kladr_id', '=', 221627]
-            ])
-            ->first();
-            RouteService::upload($kladrsCouple);
-        })->name('routesLoading')->everyMinute()->withoutOverlapping();
+        // $schedule->call(function () {
+        //     // Log::info('начало задачи everyMinute '.date('H:i:s'));
+        //     // // VkMarketService::allMarketsAdd();
+        //     // sleep(80);
+        //     // Log::info('конец задачи everyMinute '.date('H:i:s'));
+        //     $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
+        //         ['dispatch_kladr_id', '=', 221627]
+        //     ])
+        //     ->first();
+        //     RouteService::upload($kladrsCouple);
+        // })->name('routesLoading')->everyMinute()->withoutOverlapping();
 
         // /автобус/Томск/Новосибирск
         $schedule->call(function () {
