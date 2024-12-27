@@ -15,6 +15,7 @@ class Route extends Model
         'schedule',
         'stops',
         'minPrice',
+        'maxPrice',
         'station_id',
         'kladr_id',
         'lastCheckDate'
