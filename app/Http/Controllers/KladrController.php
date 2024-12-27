@@ -97,11 +97,15 @@ class KladrController extends Controller
         foreach($links as $link){
             // return response(['$link->arrivalKladr->name' => $link->arrivalKladr->name]);
             $key = mb_substr($link->arrivalKladr->name, 0, 1);
-            $linksData[$key][] = $link;
+            if(preg_match('/[а-яА-ЯЁё]/u', $key)){
+                $linksData[$key][] = $link;
+            }
+            
             // return response(['$link->arrivalKladr->name' => $linksData]);
         }
         ksort($linksData);
         foreach($linksData as $linkCharacter){
+            
             usort($linkCharacter, function($a, $b) {
                 return strcmp($a->arrivalKladr->name, $b->arrivalKladr->name);
             });
