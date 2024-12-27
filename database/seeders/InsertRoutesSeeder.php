@@ -58,6 +58,7 @@ class InsertRoutesSeeder extends Seeder
                   'num' => $race->num,
                   'name' => $race->name,
                   'minPrice' => $race->price,
+                  'maxPrice' => $race->price,
                   'kladr_id' => $kladrsCouple->dispatchKladr->id
                 ]);
                 $route->kladrs_couples()->attach($kladrsCouple->id);
