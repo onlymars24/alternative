@@ -10,6 +10,7 @@ use App\Models\Station;
 use App\Models\CacheRace;
 use Nette\Utils\DateTime;
 use App\Models\WhatsAppSms;
+use App\Models\KladrsCouple;
 use App\Services\SmsService;
 use App\Mail\LeaveReviewMail;
 use App\Models\DispatchPoint;
@@ -17,13 +18,14 @@ use App\Services\MailService;
 use App\Services\SlugService;
 use App\Services\KladrService;
 use App\Services\PointService;
+use App\Services\RouteService;
 use App\Models\KladrStationPage;
 use App\Services\SitemapService;
+use App\Services\StationService;
 use App\Models\CacheArrivalPoint;
 use App\Services\ScheduleService;
-use App\Services\FtpLoadingService;
-use App\Services\StationService;
 use App\Services\VkMarketService;
+use App\Services\FtpLoadingService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -43,12 +45,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->call(function () {
-        //     Log::info('начало задачи everyMinute '.date('H:i:s'));
-        //     // VkMarketService::allMarketsAdd();
-        //     sleep(80);
-        //     Log::info('конец задачи everyMinute '.date('H:i:s'));
-        // })->name('routesLoading')->everyMinute()->withoutOverlapping();
+        $schedule->call(function () {
+            // Log::info('начало задачи everyMinute '.date('H:i:s'));
+            // // VkMarketService::allMarketsAdd();
+            // sleep(80);
+            // Log::info('конец задачи everyMinute '.date('H:i:s'));
+            $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
+                ['dispatch_kladr_id', '=', 221627]
+            ])
+            ->first();
+            RouteService::upload($kladrsCouple);
+        })->name('routesLoading')->everyMinute()->withoutOverlapping();
+
         // /автобус/Томск/Новосибирск
         $schedule->call(function () {
             $now = date('Y-m-d H:i:s');
@@ -96,7 +104,7 @@ class Kernel extends ConsoleKernel
             }
 
             ScheduleService::dispatchInform();
-        })->name('paymentReminder')->everyThreeMinutes()->withoutOverlapping();
+        })->name('paymentReminder')->everyThreeMinutes();
 
 
         // $schedule->call(function () {

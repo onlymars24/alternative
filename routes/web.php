@@ -151,6 +151,12 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
+    ['dispatch_kladr_id', '=', 151370], 
+      // ['dispatch_kladr_id', '=', 221627]
+    ])
+    ->first();
+  dd($kladrsCouple);
   $routes = \App\Models\Route::all()->toArray();
   foreach($routes as $key => $route){
     // dd(json_decode($route['schedule']));
