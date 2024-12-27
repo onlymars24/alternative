@@ -93,7 +93,7 @@ class KladrController extends Controller
 
     public function links(Request $request){
         $links = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where('dispatch_kladr_id', $request->kladrId)->get();
-        $linksData 
+        $linksData = [];
         foreach($links as $link){
             $linksData[$link->arrivalKladr[0]] = $link;
         }
