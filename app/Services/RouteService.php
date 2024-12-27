@@ -38,7 +38,7 @@ class RouteService
                     $route->minPrice = $race->price;
                   }
                   if($race->price > $route->maxPrice){
-                    $route->minPrice = $race->price;
+                    $route->maxPrice = $race->price;
                   }
                   $route->save();
                 }
