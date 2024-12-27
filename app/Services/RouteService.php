@@ -54,7 +54,7 @@ class RouteService
                 else{
                   $schedule[$routeTime] = (array)$schedule[$routeTime];
                 }
-                $schedule[$routeTime][date('w', strtotime($race->dispatchDate))] = true;
+                $schedule[$routeTime][date('l', strtotime($race->dispatchDate))] = true;
   
                 $route->schedule = json_encode($schedule);
                 $route->save();
