@@ -101,11 +101,11 @@ class KladrController extends Controller
             // return response(['$link->arrivalKladr->name' => $linksData]);
         }
         ksort($linksData);
-        // foreach($linksData as $linkCharacter){
-        //     usort($linkCharacter, function($a, $b) {
-        //         return strcmp($a->dispatchKladr->name, $b->arrivalKladr->name);
-        //     });
-        // }
+        foreach($linksData as $linkCharacter){
+            usort($linkCharacter, function($a, $b) {
+                return strcmp($a->arrivalKladr->name, $b->arrivalKladr->name);
+            });
+        }
         return response(['links' => $linksData]);
     }
 }
