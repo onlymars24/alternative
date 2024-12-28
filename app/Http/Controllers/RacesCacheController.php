@@ -14,12 +14,18 @@ class RacesCacheController extends Controller
         //     'cacheRaces3' => $request->date,
         // ]);
         $cacheRaces = CacheRace::where([
+            ['dispatchPointName', $request->dispatchSlug],
+            ['arrivalPointName', $request->arrivalSlug],
+            ['date', $request->date]
+        ])->first();
+        if(!$cacheRaces){
+            $cacheRaces = CacheRace::where([
                 ['dispatchPointName', $request->dispatchSlug],
-                ['arrivalPointName', $request->arrivalSlug],
-                ['date', $request->date]
+                ['arrivalPointName', $request->arrivalSlug]
             ])->first();
+        }
         return response([
-            'cacheRaces' => $cacheRaces ? json_decode($cacheRaces->list) : []
+            'cacheRaces' => $cacheRaces
         ]);
     }
 }

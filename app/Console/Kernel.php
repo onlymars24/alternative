@@ -169,7 +169,17 @@ class Kernel extends ConsoleKernel
             $xml = simplexml_load_file(public_path(env('XML_FILE_NAME')));
             $cacheRaces = CacheRace::where([
                 ['date', '<', date('Y-m-d')]
-            ])->delete();
+            ])->get();
+            // dd( $cacheRaces);
+            foreach($cacheRaces as $cacheRace){
+                if(CacheRace::where([
+                    ['dispatchPointName', '=', $cacheRace->dispatchPointName],
+                    ['arrivalPointName', '=', $cacheRace->arrivalPointName],
+                    ['date', '=', date('Y-m-d')]
+                ])->first()){
+                    $cacheRace->delete();
+                }
+            }
             Log::info('Deleted successful!');
 
             for($i = 0; $i < count($xml->url); $i++){

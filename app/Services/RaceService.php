@@ -96,15 +96,6 @@ class RaceService
                             $races[$race->uid] = $race;
                         }
                     }
-                    // else{
-                    //     $isServerError = true;
-                    //     MailService::sendError(env('AVTO_SERVICE_URL').'/races/'.$dispatchPoint->id.'/'.$arrivalPoint->arrival_point_id.'/'.$date.' || '.$request->url, $tempRaces);
-                    // }
-
-
-
-                    // return response(['races' => $tempRaces]);
-
                 }
             }
         }
@@ -115,11 +106,11 @@ class RaceService
             ['date', $date]
         ])->first();
 
-        if($cacheRace){
+        if($cacheRace && count($races) > 0){
             $cacheRace->list = json_encode($races);
             $cacheRace->save();
         }
-        else{
+        elseif(count($races) > 0){
             $cacheRace = CacheRace::create([
                 'date' => $date,
                 'dispatchPointName' => $dispatchSlug,

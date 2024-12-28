@@ -150,8 +150,20 @@ Route::get('/sitemap/reload', function (Request $request) {
   FtpLoadingService::put();
 });
 
-Route::get('/spread', function (Request $request) {
-
+Route::get('/spread', function (Request $request) { 
+  $cacheRaces = CacheRace::where([
+    ['date', '<', date('Y-m-d')]
+  ])->get();
+  // dd( $cacheRaces);
+  foreach($cacheRaces as $cacheRace){
+    if(CacheRace::where([
+      ['dispatchPointName', '=', $cacheRace->dispatchPointName],
+      ['arrivalPointName', '=', $cacheRace->arrivalPointName],
+      ['date', '=', date('Y-m-d')]
+    ])->first()){
+      $cacheRace->delete();
+    }
+  }
   dd('ok');
   $arr = [];
   $arr[['qwe' => 'qwe', 'asdf' => 'asdf']] = 'qwerty';

@@ -5,7 +5,11 @@
     <div class="menu menu__top">
         <div class="container">
             <div class="menu__intro">
-                <h2 class="menu__intro-title">Расписание автобусов {{$store.state.dispatchNameConst}} — {{$store.state.arrivalNameConst}}</h2>
+                <h2 class="menu__intro-title">Расписание автобусов {{$store.state.dispatchNameConst}} — {{$store.state.arrivalNameConst}} 
+                    на {{ cacheDate == dates.today ? 'сегодня' : '' }} 
+                            {{ cacheDate == dates.tomorrow ? 'завтра' : '' }} 
+                            {{ cacheDate == dates.afterTomorrow ? 'послезавтра' : '' }}{{ formatedCacheRaces.length && !this.$route.query.on ? cacheDate : '' }}
+                </h2>
                 <div class="menu__inro-sort">
                 </div>              
             </div>             
@@ -251,7 +255,8 @@ export default {
             crumbPages: [
             ],
             dispatchItem: store.state.dispatchItem,
-            arrivalItem: store.state.arrivalItem
+            arrivalItem: store.state.arrivalItem,
+            cacheDate: null
         }
     },
     // beforeMount(){
@@ -310,7 +315,9 @@ export default {
         await axiosClient
         .get('/cache/races?dispatchSlug='+store.state.dispatchItem.slug+'&arrivalSlug='+store.state.arrivalItem.slug+'&date='+this.date)
         .then(response => {
-            this.cacheRaces = Object.values(response.data.cacheRaces)
+            let cacheRacesData = response.data.cacheRaces
+            this.cacheRaces = Object.values(JSON.parse(cacheRacesData.list))
+            this.cacheDate = dayjs(cacheRacesData.date).format('DD.MM.YYYY')
             // console.log('this.cacheRaces')
             // console.log(this.cacheRaces)
         })

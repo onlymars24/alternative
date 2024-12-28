@@ -272,6 +272,7 @@ Route::middleware('auth:api')->group(function(){
 
 Route::get('/routes/station', [RouteController::class, 'getByStation']);
 Route::get('/routes/kladr', [RouteController::class, 'getByKladr']);
+Route::get('/routes/kladrs/couple', [RouteController::class, 'getByKladrsCouple']);
 
 Route::get('/bus/route', [BusRouteController::class, 'one']);
 
