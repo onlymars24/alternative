@@ -30,8 +30,9 @@ class InsertRoutesSeeder extends Seeder
         $kladrsCouples = KladrsCouple::with('dispatchKladr', 'arrivalKladr')->where([
         ['dispatch_kladr_id', '=', 151370], 
           // ['dispatch_kladr_id', '=', 221627]
+          // ['arrival_kladr_id', '=', 33676]
         ])
-        ->take(4)
+        // ->take(5)
         ->get()
         ;
         $output = new ConsoleOutput();

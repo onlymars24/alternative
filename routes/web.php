@@ -151,6 +151,8 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+
+  dd('ok');
   $arr = [];
   $arr[['qwe' => 'qwe', 'asdf' => 'asdf']] = 'qwerty';
   dd($arr);

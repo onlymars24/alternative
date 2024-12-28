@@ -4,6 +4,7 @@ namespace App\Services;
 
 use DateTime;
 use Exception;
+use App\Models\Kladr;
 use App\Models\Route;
 use App\Models\Station;
 use App\Models\DispatchPoint;
@@ -39,6 +40,12 @@ class RouteService
                   }
                   if($race->price > $route->maxPrice){
                     $route->maxPrice = $race->price;
+                  }
+                  $stops = json_decode($route->stops);
+                  $lastStop = end($stops);
+                  if(isset($lastStop->kladr_id) && Kladr::find($lastStop->kladr_id)){
+                    $arrivalKladr = Kladr::find($lastStop->kladr_id);
+                    $route->busLink = '/автобус/'.$kladrsCouple->dispatchKladr->slug.'/'.$arrivalKladr->slug;
                   }
                   $route->save();
                 }

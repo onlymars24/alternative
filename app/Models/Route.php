@@ -26,4 +26,9 @@ class Route extends Model
     {
         return $this->belongsToMany(KladrsCouple::class);
     }
+
+    public function kladr()
+    {
+        return $this->belongsTo(Kladr::class);
+    }
 }
