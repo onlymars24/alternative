@@ -29,7 +29,7 @@ class KladrStationPageController extends Controller
     }
 
     public function oneOld(Request $request){
-        return response([ 'page' => KladrStationPage::where([
+        return response([ 'page' => KladrStationPage::with('station.kladr')->where([
             ['url_settlement_name', $request->url_settlement_name],
             ['hidden', false],
             ['station_id', '<>', null]
