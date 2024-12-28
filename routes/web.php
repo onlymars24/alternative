@@ -151,6 +151,9 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) {
+  $arr = [];
+  $arr[['qwe' => 'qwe', 'asdf' => 'asdf']] = 'qwerty';
+  dd($arr);
   dd(date('l', strtotime('2024-12-29')));
   $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
     ['dispatch_kladr_id', '=', 151370], 

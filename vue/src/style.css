@@ -1610,3 +1610,10 @@ a{
       width: 100%;
   }
 }
+
+.schedule__card{ margin-bottom: 5px; }
+.schedule__card-num{font-size: 0.8em; }
+.schedule__card-name{ color: #0275fe; padding-bottom: 5px; }
+.schedule__card-table{ width: 100%; }
+.schedule__card-th{ font-size: 0.8em; color: grey; font-weight: 300; }
+.schedule__card-td{ vertical-align: top; padding-bottom: 10px; font-size: 0.8em; }
