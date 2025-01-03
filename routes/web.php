@@ -151,9 +151,15 @@ Route::get('/sitemap/reload', function (Request $request) {
 });
 
 Route::get('/spread', function (Request $request) { 
-  $cacheRaces = CacheRace::where([
-    ['date', '<', date('Y-m-d')]
-  ])->get();
+  // $cacheRaces = CacheRace::where([
+  //   ['date', '<', date('Y-m-d')]
+  // ])->get();
+  $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
+      ['racesExistence', '=', null],
+  ])
+  ->whereIn('dispatch_kladr_id', [38528, 151370, 33676, 91977])
+  ->first();
+  dd($kladrsCouple);
   // dd( $cacheRaces);
   foreach($cacheRaces as $cacheRace){
     if(CacheRace::where([

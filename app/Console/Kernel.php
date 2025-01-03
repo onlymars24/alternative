@@ -50,10 +50,15 @@ class Kernel extends ConsoleKernel
             // // VkMarketService::allMarketsAdd();
             // sleep(80);
             // Log::info('конец задачи everyMinute '.date('H:i:s'));
+            // $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
+            //     ['dispatch_kladr_id', '=', 221627],
+            //     ['racesExistence', '=', null],
+            // ])
+            // ->first();
             $kladrsCouple = KladrsCouple::doesntHave('routes')->where([
-                ['dispatch_kladr_id', '=', 221627],
                 ['racesExistence', '=', null],
             ])
+            ->whereIn('dispatch_kladr_id', [38528, 151370, 33676, 91977])
             ->first();
             RouteService::upload($kladrsCouple);
             $KladrsCouple = KladrsCouple::find($kladrsCouple->id);
